@@ -1,0 +1,647 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>UIDynamics in Swift | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="本文翻译自BigNerdRanch，作者Steve Sparks">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UIDynamics in Swift">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2015/03/01/UIDynamics-in-Swift/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="本文翻译自BigNerdRanch，作者Steve Sparks">
+<meta property="og:image" content="http://www.bignerdranch.com/img/blog/2014/07/newproj.jpg">
+<meta property="og:image" content="http://www.bignerdranch.com/img/blog/2014/07/initial.png">
+<meta property="og:image" content="http://www.bignerdranch.com/img/blog/2014/07/round1.gif">
+<meta property="og:image" content="http://www.bignerdranch.com/img/blog/2014/07/round2.gif">
+<meta property="og:image" content="http://www.bignerdranch.com/img/blog/2014/07/round3.gif">
+<meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/UIKit/Reference/UIAcceleration_Class/Art/device_axes.jpg">
+<meta property="og:image" content="http://www.bignerdranch.com/img/blog/2014/07/round4.gif">
+<meta property="og:updated_time" content="2016-05-11T14:32:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UIDynamics in Swift">
+<meta name="twitter:description" content="本文翻译自BigNerdRanch，作者Steve Sparks">
+<meta name="twitter:image" content="http://www.bignerdranch.com/img/blog/2014/07/newproj.jpg">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015/03/01/UIDynamics-in-Swift/" title="UIDynamics in Swift" itemprop="url">UIDynamics in Swift</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2015-03-01T06:46:51.000Z" itemprop="datePublished"> 发表于 2015-03-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#魁首：UIDynamicAnimator"><span class="toc-number">1.</span> <span class="toc-text">魁首：UIDynamicAnimator</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最简单的行为：UIGravityBehavior"><span class="toc-number">2.</span> <span class="toc-text">最简单的行为：UIGravityBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反弹的墙壁：UICollisionBehavior"><span class="toc-number">3.</span> <span class="toc-text">反弹的墙壁：UICollisionBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-Motion"><span class="toc-number">4.</span> <span class="toc-text">Core Motion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他的行为"><span class="toc-number">5.</span> <span class="toc-text">其他的行为</span></a></li></ol>
+		
+		</div>
+		
+		<p>本文翻译自<a href="http://www.bignerdranch.com/blog/uidynamics-in-swift/" target="_blank" rel="external">BigNerdRanch</a>，作者<a href="http://www.bignerdranch.com/about-us/nerds/steve-sparks/" target="_blank" rel="external">Steve Sparks</a><br><a id="more"></a>  </p>
+<p>就像我们几乎所有的iOS开发者那样，我也玩了玩Swift。现在谈及它在我iOS开发任务中的作用还为时过早，因为它对于应用的生产环境的使用还有些不成熟。（WWDC一周过后，苹果就重新构造了数组的运作方式。那可是数组啊！）  </p>
+<p>然而，在WWDC之前，我一直在使用UIDynamics，所以我踏上Swift的第一步便是尝试用这方面的知识，这似乎合乎逻辑。结论是，Swift中的UIDynamics跟在Objective-C中使用没啥差别。我们只需要将其套上Swift风格的养分，它会像我们预期的那样奏效。  </p>
+<p>为了示范，我们匆匆拼凑了一个敏捷工程。使用Xcode 6，创建了一个新的Swift单视图工程。我称它是我的“<a href="https://github.com/stevesparks/RockBox" target="_blank" rel="external">Rock Box</a>”。  </p>
+<p><img src="http://www.bignerdranch.com/img/blog/2014/07/newproj.jpg" alt="">  </p>
+<p>我们无需用到Storyboard，所以我们直接在<code>ViewController.swift</code>文件中加入下面的代码：  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> box : <span class="type">UIView</span>?</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">addBox</span><span class="params">(location: CGRect)</span></span> &#123;</span><br><span class="line">   <span class="keyword">let</span> newBox = <span class="type">UIView</span>(frame: location)</span><br><span class="line">   newBox.backgroundColor = <span class="type">UIColor</span>.redColor()</span><br><span class="line"></span><br><span class="line">   view.insertSubview(newBox, atIndex: <span class="number">0</span>)</span><br><span class="line">   box = newBox</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们在<code>viewDidLoad()</code>中加上一行代码来调用它。  </p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">override</span> <span class="selector-tag">func</span> <span class="selector-tag">viewDidLoad</span>() &#123;</span><br><span class="line">   super<span class="selector-class">.viewDidLoad</span>()</span><br><span class="line">   <span class="comment">// Do any additional setup after loading the view, typically from a nib.</span></span><br><span class="line">   <span class="selector-tag">addBox</span>(CGRectMake(<span class="number">100</span>, <span class="number">100</span>, <span class="number">30</span>, <span class="number">30</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行程序，会看到一个红色的箱子：  </p>
+<p><img src="http://www.bignerdranch.com/img/blog/2014/07/initial.png" alt="">  </p>
+<p>它不动；啥都没动。那也太无聊了。我们设置它动起来吧。  </p>
+<h2 id="魁首：UIDynamicAnimator"><a href="#魁首：UIDynamicAnimator" class="headerlink" title="魁首：UIDynamicAnimator"></a>魁首：UIDynamicAnimator</h2><p>这出戏的魁首是<code>UIDynamicAnimator</code>。按照给出的一系列规则，animator在屏幕每次重绘时调整每个物体的位置。就其本身而言，animator根本不执行任何操作；它需要的规则被称为行为（behavior）。行为描述的事物类似于一个冲量，例如推一下，或重力那种持久的力。你也可以指定它们的摩擦力，弹力等等。animator不做任何对自己制定的规则；它只是魁首。我们在下一节将会声明它的一个实例。  </p>
+<h2 id="最简单的行为：UIGravityBehavior"><a href="#最简单的行为：UIGravityBehavior" class="headerlink" title="最简单的行为：UIGravityBehavior"></a>最简单的行为：UIGravityBehavior</h2><p>让我们从一个重力行为开始，结果便是我们的红色箱子掉落到屏幕底部。它是从概念上最容易理解的行为了；一个已知方向的拉力会在每个时钟周期向物体施加速度。我们打算施加垂直向下的重力。  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> animator:<span class="type">UIDynamicAnimator</span>? = <span class="literal">nil</span>;</span><br><span class="line"><span class="keyword">let</span> gravity = <span class="type">UIGravityBehavior</span>()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">createAnimatorStuff</span><span class="params">()</span></span> &#123;</span><br><span class="line">   animator = <span class="type">UIDynamicAnimator</span>(referenceView:<span class="keyword">self</span>.view);</span><br><span class="line">   animator?.addBehavior(collider)</span><br><span class="line"></span><br><span class="line">   gravity.addItem(box);</span><br><span class="line">   gravity.gravityDirection = <span class="type">CGVectorMake</span>(<span class="number">0</span>, <span class="number">0.8</span>)</span><br><span class="line">   animator?.addBehavior(gravity);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重要的是注意<code>UIDynamicAnimator</code>后面标记的问号意思是变量可能为<code>nil</code>。事实上，我就在这里把它设为<code>nil</code>。原因有些微妙：  </p>
+<ul>
+<li>animator是在类中声明的，这意味着当view controller的<code>init</code>调用时必需对其进行赋值。</li>
+<li><code>self.view</code> 必须在 <code>init</code> 之后调用。</li>
+<li>animator的构造器需要一个视图作为它的参照视图，而且这个值将会是<code>self.view</code>。</li>
+</ul>
+<p>因为我们已经在这酿造了一个鸡生蛋的问题，我们不会允许此变量为<code>nil</code>，并且在<code>viewDidLoad()</code>期间将其设定好。这引入了一些波折，任何时间我们使用<code>animator</code>变量，都将发现我们不得不亲自确保在使用之前它的值不是<code>nil</code>。这在Swift中被处理成在<code>animator</code>后面用一个问号标记，比如<code>animator?.behaviors()</code>。我们将会讨论更多些这方面的内容。暂且让我们向<code>viewDidLoad</code>加点代码来调用我们的新方法…  </p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">addBox(CGRectMake(100, </span><span class="number">100</span>, <span class="number">30</span>, <span class="number">30</span>))</span><br><span class="line">        createAnimatorStuff()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>…编译运行。它看起来是这样的：  </p>
+<p><img src="http://www.bignerdranch.com/img/blog/2014/07/round1.gif" alt="">  </p>
+<p>嗯，真有趣…就一会儿，它立刻跌出了底部。  </p>
+<h2 id="反弹的墙壁：UICollisionBehavior"><a href="#反弹的墙壁：UICollisionBehavior" class="headerlink" title="反弹的墙壁：UICollisionBehavior"></a>反弹的墙壁：UICollisionBehavior</h2><p><code>UICollisionBehavior</code>关注担心物体是否会在它们的轨迹上碰撞，如果碰撞，它们怎么相互作用。除了让物体互相碰撞，它也推断边界，也就是类似物体边框的路径。（使用<code>let</code>）声明一个<code>UICollisionBehavior</code>常量，并把它添加到设置代码中：  </p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">collider.addItem(<span class="built_in">box</span>)</span><br><span class="line"><span class="comment">// 我们在反弹墙壁</span></span><br><span class="line">collider.translatesReferenceBoundsIntoBoundary = <span class="keyword">true</span></span><br><span class="line">animator?.addBehavior(collider)</span><br></pre></td></tr></table></figure>
+<p>运行，看看得到了什么？  </p>
+<p><img src="http://www.bignerdranch.com/img/blog/2014/07/round2.gif" alt="">  </p>
+<p>更棒了！箱子掉落并停在“地板”上，甚至还有点弹性！  </p>
+<p>我们稍微重构一下，我想要看到更多箱子。我们创建了一个函数用于找到随机边框但又不压在之前绘制的箱子上，还有另一个产生随机颜色的函数。我们一旦有了这些，就能在屏幕上随机创建十个箱子。其实要做的还有很多，所以直接查看<a href="https://github.com/stevesparks/RockBox/commit/97b87458b5911f880f30179ee0630f933b48bbf5" target="_blank" rel="external">这个commit</a>来看看都做了什么。感兴趣的细节是，调用<code>createAnimatorStuff()</code>时我们不再将箱子加到行为中，而是单独地调用<code>addBoxToBehaviors(box)</code>来添加箱子。  </p>
+<p>现在我们有10个箱子并能相互碰撞！  </p>
+<p><img src="http://www.bignerdranch.com/img/blog/2014/07/round3.gif" alt="">  </p>
+<p>但是它们做的还是不够好。我们为啥不将环境重力绑定到从加速计读取到的重力上呢？  </p>
+<h2 id="Core-Motion"><a href="#Core-Motion" class="headerlink" title="Core Motion"></a>Core Motion</h2><p>iOS设备的加速计能做一堆巧活儿，这其中最常见的就是告诉我们重力向哪个方向牵引。<a href="https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIAcceleration_Class/index.html" target="_blank" rel="external">苹果关于 <code>UIAcceleration</code> 的文档</a>在一开始就给出了一张示范坐标轴如何转化到设备上的图片：  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/UIKit/Reference/UIAcceleration_Class/Art/device_axes.jpg" alt="">  </p>
+<p>这些坐标轴相当于重力的方向…基本上。我已经发现Y轴貌似被翻转了。照此，当我将<code>CMAcceleration</code>值转化成<code>CGVector</code>时，我需要转换它的值。  </p>
+<p>创建一个<code>CMMotionManager</code>使我们获得加速计的数据的入口。我们可以自己查询加速计数据，也可以要求管理者频繁地向我们发送更新。为了做到这点，我们创建一个<code>NSOperationQueue</code>，然后调用运动管理者的方法：  </p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">motionManager<span class="selector-class">.startDeviceMotionUpdatesToQueue</span>(motionQueue,</span><br><span class="line">                                 <span class="attribute">withHandler</span>: gravityUpdated)</span><br></pre></td></tr></table></figure>
+<p>这应该放在<code>viewDidAppear</code>方法，在<code>viewWillDisappear</code>中我们应该调用相反的操作：  </p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">motionManager</span><span class="selector-class">.stopDeviceMotionUpdates</span>()</span><br></pre></td></tr></table></figure>
+<p>当视图出现，系统开始定期调用<code>gravityUpdated</code>方法并传入新的加速计数据。让我们实现这个方法：  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">gravityUpdated</span><span class="params">(motion: CMDeviceMotion!, error: NSError!)</span></span> &#123;</span><br><span class="line">   <span class="keyword">if</span> (error != <span class="literal">nil</span>) &#123;</span><br><span class="line">       <span class="type">NSLog</span>(<span class="string">"<span class="subst">\(error)</span>"</span>)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">let</span> grav : <span class="type">CMAcceleration</span> = motion.gravity;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">let</span> x = <span class="type">CGFloat</span>(grav.x);</span><br><span class="line">   <span class="keyword">let</span> y = <span class="type">CGFloat</span>(grav.y);</span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> v = <span class="type">CGVectorMake</span>(x, y);</span><br><span class="line">   gravity.gravityDirection = v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>让我们谈一谈感叹号。它跟我们声明<code>animator</code>用到的问号无关。问号表明“变量可能为空”，感叹号意思相反：“变量永远不为空”，但实际意义更深。  </p>
+<p>当你声明一个<code>animator?</code>形式的变量时，它跟<code>animator</code>这样的变量是不一样的。你可以把它看做是一种<code>Optional</code>类型的对象，有可能包含<code>animator</code>也有可能不包含。所以问号和感叹号只对<code>Optional</code>起作用，对<code>animator</code>不起作用。问号在代码上意味着“如果不为空就继续”，像这样：  </p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">animator</span>?<span class="selector-class">.addBehavior</span>(<span class="selector-tag">collider</span>)</span><br></pre></td></tr></table></figure>
+<p>你可以生成等效的代码：  </p>
+<figure class="highlight cos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> let <span class="keyword">x</span> = animator &#123; <span class="keyword">x</span>.addBehavior(collider) &#125;</span><br></pre></td></tr></table></figure>
+<p>或者，你可以用感叹号来解析本质的值，取得<code>Optional</code>里面的东东并传递它的值来代替整个容器。在<code>gravityUpdated</code>的声明中，我们预示我们会收到解析好的值-它不会是<code>nil</code>。  </p>
+<p>不管怎样，这的确很酷，但是没有考虑读取加速计时设备的朝向问题。结果就是如果你颠倒你的手机，它会翻转显示，但不是加速计数据，你的箱子会开始鬼畜。所以我们加了些代码来让数据视朝向情况而定。  </p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">func gravityUpdated(motion: CMDeviceMotion!, error: NSError!) &#123;</span><br><span class="line">	<span class="keyword">if</span> error &#123;</span><br><span class="line">	  NSLog(<span class="string">"\(error)"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">let</span> grav : <span class="attr">CMAcceleration</span> = motion.gravity;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">let</span> <span class="attr">x</span> = CGFloat(grav.x);</span><br><span class="line">	<span class="keyword">let</span> <span class="attr">y</span> = CGFloat(grav.y);</span><br><span class="line">	var <span class="attr">p</span> = CGPointMake(x,y)</span><br><span class="line"></span><br><span class="line">	// Have to correct for orientation.</span><br><span class="line">	var <span class="attr">orientation</span> = UIApplication.sharedApplication().statusBarOrientation;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> <span class="attr">orientation</span> == UIInterfaceOrientation.LandscapeLeft &#123;</span><br><span class="line">	  var <span class="attr">t</span> = p.x</span><br><span class="line">	  p.<span class="attr">x</span> = <span class="number">0</span> - p.y</span><br><span class="line">	  p.<span class="attr">y</span> = t</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="attr">orientation</span> == UIInterfaceOrientation.LandscapeRight &#123;</span><br><span class="line">	  var <span class="attr">t</span> = p.x</span><br><span class="line">	  p.<span class="attr">x</span> = p.y</span><br><span class="line">	  p.<span class="attr">y</span> = <span class="number">0</span> - t</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="attr">orientation</span> == UIInterfaceOrientation.PortraitUpsideDown &#123;</span><br><span class="line">	  p.x *= -<span class="number">1</span></span><br><span class="line">	  p.y *= -<span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	var <span class="attr">v</span> = CGVectorMake(p.x, <span class="number">0</span> - p.y);</span><br><span class="line">	gravity.<span class="attr">gravityDirection</span> = v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你注意的第一件事就是我们用<code>x</code>和<code>y</code>的值创建了一个<code>CGPoint</code>。使用<code>CGPoint</code>没有什么特别的原因，只是为了把数值放在一起。  </p>
+<p>它看起来像什么？  </p>
+<p><img src="http://www.bignerdranch.com/img/blog/2014/07/round4.gif" alt="">  </p>
+<p>太酷了！  </p>
+<h2 id="其他的行为"><a href="#其他的行为" class="headerlink" title="其他的行为"></a>其他的行为</h2><p>我提交了两个commit将事情推进了一点：<a href="https://github.com/stevesparks/RockBox/commit/8752153e608e621193742582913e2e3aaba207c9" target="_blank" rel="external">其中一个</a>添加了<code>UIDynamicItemBehavior</code>，允许我们修改箱子的摩擦力和弹性。我让他们超弹(elasticity = 0.9, friction = 0.1)，于是重力演变成了箱子们狂躁弹跳似的疯狂演示。  </p>
+<p>这说明了UIDynamics中的一个缺点。当箱子速度增长，最终它们达到一个速度使得箱子在上一帧还完全在视图内，下一帧完全在视图外。在这种情况<code>UICollisionBehavior</code>将不会触发，箱子将会消失。它仍然存在，并持续消耗计算资源，但它永远不会再次出现在视图内。（一种设想是箱子永远坠落，速度递增。）  </p>
+<p>下一个<a href="https://github.com/stevesparks/RockBox/commit/ac1a838d2b4ef575f8581f1ff8c9e9433f8362a8" target="_blank" rel="external">commit</a>添加了一些<code>UIAttachmentBehaviors</code>使10个箱子变成一串箱子。它有点破坏了应用的可玩性，但我想让你看看这些物体是怎么相互连接起来的。  </p>
+<hr>
+<p>译者注：最后一节是作者吐槽Swift经历的，因为Swift版本更新了，这节内容不是很重要所以没翻译。原作者代码风格不够Swift而且语法老旧，我提了个<a href="https://github.com/stevesparks/RockBox/pull/2" target="_blank" rel="external">PR</a>，将语法更新到最新的Swift 1.2。  </p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Swift/">Swift</a><a href="/tags/翻译/">翻译</a><a href="/tags/UIKit-Dynamics/">UIKit Dynamics</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2015/03/01/UIDynamics-in-Swift/" data-title="UIDynamics in Swift | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2015/03/08/Insight-of-Null/" title="悟空!">
+  <strong>上一篇：</strong><br/>
+  <span>
+  悟空!</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2015/02/10/When-CoreData-meets-iCloud/"  title="CoreData遇见iCloud的那些坑">
+ <strong>下一篇：</strong><br/> 
+ <span>CoreData遇见iCloud的那些坑
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="blog/2015/03/01/UIDynamics-in-Swift/" data-title="UIDynamics in Swift" data-url="http://yulingtianxia.com/blog/2015/03/01/UIDynamics-in-Swift/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#魁首：UIDynamicAnimator"><span class="toc-number">1.</span> <span class="toc-text">魁首：UIDynamicAnimator</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最简单的行为：UIGravityBehavior"><span class="toc-number">2.</span> <span class="toc-text">最简单的行为：UIGravityBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反弹的墙壁：UICollisionBehavior"><span class="toc-number">3.</span> <span class="toc-text">反弹的墙壁：UICollisionBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-Motion"><span class="toc-number">4.</span> <span class="toc-text">Core Motion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他的行为"><span class="toc-number">5.</span> <span class="toc-text">其他的行为</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13.75px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 13.75px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 12.5px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 13.75px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.75px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"yulingtianxia"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

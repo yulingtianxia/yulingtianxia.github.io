@@ -1,0 +1,690 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Objective-C 引用计数原理 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="本文所使用的源码为 objc4-647 和 CF-1153.18
+实际上这是我本周实习周报的一部分，写的比较仓促，如有差错还请多多指正。
+不讲用法，只说原理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Objective-C 引用计数原理">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="本文所使用的源码为 objc4-647 和 CF-1153.18
+实际上这是我本周实习周报的一部分，写的比较仓促，如有差错还请多多指正。
+不讲用法，只说原理。">
+<meta property="og:updated_time" content="2016-08-27T03:30:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Objective-C 引用计数原理">
+<meta name="twitter:description" content="本文所使用的源码为 objc4-647 和 CF-1153.18
+实际上这是我本周实习周报的一部分，写的比较仓促，如有差错还请多多指正。
+不讲用法，只说原理。">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015/12/06/The-Principle-of-Refenrence-Counting/" title="Objective-C 引用计数原理" itemprop="url">Objective-C 引用计数原理</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-06T08:32:07.000Z" itemprop="datePublished"> 发表于 2015-12-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#引用计数如何存储"><span class="toc-number">1.</span> <span class="toc-text">引用计数如何存储</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#TaggedPointer"><span class="toc-number">1.1.</span> <span class="toc-text">TaggedPointer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#isa-指针（NONPOINTER-ISA）"><span class="toc-number">1.2.</span> <span class="toc-text">isa 指针（NONPOINTER_ISA）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#散列表"><span class="toc-number">1.3.</span> <span class="toc-text">散列表</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#获取引用计数"><span class="toc-number">2.</span> <span class="toc-text">获取引用计数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#修改引用计数"><span class="toc-number">3.</span> <span class="toc-text">修改引用计数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#retain-和-release"><span class="toc-number">3.1.</span> <span class="toc-text">retain 和 release</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#alloc-new-copy-mutableCopy"><span class="toc-number">3.2.</span> <span class="toc-text">alloc, new, copy, mutableCopy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#autorelease"><span class="toc-number">3.3.</span> <span class="toc-text">autorelease</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li></ol>
+		
+		</div>
+		
+		<ul>
+<li>本文所使用的源码为 objc4-647 和 CF-1153.18</li>
+<li>实际上这是我本周实习周报的一部分，写的比较仓促，如有差错还请多多指正。</li>
+<li>不讲用法，只说原理。</li>
+</ul>
+<a id="more"></a>
+<h1 id="引用计数如何存储"><a href="#引用计数如何存储" class="headerlink" title="引用计数如何存储"></a>引用计数如何存储</h1><p>有些对象如果支持使用 TaggedPointer，苹果会直接将其指针值作为引用计数返回；如果当前设备是 64 位环境并且使用 Objective-C 2.0，那么“一些”对象会使用其 <code>isa</code> 指针的一部分空间来存储它的引用计数；否则 Runtime 会使用一张散列表来管理引用计数。</p>
+<p>其实还有一种情况会改变引用计数的存储策略，那就是是否使用垃圾回收（用<code>UseGC</code>属性判断），但这种早已弃用的东西就不要管了，而且初始化垃圾回收机制的 <code>void gc_init(BOOL wantsGC)</code> 方法一直被传入 <code>NO</code>。</p>
+<h2 id="TaggedPointer"><a href="#TaggedPointer" class="headerlink" title="TaggedPointer"></a>TaggedPointer</h2><p>判断当前对象是否在使用 TaggedPointer 是看标志位是否为 1 ：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">if</span> SUPPORT_MSB_TAGGED_POINTERS</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> TAG_MASK (1ULL&lt;&lt;63)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> TAG_MASK 1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">bool</span> </span><br><span class="line">objc_object::isTaggedPointer() </span><br><span class="line">&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> SUPPORT_TAGGED_POINTERS</span></span><br><span class="line">    <span class="built_in">return</span> ((uintptr_t)<span class="keyword">this</span> &amp; TAG_MASK);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    <span class="built_in">return</span> false;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>id</code> 其实就是 <code>objc_object *</code> 的简写（<code>typedef struct objc_object *id;</code>），它的 <code>isTaggedPointer()</code> 方法经常会在操作引用计数时用到，因为这决定了存储引用计数的策略。</p>
+<h2 id="isa-指针（NONPOINTER-ISA）"><a href="#isa-指针（NONPOINTER-ISA）" class="headerlink" title="isa 指针（NONPOINTER_ISA）"></a>isa 指针（NONPOINTER_ISA）</h2><p>用 64 bit 存储一个内存地址显然是种浪费，毕竟很少有那么大内存的设备。于是可以优化存储方案，用一部分额外空间存储其他内容。<code>isa</code> 指针第一位为 1 即表示使用优化的 <code>isa</code> 指针，这里列出不同架构下的 64 位环境中 <code>isa</code> 指针结构：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">isa_t</span> </span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">isa_t</span>() &#123; &#125;</span><br><span class="line">    <span class="keyword">isa_t</span>(<span class="keyword">uintptr_t</span> value) : bits(value) &#123; &#125;</span><br><span class="line"></span><br><span class="line">    Class cls;</span><br><span class="line">    <span class="keyword">uintptr_t</span> bits;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> SUPPORT_NONPOINTER_ISA</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">if</span> __arm64__</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MASK        0x00000001fffffff8ULL</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MAGIC_MASK  0x000003fe00000001ULL</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MAGIC_VALUE 0x000001a400000001ULL</span></span><br><span class="line">    <span class="keyword">struct</span> &#123;</span><br><span class="line">        <span class="keyword">uintptr_t</span> indexed           : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> has_assoc         : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> has_cxx_dtor      : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> shiftcls          : <span class="number">30</span>; <span class="comment">// MACH_VM_MAX_ADDRESS 0x1a0000000</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> magic             : <span class="number">9</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> weakly_referenced : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> deallocating      : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> has_sidetable_rc  : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> extra_rc          : <span class="number">19</span>;</span><br><span class="line"><span class="meta">#       <span class="meta-keyword">define</span> RC_ONE   (1ULL&lt;&lt;45)</span></span><br><span class="line"><span class="meta">#       <span class="meta-keyword">define</span> RC_HALF  (1ULL&lt;&lt;18)</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta"># <span class="meta-keyword">elif</span> __x86_64__</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MASK        0x00007ffffffffff8ULL</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MAGIC_MASK  0x0000000000000001ULL</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MAGIC_VALUE 0x0000000000000001ULL</span></span><br><span class="line">    <span class="keyword">struct</span> &#123;</span><br><span class="line">        <span class="keyword">uintptr_t</span> indexed           : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> has_assoc         : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> has_cxx_dtor      : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> shiftcls          : <span class="number">44</span>; <span class="comment">// MACH_VM_MAX_ADDRESS 0x7fffffe00000</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> weakly_referenced : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> deallocating      : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> has_sidetable_rc  : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> extra_rc          : <span class="number">14</span>;</span><br><span class="line"><span class="meta">#       <span class="meta-keyword">define</span> RC_ONE   (1ULL&lt;&lt;50)</span></span><br><span class="line"><span class="meta">#       <span class="meta-keyword">define</span> RC_HALF  (1ULL&lt;&lt;13)</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta"># <span class="meta-keyword">else</span></span></span><br><span class="line">    <span class="comment">// Available bits in isa field are architecture-specific.</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">error</span> unknown architecture</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// SUPPORT_NONPOINTER_ISA</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>SUPPORT_NONPOINTER_ISA</code> 用于标记是否支持优化的 <code>isa</code> 指针，其字面含义意思是 <code>isa</code> 的内容不再是类的指针了，而是包含了更多信息，比如引用计数，析构状态，被其他 weak 变量引用情况。判断方法也是根据设备类型：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Define SUPPORT_NONPOINTER_ISA=1 to enable extra data in the isa field.</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> !__LP64__  ||  TARGET_OS_WIN32  ||  TARGET_IPHONE_SIMULATOR  ||  __x86_64__</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> SUPPORT_NONPOINTER_ISA 0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> SUPPORT_NONPOINTER_ISA 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>综合看来目前只有 arm64 架构的设备支持，下面列出了 <code>isa</code> 指针中变量对应的含义：</p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>indexed</td>
+<td>0 表示普通的 <code>isa</code> 指针，1 表示使用优化，存储引用计数</td>
+</tr>
+<tr>
+<td>has_assoc</td>
+<td>表示该对象是否包含 associated object，如果没有，则析构时会更快</td>
+</tr>
+<tr>
+<td>has_cxx_dtor</td>
+<td>表示该对象是否有 C++ 或 ARC 的析构函数，如果没有，则析构时更快</td>
+</tr>
+<tr>
+<td>shiftcls</td>
+<td>类的指针</td>
+</tr>
+<tr>
+<td>magic</td>
+<td>固定值为 0xd2，用于在调试时分辨对象是否未完成初始化。</td>
+</tr>
+<tr>
+<td>weakly_referenced</td>
+<td>表示该对象是否有过 <code>weak</code> 对象，如果没有，则析构时更快</td>
+</tr>
+<tr>
+<td>deallocating</td>
+<td>表示该对象是否正在析构</td>
+</tr>
+<tr>
+<td>has_sidetable_rc</td>
+<td>表示该对象的引用计数值是否过大无法存储在 <code>isa</code> 指针</td>
+</tr>
+<tr>
+<td>extra_rc</td>
+<td>存储引用计数值减一后的结果</td>
+</tr>
+</tbody>
+</table>
+<p>在 64 位环境下，优化的 <code>isa</code> 指针并不是就一定会存储引用计数，毕竟用 19bit （iOS 系统）保存引用计数不一定够。需要注意的是这 19 位保存的是<strong>引用计数的值减一</strong>。<code>has_sidetable_rc</code> 的值如果为 1，那么引用计数会存储在一个叫 <code>SideTable</code> 的类的属性中，后面会详细讲。</p>
+<h2 id="散列表"><a href="#散列表" class="headerlink" title="散列表"></a>散列表</h2><p>散列表来存储引用计数具体是用 <code>DenseMap</code> 类来实现，这个类中包含好多映射实例到其引用计数的键值对，并支持用 <code>DenseMapIterator</code> 迭代器快速查找遍历这些键值对。接着说键值对的格式：键的类型为 <code>DisguisedPtr&lt;objc_object&gt;</code>，<code>DisguisedPtr</code> 类是对 <code>objc_object *</code> 指针及其一些操作进行的封装，目的就是为了让它给人看起来不会有内存泄露的样子（真是心机裱），其内容可以理解为对象的内存地址；值的类型为 <code>__darwin_size_t</code>，在 darwin 内核一般等同于 <code>unsigned long</code>。其实这里保存的值也是等于<strong>引用计数减一</strong>。使用散列表保存引用计数的设计很好，即使出现故障导致对象的内存块损坏，只要引用计数表没有被破坏，依然可以顺藤摸瓜找到内存块的位置。</p>
+<p>之前说引用计数表是个散列表，这里简要说下散列的方法。有个专门处理键的 <code>DenseMapInfo</code> 结构体，它针对 <code>DisguisedPtr</code> 做了些优化匹配键值速度的方法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> DenseMapInfo&lt;DisguisedPtr&lt;T&gt;&gt; &#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">inline</span> DisguisedPtr&lt;T&gt; getEmptyKey() &#123;</span><br><span class="line">    return DisguisedPtr&lt;T&gt;((T*)(<span class="keyword">uintptr_t</span>)<span class="number">-1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">inline</span> DisguisedPtr&lt;T&gt; getTombstoneKey() &#123;</span><br><span class="line">    return DisguisedPtr&lt;T&gt;((T*)(<span class="keyword">uintptr_t</span>)<span class="number">-2</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="title">getHashValue</span><span class="params">(<span class="keyword">const</span> T *PtrVal)</span> </span>&#123;</span><br><span class="line">      return ptr_hash((<span class="keyword">uintptr_t</span>)PtrVal);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">bool</span> <span class="title">isEqual</span><span class="params">(<span class="keyword">const</span> DisguisedPtr&lt;T&gt; &amp;LHS, <span class="keyword">const</span> DisguisedPtr&lt;T&gt; &amp;RHS)</span> </span>&#123;</span><br><span class="line">      return LHS == RHS; </span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>当然这里的哈希算法会根据是否为 64 位平台来进行优化，算法具体细节就不深究了，我总觉得苹果在这里的 hardcode 是随便写的：</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#if __LP64__</span></span><br><span class="line">static inline uint32_t ptr_hash(uint64_t <span class="built_in">key</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">key</span> ^= <span class="built_in">key</span> &gt;&gt; <span class="number">4</span>;</span><br><span class="line">    <span class="built_in">key</span> *= <span class="number">0x8a970be7488fda55</span>;</span><br><span class="line">    <span class="built_in">key</span> ^= __builtin_bswap64(<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">return</span> (uint32_t)<span class="built_in">key</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">static inline uint32_t ptr_hash(uint32_t <span class="built_in">key</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">key</span> ^= <span class="built_in">key</span> &gt;&gt; <span class="number">4</span>;</span><br><span class="line">    <span class="built_in">key</span> *= <span class="number">0x5052acdb</span>;</span><br><span class="line">    <span class="built_in">key</span> ^= __builtin_bswap32(<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">key</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>再介绍下 <code>SideTable</code> 这个类，它用于管理引用计数表和 <code>weak</code> 表，并使用 <code>spinlock_lock</code> 自旋锁来防止操作表结构时可能的竞态条件。它用一个 64*128 大小的 <code>uint8_t</code> 静态数组作为 buffer 来保存所有的 <code>SideTable</code> 实例。并提供三个公有属性：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">spinlock_t</span> slock;<span class="comment">//保证原子操作的自选锁</span></span><br><span class="line">RefcountMap refcnts;<span class="comment">//保存引用计数的散列表</span></span><br><span class="line"><span class="keyword">weak_table_t</span> weak_table;<span class="comment">//保存 weak 引用的全局散列表</span></span><br></pre></td></tr></table></figure></p>
+<p>还提供了一个工厂方法，用于根据对象的地址在 buffer 中寻找对应的 <code>SideTable</code> 实例：<br><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> SideTable *tableForPointer(<span class="keyword">const</span> <span class="keyword">void</span> *p)</span><br></pre></td></tr></table></figure></p>
+<p><code>weak</code> 表的作用是在对象执行 <code>dealloc</code> 的时候将所有指向该对象的 <code>weak</code> 指针的值设为 <code>nil</code>，避免悬空指针。这是 <code>weak</code> 表的结构：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="keyword">weak_table_t</span> &#123;</span><br><span class="line">    <span class="keyword">weak_entry_t</span> *weak_entries;</span><br><span class="line">    <span class="keyword">size_t</span>    num_entries;</span><br><span class="line">    <span class="keyword">uintptr_t</span> mask;</span><br><span class="line">    <span class="keyword">uintptr_t</span> max_hash_displacement;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>苹果使用一个全局的 <code>weak</code> 表来保存所有的 <code>weak</code> 引用。并将对象作为键，<code>weak_entry_t</code> 作为值。<code>weak_entry_t</code> 中保存了所有指向该对象的 <code>weak</code> 指针。</p>
+<h1 id="获取引用计数"><a href="#获取引用计数" class="headerlink" title="获取引用计数"></a>获取引用计数</h1><p>在非 ARC 环境可以使用 <code>retainCount</code> 方法获取某个对象的引用计数，其会调用 <code>objc_object</code> 的 <code>rootRetainCount()</code> 方法：</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (NSUInteger)retainCount &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="params">((id)self)</span>-&gt;</span>rootRetainCount();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 ARC 时代除了使用 Core Foundation 库的 <code>CFGetRetainCount()</code> 方法，也可以使用 Runtime 的 <code>_objc_rootRetainCount(id obj)</code> 方法来获取引用计数，此时需要引入 <code>&lt;objc/runtime.h&gt;</code> 头文件。这个函数也是调用 <code>objc_object</code> 的 <code>rootRetainCount()</code> 方法：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">inline uintptr_t </span><br><span class="line"><span class="symbol">objc_object:</span>:rootRetainCount()</span><br><span class="line">&#123;</span><br><span class="line">    assert(!UseGC)<span class="comment">;</span></span><br><span class="line">    if (isTaggedPointer()) return (uintptr_t)this<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">    sidetable_lock()<span class="comment">;</span></span><br><span class="line">    isa_t <span class="keyword">bits </span>= LoadExclusive(&amp;isa.<span class="keyword">bits);</span><br><span class="line"></span>    if (<span class="keyword">bits.indexed) </span>&#123;</span><br><span class="line">        uintptr_t rc = <span class="number">1</span> + <span class="keyword">bits.extra_rc;</span><br><span class="line"></span>        if (<span class="keyword">bits.has_sidetable_rc) </span>&#123;</span><br><span class="line">            rc += sidetable_getExtraRC_nolock()<span class="comment">;</span></span><br><span class="line">        &#125;</span><br><span class="line">        sidetable_unlock()<span class="comment">;</span></span><br><span class="line">        return rc<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sidetable_unlock()<span class="comment">;</span></span><br><span class="line">    return sidetable_retainCount()<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>rootRetainCount()</code> 方法对引用计数存储逻辑进行了判断，因为 TaggedPointer 前面已经说过了，可以直接获取引用计数；64 位环境优化的 <code>isa</code> 指针前面也说过了，所以这里的重头戏是在 TaggedPointer 无法使用时调用的 <code>sidetable_retainCount()</code> 方法：</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">uintptr_t</span><br><span class="line">objc_object::sidetable_retainCount()</span><br><span class="line">&#123;</span><br><span class="line">    SideTable *<span class="keyword">table</span> = SideTable::tableForPointer(this);</span><br><span class="line"></span><br><span class="line">    size_t refcnt_result = <span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    spinlock_lock(&amp;<span class="keyword">table</span>-&gt;slock);</span><br><span class="line">    RefcountMap::iterator it = <span class="keyword">table</span>-&gt;refcnts.find(this);</span><br><span class="line">    if (it != <span class="keyword">table</span>-&gt;refcnts.end()) &#123;</span><br><span class="line">        <span class="comment">// this is valid for SIDE_TABLE_RC_PINNED too</span></span><br><span class="line">        refcnt_result += it-&gt;second &gt;&gt; SIDE_TABLE_RC_SHIFT;</span><br><span class="line">    &#125;</span><br><span class="line">    spinlock_unlock(&amp;<span class="keyword">table</span>-&gt;slock);</span><br><span class="line">    return refcnt_result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>sidetable_retainCount()</code> 方法的逻辑就是先从 <code>SideTable</code> 的静态方法获取当前实例对应的 <code>SideTable</code> 对象，其 <code>refcnts</code> 属性就是之前说的存储引用计数的散列表，这里将其类型简写为 <code>RefcountMap</code>：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">typedef <span class="symbol">objc:</span><span class="symbol">:DenseMap&lt;DisguisedPtr&lt;objc_object&gt;</span>,size_t,<span class="keyword">true</span>&gt; RefcountMap;</span><br></pre></td></tr></table></figure>
+<p>然后在引用计数表中用迭代器查找当前实例对应的键值对，获取引用计数值，并在此基础上 <strong>+1</strong> 并将结果返回。这也就是为什么之前说<strong>引用计数表存储的值为实际引用计数减一</strong>。</p>
+<p>需要注意的是为什么这里把键值对的值做了向右移位操作（<code>it-&gt;second &gt;&gt; SIDE_TABLE_RC_SHIFT</code>）:</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __LP64__</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> WORD_BITS 64</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> WORD_BITS 32</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// The order of these bits is important.</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SIDE_TABLE_WEAKLY_REFERENCED (1UL&lt;&lt;0)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SIDE_TABLE_DEALLOCATING      (1UL&lt;&lt;1)  <span class="comment">// MSB-ward of weak bit</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SIDE_TABLE_RC_ONE            (1UL&lt;&lt;2)  <span class="comment">// MSB-ward of deallocating bit</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SIDE_TABLE_RC_PINNED         (1UL&lt;&lt;(WORD_BITS-1))</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SIDE_TABLE_RC_SHIFT 2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SIDE_TABLE_FLAG_MASK (SIDE_TABLE_RC_ONE-1)RefcountMap</span></span><br></pre></td></tr></table></figure>
+<p>可以看出值的第一个 bit 表示该对象是否有过 <code>weak</code> 对象，如果没有，在析构释放内存时可以更快；第二个 bit 表示该对象是否正在析构。从第三个 bit 开始才是存储引用计数数值的地方。所以这里要做向右移两位的操作，而对引用计数的 +1 和 -1 可以使用 <code>SIDE_TABLE_RC_ONE</code>,还可以用 <code>SIDE_TABLE_RC_PINNED</code> 来判断是否引用计数值有可能溢出。</p>
+<p>当然不能够完全信任这个 <code>_objc_rootRetainCount(id obj)</code> 函数，对于已释放的对象以及不正确的对象地址，有时也返回 “1”。它所返回的引用计数只是某个给定时间点上的值，该方法并未考虑到系统稍后会把自动释放吃池清空，因而不会将后续的释放操作从返回值里减去。clang 会尽可能把 <code>NSString</code> 实现成单例对象，其引用计数会很大。如果使用了 TaggedPointer，<code>NSNumber</code> 的内容<strong>有可能</strong>就不再放到堆中，而是直接写在宽敞的64位栈指针值里。其看上去和真正的 <code>NSNumber</code> 对象一样，只是使用 TaggedPointer 优化了下，但其引用计数可能不准确。</p>
+<h1 id="修改引用计数"><a href="#修改引用计数" class="headerlink" title="修改引用计数"></a>修改引用计数</h1><h2 id="retain-和-release"><a href="#retain-和-release" class="headerlink" title="retain 和 release"></a>retain 和 release</h2><p>在非 ARC 环境下可以使用 <code>retain</code> 和 <code>release</code> 方法对引用计数进行加一减一操作，它们分别调用了 <code>_objc_rootRetain(id obj)</code> 和 <code>_objc_rootRelease(id obj)</code> 函数，不过后两者在 ARC 环境下也可使用。最后这两个函数又会调用 <code>objc_object</code> 的下面两个方法：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">inline</span> id </span><br><span class="line">objc_object::rootRetain()</span><br><span class="line">&#123;</span><br><span class="line">    assert(!UseGC);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (isTaggedPointer()) <span class="keyword">return</span> (id)<span class="keyword">this</span>;</span><br><span class="line">    <span class="keyword">return</span> sidetable_retain();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">inline</span> bool </span><br><span class="line">objc_object::rootRelease()</span><br><span class="line">&#123;</span><br><span class="line">    assert(!UseGC);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (isTaggedPointer()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">return</span> sidetable_release(<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样的实现跟获取引用计数类似，先是看是否支持 TaggedPointer（毕竟数据存在栈指针而不是堆中，栈的管理本来就是自动的），否则去操作 <code>SideTable</code> 中的 <code>refcnts</code> 属性，这与获取引用计数策略类似。<code>sidetable_retain()</code> 将 引用计数加一后返回对象，<code>sidetable_release()</code> 返回是否要执行 <code>dealloc</code> 方法：</p>
+<figure class="highlight zephir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> </span><br><span class="line">objc_object::sidetable_release(<span class="keyword">bool</span> performDealloc)</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">#if SUPPORT_NONPOINTER_ISA</span></span><br><span class="line">    assert(!isa.indexed);</span><br><span class="line"><span class="comment">#endif</span></span><br><span class="line">    SideTable *table = SideTable::tableForPointer(this);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">bool</span> do_dealloc = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (spinlock_trylock(&amp;table-&gt;slock)) &#123;</span><br><span class="line">        RefcountMap::iterator it = table-&gt;refcnts.find(this);</span><br><span class="line">        <span class="keyword">if</span> (it == table-&gt;refcnts.end()) &#123;</span><br><span class="line">            do_dealloc = <span class="keyword">true</span>;</span><br><span class="line">            table-&gt;refcnts[this] = SIDE_TABLE_DEALLOCATING;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (it-&gt;second &lt; SIDE_TABLE_DEALLOCATING) &#123;</span><br><span class="line">            <span class="comment">// SIDE_TABLE_WEAKLY_REFERENCED may be set. Don't change it.</span></span><br><span class="line">            do_dealloc = <span class="keyword">true</span>;</span><br><span class="line">            it-&gt;second |= SIDE_TABLE_DEALLOCATING;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (! (it-&gt;second &amp; SIDE_TABLE_RC_PINNED)) &#123;</span><br><span class="line">            it-&gt;second -= SIDE_TABLE_RC_ONE;</span><br><span class="line">        &#125;</span><br><span class="line">        spinlock_unlock(&amp;table-&gt;slock);</span><br><span class="line">        <span class="keyword">if</span> (do_dealloc  &amp;&amp;  performDealloc) &#123;</span><br><span class="line">            ((void(*)(objc_object *, SEL))objc_msgSend)(this, SEL_dealloc);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> do_dealloc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> sidetable_release_slow(table, performDealloc);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看到这里知道为什么在存储引用计数时<strong>总是真正的引用计数值减一</strong>了吧。因为 release 本来是要将引用计数减一，所以存储引用计数时先预留了个“一”，在减一之前先看看存储的引用计数值是否为 0 （<code>it-&gt;second &lt; SIDE_TABLE_DEALLOCATING</code>），如果是，那就将对象标记为“正在析构”（<code>it-&gt;second |= SIDE_TABLE_DEALLOCATING</code>）,并发送 <code>dealloc</code> 消息，返回 <code>YES</code>；否则就将引用计数减一（<code>it-&gt;second -= SIDE_TABLE_RC_ONE</code>）。这样做避免了负数的产生。</p>
+<p>除此之外，Core Foundation 库中也提供了增减引用计数的方法。比如在使用 Toll-Free Bridge 转换时使用的 <code>CFBridgingRetain</code> 和 <code>CFBridgingRelease</code> 方法，其本质是使用 <code>__bridge_retained</code> 和 <code>__bridge_transfer</code> 告诉编译器此处需要如何修改引用计数：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NS_INLINE</span> <span class="built_in">CF_RETURNS_RETAINED</span> <span class="built_in">CFTypeRef</span> __nullable <span class="built_in">CFBridgingRetain</span>(<span class="keyword">id</span> __nullable X) &#123;</span><br><span class="line">    <span class="keyword">return</span> (__bridge_retained <span class="built_in">CFTypeRef</span>)X;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">NS_INLINE</span> <span class="keyword">id</span> __nullable <span class="built_in">CFBridgingRelease</span>(<span class="built_in">CFTypeRef</span> <span class="built_in">CF_CONSUMED</span> __nullable X) &#123;</span><br><span class="line">    <span class="keyword">return</span> (__bridge_transfer <span class="keyword">id</span>)X;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此外 Objective-C 很多实现是靠 Core Foundation Runtime 来实现， Objective-C Runtime 源码中有些地方明确注明：”<code>// Replaced by CF</code>“，那就是意思说这块任务被 Core Foundation 库接管了。当然 Core Foundation 有一部分是开源的。还有一些 Objective-C Runtime 函数的实现被诸如 <code>ObjectAlloc</code> 和 <code>NSZombie</code> 这样的内存管理工具所替代：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Replaced by ObjectAlloc</span></span><br><span class="line">+ (<span class="keyword">id</span>)allocWithZone:(<span class="keyword">struct</span> _<span class="built_in">NSZone</span> *)zone &#123;</span><br><span class="line">    <span class="keyword">return</span> _objc_rootAllocWithZone(<span class="keyword">self</span>, (malloc_zone_t *)zone);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Replaced by CF (throws an NSException)</span></span><br><span class="line">+ (<span class="keyword">id</span>)init &#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">id</span>)<span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Replaced by NSZombies</span></span><br><span class="line">- (<span class="keyword">void</span>)dealloc &#123;</span><br><span class="line">    _objc_rootDealloc(<span class="keyword">self</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="alloc-new-copy-mutableCopy"><a href="#alloc-new-copy-mutableCopy" class="headerlink" title="alloc, new, copy, mutableCopy"></a>alloc, new, copy, mutableCopy</h2><p>根据编译器的约定，这以这四个单词开头的方法都会使引用计数加一。而 <code>new</code> 相当于调用 <code>alloc</code> 后再调用 <code>init</code>：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">id</span></span><br><span class="line">_objc_rootAlloc(Class cls)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> callAlloc(cls, <span class="literal">false</span><span class="comment">/*checkNil*/</span>, <span class="literal">true</span><span class="comment">/*allocWithZone*/</span>);</span><br><span class="line">&#125;</span><br><span class="line">+ (<span class="keyword">id</span>)alloc &#123;</span><br><span class="line">    <span class="keyword">return</span> _objc_rootAlloc(<span class="keyword">self</span>);</span><br><span class="line">&#125;</span><br><span class="line">+ (<span class="keyword">id</span>)new &#123;</span><br><span class="line">    <span class="keyword">return</span> [callAlloc(<span class="keyword">self</span>, <span class="literal">false</span><span class="comment">/*checkNil*/</span>) init];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出 <code>alloc</code> 和 <code>new</code> 最终都会调用 <code>callAlloc</code>，默认使用 Objective-C 2.0 且忽视垃圾回收和 NSZone，那么后续的调用顺序依次是为：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">class_createInstance</span><span class="params">()</span></span></span><br><span class="line">_class_createInstanceFromZone()</span><br><span class="line"><span class="function"><span class="title">calloc</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+<p><code>calloc()</code> 函数相比于 <code>malloc()</code> 函数的优点是它将分配的内存区域初始化为0，相当于 <code>malloc()</code> 后再用 <code>memset()</code> 方法初始化一遍。</p>
+<p><code>copy</code> 和 <code>mutableCopy</code> 都是基于 <code>NSCopying</code> 和 <code>NSMutableCopying</code> 方法约定，分别调用各类自己实现的 <code>copyWithZone:</code> 和 <code>mutableCopyWithZone:</code> 方法。这些方法无论实现方式是深拷贝还是浅拷贝，都会增加引用计数。（有些类的策略是懒拷贝，只增加引用计数但并不真的拷贝，等对象内容发生变化时再拷贝一份出来，比如 <code>NSArray</code>）。</p>
+<p>在 <code>retain</code> 方法加符号断点会发现 <code>alloc</code>, <code>new</code>, <code>copy</code>, <code>mutableCopy</code> 这四个方法都会通过 Core Foundation 的 <code>CFBasicHashAddValue()</code> 函数来调用 <code>retain</code> 方法。其实 CF 有个修改和查看引用计数的入口函数 <code>__CFDoExternRefOperation</code>，在 <code>CFRuntime.c</code> 文件中实现。</p>
+<h2 id="autorelease"><a href="#autorelease" class="headerlink" title="autorelease"></a>autorelease</h2><p>本想贴上一堆 Runtime 中关于自动释放池的源码然后说上一大堆，然后发现了太阳神的这篇<a href="http://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="external">黑幕背后的Autorelease</a>把我想说的都说了，把我不知道的也说了，简直太屌了。</p>
+<p>其实通过看源码可以知道好多细节，没事点进去各种宏定义往往会得到惊喜：哇，原来是这么回事，XX 就是 XX 之类。。。</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="http://www.sealiesoftware.com/blog/archive/2013/09/24/objc_explain_Non-pointer_isa.html" target="_blank" rel="external">http://www.sealiesoftware.com/blog/archive/2013/09/24/objc_explain_Non-pointer_isa.html</a></p>
+<p><a href="http://www.opensource.apple.com" target="_blank" rel="external">http://www.opensource.apple.com</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Runtime/">Runtime</a><a href="/tags/Reference-Counting/">Reference Counting</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/" data-title="Objective-C 引用计数原理 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2016/01/17/search-for-similar-images/" title="如何自制一款寻找相似图片的 Mac 工具">
+  <strong>上一篇：</strong><br/>
+  <span>
+  如何自制一款寻找相似图片的 Mac 工具</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2015/11/13/Summary-of-the-first-month-in-the-internship-of-Tencent/"  title="腾讯实习第一个月工作总结">
+ <strong>下一篇：</strong><br/> 
+ <span>腾讯实习第一个月工作总结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="blog/2015/12/06/The-Principle-of-Refenrence-Counting/" data-title="Objective-C 引用计数原理" data-url="http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#引用计数如何存储"><span class="toc-number">1.</span> <span class="toc-text">引用计数如何存储</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#TaggedPointer"><span class="toc-number">1.1.</span> <span class="toc-text">TaggedPointer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#isa-指针（NONPOINTER-ISA）"><span class="toc-number">1.2.</span> <span class="toc-text">isa 指针（NONPOINTER_ISA）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#散列表"><span class="toc-number">1.3.</span> <span class="toc-text">散列表</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#获取引用计数"><span class="toc-number">2.</span> <span class="toc-text">获取引用计数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#修改引用计数"><span class="toc-number">3.</span> <span class="toc-text">修改引用计数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#retain-和-release"><span class="toc-number">3.1.</span> <span class="toc-text">retain 和 release</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#alloc-new-copy-mutableCopy"><span class="toc-number">3.2.</span> <span class="toc-text">alloc, new, copy, mutableCopy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#autorelease"><span class="toc-number">3.3.</span> <span class="toc-text">autorelease</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13.75px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 13.75px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 12.5px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 13.75px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.75px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"yulingtianxia"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

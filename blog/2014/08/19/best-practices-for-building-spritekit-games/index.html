@@ -1,0 +1,666 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>创建SpriteKit游戏的最佳范例 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="本文会从拓展性、游戏构造和性能三个方面分别讲述建立SpriteKit游戏时的一些实践经验和范例。建议先阅读SpriteKit在iOS8和OSX10.10中的新特性有助于理解本文内容。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="创建SpriteKit游戏的最佳范例">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2014/08/19/best-practices-for-building-spritekit-games/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="本文会从拓展性、游戏构造和性能三个方面分别讲述建立SpriteKit游戏时的一些实践经验和范例。建议先阅读SpriteKit在iOS8和OSX10.10中的新特性有助于理解本文内容。">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140844930564.png?imageView2/2/w/800/q/75">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140845151467.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140845150994.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/14084531435.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:updated_time" content="2016-05-11T14:31:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="创建SpriteKit游戏的最佳范例">
+<meta name="twitter:description" content="本文会从拓展性、游戏构造和性能三个方面分别讲述建立SpriteKit游戏时的一些实践经验和范例。建议先阅读SpriteKit在iOS8和OSX10.10中的新特性有助于理解本文内容。">
+<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140844930564.png?imageView2/2/w/800/q/75">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2014/08/19/best-practices-for-building-spritekit-games/" title="创建SpriteKit游戏的最佳范例" itemprop="url">创建SpriteKit游戏的最佳范例</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2014-08-19T14:16:13.000Z" itemprop="datePublished"> 发表于 2014-08-19</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#拓展性最佳范例"><span class="toc-number">1.</span> <span class="toc-text">拓展性最佳范例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#硬编码问题"><span class="toc-number">1.1.</span> <span class="toc-text">硬编码问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#游戏构造最佳范例"><span class="toc-number">2.</span> <span class="toc-text">游戏构造最佳范例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能最佳范例"><span class="toc-number">3.</span> <span class="toc-text">性能最佳范例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Drawing-performance"><span class="toc-number">3.1.</span> <span class="toc-text">Drawing performance</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Actions-and-constraints"><span class="toc-number">3.2.</span> <span class="toc-text">Actions and constraints</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Physics"><span class="toc-number">3.3.</span> <span class="toc-text">Physics</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Shapes"><span class="toc-number">3.4.</span> <span class="toc-text">Shapes</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Effects"><span class="toc-number">3.5.</span> <span class="toc-text">Effects</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lighting"><span class="toc-number">3.6.</span> <span class="toc-text">Lighting</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>本文会从拓展性、游戏构造和性能三个方面分别讲述建立SpriteKit游戏时的一些实践经验和范例。建议先阅读<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>有助于理解本文内容。<br><a id="more"></a></p>
+<h2 id="拓展性最佳范例"><a href="#拓展性最佳范例" class="headerlink" title="拓展性最佳范例"></a>拓展性最佳范例</h2><h3 id="硬编码问题"><a href="#硬编码问题" class="headerlink" title="硬编码问题"></a>硬编码问题</h3><p>在以前，程序员在场景中做了所有的事情，在代码中引用美工，游戏第一关采用硬编码，第二关第三关就是一顿复制粘贴修修补补。修改美工图片也意味着要改代码，每次预览修改后的效果都要Build和Run，而设计游戏的人甚至要会编程，因为修改设计（比如一些游戏参数）也要改代码。如果项目接着编写下去，这导致重复性的构建代码，将数据硬编码到代码中也是种低效率做法，编码与美工和设计人员之间合作困难。  </p>
+<p>解决方案：  </p>
+<ul>
+<li>将游戏内容与游戏逻辑分离</li>
+<li>将场景构造与素材分离</li>
+<li>将数据与代码分离</li>
+<li>在Xcode中所见即所得  </li>
+</ul>
+<p>具体实现：  </p>
+<ul>
+<li>游戏逻辑写在MyScene.m文件中（使用SpriteKit的模板）</li>
+<li>游戏场景结构创建在MyScene.sks文件中</li>
+<li>场景用到的素材使用单独的sks文件分开管理</li>
+<li>数据要存储在plist文件中（XML格式）</li>
+</ul>
+<p>Xcode6为我们提供的工具：  </p>
+<ul>
+<li>SpriteKit模版，支持OC和Swift</li>
+<li>SpriteKit编辑器：可视化编辑sks文件，即时预览效果，实时物理模拟</li>
+<li>plist数据编辑器：XML语言被可视化成字典来编辑，简单高效</li>
+</ul>
+<p>在MyScene.m文件中使用下面的模板来加载MyScene.sks中设计好的场景结构，然后你就可以接着写游戏的逻辑了：  </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> path = NSBundle.mainBundle().pathForResource(file, ofType: <span class="string">"sks"</span>)       </span><br><span class="line"><span class="keyword">var</span> sceneData = NSData.dataWithContentsOfFile(path, options: .DataReadingMappedIfSafe, error: nil)</span><br><span class="line"><span class="keyword">var</span> archiver = NSKeyedUnarchiver(forReadingWithData: sceneData)</span><br><span class="line">archiver.setClass(self.classForKeyedUnarchiver(), forClassName: <span class="string">"SKScene"</span>)</span><br><span class="line"><span class="keyword">let</span> scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) <span class="keyword">as</span> GameScene</span><br><span class="line">archiver.finishDecoding()</span><br></pre></td></tr></table></figure>
+<h2 id="游戏构造最佳范例"><a href="#游戏构造最佳范例" class="headerlink" title="游戏构造最佳范例"></a>游戏构造最佳范例</h2><p>程序员总是想让游戏尽可能早地跑起来。为了完成这个目标，我们要懂得与美工和设计合作，毕竟程序员不能独自完成所有事情，下面列举下快速达成目标的步骤：  </p>
+<ol>
+<li>先把一般性的工作做完，这只是逻辑布局上的编程，不必等美工提供素材。标记好英雄、敌人等人物出现的位置，设计好背景、平台等。  </li>
+<li>用只有颜色没有贴图的<code>SKSpriteNode</code>来充当英雄和敌人，只要能区分开就好。现在可以设定父子层级关系，比如设定粒子发射位置，连接组件和关节（胳膊腿儿啥的）  </li>
+<li>设定物理层面的相互作用，比如各种物理体的类别，碰撞掩码，是否受物理世界的影响等。在Xcode中模拟物理场景，保证你做的这些从一开始就万无一失。  </li>
+<li>初始化场景逻辑和游戏逻辑，把之前在场景上布置好的物体与代码中的游戏中的物体用之前设定好的名字（英雄or敌人）联系起来。使用SpriteKit模板加载好游戏场景后，<code>SKScene</code>的<code>initWithCoder</code>会被调用，我们可以在这里加载声音和AI数据等不会变化的数据。当<code>SKView.presentScene:</code>被调用时，<code>SKScene</code>的<code>didMoveToView:</code>会被调用，在这里你要缓存可见的元素，比如敌人，你可以通过名字将它们从场景的子节点中遍历出来。    </li>
+<li>完成游戏：将美工给你的素材替代以前的纯色，增加关卡和效果（Shader，滤镜等），迭代测试。</li>
+</ol>
+<p>PS：两种搜索节点元素的方法：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">– <span class="string">childNodeWithName:</span></span><br><span class="line">– <span class="string">enumerateChildNodesWithName:</span><span class="string">usingBlock:</span></span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>关于搜索文本的语法补充：<br>通过name查找：  </p>
+<ul>
+<li>“hero”是查找叫做“hero”的子节点，不迭代</li>
+<li>“//hero”是查找场景图中所有叫做“hero”的子节点，迭代</li>
+</ul>
+<p>通过class查找：</p>
+<ul>
+<li>“//SKEmitterNode”会在场景图中迭代查找所有粒子节点</li>
+</ul>
+<p>通过通配符查找：</p>
+<ul>
+<li>“//he*”查找所有以“he”开头的子节点</li>
+</ul>
+</blockquote>
+<h2 id="性能最佳范例"><a href="#性能最佳范例" class="headerlink" title="性能最佳范例"></a>性能最佳范例</h2><p>我们要尽可能维持游戏每秒60帧频率的刷新，就需要从性能上优化。  </p>
+<h3 id="Drawing-performance"><a href="#Drawing-performance" class="headerlink" title="Drawing performance"></a>Drawing performance</h3><p>影响绘图性能的两个主要因素：  </p>
+<ul>
+<li>绘制顺序：默认的绘制顺序是按照代码中构造节点树的顺序绘制的，先绘制父节点，然后依次绘制子节点，并向下迭代。你可以将<code>SKView</code>的<code>ignoresSiblingOrder</code>属性设为YES，然后利用Z轴的层级深浅关系来定制绘制次序。</li>
+<li>共享：使用纹理图集（texture atlases），共享法线贴图，从文件加载Shader而不是字符串，将混合模式放在Z轴同一层级。  </li>
+</ul>
+<p>下面的工具能帮你评估图形性能：  </p>
+<p><code>SKView</code>上的HUD flags：  </p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">showsFPS</span><br><span class="line"></span><span class="keyword">showsDrawCount</span><br><span class="line"></span><span class="keyword">showsNodeCount</span><br><span class="line"></span><span class="keyword">showsQuadCount</span></span><br></pre></td></tr></table></figure>
+<p>profile：检测硬件使用情况。</p>
+<h3 id="Actions-and-constraints"><a href="#Actions-and-constraints" class="headerlink" title="Actions and constraints"></a>Actions and constraints</h3><p>使用<code>SKAction</code>类实现SpriteKit中的动画是很高效的。用一行代码就能实现诸如平移、旋转、缩放、渐入渐出等动画效果。你可以将多个动画组成一个序列（sequence）来依次执行，也可组成一个group来同时执行，sequence和group之间也可以互相嵌套。<code>SKAction</code>有很多方法，可以查看它的API文档。  </p>
+<p>如果你给Action使用Key命名的话，你还可以通过Key来动态删除和重写这个Action。</p>
+<p><code>SKConstraints</code>类能在节点与节点或固定点之间建立约束。详见我的另一篇文章<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>中New Physics-&gt;Constraints小节。  </p>
+<h3 id="Physics"><a href="#Physics" class="headerlink" title="Physics"></a>Physics</h3><p>模拟物理世界需要很多的硬件计算，当务之急就是减少能耗。  </p>
+<p>静态物体耗能较小，即使他们外形复杂。所以尽可能的将物理体的<code>dynamic</code>属性设为NO  </p>
+<p>物理体的外形复杂程度也决定着能耗。圆形是最简单的，耗能最少，再往上依次是矩形、多边形、复合图形、alpha像素图形：  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140844930564.png?imageView2/2/w/800/q/75" alt="">  </p>
+<p>所以你需要权衡利弊来设计你游戏中物理体的外形。上图的后两种外形是iOS8新加入的，你可以在<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>中的New Physics-&gt;Per-Pixel Physics和Improvements-&gt;Physics Updates这两个小节中学到有关它们的更多知识。  </p>
+<p>在设置碰撞掩码（mask）时，尽量将相同类别的物体归为一类，用尽可能少得类别来划分你游戏中的物体。这样能减少很多能耗。  </p>
+<p>尽可能使用iOS8新加入的<code>SKFieldNode</code>来模拟一些物理场景，而不是通过传统代码方式（自己向各种物体施加各种力）。有关<code>SKFieldNode</code>的知识可以查看<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>中New Physics-&gt;Physics Fields那节。  </p>
+<p>将<code>SKView</code>的<code>showsFields</code>属性设为YES可以将<code>SKFieldNode</code>的debug信息显示出来：  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140845151467.png" alt=""><br><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140845150994.png" alt="">  </p>
+<p>上面两个场景是我的一个SpriteKit游戏<a href="http://coloratom.yulingtianxia.com" target="_blank" rel="external">ColorAtom</a>中的秘密模式和黑洞模式截图，欢迎Star和Follow。  </p>
+<h3 id="Shapes"><a href="#Shapes" class="headerlink" title="Shapes"></a>Shapes</h3><p><code>SKShapeNode</code>的耗能层级图如下：  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/14084531435.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p>上图中的分界线区分了低功耗和高功耗的Shape。绘制分段的linear strok所需的功耗也很少。  </p>
+<h3 id="Effects"><a href="#Effects" class="headerlink" title="Effects"></a>Effects</h3><p><code>SKEffectNode</code>可以将它的子节点渲染的更加出彩，比如用CoreImage滤镜等合成出复杂的特效。但这也会对性能有很大影响，请谨慎使用。  </p>
+<p>Shader是一个不错的选择，它不需要离屏渲染，想用就用，节能环保。有关<code>SKShader</code>的知识可以查看<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>中Shader那节。  </p>
+<p><code>shouldRasterize</code>属性暗示是否缓存以备将来之需。如果你的画面会停留一段时间，可以考虑设置为YES。</p>
+<p>我们还可以从<code>SKNode</code>中获取纹理（这不费吹灰之力），还可以对纹理进行滤镜加工：   </p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SKTexture *texture = [myView textureFromNode:<span class="keyword">node</span> size:<span class="title">size</span>];</span><br><span class="line">SKTexture *texture = [myTexture textureByApplyingCIFiler:filer];</span><br></pre></td></tr></table></figure>
+<h3 id="Lighting"><a href="#Lighting" class="headerlink" title="Lighting"></a>Lighting</h3><p>光照的功耗是跟像素数量成比例的，每个<code>SKSpriteNode</code>最多能被八个光源照射，你可以利用光照掩码来优化性能。  </p>
+<p>环境光照（ambient light）所需功耗是免费的，而法线贴图（Normal Maps）功耗很低。  </p>
+<p>阴影的功耗跟光源数量成正比，所以尽可能减少光源数量。  </p>
+<p>有关Lighting的更多知识可以查看<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>中Lighting and Shadows那节。  </p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/SpriteKit/">SpriteKit</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2014/08/19/best-practices-for-building-spritekit-games/" data-title="创建SpriteKit游戏的最佳范例 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2014/09/07/zai-macshang-yong-wifigong-xiang-xiao-yuan-wang/" title="在Mac上用WiFi共享校园网">
+  <strong>上一篇：</strong><br/>
+  <span>
+  在Mac上用WiFi共享校园网</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2014/08/17/New-in-Table-and-Collection-Views/"  title="iOS8自动调整UITableView和UICollectionView布局">
+ <strong>下一篇：</strong><br/> 
+ <span>iOS8自动调整UITableView和UICollectionView布局
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="blog/2014/08/19/best-practices-for-building-spritekit-games/" data-title="创建SpriteKit游戏的最佳范例" data-url="http://yulingtianxia.com/blog/2014/08/19/best-practices-for-building-spritekit-games/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#拓展性最佳范例"><span class="toc-number">1.</span> <span class="toc-text">拓展性最佳范例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#硬编码问题"><span class="toc-number">1.1.</span> <span class="toc-text">硬编码问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#游戏构造最佳范例"><span class="toc-number">2.</span> <span class="toc-text">游戏构造最佳范例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能最佳范例"><span class="toc-number">3.</span> <span class="toc-text">性能最佳范例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Drawing-performance"><span class="toc-number">3.1.</span> <span class="toc-text">Drawing performance</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Actions-and-constraints"><span class="toc-number">3.2.</span> <span class="toc-text">Actions and constraints</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Physics"><span class="toc-number">3.3.</span> <span class="toc-text">Physics</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Shapes"><span class="toc-number">3.4.</span> <span class="toc-text">Shapes</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Effects"><span class="toc-number">3.5.</span> <span class="toc-text">Effects</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lighting"><span class="toc-number">3.6.</span> <span class="toc-text">Lighting</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13.75px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 13.75px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 12.5px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 13.75px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.75px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"yulingtianxia"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

@@ -1,0 +1,622 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>为 UIAutomation 添加自动化测试标签的探索 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为 UIAutomation 添加自动化测试标签的探索">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2016/03/28/Add-UITest-Label-for-UIAutomation/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。">
+<meta property="og:updated_time" content="2016-08-27T14:47:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="为 UIAutomation 添加自动化测试标签的探索">
+<meta name="twitter:description" content="UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2016/03/28/Add-UITest-Label-for-UIAutomation/" title="为 UIAutomation 添加自动化测试标签的探索" itemprop="url">为 UIAutomation 添加自动化测试标签的探索</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-27T16:47:32.000Z" itemprop="datePublished"> 发表于 2016-03-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析-amp-方案"><span class="toc-number">1.</span> <span class="toc-text">分析&方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践-amp-探索"><span class="toc-number">2.</span> <span class="toc-text">实践&探索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受-amp-总结"><span class="toc-number">3.</span> <span class="toc-text">感受&总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。</p>
+<a id="more"></a>
+<h2 id="分析-amp-方案"><a href="#分析-amp-方案" class="headerlink" title="分析&amp;方案"></a>分析&amp;方案</h2><p>首先回顾下生成标签需要符合的必要条件：（<strong>以下将“自动化测试标签”简称为“标签”</strong>）：</p>
+<ol>
+<li>页面内唯一：页面内不同视图标签不重复。</li>
+<li>运行时恒定：每次运行应用中此页面时视图的标签始终恒定，无需修改测试脚本。</li>
+</ol>
+<p>为了满足标签的必要条件，可以选择其在某个类中的属性名称作为标签，因为同一个类中是不可能有两个相同名称的属性的，并且属性名称都是固定在代码里的，也就是恒定不变的。在此总结下标签的策略流程：</p>
+<ol>
+<li>如果变量是某个类的属性，则可满足标签条件。因为代码没有改动，则标签也不会变化。即使代码有变动，也肯定是因为业务逻辑变更导致了界面上的变化，那么测试脚本肯定也是要改的，所以无需多虑此种情况。</li>
+<li>如果是临时创建的局部变量，同一页面中很有可能有相同名字的局部变量。而且 Objective-C Runtime 无法获取局部变量名称，所以针对此种情况尽量采用其他来源的内容作为标签。</li>
+<li>获取代码中局部变量的变量名，并与其对象绑定起来。（绑定是指将标签赋给<code>accessibilityIdentifier</code> 之类的属性）</li>
+</ol>
+<p>对于上面第二条种的局部变量生成标签的策略，详细阐述如下：</p>
+<p>由于编译器对代码进行了词法分析、语法分析和语义分析，此时局部变量名早就消失了。运行的时候局部变量在内存里也只是个冰冷冷的对象罢了，不像类的实例变量或属性那样可以获取名称。既然编译阶段之后就已经拿不到局部变量名了，所以只能对源代码进行文字处理来获取局部变量名。比如使用宏定义在 <code>addSubview:</code> 方法调用的时候传入参数名，并将参数表与参数实例绑定。但是这对 Swift 算是个方案，对于语法怪异的 Objective-C 来说是不可行的。</p>
+<p>既然从方法外不能直接传入参数，那么尝试从方法内来获取函数调用堆栈。查找上一层函数在源码的位置，用正则表达式得到 <code>addSubview:</code> 的参数名称。从函数调用堆栈获取上一层调用函数在源码中的位置（比如文件名和行数），然后用正则匹配抓取 <code>addSubview:</code> 的参数名，看样子是个方案。获取函数调用栈对应源码位置可以用 <a href="http://stackoverflow.com/questions/3151779/how-its-better-to-invoke-gdb-from-program-to-print-its-stacktrace/4611112#4611112" target="_blank" rel="external"><code>backtrace_symbols</code></a>，或者 <code>[NSThread callStackSymbols]</code> 等，但这些操作都不是在 iOS 系统内，不能将标签绑定到 iOS 运行环境中的实例。</p>
+<p>当然也可以用脚本程序帮我们在源码指定位置中插入添加标签的逻辑代码，但这样的弊端有二：</p>
+<ol>
+<li>维护成本较高，脚本在向源码中插入加标签逻辑代码时需要判断是否已经插入过这段代码，增加了出错几率</li>
+<li>对代码内容变化的鲁棒性不高。因为重构等行为很可能把原有代码顺序弄乱，脚本需要考虑很多情况。每次新增代码都要重新跑一次脚本。</li>
+</ol>
+<p>既然局部变量的名字可能重名并难于与实例绑定，不妨另辟蹊径寻求其他方法。这里提出一种假设：程序员写代码的时候之所以将一个视图变量声明为类的属性，是因为以后还会经常用到它。而那些被声明为局部变量的，肯定是临时用一次就不用了。这种用临时变量创建的视图添加到视图层级中内容极有可能就不会变了，其大部分应该是 <code>UILabel</code>、<code>UIButton</code>、<code>UIImageView</code> 以及被当做容器视图功能的 <code>UIView</code> 实例。针对这种情况可以将其视图的内容作为标签的『特殊标识』。针对这种情况可以将其视图的内容作为标签，比如 <code>UILabel</code> 的文本内容、<code>UIButton</code> 的背景图片资源名和文本内容以及 <code>UIImageView</code> 的图片资源名。基于以上的逻辑，最后采用基础控件内容作为局部变量的标签。</p>
+<p>总结为一句话：如果视图是某个类的属性，就用属性名作为标签；否则使用其内容作为标签。</p>
+<h2 id="实践-amp-探索"><a href="#实践-amp-探索" class="headerlink" title="实践&amp;探索"></a>实践&amp;探索</h2><p>我采用 hook 的方式来在运行时生成标签。hook <code>UIView</code> 中的<code>accessibilityIdentifier</code> 的原因是此时的视图层级更全，并且是惰性生成标签。其实使用 <code>accessibilityLabel</code> 也是可以的，但对 VoiceOver 功能会有影响，毕竟变量名不像视图文字内容那样有实际意义。</p>
+<p>PS：这里之所以不 hook <code>addSubview:</code> 是因为在添加 subview 时，视图层级树并不完整。虽然调用 <code>accessibilityIdentifier</code> 时视图层级也可能不完整（比如在 <code>addSubview:</code> 之前调用 <code>accessibilityIdentifier</code>），但这样的几率远远小于前者：很多时候是 <code>[a addSubview:b]</code>，但此时 <code>a</code> 还没有 <code>superview</code>，那么如果 hook <code>addSubview:</code>方法，就只能保留 <code>a</code> 以下的视图层级。这并不是我想看到的。所以在 <code>UIView</code> 中的 <code>accessibilityIdentifier</code> 方法中生成标签可以尽可能地保留完整的视图层级，并且是 lazy load 的方式，降低 CPU 使用峰值。</p>
+<p>放个残缺版的代码，心情好的时候更新下，重要的还是思路：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UIView</span> (<span class="title">TBUIAutoTest</span>)</span></span><br><span class="line">+ (<span class="keyword">void</span>)load &#123;</span><br><span class="line">	<span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line">	<span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line">	  [<span class="keyword">self</span> swizzleSelector:<span class="keyword">@selector</span>(accessibilityIdentifier) withAnotherSelector:<span class="keyword">@selector</span>(tb_accessibilityIdentifier)];</span><br><span class="line">	  [<span class="keyword">self</span> swizzleSelector:<span class="keyword">@selector</span>(accessibilityLabel) withAnotherSelector:<span class="keyword">@selector</span>(tb_accessibilityLabel)];</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">void</span>)swizzleSelector:(SEL)originalSelector withAnotherSelector:(SEL)swizzledSelector</span><br><span class="line">&#123;</span><br><span class="line">    Class aClass = [<span class="keyword">self</span> class];</span><br><span class="line">    </span><br><span class="line">    Method originalMethod = class_getInstanceMethod(aClass, originalSelector);</span><br><span class="line">    Method swizzledMethod = class_getInstanceMethod(aClass, swizzledSelector);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">BOOL</span> didAddMethod =</span><br><span class="line">    class_addMethod(aClass,</span><br><span class="line">                    originalSelector,</span><br><span class="line">                    method_getImplementation(swizzledMethod),</span><br><span class="line">                    method_getTypeEncoding(swizzledMethod));</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (didAddMethod) &#123;</span><br><span class="line">        class_replaceMethod(aClass,</span><br><span class="line">                            swizzledSelector,</span><br><span class="line">                            method_getImplementation(originalMethod),</span><br><span class="line">                            method_getTypeEncoding(originalMethod));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        method_exchangeImplementations(originalMethod, swizzledMethod);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#pragma mark - Method Swizzling</span></span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSString</span> *)tb_accessibilityIdentifier</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSString</span> *accessibilityIdentifier = [<span class="keyword">self</span> tb_accessibilityIdentifier];</span><br><span class="line">    <span class="keyword">if</span> (accessibilityIdentifier.length &gt; <span class="number">0</span> &amp;&amp; [[accessibilityIdentifier substringToIndex:<span class="number">1</span>] isEqualToString:<span class="string">@"("</span>]) &#123;</span><br><span class="line">        <span class="keyword">return</span> accessibilityIdentifier;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ([accessibilityIdentifier isEqualToString:<span class="string">@"null"</span>]) &#123;</span><br><span class="line">        accessibilityIdentifier = <span class="string">@""</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSString</span> *labelStr = [<span class="keyword">self</span>.superview findNameWithInstance:<span class="keyword">self</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (labelStr &amp;&amp; ![labelStr isEqualToString:<span class="string">@""</span>]) &#123;</span><br><span class="line">        labelStr = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"(%@)"</span>,labelStr];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> ([<span class="keyword">self</span> isKindOfClass:[<span class="built_in">UILabel</span> class]]) &#123;<span class="comment">//UILabel 使用 text</span></span><br><span class="line">            labelStr = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"(%@)"</span>,((<span class="built_in">UILabel</span> *)<span class="keyword">self</span>).text?:<span class="string">@""</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> ([<span class="keyword">self</span> isKindOfClass:[<span class="built_in">UIImageView</span> class]]) &#123;<span class="comment">//UIImageView 使用 image 的 imageName</span></span><br><span class="line">            labelStr = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"(%@)"</span>,((<span class="built_in">UIImageView</span> *)<span class="keyword">self</span>).image.accessibilityIdentifier?:[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"image%ld"</span>,(<span class="keyword">long</span>)((<span class="built_in">UIImageView</span> *)<span class="keyword">self</span>).tag]];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> ([<span class="keyword">self</span> isKindOfClass:[<span class="built_in">UIButton</span> class]]) &#123;<span class="comment">//UIButton 使用 button 的 text 和 image</span></span><br><span class="line">            labelStr = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"(%@%@)"</span>,((<span class="built_in">UIButton</span> *)<span class="keyword">self</span>).titleLabel.text?:<span class="string">@""</span>,((<span class="built_in">UIButton</span> *)<span class="keyword">self</span>).imageView.image.accessibilityIdentifier?:<span class="string">@""</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (accessibilityIdentifier) &#123;<span class="comment">// 已有 label，则在此基础上再次添加更多信息</span></span><br><span class="line">            labelStr = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"(%@)"</span>,accessibilityIdentifier];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ([<span class="keyword">self</span> isKindOfClass:[<span class="built_in">UIButton</span> class]]) &#123;</span><br><span class="line">            <span class="keyword">self</span>.accessibilityValue = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"(%@)"</span>,((<span class="built_in">UIButton</span> *)<span class="keyword">self</span>).currentBackgroundImage.accessibilityIdentifier?:<span class="string">@""</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ([labelStr isEqualToString:<span class="string">@"()"</span>] || [labelStr isEqualToString:<span class="string">@"(null)"</span>] || [labelStr isEqualToString:<span class="string">@"null"</span>]) &#123;</span><br><span class="line">        labelStr = <span class="string">@""</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="keyword">self</span> setAccessibilityIdentifier:labelStr];</span><br><span class="line">    <span class="keyword">return</span> labelStr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSString</span> *)tb_accessibilityLabel</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> ([<span class="keyword">self</span> isKindOfClass:[<span class="built_in">UIImageView</span> class]]) &#123;<span class="comment">//UIImageView 特殊处理</span></span><br><span class="line">        <span class="built_in">NSString</span> *name = [<span class="keyword">self</span>.superview findNameWithInstance:<span class="keyword">self</span>];</span><br><span class="line">        <span class="keyword">if</span> (name) &#123;</span><br><span class="line">            <span class="keyword">self</span>.accessibilityIdentifier = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"(%@)"</span>,name];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.accessibilityIdentifier = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"(%@)"</span>,((<span class="built_in">UIImageView</span> *)<span class="keyword">self</span>).image.accessibilityIdentifier?:[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"image%ld"</span>,(<span class="keyword">long</span>)((<span class="built_in">UIImageView</span> *)<span class="keyword">self</span>).tag]];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ([<span class="keyword">self</span> isKindOfClass:[<span class="built_in">UITableViewCell</span> class]]) &#123;<span class="comment">//UITableViewCell 特殊处理</span></span><br><span class="line">        <span class="keyword">self</span>.accessibilityIdentifier = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"(%@)"</span>,((<span class="built_in">UITableViewCell</span> *)<span class="keyword">self</span>).reuseIdentifier];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> tb_accessibilityLabel];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>在获取到变量名之后，还需要进行处理才能作为标签。首先在变量名外加一层括号，目的是区分下此标签是代码生成的而不是手动加上去的。方法结尾的 <code>[self setAccessibilityIdentifier:subLabelStr]</code> 用来给 <code>_accessibilityIdentifier</code> 赋值生成好的标签。</p>
+<p>对于获取不到变量名的临时变量和视图层级中一些系统私有的视图变量，才去之前分析中提到的方案特殊处理。好一长串的 <code>if-else</code> 啊，为了处理这些特殊情况写一坨脏代码我也是醉了。最后别忘处理下无意义的字符串，比如 “null”。</p>
+<p>在 UIAutomation 生成控件树时，大部分 <code>UIImageView</code> 和 <code>UITableViewCell</code> 无法通过 hook <code>accessibilityIdentifier</code> 来在控件树中获取到自动化测试标签，或者获得的标签不是属性名而是图片资源名。解决方案是 hook accessibilityLabel 方法，并在其中为 <code>UIImageView</code> 和 <code>UITableViewCell</code> 加自动化测试标签。</p>
+<p>为了将 <code>UIImage</code> 的图片资源名和实例绑定，我又 hook 了 <code>UIImage</code> 的 <code>imageNamed:</code> 类方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+ (<span class="built_in">UIImage</span> *)tb_imageNamed:(<span class="built_in">NSString</span> *)imageName&#123;</span><br><span class="line">    <span class="built_in">UIImage</span> *image = [<span class="built_in">UIImage</span> tb_imageNamed:imageName];</span><br><span class="line">    image.accessibilityIdentifier = imageName;</span><br><span class="line">    <span class="keyword">return</span> image;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面说下获取变量名的 <code>findNameWithInstance:</code> 方法的实现：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UIResponder</span> (<span class="title">TBUIAutoTest</span>)</span></span><br><span class="line"></span><br><span class="line">-(<span class="built_in">NSString</span> *)nameWithInstance:(<span class="keyword">id</span>)instance &#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> numIvars = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">NSString</span> *key=<span class="literal">nil</span>;</span><br><span class="line">    Ivar * ivars = class_copyIvarList([<span class="keyword">self</span> class], &amp;numIvars);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numIvars; i++) &#123;</span><br><span class="line">        Ivar thisIvar = ivars[i];</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *type = ivar_getTypeEncoding(thisIvar);</span><br><span class="line">        <span class="built_in">NSString</span> *stringType =  [<span class="built_in">NSString</span> stringWithCString:type encoding:<span class="built_in">NSUTF8StringEncoding</span>];</span><br><span class="line">        <span class="keyword">if</span> (![stringType hasPrefix:<span class="string">@"@"</span>]) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ((object_getIvar(<span class="keyword">self</span>, thisIvar) == instance)) &#123;<span class="comment">//此处 crash 不要慌！</span></span><br><span class="line">            key = [<span class="built_in">NSString</span> stringWithUTF8String:ivar_getName(thisIvar)];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    free(ivars);</span><br><span class="line">    <span class="keyword">return</span> key;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSString</span> *)findNameWithInstance:(<span class="built_in">UIView</span> *) instance</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">id</span> nextResponder = [<span class="keyword">self</span> nextResponder];</span><br><span class="line">    <span class="built_in">NSString</span> *name = [<span class="keyword">self</span> nameWithInstance:instance];</span><br><span class="line">    <span class="keyword">if</span> (!name) &#123;</span><br><span class="line">        <span class="keyword">return</span> [nextResponder findNameWithInstance:instance];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ([name hasPrefix:<span class="string">@"_"</span>]) &#123;  <span class="comment">//去掉变量名的下划线前缀</span></span><br><span class="line">        name = [name substringFromIndex:<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为我们并不知道某个视图对象在哪个类中充当了属性或成员变量，所以 <code>findNameWithInstance:</code> 方法会沿着响应链向上递归查找，范围不仅涵盖 <code>UIView</code>，连 <code>UIViewController</code> 都不能放过。每找一层就要调用 <code>nameWithInstance:</code> 方法用 <a href="http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/">Objective-C Runtime</a> 遍历成员变量列表的方式查找变量名。</p>
+<p>别忘去掉开头的下划线，因为在Runtime中保存的其实是成员变量的名称，默认都是带有下划线前缀的。</p>
+<p>因为 hook 的方法不是 <code>accessibilityLabel</code>，所以不能通过 Xcode 中的 View Debug 页面来查看加标签的效果。最好的方法还是通过 UIAutomation 抓取控件树，这样的效果比较真实。为了便于在真机上查看标签内容，我为所有视图增加了长按手势，长按视图后弹警告框显示自动化测试标签的内容。 </p>
+<p>hook  <code>addSubview:</code> 方法，在其中添加长按手势。 <code>longPress:</code> 方法中主要是让长按的视图高亮并弹 Alert 显示自动化测试标签的内容，代码就不贴了。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)tb_addSubview:(<span class="built_in">UIView</span> *)view &#123;</span><br><span class="line">    <span class="keyword">if</span> (!view) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="keyword">self</span> tb_addSubview:view];</span><br><span class="line">    <span class="built_in">UILongPressGestureRecognizer</span> *longPress = [[<span class="built_in">UILongPressGestureRecognizer</span> alloc] initWithTarget:<span class="keyword">self</span> action:<span class="keyword">@selector</span>(longPress:)];</span><br><span class="line">    longPress.delegate = [TB<span class="built_in">UIAutoTest</span> sharedInstance];</span><br><span class="line">    [<span class="keyword">self</span> addGestureRecognizer:longPress];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建 <code>TBUIAutoTest</code> 单例作为所有手势的委托，并在其中实现一些手势捕获优先级的逻辑，以此解决手势冲突带来的问题:</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">TBUIAutoTest</span></span></span><br><span class="line"></span><br><span class="line">+ (instancetype)sharedInstance</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line">    <span class="keyword">static</span> TB<span class="built_in">UIAutoTest</span> *_instance;</span><br><span class="line">    <span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line">        _instance = [TB<span class="built_in">UIAutoTest</span> new];</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> _instance;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">BOOL</span>)gestureRecognizer:(<span class="built_in">UIGestureRecognizer</span> *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(<span class="built_in">UIGestureRecognizer</span> *)otherGestureRecognizer</span><br><span class="line">&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">BOOL</span>)gestureRecognizer:(<span class="built_in">UIGestureRecognizer</span> *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(<span class="built_in">UIGestureRecognizer</span> *)otherGestureRecognizer</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> ([otherGestureRecognizer.view isDescendantOfView:gestureRecognizer.view]) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (![otherGestureRecognizer isKindOfClass:[<span class="built_in">UILongPressGestureRecognizer</span> class]]) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<h2 id="感受-amp-总结"><a href="#感受-amp-总结" class="headerlink" title="感受&amp;总结"></a>感受&amp;总结</h2><p><del>我是杨(gu)阿莫，今天我给大家要讲的是一个月前测试帅哥要求加自动化测试标签后老大开会讨论方案组内高工一致不赞同手动加并要求自动加并在最后老大钦点这个事情就交给我了的故事。这其中还经历了方案的各种改，五子棋同学的实力参(jiao)谋(ji)，以及拉屎时把本该思考人生的时间花在了改进方案。这个月博客实在不知道该写啥眼看月底了再不更新怕以后再也不想更新了呢所以你会发现这篇文章水水的科科！</del></p>
+<p>呵呵后来发现<del>大部分人</del>所有人都看不懂，但这个方案真的好用！</p>
+<p>如果大家有更好的方案，或者觉得我的方案一开始就跑偏了，甚至是已经有一个不用手动加标签代码的现成的超屌超牛逼的 iOS 自动化测试框架，请告诉我！据说整个腾讯都是手动加自动化测试标签，老大说做有挑战的事情才有意思嘛。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/iOS/">iOS</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2016/03/28/Add-UITest-Label-for-UIAutomation/" data-title="为 UIAutomation 添加自动化测试标签的探索 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2016/04/28/Find-Convex-Hull-with-Graham-Scan-Swift/" title="Find Convex Hull with Graham Scan &amp; Swift">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Find Convex Hull with Graham Scan &amp; Swift</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2016/02/27/TFSHelper/"  title="自制一款 Mac 平台 URL 辅助工具">
+ <strong>下一篇：</strong><br/> 
+ <span>自制一款 Mac 平台 URL 辅助工具
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="blog/2016/03/28/Add-UITest-Label-for-UIAutomation/" data-title="为 UIAutomation 添加自动化测试标签的探索" data-url="http://yulingtianxia.com/blog/2016/03/28/Add-UITest-Label-for-UIAutomation/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析-amp-方案"><span class="toc-number">1.</span> <span class="toc-text">分析&方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践-amp-探索"><span class="toc-number">2.</span> <span class="toc-text">实践&探索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受-amp-总结"><span class="toc-number">3.</span> <span class="toc-text">感受&总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13.75px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 13.75px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 12.5px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 13.75px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.75px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"yulingtianxia"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

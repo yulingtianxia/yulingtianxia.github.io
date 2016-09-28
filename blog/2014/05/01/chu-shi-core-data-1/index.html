@@ -1,0 +1,712 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>初识Core Data(1) | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="本文内容：  
+
+Core Data概述  
+新建一个Core Data工程  
+总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初识Core Data(1)">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2014/05/01/chu-shi-core-data-1/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="本文内容：  
+
+Core Data概述  
+新建一个Core Data工程  
+总结">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/14035339677.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353396978.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353414584.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353397403.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353412465.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353397837.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/14035339876.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353398727.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353388879.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353388301.png?imageView2/2/w/800/q/75">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353389167.png?imageView2/2/w/800/q/75">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353388423.png?imageView2/2/w/800/q/75">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353389646.png?imageView2/2/w/800/q/75">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353389047.png?imageView2/2/w/800/q/75">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140353388523.jpg?imageView2/2/w/800/q/75">
+<meta property="og:updated_time" content="2016-05-11T14:32:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="初识Core Data(1)">
+<meta name="twitter:description" content="本文内容：  
+
+Core Data概述  
+新建一个Core Data工程  
+总结">
+<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/14035339677.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2014/05/01/chu-shi-core-data-1/" title="初识Core Data(1)" itemprop="url">初识Core Data(1)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2014-05-01T11:58:00.000Z" itemprop="datePublished"> 发表于 2014-05-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-Data概述"><span class="toc-number">1.</span> <span class="toc-text">Core Data概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建一个Core-Data工程"><span class="toc-number">2.</span> <span class="toc-text">新建一个Core Data工程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>本文内容：  </p>
+<ul>
+<li>Core Data概述  </li>
+<li>新建一个Core Data工程  </li>
+<li>总结</li>
+</ul>
+<hr>
+<a id="more"></a>
+<h2 id="Core-Data概述"><a href="#Core-Data概述" class="headerlink" title="Core Data概述"></a>Core Data概述</h2><p>Core Data本身既不是数据库也不是数据库访问框架。相反，Core Data是一个完整的数据模型解决方案。我简单理解为对持久层的封装，使得我们可以通过可视化建立数据模型，简化数据存取。有人会联想到Hibernate，其实Core Data比Hibernate强大得多，它不仅支持SQLite数据库，还能对XML文件、二进制文件、用户自定义文件进行操作。  </p>
+<p>即使不懂SQL语句，也依然可以使用Core Data。因为Core Data将底层的数据库SQL语句封装成了一套API，并可通过可视化操作来建立数据库的模型和表之间的关系，它甚至在数据变化时会帮你自动处理关系（比如删除了一门课程，所有选这门课程的学生也会自动解除与此门课程的关系），Core Data还能对非法数据进行过滤，还支持对数据操作的Undo/Redo功能。更重要的是，Core Data的<code>NSFetchRequest</code>类可以替代SQL中的Select语句，并提供了更高效的方法将查询结果显示在UITableView中。 </p>
+<p>iOS 3.0和Mac OS X10.5都支持Core Data，但iOS上不支持XML文件存储。Core Data对读取性能做了大量优化，其中惰性加载（Faulting）就是一个例子，毕竟设备的内存是有限切珍贵的。<br>在OSX上可以绑定利用KVO和KVC保持UI项与模型对象或属性之间的连接，无需编写任何代码，通过对象和数组控制器自动从Core Data存储区分批提取<code>NSManagedObject</code>对象。这就像在VS中用.Net构建基于SQLServer的桌面程序。<br>苹果公司单独为iOS平台的Core Data引入了<code>NSFetchedResultsController</code>类帮助视图与从持久化存储文件提取的数据之间的交互。它主要是用来充当<code>UITableiView</code>的数据源，负责调整<code>UITableiView</code>行与节（section）的显示数目，以及为各表格行提供内容。  </p>
+<h2 id="新建一个Core-Data工程"><a href="#新建一个Core-Data工程" class="headerlink" title="新建一个Core Data工程"></a>新建一个Core Data工程</h2><p>在Xcode5中，只有Master-Detail Application，Utility Application以及Empty Application支持创建时使用Core Data模板，我们选择带有UITableView的Master-Detail Application吧。  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/14035339677.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p>一定要勾选Core Data选项，项目名称就叫MyCDDemo吧，嘿嘿  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353396978.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p>项目建立后会发现Frameworks中已经有了<code>CoreData.framework</code>一项，并且还多了一个MyCDDemo.xcdatamodeld文件，该文件定义了数据模型结构，你可以使用XCode内置的可视化建模工具进行构建。点开它你会发现左侧有三项：Entities，Fetch Request、Configurations。  </p>
+<p><strong>Entities</strong>  </p>
+<p>在系统的学习Core Data前，可以简单的将Entity理解为数据库中的一张表，在代码中一个<code>NSEntityDescription</code>类的对象就代表了一个Entity。Entity也像类一样可以继承，如果你有若干个相似的实体，就可以抽离出它们的共有特性作为一个“父实体”，就省去了在多个实体中都指定相同的属性。甚至可以勾选Abstract Entitiy让其成为抽象实体，就像抽象类一样。  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353414584.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p>现在已经有了一个现成的实体：Event，也就是在SQLite中有了一张叫做Event的表：  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353397403.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p>Attributes就相当于一张表的列属性，可以设置其数据类型，默认值，最大最小值等，类似数据库可视化建表。需要注意的是这里的空值是NULL，不等同于OC中的nil，更不等同于0和空字符串@“”。Event实体中已经有了一个叫timeStamp的属性，类型为Date，这是模版自动生成的，暂且别修改它。  </p>
+<p>Relationships描述了Entity间的关系：多对一，一对一等。当你指定了一个关系后，苹果推荐我们也指定一个反转关系。比如A和B是多对多的关系，那么A指向B的关系Type为To Many，同时设定B指向A的关系Type为To Many。  </p>
+<p>Fetched Property表示了一种弱的、单向的关系。因为Core Data不支持在persistent store之间建立Relationships，所以Fetched Property可用于建立cross-store关系，还用于建立“松耦合”关系，相似暂时的分组。（a fetched property of a department might be “recent hires” (employees do not have an inverse to the recent hires relationship)） </p>
+<p><strong>Fetch Request</strong>  </p>
+<p>我们使用<code>NSFetchRequest</code>类来描述数据请求，利用数据请求从持久存储（persistent store）中获取对象。经常碰到的情形是你经常需要多次执行同样的请求，或是执行遵循一个给定模式的请求，但是其中包含变量（如查找条件）——这些变量经常由用户提供。例如，在运行程序的时候，你要根据用户需要获取某个作者在用户指定日期后出版的所有出版物。  </p>
+<p>你可以预定义请求，把它们作为模板存储在被管理对象模型中。预定义的模板在你需要的时候就可以取出使用。通常情况下，我们通过Xcode的data modeling tool工具创建请求模板。模板可以包含变量：  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353412465.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p><strong>Configurations</strong>  </p>
+<p>配置包含了一个名称和若干个相关的实体。实体的集合是可以重叠的——这就是说，一个实体可以出现在多个配置中。在代码中，我们使用<code>setEntities: forConfiguration:</code>的方法来指定配置。也可以用Xcode的建模工具来指定。要获取某项配置的实体，需要用<code>entitiesForConfiguration:</code>的方法。  </p>
+<p>一般说来，如果你想把不同的实体存放在不同的存储中去，就可能用到配置。一个持久化存储协调器（persistent store coordinator，你暂且理解为负责数据库连接的东东）只能有一个被管理对象模型（managed object model，也就是把xcdatamodeld文件加载到代码中的内容啦）。所以，默认情况下，和协调器关联的某个存储必须包含同样的实体。要想绕过这个限制，你可以创建一个包含所有实体并集的模型，然后在模型中为每一个你想使用的实体子集创建配置，这样一来，使用这个模型创建协调器，当你需要添加存储（persistent store）时，可根据不同的配置来指定对应的存储属性。当你创建配置的时候，需要记住，不能创建跨存储的关系（cross-store relationships）。  </p>
+<p>模版已经生成了一个叫Default的配置，但是在程序中并没有用到它（这在之后的内容会阐述）。  </p>
+<p>在了解了xcdatamodeld类型文件之后，你可能对Core Data如何描述一个数据库有了一定的概念，下一步我们准备阅读模版自动生成的代码，你会体会到xcdatamodeld文件在程序中是如何被加载和使用的。  </p>
+<p>先看看AppDelegate.h  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIKit.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">AppDelegate</span> : <span class="title">UIResponder</span> &lt;<span class="title">UIApplicationDelegate</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="built_in">UIWindow</span> *window;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">readonly</span>, <span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="built_in">NSManagedObjectContext</span> *managedObjectContext;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">readonly</span>, <span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="built_in">NSManagedObjectModel</span> *managedObjectModel;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">readonly</span>, <span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="built_in">NSPersistentStoreCoordinator</span> *persistentStoreCoordinator;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)saveContext;</span><br><span class="line">- (<span class="built_in">NSURL</span> *)applicationDocumentsDirectory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>嗯，比平时的程序多出了三个属性嘛，而且后两个属性之前还提到过，这“三剑客“是Core Data中非常重要的三个类：  </p>
+<ul>
+<li>Managed Object Model（管理数据模型）: 你可以将这个东西看作是数据库的轮廓，或者结构。这里包含了各个实体的定义信息，一般来说，你会使用我们刚刚看过的视觉编辑器来操作这个物体，添加属性，建立属性之间的关系等等，当然你也可以使用代码。</li>
+<li>Persistent Store Coordinator （持久性数据协调器）： 你可以将这个东西看作是数据库连接库，在这里，你将设置数据存储的名字和位置，以及数据存储的时机。</li>
+<li>Managed Object Context （管理数据内容）：你可以将这一部分看作是数据的实际内容，这也是整个数据库中对我们而言最重要的部分（这还用说），基本上，插入数据，查询数据，删除数据的工作都在这里完成。</li>
+</ul>
+<p>如果你还是不好理解，那么简单的把这“三剑客”理解为：数据定义语言 (DDL)、数据库连接（DBC）、数据操作语言 (DML)在Core Data中的另一种存在吧！  </p>
+<p>下面该看看AppDelegate.m，了解下“三剑客”实例化的过程：<br>首先是程序加载完毕的代理方法： </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)application:(<span class="built_in">UIApplication</span> *)application didFinishLaunchingWithOptions:(<span class="built_in">NSDictionary</span> *)launchOptions</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Override point for customization after application launch.</span></span><br><span class="line">    <span class="built_in">UINavigationController</span> *navigationController = (<span class="built_in">UINavigationController</span> *)<span class="keyword">self</span>.window.rootViewController;</span><br><span class="line">    MasterViewController *controller = (MasterViewController *)navigationController.topViewController;</span><br><span class="line">    controller.managedObjectContext = <span class="keyword">self</span>.managedObjectContext;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们暂且只看<code>controller.managedObjectContext = self.managedObjectContext;</code>这句，调用<code>managedObjectContext</code>的getter方法并赋给程序启动后出现的<code>MasterViewController</code>，那么我们就看一下<code>managedObjectContext</code>的getter方法：  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Returns the managed object context for the application.</span></span><br><span class="line"><span class="comment">// If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.</span></span><br><span class="line">- (<span class="built_in">NSManagedObjectContext</span> *)managedObjectContext</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (_managedObjectContext != <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> _managedObjectContext;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSPersistentStoreCoordinator</span> *coordinator = [<span class="keyword">self</span> persistentStoreCoordinator];</span><br><span class="line">    <span class="keyword">if</span> (coordinator != <span class="literal">nil</span>) &#123;</span><br><span class="line">        _managedObjectContext = [[<span class="built_in">NSManagedObjectContext</span> alloc] init];</span><br><span class="line">        [_managedObjectContext setPersistentStoreCoordinator:coordinator];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _managedObjectContext;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>嗯，英文注释不错，第一次调用的时候会实例化一个<code>NSManagedObjectContext</code>对象，并使用<code>persistentStoreCoordinator</code>方法返回的<code>NSPersistentStoreCoordinator</code>对象配置上下文，最后返回新实例化的<code>NSManagedObjectContext</code>对象。<br>顺藤摸瓜，我们再看看<code>persistentStoreCoordinator</code>的getter：  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Returns the persistent store coordinator for the application.</span></span><br><span class="line"><span class="comment">// If the coordinator doesn't already exist, it is created and the application's store added to it.</span></span><br><span class="line">- (<span class="built_in">NSPersistentStoreCoordinator</span> *)persistentStoreCoordinator</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (_persistentStoreCoordinator != <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> _persistentStoreCoordinator;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSURL</span> *storeURL = [[<span class="keyword">self</span> applicationDocumentsDirectory] URLByAppendingPathComponent:<span class="string">@"MyCDDemo.sqlite"</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;</span><br><span class="line">    _persistentStoreCoordinator = [[<span class="built_in">NSPersistentStoreCoordinator</span> alloc] initWithManagedObjectModel:[<span class="keyword">self</span> managedObjectModel]];</span><br><span class="line">    <span class="keyword">if</span> (![_persistentStoreCoordinator addPersistentStoreWithType:<span class="built_in">NSSQLiteStoreType</span> configuration:<span class="literal">nil</span> URL:storeURL options:<span class="literal">nil</span> error:&amp;error]) &#123;</span><br><span class="line">        <span class="comment">/*</span><br><span class="line">         Replace this implementation with code to handle the error appropriately.</span><br><span class="line">         </span><br><span class="line">         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. </span><br><span class="line">         </span><br><span class="line">         Typical reasons for an error here include:</span><br><span class="line">         * The persistent store is not accessible;</span><br><span class="line">         * The schema for the persistent store is incompatible with current managed object model.</span><br><span class="line">         Check the error message to determine what the actual problem was.</span><br><span class="line">         </span><br><span class="line">         </span><br><span class="line">         If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.</span><br><span class="line">         </span><br><span class="line">         If you encounter schema incompatibility errors during development, you can reduce their frequency by:</span><br><span class="line">         * Simply deleting the existing store:</span><br><span class="line">         [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]</span><br><span class="line">         </span><br><span class="line">         * Performing automatic lightweight migration by passing the following dictionary as the options parameter:</span><br><span class="line">         @&#123;NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES&#125;</span><br><span class="line">         </span><br><span class="line">         Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.</span><br><span class="line">         </span><br><span class="line">         */</span></span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Unresolved error %@, %@"</span>, error, [error userInfo]);</span><br><span class="line">        abort();</span><br><span class="line">    &#125;    </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> _persistentStoreCoordinator;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了访问documents目录中的SQLite存储文件MyCDDemo.sqlite，还定义了一个<code>applicationDocumentsDirectory</code>方法，它的作用是获取程序documents的路径，代码如下：  </p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Returns the URL to the application's Documents directory.</span></span><br><span class="line"><span class="selector-tag">-</span> (NSURL *)<span class="selector-tag">applicationDocumentsDirectory</span></span><br><span class="line">&#123;</span><br><span class="line">    return <span class="selector-attr">[[[NSFileManager defaultManager]</span> <span class="selector-tag">URLsForDirectory</span><span class="selector-pseudo">:NSDocumentDirectory</span> <span class="selector-tag">inDomains</span><span class="selector-pseudo">:NSUserDomainMask</span>] <span class="selector-tag">lastObject</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>MyCDDemo.sqlite文件是在编译MyCDDemo.xcdatamodeld时生成的，同样生成的还有MyCDDemo.momd文件，后面会提到。<br><code>NSPersistentStoreCoordinator</code>初始化时需要传入<code>managedObjectModel</code>。<code>NSPersistentStoreCoordinator</code>对象在添加持久存储的时候不仅需要传入存储类型，还有配置，存储文件URL，选项以及错误类型。我们使用sqlite作为存储类型，配置为nil，还记得之前叫做default的配置么？这里我们只有一个持久存储，所以配置一项不需要。如果添加存储的时候出现错误，就会进入if判断，具体处理错误的细节可以看看模版生成的注释。<br>既然<code>NSPersistentStoreCoordinator</code>又用到了<code>managedObjectModel</code>，我们再看看<code>managedObjectModel</code>方法吧：  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Returns the managed object model for the application.</span></span><br><span class="line"><span class="comment">// If the model doesn't already exist, it is created from the application's model.</span></span><br><span class="line">- (<span class="built_in">NSManagedObjectModel</span> *)managedObjectModel</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (_managedObjectModel != <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> _managedObjectModel;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">NSURL</span> *modelURL = [[<span class="built_in">NSBundle</span> mainBundle] URLForResource:<span class="string">@"MyCDDemo"</span> withExtension:<span class="string">@"momd"</span>];</span><br><span class="line">    _managedObjectModel = [[<span class="built_in">NSManagedObjectModel</span> alloc] initWithContentsOfURL:modelURL];</span><br><span class="line">    <span class="keyword">return</span> _managedObjectModel;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>依然是跟之前一样的代码风格，这次<code>NSManagedObjectModel</code>类在初始化的时候用到了MyCDDemo.momd文件，前面提到过，当你编译项目时，MyCDDemo.xcdatamodeld数据模型将被编译成MyCDDemo.momd资源，并且保存到app的Bundle目录。  </p>
+<p>最后，在程序退出时，会调用代理<code>applicationWillTerminate:</code>  </p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">-</span> (void)<span class="selector-tag">applicationWillTerminate</span><span class="selector-pseudo">:(UIApplication</span> *)<span class="selector-tag">application</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Saves changes in the application's managed object context before the application terminates.</span></span><br><span class="line">    <span class="selector-attr">[self saveContext]</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它调用了<code>saveContext</code>方法：  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)saveContext</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;</span><br><span class="line">    <span class="built_in">NSManagedObjectContext</span> *managedObjectContext = <span class="keyword">self</span>.managedObjectContext;</span><br><span class="line">    <span class="keyword">if</span> (managedObjectContext != <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> ([managedObjectContext hasChanges] &amp;&amp; ![managedObjectContext save:&amp;error]) &#123;</span><br><span class="line">             <span class="comment">// Replace this implementation with code to handle the error appropriately.</span></span><br><span class="line">             <span class="comment">// abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. </span></span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"Unresolved error %@, %@"</span>, error, [error userInfo]);</span><br><span class="line">            abort();</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>managedObjectContext</code>对象中的数据无论怎么修改，都是发生在内存中的，需要调用<code>save</code>方法来保存到存储文件当中。  </p>
+<p>按理说接下来应该看看<code>MasterViewController中</code>被传入的<code>managedObjectContext</code>对象是如何使用的，但在这之前，我们先运行下程序，看看这个App有什么功能：  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353397837.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p>再普通不过的tableview了，点击加号便可添加一条记录，内容为时间戳，回想起之前看的名称为Event的Entity，是不是想起了什么，嘿嘿。再添加了四条记录后，不妨打开sqlite文件查看下，路径为<code>~/Library/Application Support/iPhone Simulator/[OS version]/Applications/[appGUID]/Documents/</code>(Xcode 6路径改为<code>~/Library/Developer/CoreSimulator/Devices/[模拟器UDID]/data/Containers/Data/Application/[appGUID]/Documents/</code>)，目录内包含了三个文件MyCDDemo.sqlite、MyCDDemo.sqlite-shm、MyCDDemo.sqlite-wal。如上文所述，根据AppDelegate.m文件中的<code>persistentStoreCoordinator</code>方法可知，时间戳记录被存储在MyCDDemo.sqlite文件中。我用Navicat Premium将其打开：  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/14035339876.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353398727.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p>相信你对“三剑客”有了更深的理解，再附上一张图加深下印象：  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353388879.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p>一个<code>NSManagedObjectModel</code>对象处在<code>NSPersistentStoreCoordinator</code>对象和<code>NSManagedObjectContext</code>对象之间。Core Data根据<code>NSManagedObjectModel</code>对象确定如何将底层的持久化文件中的数据映射为<code>NSManagedObject</code>对象。一个<code>NSManagedObjectModel</code>对象用于表示数据的结构。<code>NSManagedObjectModel</code>对象也被称为对象图(object graph)。你可以简单的理解为：<strong>在数据库sqlite文件中，一张表中的一条数据（table row）就相当于代码中的一个NSManagedObject对象，他们之间的映射是通过<code>NSManagedObjectModel</code>对象完成的</strong>  </p>
+<p>下面让我们进入到<code>MasterViewController</code>中来认识一下这个新出现的<code>NSManagedObject</code>“小弟”  </p>
+<p>既然数据库中的数据最终显示在了<code>UITableView</code>上，我们撇开<code>MasterViewController</code>中其他的方法，直奔<code>UITableViewDataSource</code>协议中已经实现的那几个方法：  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">NSInteger</span>)numberOfSectionsInTableView:(<span class="built_in">UITableView</span> *)tableView</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> [[<span class="keyword">self</span>.fetchedResultsController sections] count];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSInteger</span>)tableView:(<span class="built_in">UITableView</span> *)tableView numberOfRowsInSection:(<span class="built_in">NSInteger</span>)section</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">id</span> &lt;<span class="built_in">NSFetchedResultsSectionInfo</span>&gt; sectionInfo = [<span class="keyword">self</span>.fetchedResultsController sections][section];</span><br><span class="line">    <span class="keyword">return</span> [sectionInfo numberOfObjects];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">UITableViewCell</span> *)tableView:(<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">UITableViewCell</span> *cell = [tableView dequeueReusableCellWithIdentifier:<span class="string">@"Cell"</span> forIndexPath:indexPath];</span><br><span class="line">    [<span class="keyword">self</span> configureCell:cell atIndexPath:indexPath];</span><br><span class="line">    <span class="keyword">return</span> cell;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">BOOL</span>)tableView:(<span class="built_in">UITableView</span> *)tableView canEditRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Return NO if you do not want the specified item to be editable.</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)tableView:(<span class="built_in">UITableView</span> *)tableView commitEditingStyle:(<span class="built_in">UITableViewCellEditingStyle</span>)editingStyle forRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (editingStyle == <span class="built_in">UITableViewCellEditingStyleDelete</span>) &#123;</span><br><span class="line">        <span class="built_in">NSManagedObjectContext</span> *context = [<span class="keyword">self</span>.fetchedResultsController managedObjectContext];</span><br><span class="line">        [context deleteObject:[<span class="keyword">self</span>.fetchedResultsController objectAtIndexPath:indexPath]];</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;</span><br><span class="line">        <span class="keyword">if</span> (![context save:&amp;error]) &#123;</span><br><span class="line">             <span class="comment">// Replace this implementation with code to handle the error appropriately.</span></span><br><span class="line">             <span class="comment">// abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. </span></span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"Unresolved error %@, %@"</span>, error, [error userInfo]);</span><br><span class="line">            abort();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">BOOL</span>)tableView:(<span class="built_in">UITableView</span> *)tableView canMoveRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// The table view should not be re-orderable.</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你对<code>UITableView</code>的使用很有经验，一眼就可看出数据是由<code>fetchedResultsController</code>对象提供的。即使在<code>tableView: cellForRowAtIndexPath:</code>方法中没出现<code>fetchedResultsController</code>，但是在其调用的<code>configureCell: atIndexPath:</code>方法中依然用到了<code>fetchedResultsController</code>：  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)<span class="string">configureCell:</span>(UITableViewCell *)cell <span class="string">atIndexPath:</span>(NSIndexPath *)indexPath</span><br><span class="line">&#123;</span><br><span class="line">    NSManagedObject *object = [self.fetchedResultsController <span class="string">objectAtIndexPath:</span>indexPath];</span><br><span class="line">    cell.textLabel.text = [[object <span class="string">valueForKey:</span>@<span class="string">"timeStamp"</span>] description];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>嗯看来NSManagedObject对象全都由这个fetchedResultsController提供咯，下面揭开它神秘的面纱：  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">NSFetchedResultsController</span> *)fetchedResultsController</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (_fetchedResultsController != <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> _fetchedResultsController;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSFetchRequest</span> *fetchRequest = [[<span class="built_in">NSFetchRequest</span> alloc] init];</span><br><span class="line">    <span class="comment">// Edit the entity name as appropriate.</span></span><br><span class="line">    <span class="built_in">NSEntityDescription</span> *entity = [<span class="built_in">NSEntityDescription</span> entityForName:<span class="string">@"Event"</span> inManagedObjectContext:<span class="keyword">self</span>.managedObjectContext];</span><br><span class="line">    [fetchRequest setEntity:entity];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Set the batch size to a suitable number.</span></span><br><span class="line">    [fetchRequest setFetchBatchSize:<span class="number">20</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Edit the sort key as appropriate.</span></span><br><span class="line">    <span class="built_in">NSSortDescriptor</span> *sortDescriptor = [[<span class="built_in">NSSortDescriptor</span> alloc] initWithKey:<span class="string">@"timeStamp"</span> ascending:<span class="literal">NO</span>];</span><br><span class="line">    <span class="built_in">NSArray</span> *sortDescriptors = @[sortDescriptor];</span><br><span class="line">    </span><br><span class="line">    [fetchRequest setSortDescriptors:sortDescriptors];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Edit the section name key path and cache name if appropriate.</span></span><br><span class="line">    <span class="comment">// nil for section name key path means "no sections".</span></span><br><span class="line">    <span class="built_in">NSFetchedResultsController</span> *aFetchedResultsController = [[<span class="built_in">NSFetchedResultsController</span> alloc] initWithFetchRequest:fetchRequest managedObjectContext:<span class="keyword">self</span>.managedObjectContext sectionNameKeyPath:<span class="literal">nil</span> cacheName:<span class="string">@"Master"</span>];</span><br><span class="line">    aFetchedResultsController.delegate = <span class="keyword">self</span>;</span><br><span class="line">    <span class="keyword">self</span>.fetchedResultsController = aFetchedResultsController;</span><br><span class="line">    </span><br><span class="line">	<span class="built_in">NSError</span> *error = <span class="literal">nil</span>;</span><br><span class="line">	<span class="keyword">if</span> (![<span class="keyword">self</span>.fetchedResultsController performFetch:&amp;error]) &#123;</span><br><span class="line">	     <span class="comment">// Replace this implementation with code to handle the error appropriately.</span></span><br><span class="line">	     <span class="comment">// abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. </span></span><br><span class="line">	    <span class="built_in">NSLog</span>(<span class="string">@"Unresolved error %@, %@"</span>, error, [error userInfo]);</span><br><span class="line">	    abort();</span><br><span class="line">	&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> _fetchedResultsController;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>嗯，之前提到过，Core Data在iOS平台使用了<code>NSFetchedResultsController</code>对象来简化对提取结果和表格视图的处理。<code>NSFetchedResultsController</code>对象被惰性创建并只在表格视图数据源方法有需要时才提取数据。你会看到在<code>NSFetchRequest</code>对象的配置中，使用了Event实体，并提供了一个<code>NSSortDescriptor</code>对象以让提取结果按timeStamp进行排序。最后通过<code>NSFetchRequest</code>对象和<code>managedObjectContext</code>（在AppDelegate中传入的<code>NSManagedObjectContext</code>实例）作为参数传入<code>NSFetchedResultsController</code>的初始化方法。（<code>sectionNameKeyPath</code>参数传入nil时表示只有一个section，你会发现<code>NSFetchedResultsController</code>从数据库获取的结果跟<code>UITableView</code>需要的数据格式相同，都通过<code>NSIndexPath</code>地址来获取一条数据的内容）<br><code>NSFetchedResultsController</code>也有它的代理，将<code>MasterViewController</code>设置为其代理，这样在fetched results 发生变化时，<code>MasterViewController</code>中实现的<code>NSFetchedResultsControllerDelegate</code>方法会被调用：  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)controllerWillChangeContent:(<span class="built_in">NSFetchedResultsController</span> *)controller</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span>.tableView beginUpdates];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)controller:(<span class="built_in">NSFetchedResultsController</span> *)controller didChangeSection:(<span class="keyword">id</span> &lt;<span class="built_in">NSFetchedResultsSectionInfo</span>&gt;)sectionInfo</span><br><span class="line">           atIndex:(<span class="built_in">NSUInteger</span>)sectionIndex forChangeType:(<span class="built_in">NSFetchedResultsChangeType</span>)type</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">switch</span>(type) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="built_in">NSFetchedResultsChangeInsert</span>:</span><br><span class="line">            [<span class="keyword">self</span>.tableView insertSections:[<span class="built_in">NSIndexSet</span> indexSetWithIndex:sectionIndex] withRowAnimation:<span class="built_in">UITableViewRowAnimationFade</span>];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">case</span> <span class="built_in">NSFetchedResultsChangeDelete</span>:</span><br><span class="line">            [<span class="keyword">self</span>.tableView deleteSections:[<span class="built_in">NSIndexSet</span> indexSetWithIndex:sectionIndex] withRowAnimation:<span class="built_in">UITableViewRowAnimationFade</span>];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)controller:(<span class="built_in">NSFetchedResultsController</span> *)controller didChangeObject:(<span class="keyword">id</span>)anObject</span><br><span class="line">       atIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath forChangeType:(<span class="built_in">NSFetchedResultsChangeType</span>)type</span><br><span class="line">      newIndexPath:(<span class="built_in">NSIndexPath</span> *)newIndexPath</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">UITableView</span> *tableView = <span class="keyword">self</span>.tableView;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">switch</span>(type) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="built_in">NSFetchedResultsChangeInsert</span>:</span><br><span class="line">            [tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:<span class="built_in">UITableViewRowAnimationFade</span>];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">case</span> <span class="built_in">NSFetchedResultsChangeDelete</span>:</span><br><span class="line">            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:<span class="built_in">UITableViewRowAnimationFade</span>];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">case</span> <span class="built_in">NSFetchedResultsChangeUpdate</span>:</span><br><span class="line">            [<span class="keyword">self</span> configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">case</span> <span class="built_in">NSFetchedResultsChangeMove</span>:</span><br><span class="line">            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:<span class="built_in">UITableViewRowAnimationFade</span>];</span><br><span class="line">            [tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:<span class="built_in">UITableViewRowAnimationFade</span>];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)controllerDidChangeContent:(<span class="built_in">NSFetchedResultsController</span> *)controller</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span>.tableView endUpdates];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span><br><span class="line">// Implementing the above methods to update the table view in response to individual changes may have performance implications if a large number of changes are made simultaneously. If this proves to be an issue, you can instead just implement controllerDidChangeContent: which notifies the delegate that all section and object changes have been processed. </span><br><span class="line"> </span><br><span class="line"> - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller</span><br><span class="line">&#123;</span><br><span class="line">    // In the simplest, most efficient, case, reload the table view.</span><br><span class="line">    [self.tableView reloadData];</span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>相对于之前<code>UITableViewDataSource</code>协议方法对<code>NSFetchedResultsController</code>对象中数据的修改（通过<code>NSManagedObject</code>对象做载体），<code>NSFetchedResultsControllerDelegate</code>协议方法会在察觉到数据修改后被调用，用于产生tableview操作数据后对应的动画效果。  </p>
+<p>可能你会觉得有些混乱，这里贴上几张图梳理下各个类的关系和结构：  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353388301.png?imageView2/2/w/800/q/75" alt="">  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353389167.png?imageView2/2/w/800/q/75" alt="">  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353388423.png?imageView2/2/w/800/q/75" alt="">  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353389646.png?imageView2/2/w/800/q/75" alt="">  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353389047.png?imageView2/2/w/800/q/75" alt="">  </p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140353388523.jpg?imageView2/2/w/800/q/75" alt="">  </p>
+<p>最后，找到<code>insertNewObject</code>方法，当用户尝试加入一个对象到表视图时，该方法将被调用。接着你将看到如下的处理过程：  </p>
+<ul>
+<li>获得一个<code>NSManagedObjectContext</code>对象；</li>
+<li>决定创建新对象的实体；</li>
+<li>根据实体名称创建一个新的<code>NSManagedObject</code>对象并将其插入到<code>NSManagedObjectContext</code>对象；</li>
+<li>对新创建的<code>NSManagedObject</code>对象设置timeStamp属性值</li>
+<li><code>NSManagedObjectContext</code>对象执行保存。  </li>
+</ul>
+<p>当上下文执行保存，新的对象将被写到持久存储区中。这是如此简单！  </p>
+<p>DetailViewController的内容比较简单，不在叙述，到此结束，新建Core Data的模版工程代码已经解析完毕了。在下一期文章中将会亲手修改代码，探索Core Data更多的使用技巧。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Core Data框架基本的5个类：：NSPersistentStoreCoordinator、NSManagedObjectContext、NSManagedObjectModel、NSEntityDescription、NSManagedObject。  </p>
+<ul>
+<li><p>NSPersistentStoreCoordinator持久化存储协调器（简称协调器）：负责从磁盘加载数据和将数据写入磁盘。协调器可以处理多种格式的数据库文件（NSPersistentStore），如二进制文件，XML文件、SQLite文件。你也可以实现自己的数据库文件格式（使用NSAtomicStore和NSIncrementalStore类），理论上你可以实现打开World或Photoshop文件的协调器。</p>
+</li>
+<li><p>NSEntityDescription实体描述（简称实体）：实体可以被看做是NSManagedObject对象的“class”。实体定义了一个NSManagedObject对象所拥有的所有属性（NSAttributeDescription）,关系（NSRelationshipDescription），提取属性（NSFetchedPropertyDescription）。</p>
+</li>
+<li><p>NSManagedObjectContext托管对象上下文（简称上下文）：上下文是内存中的一块暂存区域。查询对象（使用NSFetchRequest），创建对象，删除对象等操作都是在上下文中进行。在上下文没有保存之前，对数据的任何修改都只记录在暂存区中，不会影响磁盘上的数据。你可以创建多个上下文，但整个程序只能创建一个NSPersstentStoreCoordinator对象。</p>
+</li>
+<li><p>NSManagedObject托管对象：Core Data的核心单元。模型对象的数据被持有在NSManagedObject对象中。每一个NSManagedObject对象都对应一个实体（就像每一个对象都有一个类）</p>
+</li>
+<li><p>NSManagedObjectModel托管对象模型：NSManagedObjectModel通常被定义在一个.mom文件中，文件中保存了所有实体的定义。NSManagedObjectModel and the NS*Description 类完整定义了Core Data模型应该/可以包含的内容。</p>
+</li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Core-Data/">Core Data</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2014/05/01/chu-shi-core-data-1/" data-title="初识Core Data(1) | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2014/05/02/github-page-build-warning/" title="GitHub Page build warning">
+  <strong>上一篇：</strong><br/>
+  <span>
+  GitHub Page build warning</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2014/04/28/iosdan-yuan-ce-shi-xctest/"  title="Xcode单元测试-XCTest">
+ <strong>下一篇：</strong><br/> 
+ <span>Xcode单元测试-XCTest
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="blog/2014/05/01/chu-shi-core-data-1/" data-title="初识Core Data(1)" data-url="http://yulingtianxia.com/blog/2014/05/01/chu-shi-core-data-1/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-Data概述"><span class="toc-number">1.</span> <span class="toc-text">Core Data概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建一个Core-Data工程"><span class="toc-number">2.</span> <span class="toc-text">新建一个Core Data工程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13.75px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 13.75px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 12.5px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 13.75px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.75px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"yulingtianxia"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

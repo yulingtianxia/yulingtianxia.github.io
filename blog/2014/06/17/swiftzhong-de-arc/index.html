@@ -1,0 +1,661 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift中的ARC | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="Objective-C中的ARC被Swift很好的继承下来了，本文参考自Swift文档网上的翻译，主要重点记录下Swift中的ARC与OC对比需要注意的地方。(2014-8-8更新至beta5语法)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift中的ARC">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2014/06/17/swiftzhong-de-arc/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="Objective-C中的ARC被Swift很好的继承下来了，本文参考自Swift文档网上的翻译，主要重点记录下Swift中的ARC与OC对比需要注意的地方。(2014-8-8更新至beta5语法)">
+<meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/referenceCycle01_2x.png">
+<meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/referenceCycle02_2x.png">
+<meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/referenceCycle03_2x.png">
+<meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/weakReference01_2x.png">
+<meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/weakReference02_2x.png">
+<meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/weakReference03_2x.png">
+<meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/unownedReference01_2x.png">
+<meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/unownedReference02_2x.png">
+<meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/closureReferenceCycle01_2x.png">
+<meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/closureReferenceCycle02_2x.png">
+<meta property="og:updated_time" content="2016-05-11T14:32:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Swift中的ARC">
+<meta name="twitter:description" content="Objective-C中的ARC被Swift很好的继承下来了，本文参考自Swift文档网上的翻译，主要重点记录下Swift中的ARC与OC对比需要注意的地方。(2014-8-8更新至beta5语法)">
+<meta name="twitter:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/referenceCycle01_2x.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2014/06/17/swiftzhong-de-arc/" title="Swift中的ARC" itemprop="url">Swift中的ARC</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2014-06-17T02:32:38.000Z" itemprop="datePublished"> 发表于 2014-06-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类实例之间强引用循环的产生"><span class="toc-number">2.</span> <span class="toc-text">类实例之间强引用循环的产生</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何解决实例间强引用循环"><span class="toc-number">3.</span> <span class="toc-text">如何解决实例间强引用循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#弱引用"><span class="toc-number">3.1.</span> <span class="toc-text">弱引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无主引用"><span class="toc-number">3.2.</span> <span class="toc-text">无主引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无主引用以及隐式解析可选属性"><span class="toc-number">3.3.</span> <span class="toc-text">无主引用以及隐式解析可选属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">3.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#闭包引起的强引用循环"><span class="toc-number">4.</span> <span class="toc-text">闭包引起的强引用循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决闭包引起的循环强引用"><span class="toc-number">5.</span> <span class="toc-text">解决闭包引起的循环强引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义捕获列表"><span class="toc-number">5.1.</span> <span class="toc-text">定义捕获列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#捕获列表中的弱引用和无主引用"><span class="toc-number">5.2.</span> <span class="toc-text">捕获列表中的弱引用和无主引用</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>Objective-C中的ARC被Swift很好的继承下来了，本文参考自Swift文档网上的翻译，主要重点记录下Swift中的ARC与OC对比需要注意的地方。(2014-8-8更新至beta5语法)<br><a id="more"></a></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>当你每次创建一个类的新的实例的时候，ARC 会分配一大块内存用来储存实例的信息。内存中会包含实例的类型信息，以及这个实例所有相关属性的值。此外，当实例不再被使用时，ARC 释放实例所占用的内存，并让释放的内存能挪作他用。这确保了不再被使用的实例，不会一直占用内存空间。  </p>
+<h2 id="类实例之间强引用循环的产生"><a href="#类实例之间强引用循环的产生" class="headerlink" title="类实例之间强引用循环的产生"></a>类实例之间强引用循环的产生</h2><p>如果你对OC中的强引用循环很了解，可以直接跳过这节。  </p>
+<p>但是如果两个类的实例之间互相引用，这样就产生了强引用循环。下面展示了一个不经意产生强引用循环的例子。例子定义了两个类：<code>Person</code>和<code>Apartment</code>，用来建模公寓和它其中的居民:  </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="built_in">String</span></span><br><span class="line">    init(name: <span class="built_in">String</span>) &#123; self.name = name &#125;</span><br><span class="line">    <span class="keyword">var</span> apartment: Apartment?</span><br><span class="line">    deinit &#123; println(<span class="string">"\(name) is being deinitialized"</span>) &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apartment</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> number: Int</span><br><span class="line">    init(number: Int) &#123; self.number = number &#125;</span><br><span class="line">    <span class="keyword">var</span> tenant: Person?</span><br><span class="line">    deinit &#123; println(<span class="string">"Apartment #\(number) is being deinitialized"</span>) &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来的代码片段定义了两个可选类型的变量<code>john</code>和<code>number73</code>,并分别被设定为下面的<code>Apartment</code>和<code>Person</code>的实例。这两个变量都被初始化为<code>nil</code>，并为可选的（让它们可选是为了以后能销毁，为了演示程序）：  </p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> john: Person?</span><br><span class="line"><span class="keyword">var</span> number73: Apartment?</span><br></pre></td></tr></table></figure>
+<p>现在你可以创建特定的<code>Person</code>和<code>Apartment</code>实例并将类实例赋值给<code>john</code>和<code>number73</code>变量：  </p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">john</span> = Person(name: <span class="string">"John Appleseed"</span>)</span><br><span class="line"><span class="attr">number73</span> = Apartment(number: <span class="number">73</span>)</span><br></pre></td></tr></table></figure>
+<p>在<code>john</code>和<code>number73</code>互相引用之前，它们的强引用关系是这样的：  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/referenceCycle01_2x.png" alt="">  </p>
+<p>现在你能够将这两个实例关联在一起，这样人就能有公寓住了，而公寓也有了房客。注意感叹号是用来强制解析可选变量<code>john</code>和<code>number73</code>中的实例：  </p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">john!<span class="selector-class">.apartment</span> = number73</span><br><span class="line">number73!<span class="selector-class">.tenant</span> = john</span><br></pre></td></tr></table></figure>
+<p>在将两个实例联系在一起之后，强引用的关系变成了这样：  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/referenceCycle02_2x.png" alt="">  </p>
+<p>这样即使让<code>john</code>和<code>number73</code>断开它们持有的强引用，内存中的那两个<code>Person</code>和<code>Apartment</code>实例并不会销毁，因为它们互相引用，引用计数都为1：  </p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">john</span> = nil</span><br><span class="line"><span class="attr">number73</span> = nil</span><br></pre></td></tr></table></figure>
+<p>当你把这两个变量设为<code>nil</code>时，没有任何一个析构函数被调用。强引用循环阻止了<code>Person</code>和<code>Apartment</code>类实例的销毁，并在你的应用程序中造成了内存泄漏。  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/referenceCycle03_2x.png" alt="">  </p>
+<h2 id="如何解决实例间强引用循环"><a href="#如何解决实例间强引用循环" class="headerlink" title="如何解决实例间强引用循环"></a>如何解决实例间强引用循环</h2><h3 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h3><p>跟OC中的弱引用相似，声明属性或者变量时，在前面加上<code>weak</code>关键字表明这是一个弱引用。弱引用不会牢牢保持住引用的实例，并且不会阻止 ARC 销毁被引用的实例。因为弱引用的值会变化并可能为<code>nil</code>，所以弱引用不能是常量，必须是可选类型（Optional）。因为弱引用不会保持所引用的实例，即使引用存在，实例也有可能被销毁。因此，ARC 会在引用的实例被销毁后自动将其赋值为nil。  </p>
+<p>下面的例子跟上面<code>Person</code>和<code>Apartment</code>的例子一致，但是有一个重要的区别。这一次，<code>Apartment</code>的<code>tenant</code>属性被声明为弱引用：  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>) &#123; <span class="keyword">self</span>.name = name &#125;</span><br><span class="line">    <span class="keyword">var</span> apartment: <span class="type">Apartment</span>?</span><br><span class="line">    <span class="keyword">deinit</span> &#123; <span class="built_in">println</span>(<span class="string">"<span class="subst">\(name)</span> is being deinitialized"</span>) &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apartment</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> number: <span class="type">Int</span></span><br><span class="line">    <span class="keyword">init</span>(number: <span class="type">Int</span>) &#123; <span class="keyword">self</span>.number = number &#125;</span><br><span class="line">    <span class="keyword">weak</span> <span class="keyword">var</span> tenant: <span class="type">Person</span>?</span><br><span class="line">    <span class="keyword">deinit</span> &#123; <span class="built_in">println</span>(<span class="string">"Apartment #<span class="subst">\(number)</span> is being deinitialized"</span>) &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后跟之前一样，建立两个变量（<code>john</code>和<code>number73</code>）之间的强引用，并关联两个实例：  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var <span class="string">john:</span> Person?</span><br><span class="line">var number73: Apartment?</span><br><span class="line"></span><br><span class="line">john = Person(name: <span class="string">"John Appleseed"</span>)</span><br><span class="line">number73 = Apartment(<span class="string">number:</span> <span class="number">73</span>)</span><br><span class="line"></span><br><span class="line">john!.apartment = number73</span><br><span class="line">number73!.tenant = john</span><br></pre></td></tr></table></figure>
+<p>现在的引用关系如下：  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/weakReference01_2x.png" alt="">  </p>
+<p>当<code>john</code>的强引用断开后，引用关系变成了这样子：  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/weakReference02_2x.png" alt="">  </p>
+<p>因为没有强引用指向<code>Person</code>实例，它的引用计数为0，所以该实例会被销毁。因此<code>number73</code>指向的<code>Apartment</code>实例的的引用计数会变为1，因为<code>Person</code>实例销毁后，其<code>apartment</code>属性对<code>Apartment</code>实例的强引用也会断开。此时如果再断开<code>number73</code>对<code>Apartment</code>实例的强引用：  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/weakReference03_2x.png" alt="">  </p>
+<p><code>Apartment</code>实例因为引用计数为0，会被销毁，到此为止强引用循环被打破。  </p>
+<h3 id="无主引用"><a href="#无主引用" class="headerlink" title="无主引用"></a>无主引用</h3><p>和弱引用类似，无主引用不会牢牢保持住引用的实例。和弱引用不同的是，无主引用是永远有值的（不能为<code>nil</code>）。因此，无主引用总是被定义为非可选类型（non-optional type）。你可以在声明属性或者变量时，在前面加上关键字<code>unowned</code>表示这是一个无主引用。</p>
+<p>下面的例子定义了两个类，<code>Customer</code>和<code>CreditCard</code>，模拟了银行客户和客户的信用卡。一个客户可能有或者没有信用卡，但是一张信用卡总是关联着一个客户。所以<code>Customer</code>类的<code>card</code>属性可以为<code>nil</code>，但是<code>CreditCard</code>类的<code>customer</code>属性不能为<code>nil</code>，所以创建CreditCard实例的时候必须给<code>customer</code>属性赋值避免其为<code>nil</code>。将<code>customer</code>属性定义为无主引用，用以避免循环强引用：  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Customer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> card: <span class="type">CreditCard</span>?</span><br><span class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.name = name</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">deinit</span> &#123; <span class="built_in">println</span>(<span class="string">"<span class="subst">\(name)</span> is being deinitialized"</span>) &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CreditCard</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> number: <span class="type">Int64</span></span><br><span class="line">    <span class="keyword">unowned</span> <span class="keyword">let</span> customer: <span class="type">Customer</span></span><br><span class="line">    <span class="keyword">init</span>(number: <span class="type">Int64</span>, customer: <span class="type">Customer</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.number = number</span><br><span class="line">        <span class="keyword">self</span>.customer = customer</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">deinit</span> &#123; <span class="built_in">println</span>(<span class="string">"Card #<span class="subst">\(number)</span> is being deinitialized"</span>) &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> john: <span class="type">Customer</span>?</span><br><span class="line">john = <span class="type">Customer</span>(name: <span class="string">"John Appleseed"</span>)</span><br><span class="line">john!.card = <span class="type">CreditCard</span>(number: <span class="number">1234_5678_9012_3456</span>, customer: john!)</span><br></pre></td></tr></table></figure>
+<p>关联两个实例后，引用关系如下：  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/unownedReference01_2x.png" alt=""></p>
+<p>由于<code>customer</code>的无主引用，当你断开<code>john</code>变量持有的强引用时，再也没有指向<code>Customer</code>实例的强引用了：  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/unownedReference02_2x.png" alt="">  </p>
+<p>于是<code>Customer</code>实例被销毁，这样又导致没有强引用指向<code>CreditCard</code>实例，最后<code>CreditCard</code>实例也被销毁了，这样说明强引用循环被打破了。  </p>
+<h3 id="无主引用以及隐式解析可选属性"><a href="#无主引用以及隐式解析可选属性" class="headerlink" title="无主引用以及隐式解析可选属性"></a>无主引用以及隐式解析可选属性</h3><p>下面的例子定义了两个类，<code>Country</code>和<code>City</code>，每个类将另外一个类的实例保存为属性。在这个模型中，每个国家必须有首都，而每一个城市必须属于一个国家。为了实现这种关系，<code>Country</code>类拥有一个<code>capitalCity</code>属性，而<code>City</code>类有一个<code>country</code>属性：  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Country</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">let</span> capitalCity: <span class="type">City</span>!</span><br><span class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>, capitalName: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.name = name</span><br><span class="line">        <span class="keyword">self</span>.capitalCity = <span class="type">City</span>(name: capitalName, country: <span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">City</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">unowned</span> <span class="keyword">let</span> country: <span class="type">Country</span></span><br><span class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>, country: <span class="type">Country</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.name = name</span><br><span class="line">        <span class="keyword">self</span>.country = country</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这种场景中，两个属性都必须有值，并且初始化完成后不能为<code>nil</code>。在这种场景中，需要一个类使用无主属性，而另外一个类使用隐式解析可选属性。</p>
+<p>隐式解析可选(<code>Implicitly Unwrapped Optionals</code>)被用于类的初始化方法中，避免循环引用，因为编译器会将其认为默认<code>nil</code>，不需赋值就可以完成类的初始化，在例子中一旦<code>name</code>属性被赋值后(但<code>capitalCity</code>还没被赋值时)<code>Country</code>类就已经初始化并且自身（<code>self</code>）可以被引用；这样就能实现一行代码建立<code>Country</code>和<code>City</code>实例而不造成强引用循环。  </p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">var</span> country = Country(name: <span class="string">"Canada"</span>, capitalName: <span class="string">"Ottawa"</span>)</span><br><span class="line"><span class="function"><span class="title">println</span><span class="params">(<span class="string">"\(country.name)'s capital city is called \(country.capitalCity.name)"</span>)</span></span></span><br><span class="line"><span class="comment">// prints "Canada's capital city is called Ottawa"</span></span><br></pre></td></tr></table></figure>
+<p>使用隐式解析可选值的意义在于满足了两个类构造函数的需求。<code>capitalCity</code>属性在初始化完成后，能像非可选值一样使用和存取同时还避免了循环强引用。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><code>Person</code>和<code>Apartment</code>的例子展示了两个属性的值都允许为<code>nil</code>，并会潜在的产生循环强引用。这种场景最适合用弱引用来解决。  </p>
+<p><code>Customer</code>和<code>CreditCard</code>的例子展示了一个属性的值允许为<code>nil</code>，而另一个属性的值不允许为<code>nil</code>，并会潜在的产生循环强引用。这种场景最适合通过无主引用来解决。  </p>
+<p><code>Country</code>和<code>City</code>的例子展示了两个属性的值都不允许为<code>nil</code>，并会潜在的产生循环强引用。这种场景需要一个类使用无主属性，而另外一个类使用隐式解析可选属性。  </p>
+<h2 id="闭包引起的强引用循环"><a href="#闭包引起的强引用循环" class="headerlink" title="闭包引起的强引用循环"></a>闭包引起的强引用循环</h2><p>强引用循环还会发生在当你将一个闭包赋值给类实例的某个属性，并且这个闭包体中又使用了实例。这个闭包体中可能访问了实例的某个属性，例如<code>self.someProperty</code>，或者闭包中调用了实例的某个方法，例如<code>self.someMethod</code>。这两种情况都导致了闭包 “捕获” <code>self</code>，因为闭包也是引用类型，从而产生了强引用循环。在Swift中闭包如果想使用外部的实例，不必像OC中的Block那样在外部实例前加<code>__block</code>加以修饰，而是可以直接用“值捕获”的方式捕获到闭包外面的实例。Swift 会决定捕获引用还是拷贝值，并负责管理内存释放。    </p>
+<p>Swift 有如下要求：只要在闭包内使用self的成员，就要用self.someProperty或者self.someMethod（而不只是someProperty或someMethod）。这提醒你可能会不小心就捕获了self。  </p>
+<p>在OC中也存在<code>Block</code>中引用<code>self</code>或<code>self</code>的属性而导致<code>self</code>被<code>Block</code> retain，进而产生引用循环，这也是为什么代理属性都被声明为<code>weak</code>的原因。  </p>
+<p>下面的例子为你展示了当一个闭包引用了self后是如何产生一个循环强引用的。例子中定义了一个叫HTMLElement的类，用一种简单的模型表示 HTML 中的一个单独的元素：  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HTMLElement</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">let</span> text: <span class="type">String</span>?</span><br><span class="line"></span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> asHTML: () -&gt; <span class="type">String</span> = &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> text = <span class="keyword">self</span>.text &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"&lt;<span class="subst">\(<span class="keyword">self</span>.name)</span>&gt;<span class="subst">\(text)</span>&lt;/<span class="subst">\(<span class="keyword">self</span>.name)</span>&gt;"</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"&lt;<span class="subst">\(<span class="keyword">self</span>.name)</span> /&gt;"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>, text: <span class="type">String</span>? = <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.name = name</span><br><span class="line">        <span class="keyword">self</span>.text = text</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">deinit</span> &#123;</span><br><span class="line">        <span class="built_in">println</span>(<span class="string">"<span class="subst">\(name)</span> is being deinitialized"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>HTMLElement</code>定义了一个<code>lazy</code>属性<code>asHTML</code>。这个属性引用了一个闭包，将<code>name</code>和<code>text</code>组合成 HTML 字符串片段。该属性是<code>() -&gt; String</code>类型，或者可以理解为“一个没有参数，返回<code>String</code>的函数”。因为该闭包无参数并可推断出返回值类型，所以采取了简写，省略了关键字<code>in</code>和闭包的参数和返回值类型声明。  </p>
+<p><code>asHTML</code>声明为<code>lazy</code>属性，因为只有当元素确实需要处理为HTML输出的字符串时，才需要使用<code>asHTML</code>。也就是说，在默认的闭包中可以使用<code>self</code>，因为只有当初始化完成以及<code>self</code>确实存在后，才能访问<code>lazy</code>属性。  </p>
+<p>下面的代码展示了如何用HTMLElement类创建实例并打印消息  </p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var paragraph: HTMLElement? = HTMLElement(name: <span class="string">"p"</span>, text: <span class="string">"hello, world"</span>)</span><br><span class="line">println(paragraph!.asHTML())</span><br><span class="line">// prints<span class="string">"hello, world"</span></span><br></pre></td></tr></table></figure>
+<p>不幸的是，上面写的HTMLElement类产生了类实例和asHTML默认值的闭包之间的循环强引用。循环强引用如下图所示：  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/closureReferenceCycle01_2x.png" alt="">  </p>
+<p>虽然闭包多次使用了<code>self</code>，它只捕获<code>HTMLElement</code>实例的一个强引用。如果设置<code>paragraph</code>变量为<code>nil</code>，打破它持有的<code>HTMLElement</code>实例的强引用，<code>HTMLElement</code>实例和它的闭包都不会被销毁，也是因为强引用循环  </p>
+<h2 id="解决闭包引起的循环强引用"><a href="#解决闭包引起的循环强引用" class="headerlink" title="解决闭包引起的循环强引用"></a>解决闭包引起的循环强引用</h2><p>Swift 提供了一种优雅的方法来解决这个问题，称之为闭包捕获列表（closuer capture list）  </p>
+<h3 id="定义捕获列表"><a href="#定义捕获列表" class="headerlink" title="定义捕获列表"></a>定义捕获列表</h3><p>捕获列表放置在闭包参数列表和返回类型之前，列表中每项都是由<code>weak</code>或<code>unowned</code>关键字和实例的引用（如self或someInstance）成对组成。每项都通过逗号分开写在方括号中。  </p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lazy var someClosure: (Int, <span class="built_in">String</span>) -&gt; <span class="built_in">String</span> = &#123;</span><br><span class="line">    [unowned <span class="keyword">self</span>] (index: Int, stringToProcess: <span class="built_in">String</span>) -&gt; <span class="built_in">String</span> <span class="keyword">in</span></span><br><span class="line">    <span class="comment">// closure body goes here</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果闭包没有指定参数列表或者返回类型，则可以通过上下文推断，那么可以捕获列表放在闭包开始的地方，跟着是关键字<code>in</code>：  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">lazy</span> <span class="keyword">var</span> someClosure: () -&gt; <span class="type">String</span> = &#123;</span><br><span class="line">    [<span class="keyword">unowned</span> <span class="keyword">self</span>] <span class="keyword">in</span></span><br><span class="line">    <span class="comment">// closure body goes here</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="捕获列表中的弱引用和无主引用"><a href="#捕获列表中的弱引用和无主引用" class="headerlink" title="捕获列表中的弱引用和无主引用"></a>捕获列表中的弱引用和无主引用</h3><p>当捕获引用有时可能会是<code>nil</code>时，将闭包内的捕获定义为弱引用。<br>当闭包和捕获的实例总是互相引用时并且总是同时销毁时，将闭包内的捕获定义为无主引用。<br>如果捕获的引用绝对不会置为<code>nil</code>，应该用无主引用，而不是弱引用。  </p>
+<p>前面的<code>HTMLElement</code>例子中，无主引用是正确的解决循环强引用的方法。这样编写<code>HTMLElement</code>类来避免循环强引用：  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HTMLElement</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">let</span> text: <span class="type">String</span>?</span><br><span class="line"></span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> asHTML: () -&gt; <span class="type">String</span> = &#123;</span><br><span class="line">        [<span class="keyword">unowned</span> <span class="keyword">self</span>] <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> text = <span class="keyword">self</span>.text &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"&lt;<span class="subst">\(<span class="keyword">self</span>.name)</span>&gt;<span class="subst">\(text)</span>&lt;/<span class="subst">\(<span class="keyword">self</span>.name)</span>&gt;"</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"&lt;<span class="subst">\(<span class="keyword">self</span>.name)</span> /&gt;"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>, text: <span class="type">String</span>? = <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.name = name</span><br><span class="line">        <span class="keyword">self</span>.text = text</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">deinit</span> &#123;</span><br><span class="line">        <span class="built_in">println</span>(<span class="string">"<span class="subst">\(name)</span> is being deinitialized"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的例子只是多了一个捕获列表并增加关键字<code>in</code>，使用捕获列表后引用关系如下图所示：  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/closureReferenceCycle02_2x.png" alt="">  </p>
+<p>这一次，闭包以无主引用的形式捕获<code>self</code>，并不会持有<code>HTMLElement</code>实例的强引用。如果将<code>paragraph</code>赋值为<code>nil</code>，<code>HTMLElement</code>实例将会被销毁，并能看到它的析构函数打印出的消息。  </p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">paragraph = <span class="keyword">nil</span></span><br><span class="line"><span class="comment">// prints "p is being deinitialized"</span></span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Swift/">Swift</a><a href="/tags/ARC/">ARC</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2014/06/17/swiftzhong-de-arc/" data-title="Swift中的ARC | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2014/06/17/optionals-and-optional-chaining-in-swift/" title="Optionals and Optional Chaining in Swift">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Optionals and Optional Chaining in Swift</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2014/06/16/swiftzhong-zai-yun-suan-fu/"  title="Swift重载和自定义运算符">
+ <strong>下一篇：</strong><br/> 
+ <span>Swift重载和自定义运算符
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="blog/2014/06/17/swiftzhong-de-arc/" data-title="Swift中的ARC" data-url="http://yulingtianxia.com/blog/2014/06/17/swiftzhong-de-arc/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类实例之间强引用循环的产生"><span class="toc-number">2.</span> <span class="toc-text">类实例之间强引用循环的产生</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何解决实例间强引用循环"><span class="toc-number">3.</span> <span class="toc-text">如何解决实例间强引用循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#弱引用"><span class="toc-number">3.1.</span> <span class="toc-text">弱引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无主引用"><span class="toc-number">3.2.</span> <span class="toc-text">无主引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无主引用以及隐式解析可选属性"><span class="toc-number">3.3.</span> <span class="toc-text">无主引用以及隐式解析可选属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">3.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#闭包引起的强引用循环"><span class="toc-number">4.</span> <span class="toc-text">闭包引起的强引用循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决闭包引起的循环强引用"><span class="toc-number">5.</span> <span class="toc-text">解决闭包引起的循环强引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义捕获列表"><span class="toc-number">5.1.</span> <span class="toc-text">定义捕获列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#捕获列表中的弱引用和无主引用"><span class="toc-number">5.2.</span> <span class="toc-text">捕获列表中的弱引用和无主引用</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13.75px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 13.75px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 12.5px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 13.75px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.75px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"yulingtianxia"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

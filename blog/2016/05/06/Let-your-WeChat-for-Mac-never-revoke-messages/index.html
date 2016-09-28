@@ -1,0 +1,626 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>让你的微信不再被人撤回消息 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp;amp; iOS。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="让你的微信不再被人撤回消息">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp;amp; iOS。">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-findfuntion@2x.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-pseudocode@2x.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-revokemsg@2x.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-NewExecutable@2x.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineering/wechat-ios.png">
+<meta property="og:updated_time" content="2016-08-27T03:30:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="让你的微信不再被人撤回消息">
+<meta name="twitter:description" content="处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp;amp; iOS。">
+<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-findfuntion@2x.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/" title="让你的微信不再被人撤回消息" itemprop="url">让你的微信不再被人撤回消息</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2016-05-06T10:24:04.000Z" itemprop="datePublished"> 发表于 2016-05-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#为什么不对-iOS-动刀-Mac-和-iOS-双管齐下"><span class="toc-number">1.</span> <span class="toc-text">为什么不对 iOS 动刀 Mac 和 iOS 双管齐下</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#脑洞和胆子都要大"><span class="toc-number">2.</span> <span class="toc-text">脑洞和胆子都要大</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS-要稍微折腾一些"><span class="toc-number">3.</span> <span class="toc-text">iOS 要稍微折腾一些</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li></ol>
+		
+		</div>
+		
+		<p>处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp; iOS。</p>
+<a id="more"></a>
+<h1 id="为什么不对-iOS-动刀-Mac-和-iOS-双管齐下"><a href="#为什么不对-iOS-动刀-Mac-和-iOS-双管齐下" class="headerlink" title="为什么不对 iOS 动刀 Mac 和 iOS 双管齐下"></a><del>为什么不对 iOS 动刀</del> Mac 和 iOS 双管齐下</h1><p><del>iOS 上的微信 APP 不一定始终在前台运行着，如果别人在撤回消息时微信在后台甚至手机锁屏、断网，这时很可能没有调用撤回消息的方法，甚至当微信重新返回到前台时，从服务器根本不会接到原来消息的数据，而是只收到了一条『撤回』指令。基于以上猜测，我决定对微信 for Mac 下手，毕竟电脑上的微信只要开着就一直接收消息，Mac 版微信不会跑到后台。</del></p>
+<p>PS：后来有人说 Web 版微信本来就不会撤回消息。。。可惜我从没用过；发送和撤回消息时 iOS 微信即使没运行，在之后接收服务器消息时依然会接到原消息内容。。。好吧是我高估了微信。。。</p>
+<p>20160701 Update：</p>
+<p>今天在家无聊顺手也吧 iOS 的微信搞定了，只是比 Mac 的稍微麻烦一点罢了。</p>
+<h1 id="脑洞和胆子都要大"><a href="#脑洞和胆子都要大" class="headerlink" title="脑洞和胆子都要大"></a>脑洞和胆子都要大</h1><p>之前看的一些逆向的教程里，感觉前期工作都是装软件配环境，噼里啪啦命令一顿敲，整的挺玄乎，其实都是用人家现成儿的工具做些事情，美其名曰『站在巨人的肩膀上』，这里不再赘述。在我看来第一个真正意义上有难度的事情就是一个字儿：『猜』！</p>
+<p>想要凭 dump 出的头文件里面的一堆函数名类名来猜出想要动手脚的地方，的确是个技术活儿。不仅考验脑洞，有时候还得运气好。把应用程序中的微信拖到 Hopper 中，搜下 “revoke”。这不，我一下子就猜出在哪个方法里面处理撤回消息逻辑的了：</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-findfuntion@2x.png" alt=""></p>
+<p>我凭借直觉，认为 <code>-[MessageService onRevokeMsg:]</code> 就是我们要找的方法。事实也证明我是对的，一次成功！先看看这个方法的伪代码：</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-pseudocode@2x.png" alt=""></p>
+<p>伪代码里面包含着好多层复杂的 <code>if</code> 判断逻辑，想必是这里复杂的业务逻辑让微信的同事无比抓狂，不要怕，我们不想让后面的事情发生，直接来个 <code>return</code> 就万事大吉！按快捷键 『option+A』 或者选择 Hopper 菜单栏的 『Modify -&gt; Assemble Instruction…』来修改第一行汇编语句：</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-revokemsg@2x.png" alt=""></p>
+<p>可能觉得这里直接 <code>return</code> 掉是不是胆子也太大了，其实我还是看了函数里这坨代码的。那么多的 <code>if</code> 判断伴随着的是各种出错场景下的数据上报，真正核心业务逻辑也就是下面这坨：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">r12</span> = [[MessageData alloc] initWithMsgType:<span class="number">0x2710</span>]<span class="comment">;</span></span><br><span class="line"><span class="built_in">rax</span> = [<span class="built_in">r12</span> isSendFromSelf]<span class="comment">;</span></span><br><span class="line"><span class="built_in">rsi</span> = @selector(toUsrName)<span class="comment">;</span></span><br><span class="line">if (LOBYTE(<span class="built_in">rax</span>) != <span class="number">0x0</span>) &#123;</span><br><span class="line">      <span class="built_in">rbx</span> = [[<span class="built_in">r13</span> toUsrName] retain]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">r12</span> setFromUsrName:<span class="built_in">rbx</span>]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">rbx</span> release]<span class="comment">;</span></span><br><span class="line">      <span class="built_in">rbx</span> = [[<span class="built_in">r13</span> fromUsrName] retain]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">r12</span> setToUsrName:<span class="built_in">rbx</span>]<span class="comment">;</span></span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">      <span class="built_in">rbx</span> = [[<span class="built_in">r13</span> toUsrName] retain]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">r12</span> setFromUsrName:<span class="built_in">rbx</span>]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">rbx</span> release]<span class="comment">;</span></span><br><span class="line">      <span class="built_in">rbx</span> = [[<span class="built_in">r13</span> fromUsrName] retain]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">r12</span> setToUsrName:<span class="built_in">rbx</span>]<span class="comment">;</span></span><br><span class="line">&#125;</span><br><span class="line">[<span class="built_in">rbx</span> release]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r12</span> setMsgStatus:<span class="number">0x4</span>]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r12</span> setMsgContent:var_58]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r12</span> setMsgCreateTime:LODWORD([<span class="built_in">r13</span> msgCreateTime])]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r15</span> AddLocalMsg:var_50 msgData:<span class="built_in">r12</span>]<span class="comment">;</span></span><br><span class="line"><span class="built_in">rbx</span> = [[NSArray arrayWithObject:<span class="built_in">r13</span>] retain]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r15</span> DelMsg:var_50 msgList:<span class="built_in">rbx</span> isDelAll:<span class="number">0x0</span>]<span class="comment">;</span></span><br><span class="line"><span class="built_in">r15</span> = *objc_release<span class="comment">;</span></span><br><span class="line">[<span class="built_in">rbx</span> release]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r12</span> release]<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>这段代码先是判断下撤回消息的人是不是自己，然后分情况更新 UI，最后生成并更新数据。既然没有啥重要操作，那就放心地忽略吧哈哈。</p>
+<p>现在需要将修改后的汇编重新生成新的可执行文件。选择 Hopper 菜单里的 『File -&gt; Produce New Executable…』 后点 Yes：</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-NewExecutable@2x.png" alt=""></p>
+<p>最后将生成的可执行文件替换到 <code>/Applications/WeChat.app/Contents/MacOS/WeChat</code></p>
+<p>唯一让我不解的是无需对新的 <code>WeChat</code> 可执行文件进行代码签名微信依然可以正常运行。我是第一次玩逆向，还请前辈大神们指教。做了一系列撤回消息的尝试后，手机上面显示撤回，但 Mac 版微信的消息依然还在。一次猜中，成功！</p>
+<h1 id="iOS-要稍微折腾一些"><a href="#iOS-要稍微折腾一些" class="headerlink" title="iOS 要稍微折腾一些"></a>iOS 要稍微折腾一些</h1><p>前提是有一个已经砸壳的 ipa，要么自己在越狱机中用 dumpdecrypted 砸壳，或者干脆从第三方工具下一个已经砸壳的（也就是给越狱机安装的）。我一开始从同步助手下的有点问题，后来从PP助手下的。</p>
+<p>有了被砸壳的 ipa 就可以继续了，解压后找到里面的 WeChat.app ，注意用 <code>codesign -dvvv WeChat.app</code> 验证下签名。正版的 app 签名是腾讯的。。。</p>
+<p><strong>第一步</strong>，猜，嗯，是 <code>-[CMessageMgr onRevokeMsg:]</code> 这个方法。类名换了而已。</p>
+<p><strong>第二步</strong>，改汇编代码。这里需要改的是 Thumb 指令集。其实它是较新的 ARM 处理器的一种模式。我们比较关心的是各种指令的含义，尤其是如何从 Thumb 切换回 ARM，没错，就是用 <code>bx</code>：</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineering/wechat-ios.png" alt=""></p>
+<p>这有一个<a href="http://infocenter.arm.com/help/topic/com.arm.doc.qrc0006ec/QRC0006_UAL16.pdf" target="_blank" rel="external">Thumb® 16 位指令集快速参考卡</a></p>
+<p>最后还是跟之前一样替换生成的可执行文件。</p>
+<p><strong>第三步</strong>，签名！建议先阅读 <a href="http://objccn.io/issue-17-2/" target="_blank" rel="external">代码签名探析</a>，了解下授权机制 (Entitlements) 和配置文件 (Provisioning)。这一步的前提是拥有一个合法证书，个人或企业都可以！</p>
+<p>先随便新建个工程(我的叫 testUIImage，昨晚研究 UIImage 时建的)，一定要用证书签名，别选 None。。。target 架构选对（自己手机），编译后生成了个 ipa 文件。我们要的就是它里面的签名信息。</p>
+<p>先用 <code>ldid</code> 工具在桌面上生成个授权文件（Entitlements.plist）：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldid -e <span class="regexp">/Users/y</span>angxiaoyu<span class="regexp">/Library/</span>Developer<span class="regexp">/Xcode/</span>DerivedData<span class="regexp">/testUIImage-aoqcifvynorulecqtwqqugleuktf/</span>Build<span class="regexp">/Products/</span>Debug-iphoneos<span class="regexp">/testUIImage.app/</span>testUIImage &gt; ~<span class="regexp">/Desktop/</span>Entitlements.plist</span><br></pre></td></tr></table></figure>
+<p>PS：我是用 <code>homebrew</code> 安装的 <code>ldid</code></p>
+<p>然后把 testUIImage.app 中的配置文件 (Provisioning) <strong>embedded.mobileprovision</strong> 复制粘贴到我们的 WeChat.app 中。（右键显示包内容都会吧）</p>
+<p>最后用 <code>codesign</code> 命令对 WeChat.app 签名，注意替换为你自己的证书『常用名称』：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codesign -f -s <span class="string">"iPhone Developer: xiaoyu yang (XXXXXXXXX)"</span> --entitlements <span class="regexp">/Users/y</span>angxiaoyu<span class="regexp">/Desktop/</span>Entitlements.plist <span class="regexp">/Users/y</span>angxiaoyu<span class="regexp">/Desktop/</span>微信_v6.<span class="number">3.22</span><span class="regexp">/Payload/</span>WeChat.app</span><br></pre></td></tr></table></figure>
+<p><strong>第四步</strong>，也是最后一步，打包新的 WeChat.ipa：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcrun -sdk iphoneos PackageApplication -v <span class="regexp">/Users/y</span>angxiaoyu<span class="regexp">/Desktop/</span>微信_v6.<span class="number">3.22</span><span class="regexp">/Payload/</span>WeChat.app  -o ~<span class="regexp">/Desktop/</span>WeChat.ipa</span><br></pre></td></tr></table></figure>
+<p>现在可以把新的 WeChat.ipa 安装到自己的手机上啦！</p>
+<p>验证了下退出微信杀掉进程后，对方发消息并撤回，进入微信后依然可以收到撤回的消息。excited！</p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>其实逆向工程是门很有趣的学问，而任何学问都是入门简单深入难。本例看似容易，其实如果面对更加复杂的环境下，光靠我那点儿可怜的汇编知识肯定是不够的。如果是对 iOS 上的 APP 进行逆向，实则准备工作要麻烦得多。真正掌握了底层的原理和基础知识才是硬道理！</p>
+<p>其实是利用 Security 框架在 app 内部验证签名防止被人修改的，当然在 Mac 上我们最方便的还是用 <code>codesign</code> 命令啦。苹果提供了<a href="https://developer.apple.com/library/mac/documentation/Security/Reference/CodeSigningRef/index.html#//apple_ref/doc/uid/TP40008151-CH2-SW27" target="_blank" rel="external">代码签名服务的文档</a></p>
+<p>老子终于也当了回标题党！啊哈！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/iOS/">iOS</a><a href="/tags/Reverse-Engineering/">Reverse Engineering</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/" data-title="让你的微信不再被人撤回消息 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/" title="Objective-C 消息发送与转发机制原理">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Objective-C 消息发送与转发机制原理</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2016/04/28/Find-Convex-Hull-with-Graham-Scan-Swift/"  title="Find Convex Hull with Graham Scan &amp; Swift">
+ <strong>下一篇：</strong><br/> 
+ <span>Find Convex Hull with Graham Scan &amp; Swift
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/" data-title="让你的微信不再被人撤回消息" data-url="http://yulingtianxia.com/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#为什么不对-iOS-动刀-Mac-和-iOS-双管齐下"><span class="toc-number">1.</span> <span class="toc-text">为什么不对 iOS 动刀 Mac 和 iOS 双管齐下</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#脑洞和胆子都要大"><span class="toc-number">2.</span> <span class="toc-text">脑洞和胆子都要大</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS-要稍微折腾一些"><span class="toc-number">3.</span> <span class="toc-text">iOS 要稍微折腾一些</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13.75px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 13.75px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 12.5px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 13.75px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.75px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"yulingtianxia"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
