@@ -1,0 +1,641 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Let&#39;s Talk About project.pbxproj | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="project.pbxproj 文件被包含于 Xcode 工程文件 *.xcodeproj 之中，存储着 Xcode 工程的各项配置参数。它本质上是一种旧风格的 Property List 文件，历史可追溯到 NeXT 的 OpenStep。其可读性不如 xml 和 json，苹果却一直沿用至今，作为一家以创新闻名的公司可能这里剩下的就是情怀吧。
+本文谈了下 project.pbxproj 的知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Let's Talk About project.pbxproj">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2016/09/28/Let-s-Talk-About-project-pbxproj/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="project.pbxproj 文件被包含于 Xcode 工程文件 *.xcodeproj 之中，存储着 Xcode 工程的各项配置参数。它本质上是一种旧风格的 Property List 文件，历史可追溯到 NeXT 的 OpenStep。其可读性不如 xml 和 json，苹果却一直沿用至今，作为一家以创新闻名的公司可能这里剩下的就是情怀吧。
+本文谈了下 project.pbxproj 的知识">
+<meta property="og:image" content="https://github.com/yulingtianxia/pbxprojHelper/blob/master/images/MainWindow@2x.png?raw=true">
+<meta property="og:image" content="https://github.com/yulingtianxia/pbxprojHelper/blob/master/images/GeneratorWindow@2x.png?raw=true">
+<meta property="og:updated_time" content="2016-10-03T06:01:07.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Let's Talk About project.pbxproj">
+<meta name="twitter:description" content="project.pbxproj 文件被包含于 Xcode 工程文件 *.xcodeproj 之中，存储着 Xcode 工程的各项配置参数。它本质上是一种旧风格的 Property List 文件，历史可追溯到 NeXT 的 OpenStep。其可读性不如 xml 和 json，苹果却一直沿用至今，作为一家以创新闻名的公司可能这里剩下的就是情怀吧。
+本文谈了下 project.pbxproj 的知识">
+<meta name="twitter:image" content="https://github.com/yulingtianxia/pbxprojHelper/blob/master/images/MainWindow@2x.png?raw=true">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2016/09/28/Let-s-Talk-About-project-pbxproj/" title="Let&#39;s Talk About project.pbxproj" itemprop="url">Let&#39;s Talk About project.pbxproj</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-28T14:58:19.000Z" itemprop="datePublished"> 发表于 2016-09-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Property-List-的历史"><span class="toc-number">1.</span> <span class="toc-text">Property List 的历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作-Property-List-的途径"><span class="toc-number">2.</span> <span class="toc-text">操作 Property List 的途径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简要解析-project-pbxproj-文件"><span class="toc-number">3.</span> <span class="toc-text">简要解析 project.pbxproj 文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#内容规则"><span class="toc-number">3.1.</span> <span class="toc-text">内容规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内容类型"><span class="toc-number">3.2.</span> <span class="toc-text">内容类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作-project-pbxproj-文件"><span class="toc-number">4.</span> <span class="toc-text">操作 project.pbxproj 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">5.</span> <span class="toc-text">Reference</span></a></li></ol>
+		
+		</div>
+		
+		<p>project.pbxproj 文件被包含于 Xcode 工程文件 *.xcodeproj 之中，存储着 Xcode 工程的各项配置参数。它本质上是一种旧风格的 Property List 文件，历史可追溯到 NeXT 的 OpenStep。其可读性不如 xml 和 json，苹果却一直沿用至今，作为一家以创新闻名的公司可能这里剩下的就是情怀吧。</p>
+<p>本文谈了下 project.pbxproj 的知识，并总结了一些操作工程文件的优秀轮子，并在最后给出了自己的解决方案 <a href="https://github.com/yulingtianxia/pbxprojHelper" target="_blank" rel="external">pbxprojHelper</a>。</p>
+<a id="more"></a>
+<h2 id="Property-List-的历史"><a href="#Property-List-的历史" class="headerlink" title="Property List 的历史"></a>Property List 的历史</h2><p>想了解 project.pbxproj 文件格式，就需要先了解 Property List。</p>
+<p>Property List 有很多种表现方式，最古老的格式就是之前提到的 NeXTSTEP 所使用的格式。那时还算是可读性很强的，仍需要手动编辑。与 json 最明显的差别是：数组用小括号括起来并用逗号隔开元素；字典用大括号括起来并用分号隔开键值对，键值之间用等号连接；二进制数据用尖括号 <code>&lt;&gt;</code> 括起来：</p>
+<p>数组：</p>
+<figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( <span class="string">"1"</span>, <span class="string">"2"</span>, <span class="string">"3"</span> )</span><br></pre></td></tr></table></figure>
+<p>字典：</p>
+<figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">"key"</span> = <span class="string">"value"</span><span class="comment">;</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这也是 project.pbxproj 文件中所使用的格式。</p>
+<p>后来出现的 GNUstep 沿用了 NeXTSTEP 格式，并添加了对 <code>NSValue</code> 和 <code>NSDate</code> 对象的支持。到了苹果的 Mac OS X 10.0 推出了新的 XML 格式，旧的 NeXTSTEP 被废弃，只支持读不支持写。这也是为什么使用 <code>plutil</code> 命令或者 Cocoa 的 <code>NSPropertyListSerialization</code> 写入 OpenStep 格式时会报错：<em>Property list format kCFProperty ListOpenStepFormat not supported for writing</em></p>
+<p>因为 XML 语法啰嗦很占空间，苹果在 Mac OS X 10.2 又推出了一种新格式，将 Property List 存储于二进制文件中。虽然在 Mac OS X 10.7 JSON 格式出现了，但是跟 Property List 不兼容。</p>
+<p>于是乎 Property List 在苹果家族的历史上存在三种格式：OpenStep，XML 和 Binary。<strong>除了 OpenStep 被废弃不支持写入以外，其余格式都提供 API 支持读写。</strong></p>
+<h2 id="操作-Property-List-的途径"><a href="#操作-Property-List-的途径" class="headerlink" title="操作 Property List 的途径"></a>操作 Property List 的途径</h2><p>Unix 的 <code>plutil</code> 工具提供了处理 Property list 文件的能力。 比如将 Property list 文件转成 XML 格式: </p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plutil -convert xml1 -s -r -o project.pbxproj.<span class="keyword">xml</span> <span class="title">project</span>.pbxproj</span><br></pre></td></tr></table></figure>
+<p><code>-convert</code> 选项可以传入的参数有： xml1, binary1 和 json。</p>
+<p>当然 Cocoa 的 <code>NSPropertyListSerialization</code> 也提供了类似的功能，更面向对象。其实 <code>plutil</code> 和 <code>NSPropertyListSerialization</code> 底层都是调用 <code>CoreFoundation</code> 的<code>CFPropertyList</code> 相关的 API，所以功能类似。</p>
+<p>使用 <code>NSPropertyListSerialization</code> 读入 project.pbxproj 文件时，字典中键值对的顺序会跟文件中原始的顺序不一致。这是因为字典为了实现快速查找会将 key 按序存储（比如字典序或用红黑树排序）。用 <code>plutil</code> 命令将 project.pbxproj 文件转成 xml 或 json 也会如此。</p>
+<p>此外，<code>plutil</code> 命令也支持对某个 <code>keypath</code> 的增、删、改操作。<code>NSPropertyListSerialization</code> 就更不用说了，在程序中随意搞。</p>
+<p>之前提到过不支持 OpenStep 写入的问题，所以即便我们能在内存中操作 project.pbxproj 文件，依然不能直接保存。<strong>如果自己动手写一个 OpenStep 格式生成程序，依然无法准确还原字典中键值对的顺序。</strong>更何况 project.pbxproj 文件中还插入了大量增强 human-readable 的注释，这些注释的生成是有特殊逻辑的，这个在后面会讲。</p>
+<h2 id="简要解析-project-pbxproj-文件"><a href="#简要解析-project-pbxproj-文件" class="headerlink" title="简要解析 project.pbxproj 文件"></a>简要解析 project.pbxproj 文件</h2><p>既然表面上无法将修改过的工程文件数据还原为 OpenStep 格式，Xcode 又是如何『开挂』做到的呢？这就得从 project.pbxproj 文件内容说起了。</p>
+<h3 id="内容规则"><a href="#内容规则" class="headerlink" title="内容规则"></a>内容规则</h3><p>project.pbxproj 使用 UUID 作为交叉引用的索引，保证每个配置信息对象的唯一性。因为 UUID 根据机器硬件和时间戳生成，避免了多人在同一时间段操作修改工程文件带来的问题。也就是说工程中每项配置对象都有个唯一的 UUID，然后其他配置对象想引用某个配置对象直接使用它的 UUID 即可。这就跟我们编程时使用指针指向某个对象的地址一样，其他对象的属性想引用它，只需要给属性传个指针地址就行了。</p>
+<p>可以把整个文件的内容想象成一个字典，字典中的 Key 按照字典序来排列。字典的第一层级总共有 5 个键值对，Key 分别为：<code>archiveVersion</code>，<code>classes</code>，<code>objectVersion</code>，<code>objects</code> 和 <code>rootObject</code>。其中重要的 Key 是 <code>objects</code> 和 <code>rootObject</code>。</p>
+<p>所有的配置对象都放在 <code>objects</code> 对应的 Value 中，包括跟对象（<code>rootObject</code>）。 <code>objects</code> 对应的 Value 也是一个字典，Key 都为 UUID，Value 依然是个字典。可以将 <code>rootObject</code> 的值（是一个 UUID）作为 Key 在 <code>objects</code> 对应的字典中找到根对象。这个根对象的 <code>isa</code> 属性为 <code>PBXProject</code>（<code>isa = PBXProject</code>）。<strong>读懂 project.pbxproj 的最好方式就是顺着 <code>rootObject</code> 的各个属性对应的 UUID 在 <code>objects</code> 中找到对应的对象，然后一层层看下去。</strong>这样整个文件的配置信息存放方式就慢慢摸清了。</p>
+<p><strong><code>objects</code> 中的键值对被分成了若干个 section，虽然 section 的顺序是 Xcode 私有 API 钦定的，但每个 section 内部的键值对会根据 Key 的字典序排列。</strong></p>
+<p><strong>每个对象内部的属性（也是键值对）会把 <code>isa</code> 排在最前面，其余的按照字典序排列。</strong></p>
+<p>数组内部的顺序完全按照元素内容的字典序排列。</p>
+<p>下面是 <code>objects</code> 中 <code>PBXNativeTarget</code> section 的一个对象，感受一下格式：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Begin PBXNativeTarget section */</span></span><br><span class="line">		A450185D1D9D68D60002869D <span class="comment">/* projectTest */</span> = &#123;</span><br><span class="line">			isa = PBXNativeTarget<span class="comment">;</span></span><br><span class="line">			<span class="keyword">buildConfigurationList </span>= A45018751D9D68D60002869D <span class="comment">/* Build configuration list for PBXNativeTarget "projectTest" */</span><span class="comment">;</span></span><br><span class="line">			<span class="keyword">buildPhases </span>= (</span><br><span class="line">				A450185A1D9D68D60002869D <span class="comment">/* Sources */</span>,</span><br><span class="line">				A<span class="number">450185B</span>1D9D68D60002869D <span class="comment">/* Frameworks */</span>,</span><br><span class="line">				A450185C1D9D68D60002869D <span class="comment">/* Resources */</span>,</span><br><span class="line">			)<span class="comment">;</span></span><br><span class="line">			<span class="keyword">buildRules </span>= (</span><br><span class="line">			)<span class="comment">;</span></span><br><span class="line">			dependencies = (</span><br><span class="line">			)<span class="comment">;</span></span><br><span class="line">			name = projectTest<span class="comment">;</span></span><br><span class="line">			productName = projectTest<span class="comment">;</span></span><br><span class="line">			productReference = A450185E1D9D68D60002869D <span class="comment">/* projectTest.app */</span><span class="comment">;</span></span><br><span class="line">			productType = <span class="string">"com.apple.product-type.application"</span><span class="comment">;</span></span><br><span class="line">		&#125;<span class="comment">;</span></span><br><span class="line"><span class="comment">/* End PBXNativeTarget section */</span></span><br></pre></td></tr></table></figure>
+<p>可以根据 <code>A45018751D9D68D60002869D</code> 找到对应的 <code>buildConfigurationList</code> 对象的内容，所以说 project.pbxproj 使用 UUID 作为交叉引用的索引。通过这种关系，可以递归构建一张有向图，每个对象都是一个节点。</p>
+<h3 id="内容类型"><a href="#内容类型" class="headerlink" title="内容类型"></a>内容类型</h3><p>在 Xcode 中能看见所有的公共配置信息都存在于 project.pbxproj 中。主要包含跟文件相关的 BuildFile，Group 和 FileReference；跟编译相关的 BuildPhase 和 Build Configuration（List）；以及一些列 Target 和 TargetDependency。</p>
+<p><code>objects</code> 的键值对根据内容类型被分成了若干个 section，采用注释的方式分节也使得可读性更强。section 的数量跟工程有关，尤其是每个工程的 BuildPhase 和 Target 差别都很大。下面列出了一个section 列表（非完整）：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">PBXBuildFile</span><br><span class="line">PBXBuildPhase</span><br><span class="line">PBXAppleScriptBuildPhase</span><br><span class="line">PB<span class="built_in">XCopyFilesBuildPhase</span></span><br><span class="line">PBXFrameworksBuildPhase</span><br><span class="line">PBXHeadersBuildPhase</span><br><span class="line">PBXResourcesBuildPhase</span><br><span class="line">PBXShellScriptBuildPhase</span><br><span class="line">PBXSourcesBuildPhase</span><br><span class="line">PB<span class="built_in">XContainerItemProxy</span></span><br><span class="line">PBXFileElement</span><br><span class="line">PBXFileReference</span><br><span class="line">PBXGroup</span><br><span class="line">PBXVariantGroup</span><br><span class="line">PBXTarget</span><br><span class="line">PBXAggregateTarget</span><br><span class="line">PBXLegacyTarget</span><br><span class="line">PBXNativeTarget</span><br><span class="line">PBXProject</span><br><span class="line">PBXTargetDependency</span><br><span class="line"><span class="built_in">XCBuildConfiguration</span></span><br><span class="line"><span class="built_in">XCConfigurationList</span></span><br></pre></td></tr></table></figure>
+<p>每个 section 中的对象类型都是相同的，对象的类型是靠 <code>isa</code> 的值区分的。对象内部的属性类型以及含义可以参照这篇文章提供的对照表：<a href="http://www.monobjc.net/xcode-project-file-format.html" target="_blank" rel="external">Xcode Project File Format</a></p>
+<h2 id="操作-project-pbxproj-文件"><a href="#操作-project-pbxproj-文件" class="headerlink" title="操作 project.pbxproj 文件"></a>操作 project.pbxproj 文件</h2><p>我收集了一些可以操作 project.pbxproj 文件的优秀轮子，原理大都是用 <code>plutil</code> 转成 json 或 xml 后进行处理，不仅功能非常局限，且都无法完美还原为 OpenStep 格式的内容：</p>
+<ul>
+<li><a href="https://github.com/CocoaPods/Xcodeproj" target="_blank" rel="external">Xcodeproj</a> CocoaPods 写的 Ruby 解析库，用于修改引入 CocoaPods 的工程文件并保存为 XML 格式。CocoaPods 本身是很强大的，还可以用来操作 Xcode workspaces (.xcworkspace), configuration files (.xcconfig) 和 Xcode Scheme files (.xcscheme).</li>
+<li><a href="https://github.com/kronenthaler/mod-pbxproj" target="_blank" rel="external">mod-pbxproj</a> 强大的 Python 解析库，支持一定的修改操作，可输出 OpenStep 格式，但是顺序和注释内容无法完美还原，有些鸡肋。</li>
+<li><a href="https://github.com/truebit/xUnique" target="_blank" rel="external">xUnique</a> 用 Python 写的统一多设备生成的 UUID 的工具，主要用途是统一工程在多设备上生成的 UUID，避免工程文件冲突。</li>
+<li><a href="https://github.com/mjmsmith/pbxplorer" target="_blank" rel="external">pbxplorer</a>  Ruby 写的解析库。</li>
+<li><a href="https://github.com/alunny/node-xcode" target="_blank" rel="external">node-xcode</a> Cordova 基于它管理 Xcode 工程</li>
+</ul>
+<p>不过 <strong>Xcode 可以打开 XML 格式的 project.pbxproj，一旦在 Xcode 界面上修改工程配置就会重新将 project.pbxproj 转成 OpenStep 风格。解铃还须系铃人，经过多番对比之后发现最终还是 Xcode 自己才能将 XML 完美还原成原来的 OpenStep 格式，且 <code>diff</code> 对比毫无差错。</strong>原因很简单，Xcode 使用的私有 API 的导出结果是个黑盒，外界无论怎么猜都会有瑕疵。所以还是导出为 XML 后手动在 Xcode 界面中触发下吧。既然这样的话，如果能够简单高效地生成出 XML 文件作为工程文件就好了。基于此想法我开发了一款叫做 <a href="https://github.com/yulingtianxia/pbxprojHelper" target="_blank" rel="external">pbxprojHelper</a> 的 Mac App：</p>
+<p><img src="https://github.com/yulingtianxia/pbxprojHelper/blob/master/images/MainWindow@2x.png?raw=true" alt="Main Window"></p>
+<p>操作简单粗暴：</p>
+<ol>
+<li>选择一个工程文件然后内容会自动解析在下面的 Outline 列表中，Filter 输入框便于过滤查看内容。</li>
+<li>单击 Outline 列表中的文字即可复制内容到剪贴板，双击复制整个keypath！ </li>
+<li>对 project.pbxproj 文件的增删改操作都配置在 json 文件中，每次想对工程进行修改只需选择对应的 json 配置文件然后点击 “Apply” 即可完成写入替换哦！</li>
+<li>不小心误操作的话还可以点 “Revert” 回滚到上个版本哦！</li>
+<li>什么？懒得写 json 配置文件？下面这个附带的 json 配置生成器可以帮你直接生成一个哦！使用 ⇧⌘0 快捷键即可召唤此神器！选择两个工程文件和 json 保存路径后轻轻一点 “Generate” 就搞定咯：</li>
+</ol>
+<p><img src="https://github.com/yulingtianxia/pbxprojHelper/blob/master/images/GeneratorWindow@2x.png?raw=true" alt="Generator Window"></p>
+<p>所以处理工程文件的正确姿势是：</p>
+<ol>
+<li>拷贝出一份原始的 project.pbxproj 文件</li>
+<li>在 Xcode 界面上修改工程配置，比如修改编译选项，使用自己的证书等</li>
+<li>使用 pbxprojHelper 的 JSON Configuration Generator 来对比修改后的工程文件和原始的工程文件，自动生成 JSON 配置文件</li>
+<li>以后想要在工程文件上施加自己的修改时，只需要应用之前生成好的 JSON 配置文件即可</li>
+</ol>
+<p>pbxprojHelper 的<strong>优势在于可以自由地增删改查任意属性，原生 UI 降低了使用门槛。功能强大的同时人性化的设计使得更快捷浏览工程文件中的内容。无需写任何代码即可一键配置自己想要的工程文件</strong></p>
+<p>你可以在 GitHub 上下载最新的 <a href="https://github.com/yulingtianxia/pbxprojHelper/releases/latest" target="_blank" rel="external">Release</a> 版。</p>
+<p><strong>本项目完全手撸，没依赖上面提到的任何轮子😃</strong></p>
+<p>想了解更多信息请查看 GitHub 主页：<a href="https://github.com/yulingtianxia/pbxprojHelper" target="_blank" rel="external">https://github.com/yulingtianxia/pbxprojHelper</a></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://en.wikipedia.org/wiki/Property_list" target="_blank" rel="external">https://en.wikipedia.org/wiki/Property_list</a><br><a href="http://www.monobjc.net/xcode-project-file-format.html" target="_blank" rel="external">http://www.monobjc.net/xcode-project-file-format.html</a><br><a href="http://stackoverflow.com/questions/1452707/library-to-read-write-pbxproj-xcodeproj-files" target="_blank" rel="external">http://stackoverflow.com/questions/1452707/library-to-read-write-pbxproj-xcodeproj-files</a><br><a href="https://github.com/CocoaPods/Xcodeproj/issues/52" target="_blank" rel="external">https://github.com/CocoaPods/Xcodeproj/issues/52</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/Xcode/">Xcode</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2016/09/28/Let-s-Talk-About-project-pbxproj/" data-title="Let&#39;s Talk About project.pbxproj | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/blog/2016/08/29/Some-Experience-of-Gesture/"  title="处理手势冲突和错乱的一点经验">
+ <strong>下一篇：</strong><br/> 
+ <span>处理手势冲突和错乱的一点经验
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="blog/2016/09/28/Let-s-Talk-About-project-pbxproj/" data-title="Let's Talk About project.pbxproj" data-url="http://yulingtianxia.com/blog/2016/09/28/Let-s-Talk-About-project-pbxproj/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Property-List-的历史"><span class="toc-number">1.</span> <span class="toc-text">Property List 的历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作-Property-List-的途径"><span class="toc-number">2.</span> <span class="toc-text">操作 Property List 的途径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简要解析-project-pbxproj-文件"><span class="toc-number">3.</span> <span class="toc-text">简要解析 project.pbxproj 文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#内容规则"><span class="toc-number">3.1.</span> <span class="toc-text">内容规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内容类型"><span class="toc-number">3.2.</span> <span class="toc-text">内容类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作-project-pbxproj-文件"><span class="toc-number">4.</span> <span class="toc-text">操作 project.pbxproj 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">5.</span> <span class="toc-text">Reference</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13.33px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.44px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 13.33px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.78px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.11px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.22px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.67px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.89px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.33px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.56px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 13.33px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.33px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"yulingtianxia"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
