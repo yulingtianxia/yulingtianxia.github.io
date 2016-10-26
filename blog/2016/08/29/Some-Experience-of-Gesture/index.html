@@ -20,7 +20,7 @@
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/SomeExperienceofGesture/WhichViewShouldResponseToGesture.png">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/SomeExperienceofGesture/transform%E5%AF%B9%E6%AF%94%E5%9D%90%E6%A0%87.png">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/SomeExperienceofGesture/Rotation%E5%8C%BA%E5%9F%9F%E5%88%A4%E6%96%AD.png">
-<meta property="og:updated_time" content="2016-09-28T14:51:15.000Z">
+<meta property="og:updated_time" content="2016-10-18T16:48:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="处理手势冲突和错乱的一点经验">
 <meta name="twitter:description" content="如果一个页面上包含着很多视图，而且界面上业务逻辑比较复杂，那么手势响应冲突或者错乱很容易发生。这时就得猥琐点啦，见招拆招。">
@@ -111,7 +111,7 @@
 <a id="more"></a>
 <h2 id="处理界面多变引发的手势冲突"><a href="#处理界面多变引发的手势冲突" class="headerlink" title="处理界面多变引发的手势冲突"></a>处理界面多变引发的手势冲突</h2><h3 id="分析问题"><a href="#分析问题" class="headerlink" title="分析问题"></a>分析问题</h3><p>界面变化多意味着什么？负责的业务逻辑？不同机型适配？这都不是我要首先去重点考虑的，但有一点很重要，那就是要有一个完善的状态机！要透过现象看本质：手势冲突的原因？难道是因为那几个 <code>UIGestureRecognizerDelegate</code> 方法的实现有问题？或者是因为跨层级传递事件在 <code>hitTest:withEvent:</code> 里的业务逻辑太复杂没理清？其实这些就算都能弄得很明白，界面内容一变化就容易出问题。更有可能为了快速响应用户的操作而让一些视图常驻内存，而不是每次重新创建和添加，这增加了界面内容的复杂度。</p>
 <p>举个栗子，我想让用户发图片前可以对图片进行编辑，比如加段文字、贴纸、滤镜、涂鸦之类的，甚至可以裁剪和加背景音乐。暂且不说如何展示编辑后的图片，但就编辑的界面就很复杂，毕竟好多种编辑模式要在同一个界面中完成。这少不了各种编辑模式入口的按钮，也少不了每种编辑模式对界面视图层级的叠加。起码滤镜要单独一层吧，每个贴纸和文字都是个视图，涂鸦也要一层视图。裁剪时整个图片包括编辑时添加的内容都要跟着一起缩放和旋转，切换滤镜需要滑动，文字和贴纸都要缩放平移旋转等操作。更别提添加文字、贴纸和背景音乐时要覆盖一个全屏的界面（不用新的 controller，而是添加视图），让用户编辑文字或选择素材。这些业务都在一个 controller 里放着，好多层视图叠加，而且变幻莫测。在什么时刻该响应哪个视图的哪个手势，靠什么判断？答案就是：<strong>状态机</strong></p>
-<p>其实在 QQ 日迹中，状态机能解决的更多的是界面错乱的问题，但界面一旦错乱必将对手势判断带来致命影响。就算界面不错乱，也需要在 <code>UIGestureRecognizerDelegate</code> 方法或 <code>hitTest:withEvent:</code> 中知晓当前界面处于何种状态，然后才能准确判断选择哪个手势或哪个视图。这里展开叙述下我对未来可以使用状态机解决 UI 错乱以及因此而引发手势冲突的构想。</p>
+<p>状态机能解决的更多的是界面错乱的问题，但界面一旦错乱必将对手势判断带来致命影响。就算界面不错乱，也需要在 <code>UIGestureRecognizerDelegate</code> 方法或 <code>hitTest:withEvent:</code> 中知晓当前界面处于何种状态，然后才能准确判断选择哪个手势或哪个视图。这里展开叙述下我对未来可以使用状态机解决 UI 错乱以及因此而引发手势冲突的构想。</p>
 <h3 id="使用状态机的构想方案"><a href="#使用状态机的构想方案" class="headerlink" title="使用状态机的构想方案"></a>使用状态机的构想方案</h3><p>可以认为每种编辑模式下都是一种状态，编辑完成之后也是种状态。还要考虑到初始状态或者无状态的情况。用户对图片上的贴纸和文字等元素进行操作时肯定也要设定一种状态。总之状态不求多，但一定要面面俱到无遗漏，要根据当前界面操作设计状态。某种状态下可能还会有子状态，比如涂鸦模式下可能会有画笔、橡皮擦、马赛克，并能选择粗细之类的功能。这些都属于涂鸦模式下界面中的其他小功能，如果把这些功能的对应的状态跟其他几种编辑模式对应的状态放在一起，能保证唯一性的话倒不是说不可以，但很不合适。</p>
 <p>每种状态都要规定它的『下一个状态』的集合，比如涂鸦模式下可能会进入到编辑完成状态，也可能返回到初始状态，也可能进入到裁剪状态。。。这些规则要照着产品经理指定的业务逻辑来，做到调理清晰。制定好每种状态的『下一个状态』的集合后，一张有向图就会展现出来了，规则定了就好办了。不要把这些状态简单理解成『一个枚举』，要用面向对象的思想来实现。比如可以建立个表示状态的基类，再弄个 <code>isValidNextState:</code> 方法来判断输入的状态是否能当做此状态的『下一个状态』。苹果的 <code>GameplayKit</code> 中的状态机（<code>GKStateMachine</code>）就是个很不错的例子。</p>
 <p>下一步就是状态的响应，在状态转换时驱动界面元素的变化。什么？不是应该在点击按钮时对界面做变更么？这种思维很局限，也是导致代码复用不高和 bug 频出的原因。能够改变编辑模式的不一定只有按钮点击，这要根据产品的业务。所以应该让界面变更依赖于状态的变化，这样更集中统一，不容易出差错。（但这样的缺点可能就是产品经理要求上报用户行为时无法获知用户何种操作导致状态变化，这里只能通过在状态类中加标志位判断了。）</p>
@@ -235,6 +235,12 @@
   <div class="linkslist">
   <p class="asidetitle">友情链接</p>
     <ul>
+        
+          <li>
+            
+            	<a href="http://pbxproj.yulingtianxia.com" target="_blank" title="pbxprojHelper">pbxprojHelper</a>
+            
+          </li>
         
           <li>
             

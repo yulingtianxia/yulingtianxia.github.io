@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2016-10-03T06:01:07.000Z</updated>
+  <updated>2016-10-18T16:48:04.000Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yulingtianxia.com/blog/2016/09/28/Let-s-Talk-About-project-pbxproj/"/>
     <id>http://yulingtianxia.com/blog/2016/09/28/Let-s-Talk-About-project-pbxproj/</id>
     <published>2016-09-28T14:58:19.000Z</published>
-    <updated>2016-10-03T06:01:07.000Z</updated>
+    <updated>2016-10-18T16:48:04.000Z</updated>
     
     <content type="html">&lt;p&gt;project.pbxproj 文件被包含于 Xcode 工程文件 *.xcodeproj 之中，存储着 Xcode 工程的各项配置参数。它本质上是一种旧风格的 Property List 文件，历史可追溯到 NeXT 的 OpenStep。其可读性不如 xml 和 json，苹果却一直沿用至今，作为一家以创新闻名的公司可能这里剩下的就是情怀吧。&lt;/p&gt;
 &lt;p&gt;本文谈了下 project.pbxproj 的知识，并总结了一些操作工程文件的优秀轮子，并在最后给出了自己的解决方案 &lt;a href=&quot;https://github.com/yulingtianxia/pbxprojHelper&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;pbxprojHelper&lt;/a&gt;。&lt;/p&gt;
@@ -83,8 +83,11 @@
 &lt;li&gt;以后想要在工程文件上施加自己的修改时，只需要应用之前生成好的 JSON 配置文件即可&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;pbxprojHelper 的&lt;strong&gt;优势在于可以自由地增删改查任意属性，原生 UI 降低了使用门槛。功能强大的同时人性化的设计使得更快捷浏览工程文件中的内容。无需写任何代码即可一键配置自己想要的工程文件&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;你可以在 GitHub 上下载最新的 &lt;a href=&quot;https://github.com/yulingtianxia/pbxprojHelper/releases/latest&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Release&lt;/a&gt; 版。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;本项目完全手撸，没依赖上面提到的任何轮子😃&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;此外还提供了命令行工具 &lt;code&gt;pbxproj&lt;/code&gt;, 它具有 pbxprojHelper.app 具有的大部分功能：&lt;/p&gt;
+&lt;figure class=&quot;highlight applescript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Usage: pbxproj [command_option] &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Command options are (-convert &lt;span class=&quot;keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;the&lt;/span&gt; default):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-compare modified_file -o path          compare modified &lt;span class=&quot;keyword&quot;&gt;property&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;property&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;and&lt;/span&gt; generate a json &lt;span class=&quot;literal&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;at&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;the&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;given&lt;/span&gt; path&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-apply json_file                        apply a json &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;on&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;property&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-revert                                 revert &lt;span class=&quot;keyword&quot;&gt;property&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;to&lt;/span&gt; latest backup&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-convert                                rewrite &lt;span class=&quot;keyword&quot;&gt;property&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt; files &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; xml format&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;可以使用 &lt;code&gt;pbxproj&lt;/code&gt; 搭配 DevToolsCore 私有 framework 来完成修改工程文件并转化成 OpenStep 格式的一条龙自动化程序。&lt;/p&gt;
+&lt;p&gt;你可以在 GitHub 上下载最新的 &lt;a href=&quot;https://github.com/yulingtianxia/pbxprojHelper/releases/latest&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Release&lt;/a&gt; 版。或者在 App Store 中下载：&lt;a href=&quot;https://itunes.apple.com/cn/app/pbxprojhelper/id1160801848?mt=12&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://itunes.apple.com/cn/app/pbxprojhelper/id1160801848?mt=12&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;本项目完全手撸，没依赖上面提到的任何轮子😃。&lt;/strong&gt;但由于使用 Swift 3 来开发，所以最低只能支持 macOS 10.12 系统。&lt;/p&gt;
 &lt;p&gt;想了解更多信息请查看 GitHub 主页：&lt;a href=&quot;https://github.com/yulingtianxia/pbxprojHelper&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/yulingtianxia/pbxprojHelper&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;Reference&quot;&gt;&lt;a href=&quot;#Reference&quot; class=&quot;headerlink&quot; title=&quot;Reference&quot;&gt;&lt;/a&gt;Reference&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Property_list&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://en.wikipedia.org/wiki/Property_list&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;http://www.monobjc.net/xcode-project-file-format.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.monobjc.net/xcode-project-file-format.html&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;http://stackoverflow.com/questions/1452707/library-to-read-write-pbxproj-xcodeproj-files&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://stackoverflow.com/questions/1452707/library-to-read-write-pbxproj-xcodeproj-files&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/CocoaPods/Xcodeproj/issues/52&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/CocoaPods/Xcodeproj/issues/52&lt;/a&gt;&lt;/p&gt;
 </content>
@@ -97,9 +100,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
   </entry>
   
@@ -108,13 +111,13 @@
     <link href="http://yulingtianxia.com/blog/2016/08/29/Some-Experience-of-Gesture/"/>
     <id>http://yulingtianxia.com/blog/2016/08/29/Some-Experience-of-Gesture/</id>
     <published>2016-08-29T02:53:51.000Z</published>
-    <updated>2016-09-28T14:51:15.000Z</updated>
+    <updated>2016-10-18T16:48:04.000Z</updated>
     
     <content type="html">&lt;p&gt;如果一个页面上包含着很多视图，而且界面上业务逻辑比较复杂，那么手势响应冲突或者错乱很容易发生。这时就得猥琐点啦，见招拆招。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
 &lt;h2 id=&quot;处理界面多变引发的手势冲突&quot;&gt;&lt;a href=&quot;#处理界面多变引发的手势冲突&quot; class=&quot;headerlink&quot; title=&quot;处理界面多变引发的手势冲突&quot;&gt;&lt;/a&gt;处理界面多变引发的手势冲突&lt;/h2&gt;&lt;h3 id=&quot;分析问题&quot;&gt;&lt;a href=&quot;#分析问题&quot; class=&quot;headerlink&quot; title=&quot;分析问题&quot;&gt;&lt;/a&gt;分析问题&lt;/h3&gt;&lt;p&gt;界面变化多意味着什么？负责的业务逻辑？不同机型适配？这都不是我要首先去重点考虑的，但有一点很重要，那就是要有一个完善的状态机！要透过现象看本质：手势冲突的原因？难道是因为那几个 &lt;code&gt;UIGestureRecognizerDelegate&lt;/code&gt; 方法的实现有问题？或者是因为跨层级传递事件在 &lt;code&gt;hitTest:withEvent:&lt;/code&gt; 里的业务逻辑太复杂没理清？其实这些就算都能弄得很明白，界面内容一变化就容易出问题。更有可能为了快速响应用户的操作而让一些视图常驻内存，而不是每次重新创建和添加，这增加了界面内容的复杂度。&lt;/p&gt;
 &lt;p&gt;举个栗子，我想让用户发图片前可以对图片进行编辑，比如加段文字、贴纸、滤镜、涂鸦之类的，甚至可以裁剪和加背景音乐。暂且不说如何展示编辑后的图片，但就编辑的界面就很复杂，毕竟好多种编辑模式要在同一个界面中完成。这少不了各种编辑模式入口的按钮，也少不了每种编辑模式对界面视图层级的叠加。起码滤镜要单独一层吧，每个贴纸和文字都是个视图，涂鸦也要一层视图。裁剪时整个图片包括编辑时添加的内容都要跟着一起缩放和旋转，切换滤镜需要滑动，文字和贴纸都要缩放平移旋转等操作。更别提添加文字、贴纸和背景音乐时要覆盖一个全屏的界面（不用新的 controller，而是添加视图），让用户编辑文字或选择素材。这些业务都在一个 controller 里放着，好多层视图叠加，而且变幻莫测。在什么时刻该响应哪个视图的哪个手势，靠什么判断？答案就是：&lt;strong&gt;状态机&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;其实在 QQ 日迹中，状态机能解决的更多的是界面错乱的问题，但界面一旦错乱必将对手势判断带来致命影响。就算界面不错乱，也需要在 &lt;code&gt;UIGestureRecognizerDelegate&lt;/code&gt; 方法或 &lt;code&gt;hitTest:withEvent:&lt;/code&gt; 中知晓当前界面处于何种状态，然后才能准确判断选择哪个手势或哪个视图。这里展开叙述下我对未来可以使用状态机解决 UI 错乱以及因此而引发手势冲突的构想。&lt;/p&gt;
+&lt;p&gt;状态机能解决的更多的是界面错乱的问题，但界面一旦错乱必将对手势判断带来致命影响。就算界面不错乱，也需要在 &lt;code&gt;UIGestureRecognizerDelegate&lt;/code&gt; 方法或 &lt;code&gt;hitTest:withEvent:&lt;/code&gt; 中知晓当前界面处于何种状态，然后才能准确判断选择哪个手势或哪个视图。这里展开叙述下我对未来可以使用状态机解决 UI 错乱以及因此而引发手势冲突的构想。&lt;/p&gt;
 &lt;h3 id=&quot;使用状态机的构想方案&quot;&gt;&lt;a href=&quot;#使用状态机的构想方案&quot; class=&quot;headerlink&quot; title=&quot;使用状态机的构想方案&quot;&gt;&lt;/a&gt;使用状态机的构想方案&lt;/h3&gt;&lt;p&gt;可以认为每种编辑模式下都是一种状态，编辑完成之后也是种状态。还要考虑到初始状态或者无状态的情况。用户对图片上的贴纸和文字等元素进行操作时肯定也要设定一种状态。总之状态不求多，但一定要面面俱到无遗漏，要根据当前界面操作设计状态。某种状态下可能还会有子状态，比如涂鸦模式下可能会有画笔、橡皮擦、马赛克，并能选择粗细之类的功能。这些都属于涂鸦模式下界面中的其他小功能，如果把这些功能的对应的状态跟其他几种编辑模式对应的状态放在一起，能保证唯一性的话倒不是说不可以，但很不合适。&lt;/p&gt;
 &lt;p&gt;每种状态都要规定它的『下一个状态』的集合，比如涂鸦模式下可能会进入到编辑完成状态，也可能返回到初始状态，也可能进入到裁剪状态。。。这些规则要照着产品经理指定的业务逻辑来，做到调理清晰。制定好每种状态的『下一个状态』的集合后，一张有向图就会展现出来了，规则定了就好办了。不要把这些状态简单理解成『一个枚举』，要用面向对象的思想来实现。比如可以建立个表示状态的基类，再弄个 &lt;code&gt;isValidNextState:&lt;/code&gt; 方法来判断输入的状态是否能当做此状态的『下一个状态』。苹果的 &lt;code&gt;GameplayKit&lt;/code&gt; 中的状态机（&lt;code&gt;GKStateMachine&lt;/code&gt;）就是个很不错的例子。&lt;/p&gt;
 &lt;p&gt;下一步就是状态的响应，在状态转换时驱动界面元素的变化。什么？不是应该在点击按钮时对界面做变更么？这种思维很局限，也是导致代码复用不高和 bug 频出的原因。能够改变编辑模式的不一定只有按钮点击，这要根据产品的业务。所以应该让界面变更依赖于状态的变化，这样更集中统一，不容易出差错。（但这样的缺点可能就是产品经理要求上报用户行为时无法获知用户何种操作导致状态变化，这里只能通过在状态类中加标志位判断了。）&lt;/p&gt;
@@ -594,9 +597,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="iOS" scheme="http://yulingtianxia.com/tags/iOS/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Reverse Engineering" scheme="http://yulingtianxia.com/tags/Reverse-Engineering/"/>
     
@@ -661,9 +664,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Algorithm" scheme="http://yulingtianxia.com/tags/Algorithm/"/>
     
@@ -795,9 +798,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Algorithm" scheme="http://yulingtianxia.com/tags/Algorithm/"/>
     

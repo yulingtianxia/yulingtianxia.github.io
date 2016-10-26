@@ -21,7 +21,7 @@
 本文谈了下 project.pbxproj 的知识">
 <meta property="og:image" content="https://github.com/yulingtianxia/pbxprojHelper/blob/master/images/MainWindow@2x.png?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/pbxprojHelper/blob/master/images/GeneratorWindow@2x.png?raw=true">
-<meta property="og:updated_time" content="2016-10-03T06:01:07.000Z">
+<meta property="og:updated_time" content="2016-10-18T16:48:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Let's Talk About project.pbxproj">
 <meta name="twitter:description" content="project.pbxproj 文件被包含于 Xcode 工程文件 *.xcodeproj 之中，存储着 Xcode 工程的各项配置参数。它本质上是一种旧风格的 Property List 文件，历史可追溯到 NeXT 的 OpenStep。其可读性不如 xml 和 json，苹果却一直沿用至今，作为一家以创新闻名的公司可能这里剩下的就是情怀吧。
@@ -170,8 +170,11 @@
 <li>以后想要在工程文件上施加自己的修改时，只需要应用之前生成好的 JSON 配置文件即可</li>
 </ol>
 <p>pbxprojHelper 的<strong>优势在于可以自由地增删改查任意属性，原生 UI 降低了使用门槛。功能强大的同时人性化的设计使得更快捷浏览工程文件中的内容。无需写任何代码即可一键配置自己想要的工程文件</strong></p>
-<p>你可以在 GitHub 上下载最新的 <a href="https://github.com/yulingtianxia/pbxprojHelper/releases/latest" target="_blank" rel="external">Release</a> 版。</p>
-<p><strong>本项目完全手撸，没依赖上面提到的任何轮子😃</strong></p>
+<p>此外还提供了命令行工具 <code>pbxproj</code>, 它具有 pbxprojHelper.app 具有的大部分功能：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Usage: pbxproj [command_option] <span class="built_in">file</span></span><br><span class="line">Command options are (-convert <span class="keyword">is</span> <span class="keyword">the</span> default):</span><br><span class="line">-compare modified_file -o path          compare modified <span class="keyword">property</span> <span class="built_in">list</span> <span class="built_in">file</span> <span class="keyword">with</span> <span class="keyword">property</span> <span class="built_in">list</span> <span class="built_in">file</span> <span class="keyword">and</span> generate a json <span class="literal">result</span> <span class="keyword">at</span> <span class="keyword">the</span> <span class="keyword">given</span> path</span><br><span class="line">-apply json_file                        apply a json <span class="built_in">file</span> <span class="keyword">on</span> <span class="keyword">property</span> <span class="built_in">list</span> <span class="built_in">file</span></span><br><span class="line">-revert                                 revert <span class="keyword">property</span> <span class="built_in">list</span> <span class="built_in">file</span> <span class="keyword">to</span> latest backup</span><br><span class="line">-convert                                rewrite <span class="keyword">property</span> <span class="built_in">list</span> files <span class="keyword">in</span> xml format</span><br></pre></td></tr></table></figure>
+<p>可以使用 <code>pbxproj</code> 搭配 DevToolsCore 私有 framework 来完成修改工程文件并转化成 OpenStep 格式的一条龙自动化程序。</p>
+<p>你可以在 GitHub 上下载最新的 <a href="https://github.com/yulingtianxia/pbxprojHelper/releases/latest" target="_blank" rel="external">Release</a> 版。或者在 App Store 中下载：<a href="https://itunes.apple.com/cn/app/pbxprojhelper/id1160801848?mt=12" target="_blank" rel="external">https://itunes.apple.com/cn/app/pbxprojhelper/id1160801848?mt=12</a></p>
+<p><strong>本项目完全手撸，没依赖上面提到的任何轮子😃。</strong>但由于使用 Swift 3 来开发，所以最低只能支持 macOS 10.12 系统。</p>
 <p>想了解更多信息请查看 GitHub 主页：<a href="https://github.com/yulingtianxia/pbxprojHelper" target="_blank" rel="external">https://github.com/yulingtianxia/pbxprojHelper</a></p>
 <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://en.wikipedia.org/wiki/Property_list" target="_blank" rel="external">https://en.wikipedia.org/wiki/Property_list</a><br><a href="http://www.monobjc.net/xcode-project-file-format.html" target="_blank" rel="external">http://www.monobjc.net/xcode-project-file-format.html</a><br><a href="http://stackoverflow.com/questions/1452707/library-to-read-write-pbxproj-xcodeproj-files" target="_blank" rel="external">http://stackoverflow.com/questions/1452707/library-to-read-write-pbxproj-xcodeproj-files</a><br><a href="https://github.com/CocoaPods/Xcodeproj/issues/52" target="_blank" rel="external">https://github.com/CocoaPods/Xcodeproj/issues/52</a></p>
   
@@ -182,7 +185,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/Xcode/">Xcode</a>
+  <span></span> <a href="/tags/Xcode/">Xcode</a><a href="/tags/macOS/">macOS</a>
   </div>
 
 </div>
@@ -256,6 +259,12 @@
   <div class="linkslist">
   <p class="asidetitle">友情链接</p>
     <ul>
+        
+          <li>
+            
+            	<a href="http://pbxproj.yulingtianxia.com" target="_blank" title="pbxprojHelper">pbxprojHelper</a>
+            
+          </li>
         
           <li>
             
