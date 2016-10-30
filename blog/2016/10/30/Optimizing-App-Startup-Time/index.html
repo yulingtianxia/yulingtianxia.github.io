@@ -1,0 +1,679 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>优化 App 的启动时间 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="这是一篇 WWDC 2016 Session 406 的学习笔记，从原理到实践讲述了如何优化 App 的启动时间。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="优化 App 的启动时间">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2016/10/30/Optimizing-App-Startup-Time/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="这是一篇 WWDC 2016 Session 406 的学习笔记，从原理到实践讲述了如何优化 App 的启动时间。">
+<meta property="og:updated_time" content="2016-10-30T05:22:01.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="优化 App 的启动时间">
+<meta name="twitter:description" content="这是一篇 WWDC 2016 Session 406 的学习笔记，从原理到实践讲述了如何优化 App 的启动时间。">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2016/10/30/Optimizing-App-Startup-Time/" title="优化 App 的启动时间" itemprop="url">优化 App 的启动时间</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2016-10-30T05:11:10.000Z" itemprop="datePublished"> 发表于 2016-10-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#App-运行理论"><span class="toc-number">1.</span> <span class="toc-text">App 运行理论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理论速成"><span class="toc-number">1.1.</span> <span class="toc-text">理论速成</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Mach-O-术语"><span class="toc-number">1.1.1.</span> <span class="toc-text">Mach-O 术语</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mach-O-镜像文件"><span class="toc-number">1.1.2.</span> <span class="toc-text">Mach-O 镜像文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mach-O-Universal-文件"><span class="toc-number">1.1.3.</span> <span class="toc-text">Mach-O Universal 文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#虚拟内存"><span class="toc-number">1.1.4.</span> <span class="toc-text">虚拟内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mach-O-镜像-加载"><span class="toc-number">1.1.5.</span> <span class="toc-text">Mach-O 镜像 加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安全"><span class="toc-number">1.1.6.</span> <span class="toc-text">安全</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从-exec-到-main"><span class="toc-number">1.2.</span> <span class="toc-text">从 exec() 到 main()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dyld-加载-dylib-文件"><span class="toc-number">1.3.</span> <span class="toc-text">dyld 加载 dylib 文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#加载-Dylib"><span class="toc-number">1.3.1.</span> <span class="toc-text">加载 Dylib</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Fix-ups"><span class="toc-number">1.3.2.</span> <span class="toc-text">Fix-ups</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rebasing-和-Binding"><span class="toc-number">1.3.3.</span> <span class="toc-text">Rebasing 和 Binding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rebasing"><span class="toc-number">1.3.4.</span> <span class="toc-text">Rebasing</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Binding"><span class="toc-number">1.3.5.</span> <span class="toc-text">Binding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ObjC-Runtime"><span class="toc-number">1.3.6.</span> <span class="toc-text">ObjC Runtime</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Initializers"><span class="toc-number">1.3.7.</span> <span class="toc-text">Initializers</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#改善启动时间"><span class="toc-number">2.</span> <span class="toc-text">改善启动时间</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测量启动时间"><span class="toc-number">2.1.</span> <span class="toc-text">测量启动时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#优化启动时间"><span class="toc-number">2.2.</span> <span class="toc-text">优化启动时间</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#加载-Dylib-1"><span class="toc-number">2.2.1.</span> <span class="toc-text">加载 Dylib</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rebase-Binding"><span class="toc-number">2.2.2.</span> <span class="toc-text">Rebase/Binding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ObjC-Setup"><span class="toc-number">2.2.3.</span> <span class="toc-text">ObjC Setup</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Initializer"><span class="toc-number">2.2.4.</span> <span class="toc-text">Initializer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li></ol>
+		
+		</div>
+		
+		<p>这是一篇 WWDC 2016 Session 406 的学习笔记，从原理到实践讲述了如何优化 App 的启动时间。</p>
+<a id="more"></a>
+<h2 id="App-运行理论"><a href="#App-运行理论" class="headerlink" title="App 运行理论"></a>App 运行理论</h2><ul>
+<li><code>main()</code> 执行前发生的事</li>
+<li>Mach-O 格式</li>
+<li>虚拟内存基础</li>
+<li>Mach-O 二进制的加载</li>
+</ul>
+<h3 id="理论速成"><a href="#理论速成" class="headerlink" title="理论速成"></a>理论速成</h3><h4 id="Mach-O-术语"><a href="#Mach-O-术语" class="headerlink" title="Mach-O 术语"></a>Mach-O 术语</h4><p>Mach-O 是针对不同运行时可执行文件的文件类型。 </p>
+<p>文件类型：</p>
+<ul>
+<li>Executable： 应用的主要二进制</li>
+<li>Dylib： 动态链接库（又称 DSO 或 DLL）</li>
+<li>Bundle： 不能被链接的 Dylib，只能在运行时使用 <code>dlopen()</code> 加载，可当做 macOS 的插件。</li>
+</ul>
+<p>Image： executable，dylib 或 bundle<br>Framework： 包含 Dylib 以及资源文件和头文件的文件夹</p>
+<h4 id="Mach-O-镜像文件"><a href="#Mach-O-镜像文件" class="headerlink" title="Mach-O 镜像文件"></a>Mach-O 镜像文件</h4><p>Mach-O 被划分成一些 segement，每个 segement 又被划分成一些 section。</p>
+<p>segment 的名字都是大写的，且空间大小为页的整数。页的大小跟硬件有关，在 arm64 架构一页是 16KB，其余为 4KB。</p>
+<p>section 虽然没有整数倍页大小的限制，但是 section 之间不会有重叠。</p>
+<p>几乎所有 Mach-O 都包含这三个段（segment）： <code>__TEXT</code>,<code>__DATA</code> 和 <code>__LINKEDIT</code>：</p>
+<ul>
+<li><code>__TEXT</code> 包含 Mach header，被执行的代码和只读常量（如C 字符串）。只读可执行（r-x）。</li>
+<li><code>__DATA</code> 包含全局变量，静态变量等。可读写（rw-）。</li>
+<li><code>__LINKEDIT</code> 包含了加载程序的『元数据』，比如函数的名称和地址。只读（r–）。</li>
+</ul>
+<h4 id="Mach-O-Universal-文件"><a href="#Mach-O-Universal-文件" class="headerlink" title="Mach-O Universal 文件"></a>Mach-O Universal 文件</h4><p><a href="https://en.wikipedia.org/wiki/Fat_binary" target="_blank" rel="external">FAT 二进制</a>文件，将多种架构的 Mach-O 文件合并而成。它通过 Fat Header 来记录不同架构在文件中的偏移量，Fat Header 占一页的空间。</p>
+<p>按分页来存储这些 segement 和 header 会浪费空间，但这有利于虚拟内存的实现。</p>
+<h4 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h4><p>虚拟内存就是一层间接寻址（indirection）。软件工程中有句格言就是任何问题都能通过添加一个间接层来解决。虚拟内存解决的是管理所有进程使用物理 RAM 的问题。通过添加间接层来让每个进程使用逻辑地址空间，它可以映射到 RAM 上的某个物理页上。这种映射不是一对一的，逻辑地址可能映射不到 RAM 上，也可能有多个逻辑地址映射到同一个物理 RAM 上。针对第一种情况，当进程要存储逻辑地址内容时会触发 page fault；第二种情况就是多进程共享内存。</p>
+<p>对于文件可以不用一次性读入整个文件，可以使用分页映射（<code>mmap()</code>）的方式读取。也就是把文件某个片段映射到进程逻辑内存的某个页上。当某个想要读取的页没有在内存中，就会触发 page fault，内核只会读入那一页，实现文件的懒加载。</p>
+<p>也就是说 Mach-O 文件中的 <code>__TEXT</code> 段可以映射到多个进程，并可以懒加载，且进程之间共享内存。<code>__DATA</code> 段是可读写的。这里使用到了 Copy-On-Write 技术，简称 COW。也就是多个进程共享一页内存空间时，一旦有进程要做写操作，它会先将这页内存内容复制一份出来，然后重新映射逻辑地址到新的 RAM 页上。也就是这个进程自己拥有了那页内存的拷贝。这就涉及到了 clean/dirty page 的概念。dirty page 含有进程自己的信息，而 clean page 可以被内核重新生成（重新读磁盘）。所以 dirty page 的代价大于 clean page。</p>
+<h4 id="Mach-O-镜像-加载"><a href="#Mach-O-镜像-加载" class="headerlink" title="Mach-O 镜像 加载"></a>Mach-O 镜像 加载</h4><p>所以在多个进程加载 Mach-O 镜像时 <code>__TEXT</code> 和  <code>__LINKEDIT</code> 因为只读，都是可以共享内存的。而 <code>__DATA</code> 因为可读写，就会产生 dirty page。当 dyld 执行结束后，<code>__LINKEDIT</code> 就没用了，对应的内存页会被回收。</p>
+<h4 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h4><p>ASLR（Address Space Layout Randomization）：地址空间布局随机化，镜像会在随机的地址上加载。这其实是一二十年前的旧技术了。</p>
+<p>代码签名：可能我们认为 Xcode 会把整个文件都做加密 hash 并用做数字签名。其实为了在运行时验证 Mach-O 文件的签名，并不是每次重复读入整个文件，而是把每页内容都生成一个单独的加密散列值，并存储在 <code>__LINKEDIT</code> 中。这使得文件每页的内容都能及时被校验确并保不被篡改。</p>
+<h3 id="从-exec-到-main"><a href="#从-exec-到-main" class="headerlink" title="从 exec() 到 main()"></a>从 <code>exec()</code> 到 <code>main()</code></h3><p><code>exec()</code> 是一个系统调用。系统内核把应用映射到新的地址空间，且每次起始位置都是随机的（因为使用 ASLR）。并将起始位置到 <code>0x000000</code> 这段范围的进程权限都标记为不可读写不可执行。如果是 32 位进程，这个范围<strong>至少</strong>是 4KB；对于 64 位进程则<strong>至少</strong>是 4GB。NULL 指针引用和指针截断误差都是会被它捕获。</p>
+<h3 id="dyld-加载-dylib-文件"><a href="#dyld-加载-dylib-文件" class="headerlink" title="dyld 加载 dylib 文件"></a><code>dyld</code> 加载 dylib 文件</h3><p>Unix 的前二十年很安逸，因为那时还没有发明动态链接库。有了动态链接库后，一个用于加载链接库的帮助程序被创建。在苹果的平台里是 <code>dyld</code>，其他 Unix 系统也有 <a href="https://zh.wikipedia.org/wiki/Ld.so" target="_blank" rel="external"><code>ld.so</code></a>。 当内核完成映射进程的工作后会将名字为 <code>dyld</code> 的Mach-O 文件映射到进程中的随机地址，它将 PC 寄存器设为 <code>dyld</code> 的地址并运行。<code>dyld</code> 在应用进程中运行的工作是加载应用依赖的所有动态链接库，准备好运行所需的一切，它拥有的权限跟应用一样。</p>
+<p>下面的步骤构成了 <code>dyld</code> 的时间线：</p>
+<p>Load dylibs -&gt; Rebase -&gt; Bind -&gt; ObjC -&gt; Initializers</p>
+<h4 id="加载-Dylib"><a href="#加载-Dylib" class="headerlink" title="加载 Dylib"></a>加载 Dylib</h4><p>从主执行文件的 header 获取到需要加载的所依赖动态库列表，而 header 早就被内核映射过。然后它需要找到每个 dylib，然后打开文件读取文件起始位置，确保它是 Mach-O 文件。接着会找到代码签名并将其注册到内核。然后在 dylib 文件的每个 segment 上调用 <code>mmap()</code>。应用所依赖的 dylib 文件可能会再依赖其他 dylib，所以 <code>dyld</code> 所需要加载的是动态库列表一个递归依赖的集合。一般应用会加载 100 到 400 个 dylib 文件，但大部分都是系统 dylib，它们会被预先计算和缓存起来，加载速度很快。</p>
+<h4 id="Fix-ups"><a href="#Fix-ups" class="headerlink" title="Fix-ups"></a>Fix-ups</h4><p>在加载所有的动态链接库之后，它们只是处在相互独立的状态，需要将它们绑定起来，这就是 Fix-ups。代码签名使得我们不能修改指令，那样就不能让一个 dylib 的调用另一个 dylib。这时需要加很多间接层。</p>
+<p>现代 code-gen 被叫做动态 PIC（Position Independent Code），意味着代码可以被加载到间接的地址上。当调用发生时，code-gen 实际上会在 <code>__DATA</code> 段中创建一个指向被调用者的指针，然后加载指针并跳转过去。</p>
+<p>所以 <code>dyld</code> 做的事情就是修正（fix-up）指针和数据。Fix-up 有两种类型，rebasing 和 binding。</p>
+<h4 id="Rebasing-和-Binding"><a href="#Rebasing-和-Binding" class="headerlink" title="Rebasing 和 Binding"></a>Rebasing 和 Binding</h4><p>Rebasing：在镜像内部调整指针的指向<br>Binding：将指针指向镜像外部的内容</p>
+<p>可以通过命令行查看 rebase 和 bind 等信息：</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">xcrun</span> dyldinfo -rebase -<span class="keyword">bind </span>-lazy_bind myapp.app/myapp</span><br></pre></td></tr></table></figure>
+<p>通过这个命令可以查看所有的 Fix-up。rebase，bind，weak_bind，lazy_bind 都存储在 <code>__LINKEDIT</code> 段中，并可通过 <code>LC_DYLD_INFO_ONLY</code> 查看各种信息的偏移量和大小。</p>
+<p>建议用 MachOView 查看更加方便直观。</p>
+<p>从 <code>dyld</code> 源码层面简要介绍下 Rebasing 和 Binding 的流程。</p>
+<p><code>ImageLoader</code> 是一个用于加载可执行文件的基类，它负责链接镜像，但不关心具体文件格式，因为这些都交给子类去实现。每个可执行文件都会对应一个 <code>ImageLoader</code> 实例。<code>ImageLoaderMachO</code> 是用于加载 Mach-O 格式文件的 <code>ImageLoader</code> 子类，而 <code>ImageLoaderMachOClassic</code> 和 <code>ImageLoaderMachOCompressed</code> 都继承于 <code>ImageLoaderMachO</code>，分别用于加载那些 <code>__LINKEDIT</code> 段为传统格式和压缩格式的 Mach-O 文件。</p>
+<p>因为 dylib 之间有依赖关系，所以 <code>ImageLoader</code> 中的好多操作都是沿着依赖链递归操作的，Rebasing 和 Binding 也不例外，分别对应着 <code>recursiveBind()</code> 和 <code>recursiveBind()</code> 这两个方法。因为是递归，所以会自底向上地分别调用 <code>doRebase()</code> 和 <code>doBind()</code> 方法，这样被依赖的 dylib 总是先于依赖它的 dylib 执行 Rebasing 和 Binding。传入 <code>doRebase()</code> 和 <code>doBind()</code> 的参数包含一个 <code>LinkContext</code> 上下文，存储了可执行文件的一堆状态和相关的函数。</p>
+<p>在 Rebasing 和 Binding 前会判断是否已经 Prebinding。如果已经进行过预绑定（Prebinding），那就不需要 Rebasing 和 Binding 这些 Fix-up 流程了，因为已经在预先绑定的地址加载好了。</p>
+<p><code>ImageLoaderMachO</code> 实例<strong>不使用预绑</strong>定会有四个原因：</p>
+<ol>
+<li>Mach-O Header 中 <code>MH_PREBOUND</code> 标志位为 <code>0</code></li>
+<li>镜像加载地址有偏移（这个后面会讲到）</li>
+<li>依赖的库有变化</li>
+<li>镜像使用 flat-namespace，预绑定的一部分会被忽略</li>
+<li><code>LinkContext</code> 的环境变量禁止了预绑定</li>
+</ol>
+<p><code>ImageLoaderMachO</code> 中 <code>doRebase()</code> 做的事情大致如下：</p>
+<ol>
+<li>如果使用预绑定，<code>fgImagesWithUsedPrebinding</code> 计数加一，并 <code>return</code>;否则进入第二步</li>
+<li>如果 <code>MH_PREBOUND</code> 标志位为 <code>1</code>（也就是可以预绑定但没使用），且镜像在共享内存中，重置上下文中所有的 lazy pointer。（如果镜像在共享内存中，稍后会在 Binding 过程中绑定，所以无需重置）</li>
+<li>如果镜像加载地址偏移量为0，则无需 Rebasing，直接 <code>return</code>；否则进入第四步</li>
+<li>调用 <code>rebase()</code> 方法，这才是真正做 Rebasing 工作的方法。如果开启 <code>TEXT_RELOC_SUPPORT</code> 宏，会允许 <code>rebase()</code> 方法对 <code>__TEXT</code> 段做写操作来对其进行 Fix-up。所以其实 <code>__TEXT</code> 只读属性并不是绝对的。</li>
+</ol>
+<p><code>ImageLoaderMachOClassic</code> 和 <code>ImageLoaderMachOCompressed</code> 分别实现了自己的 <code>doRebase()</code> 方法。实现逻辑大同小异，同样会判断是否使用预绑定，并在真正的 Binding 工作时判断 <code>TEXT_RELOC_SUPPORT</code> 宏来决定是否对 <code>__TEXT</code> 段做写操作。最后都会调用 <code>setupLazyPointerHandler</code> 在镜像中设置 <code>dyld</code> 的 entry point，放在最后调用是为了让主可执行文件设置好 <code>__dyld</code> 或 <code>__program_vars</code>。</p>
+<p>其实真实的 Fix-up 比这要复杂得多。</p>
+<h4 id="Rebasing"><a href="#Rebasing" class="headerlink" title="Rebasing"></a>Rebasing</h4><p>在过去，会把 dylib 加载到指定地址，所有指针和数据对于代码来说都是对的，<code>dyld</code> 就无需做任何 fix-up 了。如今用了 ASLR 后悔将 dylib 加载到新的随机地址(actual_address)，这个随机的地址跟代码和数据指向的旧地址(preferred_address)会有偏差，<code>dyld</code> 需要修正这个偏差(slide)，做法就是将 dylib 内部的指针地址都加上这个偏移量，偏移量的计算方法如下：</p>
+<p>Slide = actual_address - preferred_address</p>
+<p>然后就是重复不断地对 <code>__DATA</code> 段中需要 rebase 的指针加上这个偏移量。这就又涉及到 page fault 和 COW。这可能会产生 I/O 瓶颈，但因为 rebase 的顺序是按地址排列的，所以从内核的角度来看这是个有次序的任务，它会预先读入数据，减少 I/O 消耗。</p>
+<h4 id="Binding"><a href="#Binding" class="headerlink" title="Binding"></a>Binding</h4><p>Binding 是处理那些指向 dylib 外部的指针，它们实际上被符号（symbol）名称绑定，也就是个字符串。之前提到 <code>__LINKEDIT</code> 段中也存储了需要 bind 的指针，以及指针需要指向的符号。<code>dyld</code> 需要找到 symbol 对应的实现，这需要很多计算，去符号表里查找。找到后会将内容存储到 <code>__DATA</code> 段中的那个指针中。Binding 看起来计算量比 Rebasing 更大，但其实需要的 I/O 操作很少，因为之前 Rebasing 已经替 Binding 做过了。</p>
+<h4 id="ObjC-Runtime"><a href="#ObjC-Runtime" class="headerlink" title="ObjC Runtime"></a>ObjC Runtime</h4><p>Objective-C 中有很多数据结构都是靠 Rebasing 和 Binding 来修正（fix-up）的，比如 <code>Class</code> 中指向超类的指针和指向方法的指针。</p>
+<p>ObjC 是个动态语言，可以用类的名字来实例化一个类的对象。这意味着 ObjC Runtime 需要维护一张映射类名与类的全局表。当加载一个 dylib 时，其定义的所有的类都需要被注册到这个全局表中。</p>
+<p>C++ 中有个问题叫做易碎的基类（fragile base class）。ObjC 就没有这个问题，因为会在加载时通过 fix-up 动态类中改变实例变量的偏移量。</p>
+<p>在 ObjC 中可以通过定义类别（Category）的方式改变一个类的方法。有时你想要添加方法的类在另一个 dylib 中，而不在你的镜像中（也就是对系统或别人的类动刀），这时也需要做些 fix-up。</p>
+<p>ObjC 中的 selector 必须是唯一的。</p>
+<h4 id="Initializers"><a href="#Initializers" class="headerlink" title="Initializers"></a>Initializers</h4><p>C++ 会为静态创建的对象生成初始化器。而在 ObjC 中有个叫 <code>+load</code> 的方法，然而它被废弃了，现在建议使用 <code>+initialize</code>。对比详见：<a href="http://stackoverflow.com/questions/13326435/nsobject-load-and-initialize-what-do-they-do" target="_blank" rel="external">http://stackoverflow.com/questions/13326435/nsobject-load-and-initialize-what-do-they-do</a></p>
+<p>现在有了主执行文件，一堆 dylib，其依赖关系构成了一张巨大的有向图，那么执行初始化器的顺序是什么？自顶向上！按照依赖关系，先加载叶子节点，然后逐步向上加载中间节点，直至最后加载根节点。这种加载顺序确保了安全性，加载某个 dylib 前，其所依赖的其余 dylib 文件肯定已经被预先加载。</p>
+<p>最后 <code>dyld</code> 会调用 <code>main()</code> 函数。<code>main()</code> 会调用 <code>UIApplicationMain()</code>。</p>
+<h2 id="改善启动时间"><a href="#改善启动时间" class="headerlink" title="改善启动时间"></a>改善启动时间</h2><p>从点击 App 图标到加载 App 闪屏之间会有个动画，我们希望 App 启动速度比这个动画更快。虽然不同设备上 App 启动速度不一样，但启动时间最好控制在 400ms。需要注意的是启动时间一旦超过 20s，系统会认为发生了死循环并杀掉 App 进程。当然启动时间最好以 App 所支持的最低配置设备为准。直到 <code>applicationWillFinishLaunching</code> 被调动，App 才启动结束。</p>
+<h3 id="测量启动时间"><a href="#测量启动时间" class="headerlink" title="测量启动时间"></a>测量启动时间</h3><p>Warm launch: App 和数据已经在内存中<br>Cold launch: App 不在内核缓冲存储器中</p>
+<p>冷启动（Cold launch）耗时才是我们需要测量的重要数据，为了准确测量冷启动耗时，测量前需要重启设备。在 <code>main()</code> 方法执行前测量是很难的，好在 <code>dyld</code> 提供了内建的测量方法：在 Xcode 中 Edit scheme -&gt; Run -&gt; Auguments 将环境变量 <code>DYLD_PRINT_STATISTICS</code> 设为 <code>1</code>。控制台输出的内容如下：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Total pre-main <span class="selector-tag">time</span>: <span class="number">228.41</span> milliseconds (<span class="number">100.0%</span>)</span><br><span class="line">         dylib loading <span class="selector-tag">time</span>:  <span class="number">82.35</span> milliseconds (<span class="number">36.0%</span>)</span><br><span class="line">        rebase/binding <span class="selector-tag">time</span>:   <span class="number">6.12</span> milliseconds (<span class="number">2.6%</span>)</span><br><span class="line">            ObjC setup <span class="selector-tag">time</span>:   <span class="number">7.82</span> milliseconds (<span class="number">3.4%</span>)</span><br><span class="line">           initializer <span class="selector-tag">time</span>: <span class="number">132.02</span> milliseconds (<span class="number">57.8%</span>)</span><br><span class="line">           slowest intializers :</span><br><span class="line">             libSystem<span class="selector-class">.B</span><span class="selector-class">.dylib</span> : <span class="number">122.07</span> milliseconds (<span class="number">53.4%</span>)</span><br><span class="line">                CoreFoundation :   <span class="number">5.59</span> milliseconds (<span class="number">2.4%</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="优化启动时间"><a href="#优化启动时间" class="headerlink" title="优化启动时间"></a>优化启动时间</h3><p>可以针对 App 启动前的每个步骤进行相应的优化工作。</p>
+<h4 id="加载-Dylib-1"><a href="#加载-Dylib-1" class="headerlink" title="加载 Dylib"></a>加载 Dylib</h4><p>之前提到过加载系统的 dylib 很快，因为有优化。但加载内嵌（embedded）的 dylib 文件很占时间，所以尽可能把多个内嵌 dylib 合并成一个来加载，或者使用 static archive。使用 <code>dlopen()</code> 来在运行时懒加载是不建议的，这么做可能会带来一些问题，并且总的开销更大。</p>
+<h4 id="Rebase-Binding"><a href="#Rebase-Binding" class="headerlink" title="Rebase/Binding"></a>Rebase/Binding</h4><p>之前提过 Rebaing 消耗了大量时间在 I/O 上，而在之后的 Binding 就不怎么需要 I/O 了，而是将时间耗费在计算上。所以这两个步骤的耗时是混在一起的。</p>
+<p>之前说过可以从查看 <code>__DATA</code> 段中需要修正（fix-up）的指针，所以减少指针数量才会减少这部分工作的耗时。对于 ObjC 来说就是减少 <code>Class</code>,<code>selector</code> 和 <code>category</code> 这些元数据的数量。从编码原则和设计模式之类的理论都会鼓励大家多写精致短小的类和方法，并将每部分方法独立出一个类别，其实这会增加启动时间。对于 C++ 来说需要减少虚方法，因为虚方法会创建 vtable，这也会在 <code>__DATA</code> 段中创建结构。虽然 C++ 虚方法对启动耗时的增加要比 ObjC 元数据要少，但依然不可忽视。最后推荐使用 Swift 结构体，它需要 fix-up 的内容较少。</p>
+<h4 id="ObjC-Setup"><a href="#ObjC-Setup" class="headerlink" title="ObjC Setup"></a>ObjC Setup</h4><p>针对这步所能事情很少，几乎都靠 Rebasing 和 Binding 步骤中减少所需 fix-up 内容。因为前面的工作也会使得这步耗时减少。</p>
+<h4 id="Initializer"><a href="#Initializer" class="headerlink" title="Initializer"></a>Initializer</h4><p><strong>显式初始化</strong></p>
+<ul>
+<li>使用 <code>+initialize</code> 来替代 <code>+load</code></li>
+<li>不要使用 <code>__atribute__((constructor))</code> 将方法显式标记为初始化器，而是让初始化方法调用时才执行。比如使用 <code>dispatch_once()</code>,<code>pthread_once()</code> 或 <code>std::once()</code>。也就是在第一次使用时才初始化，推迟了一部分工作耗时。</li>
+</ul>
+<p><strong>隐式初始化</strong></p>
+<p>对于带有<a href="http://stackoverflow.com/questions/3899223/what-is-a-non-trivial-constructor-in-c" target="_blank" rel="external">复杂（non-trivial）构造器</a>的 C++ 静态变量：</p>
+<ol>
+<li>在调用的地方使用初始化器。</li>
+<li>只用简单值类型赋值（POD:Plain Old Data），这样静态链接器会预先计算 <code>__DATA</code> 中的数据，无需再进行 fix-up 工作。</li>
+<li>使用编译器 warning 标志 <code>-Wglobal-constructors</code> 来发现隐式初始化代码。</li>
+<li>使用 Swift 重写代码，因为 Swift 已经预先处理好了，强力推荐。</li>
+</ol>
+<p>不要在初始化方法中调用 <code>dlopen()</code>，对性能有影响。因为 <code>dyld</code> 在 App 开始前运行，由于此时是单线程运行所以系统会取消加锁，但 <code>dlopen()</code> 开启了多线程，系统不得不加锁，这就严重影响了性能，还可能会造成死锁以及产生未知的后果。所以也不要在初始化器中创建线程。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://developer.apple.com/videos/play/wwdc2016/406/" target="_blank" rel="external">https://developer.apple.com/videos/play/wwdc2016/406/</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Runtime/">Runtime</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2016/10/30/Optimizing-App-Startup-Time/" data-title="优化 App 的启动时间 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/blog/2016/09/28/Let-s-Talk-About-project-pbxproj/"  title="Let&#39;s Talk About project.pbxproj">
+ <strong>下一篇：</strong><br/> 
+ <span>Let&#39;s Talk About project.pbxproj
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="blog/2016/10/30/Optimizing-App-Startup-Time/" data-title="优化 App 的启动时间" data-url="http://yulingtianxia.com/blog/2016/10/30/Optimizing-App-Startup-Time/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#App-运行理论"><span class="toc-number">1.</span> <span class="toc-text">App 运行理论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理论速成"><span class="toc-number">1.1.</span> <span class="toc-text">理论速成</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Mach-O-术语"><span class="toc-number">1.1.1.</span> <span class="toc-text">Mach-O 术语</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mach-O-镜像文件"><span class="toc-number">1.1.2.</span> <span class="toc-text">Mach-O 镜像文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mach-O-Universal-文件"><span class="toc-number">1.1.3.</span> <span class="toc-text">Mach-O Universal 文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#虚拟内存"><span class="toc-number">1.1.4.</span> <span class="toc-text">虚拟内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mach-O-镜像-加载"><span class="toc-number">1.1.5.</span> <span class="toc-text">Mach-O 镜像 加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安全"><span class="toc-number">1.1.6.</span> <span class="toc-text">安全</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从-exec-到-main"><span class="toc-number">1.2.</span> <span class="toc-text">从 exec() 到 main()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dyld-加载-dylib-文件"><span class="toc-number">1.3.</span> <span class="toc-text">dyld 加载 dylib 文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#加载-Dylib"><span class="toc-number">1.3.1.</span> <span class="toc-text">加载 Dylib</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Fix-ups"><span class="toc-number">1.3.2.</span> <span class="toc-text">Fix-ups</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rebasing-和-Binding"><span class="toc-number">1.3.3.</span> <span class="toc-text">Rebasing 和 Binding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rebasing"><span class="toc-number">1.3.4.</span> <span class="toc-text">Rebasing</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Binding"><span class="toc-number">1.3.5.</span> <span class="toc-text">Binding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ObjC-Runtime"><span class="toc-number">1.3.6.</span> <span class="toc-text">ObjC Runtime</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Initializers"><span class="toc-number">1.3.7.</span> <span class="toc-text">Initializers</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#改善启动时间"><span class="toc-number">2.</span> <span class="toc-text">改善启动时间</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测量启动时间"><span class="toc-number">2.1.</span> <span class="toc-text">测量启动时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#优化启动时间"><span class="toc-number">2.2.</span> <span class="toc-text">优化启动时间</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#加载-Dylib-1"><span class="toc-number">2.2.1.</span> <span class="toc-text">加载 Dylib</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rebase-Binding"><span class="toc-number">2.2.2.</span> <span class="toc-text">Rebase/Binding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ObjC-Setup"><span class="toc-number">2.2.3.</span> <span class="toc-text">ObjC Setup</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Initializer"><span class="toc-number">2.2.4.</span> <span class="toc-text">Initializer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://pbxproj.yulingtianxia.com" target="_blank" title="pbxprojHelper">pbxprojHelper</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.5px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.75px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 12.5px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 12.5px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 12.5px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 12.5px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"yulingtianxia"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
