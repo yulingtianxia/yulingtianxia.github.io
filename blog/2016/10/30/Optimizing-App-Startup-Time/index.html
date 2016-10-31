@@ -17,7 +17,7 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2016/10/30/Optimizing-App-Startup-Time/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="这是一篇 WWDC 2016 Session 406 的学习笔记，从原理到实践讲述了如何优化 App 的启动时间。">
-<meta property="og:updated_time" content="2016-10-30T05:31:31.000Z">
+<meta property="og:updated_time" content="2016-10-31T15:19:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="优化 App 的启动时间">
 <meta name="twitter:description" content="这是一篇 WWDC 2016 Session 406 的学习笔记，从原理到实践讲述了如何优化 App 的启动时间。">
@@ -151,7 +151,7 @@
 <p>建议用 MachOView 查看更加方便直观。</p>
 <p>从 <code>dyld</code> 源码层面简要介绍下 Rebasing 和 Binding 的流程。</p>
 <p><code>ImageLoader</code> 是一个用于加载可执行文件的基类，它负责链接镜像，但不关心具体文件格式，因为这些都交给子类去实现。每个可执行文件都会对应一个 <code>ImageLoader</code> 实例。<code>ImageLoaderMachO</code> 是用于加载 Mach-O 格式文件的 <code>ImageLoader</code> 子类，而 <code>ImageLoaderMachOClassic</code> 和 <code>ImageLoaderMachOCompressed</code> 都继承于 <code>ImageLoaderMachO</code>，分别用于加载那些 <code>__LINKEDIT</code> 段为传统格式和压缩格式的 Mach-O 文件。</p>
-<p>因为 dylib 之间有依赖关系，所以 <code>ImageLoader</code> 中的好多操作都是沿着依赖链递归操作的，Rebasing 和 Binding 也不例外，分别对应着 <code>recursiveBind()</code> 和 <code>recursiveBind()</code> 这两个方法。因为是递归，所以会自底向上地分别调用 <code>doRebase()</code> 和 <code>doBind()</code> 方法，这样被依赖的 dylib 总是先于依赖它的 dylib 执行 Rebasing 和 Binding。传入 <code>doRebase()</code> 和 <code>doBind()</code> 的参数包含一个 <code>LinkContext</code> 上下文，存储了可执行文件的一堆状态和相关的函数。</p>
+<p>因为 dylib 之间有依赖关系，所以 <code>ImageLoader</code> 中的好多操作都是沿着依赖链递归操作的，Rebasing 和 Binding 也不例外，分别对应着 <code>recursiveRebase()</code> 和 <code>recursiveBind()</code> 这两个方法。因为是递归，所以会自底向上地分别调用 <code>doRebase()</code> 和 <code>doBind()</code> 方法，这样被依赖的 dylib 总是先于依赖它的 dylib 执行 Rebasing 和 Binding。传入 <code>doRebase()</code> 和 <code>doBind()</code> 的参数包含一个 <code>LinkContext</code> 上下文，存储了可执行文件的一堆状态和相关的函数。</p>
 <p>在 Rebasing 和 Binding 前会判断是否已经 Prebinding。如果已经进行过预绑定（Prebinding），那就不需要 Rebasing 和 Binding 这些 Fix-up 流程了，因为已经在预先绑定的地址加载好了。</p>
 <p><code>ImageLoaderMachO</code> 实例<strong>不使用预绑</strong>定会有四个原因：</p>
 <ol>
