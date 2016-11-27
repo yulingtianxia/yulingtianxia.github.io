@@ -11,16 +11,19 @@
     
 
     
-    <meta name="description" content="UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。">
+    <meta name="description" content="UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。
+Github 传送门: TB">
 <meta property="og:type" content="article">
 <meta property="og:title" content="为 UIAutomation 添加自动化测试标签的探索">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2016/03/28/Add-UITest-Label-for-UIAutomation/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。">
-<meta property="og:updated_time" content="2016-08-27T14:47:42.000Z">
+<meta property="og:description" content="UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。
+Github 传送门: TB">
+<meta property="og:updated_time" content="2016-11-07T14:49:14.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="为 UIAutomation 添加自动化测试标签的探索">
-<meta name="twitter:description" content="UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。">
+<meta name="twitter:description" content="UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。
+Github 传送门: TB">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -104,6 +107,7 @@
 		</div>
 		
 		<p>UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。</p>
+<p>Github 传送门: <a href="https://github.com/yulingtianxia/TBUIAutoTest" target="_blank" rel="external">TBUIAutoTest</a></p>
 <a id="more"></a>
 <h2 id="分析-amp-方案"><a href="#分析-amp-方案" class="headerlink" title="分析&amp;方案"></a>分析&amp;方案</h2><p>首先回顾下生成标签需要符合的必要条件：（<strong>以下将“自动化测试标签”简称为“标签”</strong>）：</p>
 <ol>
@@ -147,6 +151,7 @@
 <h2 id="感受-amp-总结"><a href="#感受-amp-总结" class="headerlink" title="感受&amp;总结"></a>感受&amp;总结</h2><p><del>我是杨(gu)阿莫，今天我给大家要讲的是一个月前测试帅哥要求加自动化测试标签后老大开会讨论方案组内高工一致不赞同手动加并要求自动加并在最后老大钦点这个事情就交给我了的故事。这其中还经历了方案的各种改，五子棋同学的实力参(jiao)谋(ji)，以及拉屎时把本该思考人生的时间花在了改进方案。这个月博客实在不知道该写啥眼看月底了再不更新怕以后再也不想更新了呢所以你会发现这篇文章水水的科科！</del></p>
 <p>呵呵后来发现<del>大部分人</del>所有人都看不懂，但这个方案真的好用！</p>
 <p>如果大家有更好的方案，或者觉得我的方案一开始就跑偏了，甚至是已经有一个不用手动加标签代码的现成的超屌超牛逼的 iOS 自动化测试框架，请告诉我！据说整个腾讯都是手动加自动化测试标签，老大说做有挑战的事情才有意思嘛。</p>
+<p>欢迎给 <a href="https://github.com/yulingtianxia/TBUIAutoTest" target="_blank" rel="external">TBUIAutoTest</a> 提 PR 和 Issue！</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -281,7 +286,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.5px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.75px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 12.5px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 12.5px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 12.5px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 12.5px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.5px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 12.5px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.75px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.25px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 12.5px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 12.5px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
