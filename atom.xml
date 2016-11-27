@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2016-11-27T17:20:02.000Z</updated>
+  <updated>2016-11-27T17:32:16.000Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yulingtianxia.com/blog/2016/11/28/pbxprojHelper/"/>
     <id>http://yulingtianxia.com/blog/2016/11/28/pbxprojHelper/</id>
     <published>2016-11-27T16:03:08.000Z</published>
-    <updated>2016-11-27T17:20:02.000Z</updated>
+    <updated>2016-11-27T17:32:16.000Z</updated>
     
     <content type="html">&lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/pbxprojHelper&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;pbxprojHelper&lt;/a&gt; 可以帮你快速配置 Xcode 工程文件，省去麻烦的人工手动操作。项目开源，使用 Swift 开发，详细介绍请见&lt;a href=&quot;https://github.com/yulingtianxia/pbxprojHelper/blob/master/Documentation/README_ZH.md&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;使用说明&lt;/a&gt;。除了 Mac App 外还提供了命令行工具 &lt;a href=&quot;https://github.com/yulingtianxia/pbxprojHelper/releases/download/1.1.3/pbxproj&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;code&gt;pbxproj&lt;/code&gt;&lt;/a&gt;，它集成了 &lt;a href=&quot;https://github.com/yulingtianxia/pbxprojHelper&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;pbxprojHelper&lt;/a&gt; 的核心功能，同样简易实用。&lt;/p&gt;
 &lt;p&gt;因为 &lt;a href=&quot;https://github.com/yulingtianxia/pbxprojHelper/blob/master/Documentation/README_ZH.md&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;README_ZH&lt;/a&gt; 中对使用方法已经讲得很详细了，这里重点说的是产品方案和技术实现。&lt;/p&gt;
@@ -86,7 +86,7 @@
 &lt;p&gt;最后经过方法嵌套拼装成如下：&lt;/p&gt;
 &lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;isItem&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;number&quot;&gt;_&lt;/span&gt; item: Any, containsKeyWord word: String)&lt;/span&gt;&lt;/span&gt; -&amp;gt; &lt;span class=&quot;type&quot;&gt;Bool&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; tupleItem = item &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt;? &lt;span class=&quot;type&quot;&gt;Item&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; checkAny(value: tupleItem.key, containsString: word) || checkAny(value: tupleItem.value, containsString: word) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;literal&quot;&gt;true&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;dfs&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(propertyList list: Any)&lt;/span&gt;&lt;/span&gt; -&amp;gt; &lt;span class=&quot;type&quot;&gt;Bool&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        	&lt;span class=&quot;comment&quot;&gt;/// 此处省略&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; dfs(propertyList: tupleItem.value)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;literal&quot;&gt;false&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;h3 id=&quot;快速切换工程文件&quot;&gt;&lt;a href=&quot;#快速切换工程文件&quot; class=&quot;headerlink&quot; title=&quot;快速切换工程文件&quot;&gt;&lt;/a&gt;快速切换工程文件&lt;/h3&gt;&lt;p&gt;下拉列表的 UI 实现很简单，就是一个 &lt;code&gt;NSView&lt;/code&gt; 里面放几个 &lt;code&gt;NSTextField&lt;/code&gt;。维护常用工程文件列表需要在每次用户选择工程文件后将其加入列表，实现 LRU 算法。&lt;/p&gt;
-&lt;p&gt;这里对 LRU 缓存的需求跟 &lt;a href=&quot;http://yulingtianxia.com/blog/2016/02/27/TFSHelper/#缓存常用链接&quot;&gt;自制一款 Mac 平台 URL 辅助工具&lt;/a&gt; 这篇文章中的 TFSHelper 的是一样的。我直接把代码搬过来了。&lt;/p&gt;
+&lt;p&gt;这里对 LRU 缓存的需求跟 &lt;a href=&quot;http://yulingtianxia.com/blog/2016/02/27/TFSHelper/#缓存常用链接&quot;&gt;自制一款 Mac 平台 URL 辅助工具&lt;/a&gt; 这篇文章中的 TFSHelper 的是一样的。我直接把代码搬过来了。我将其放到 Github Gist 上了，可能需要科学上网：&lt;a href=&quot;https://gist.github.com/yulingtianxia/5d61afdb241dcd5562b211cb485883fa&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;LRUCache&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;下拉列表的点击操作交由 &lt;code&gt;NSClickGestureRecognizer&lt;/code&gt; 捕获处理。&lt;/p&gt;
 &lt;h3 id=&quot;构造命令行工具&quot;&gt;&lt;a href=&quot;#构造命令行工具&quot; class=&quot;headerlink&quot; title=&quot;构造命令行工具&quot;&gt;&lt;/a&gt;构造命令行工具&lt;/h3&gt;&lt;p&gt;为了尽可能精简命令行的使用复杂度，我只把最核心的功能封装进去，一共只有这几个命令：&lt;/p&gt;
 &lt;figure class=&quot;highlight applescript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Usage: pbxproj [command_option] &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Command options are (-convert &lt;span class=&quot;keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;the&lt;/span&gt; default):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-compare modified_file -o path          compare modified &lt;span class=&quot;keyword&quot;&gt;property&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;property&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;and&lt;/span&gt; generate a json &lt;span class=&quot;literal&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;at&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;the&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;given&lt;/span&gt; path&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-apply json_file                        apply a json &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;on&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;property&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-revert                                 revert &lt;span class=&quot;keyword&quot;&gt;property&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;to&lt;/span&gt; latest backup&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-convert                                rewrite &lt;span class=&quot;keyword&quot;&gt;property&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt; files &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; xml format&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
@@ -111,11 +111,11 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
     
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
   </entry>
   
@@ -326,9 +326,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
   </entry>
   
@@ -890,9 +890,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Algorithm" scheme="http://yulingtianxia.com/tags/Algorithm/"/>
     
@@ -1027,9 +1027,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Algorithm" scheme="http://yulingtianxia.com/tags/Algorithm/"/>
     
@@ -2029,9 +2029,9 @@
     </summary>
     
     
-      <category term="iOS" scheme="http://yulingtianxia.com/tags/iOS/"/>
-    
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="iOS" scheme="http://yulingtianxia.com/tags/iOS/"/>
     
       <category term="AppGroups" scheme="http://yulingtianxia.com/tags/AppGroups/"/>
     
