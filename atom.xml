@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2016-11-27T17:32:16.000Z</updated>
+  <updated>2016-12-28T15:40:01.000Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -14,6 +14,41 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>多媒体编辑模块架构设计</title>
+    <link href="http://yulingtianxia.com/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/"/>
+    <id>http://yulingtianxia.com/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/</id>
+    <published>2016-12-29T01:37:04.000Z</published>
+    <updated>2016-12-28T15:40:01.000Z</updated>
+    
+    <content type="html">&lt;h2 id=&quot;多媒体编辑模块重构概要&quot;&gt;&lt;a href=&quot;#多媒体编辑模块重构概要&quot; class=&quot;headerlink&quot; title=&quot;多媒体编辑模块重构概要&quot;&gt;&lt;/a&gt;多媒体编辑模块重构概要&lt;/h2&gt;&lt;p&gt;多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的是一个平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。&lt;/p&gt;
+&lt;p&gt;这里设想的场景是：用户录制好一段视频或拍照后进入编辑模块，编辑面板下方有几个按钮，点击后可以进入某种编辑模式，比如添加文字、表情、涂鸦、音乐等编辑功能。右下角会有个发表按钮，左上角有个重拍按钮：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/原型.png&quot; alt=&quot;原型&quot;&gt;&lt;/p&gt;
+&lt;p&gt;设计一个模块首先要明确它的职责，输入和输出都是什么。多媒体编辑简介如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/简介.png&quot; alt=&quot;简介&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;组件化总体设计&quot;&gt;&lt;a href=&quot;#组件化总体设计&quot; class=&quot;headerlink&quot; title=&quot;组件化总体设计&quot;&gt;&lt;/a&gt;组件化总体设计&lt;/h2&gt;&lt;p&gt;在明确了多媒体编辑模块的本质是 UI 操作面板后，首先要从视图层级入手，设计好整个模块各职责对应的层级，并兼顾触摸事件的传递。在视图层级交互策略设计好后，就可以进行 UML 的设计了。这次，要拒绝不规范的编程习惯，并对耦合几乎零容忍！将编辑组件与 EditView 解耦，把一些基础逻辑抽象出来，与具体业务剥离开。减少了多人改同一份代码带来的风险，并能更快定位bug来源。&lt;/p&gt;
+&lt;h3 id=&quot;视图层级图&quot;&gt;&lt;a href=&quot;#视图层级图&quot; class=&quot;headerlink&quot; title=&quot;视图层级图&quot;&gt;&lt;/a&gt;视图层级图&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/框架总体视图层级设计.png&quot; alt=&quot;框架总体视图层级设计&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;UML-架构图&quot;&gt;&lt;a href=&quot;#UML-架构图&quot; class=&quot;headerlink&quot; title=&quot;UML 架构图&quot;&gt;&lt;/a&gt;UML 架构图&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/多媒体编辑重构UML.png&quot; alt=&quot;多媒体编辑重构UML&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;手势识别引擎&quot;&gt;&lt;a href=&quot;#手势识别引擎&quot; class=&quot;headerlink&quot; title=&quot;手势识别引擎&quot;&gt;&lt;/a&gt;手势识别引擎&lt;/h2&gt;&lt;p&gt;手势引擎既要『大一统』式地管理，又要与具体响应手势的元素视图进行解耦，做法就是统一接口，制定标准。所有想响应手势的视图都需要继承 &lt;code&gt;InteractionElementView&lt;/code&gt; 或者将其作为 &lt;code&gt;parentView&lt;/code&gt;。可以配置元素对象来实现对手势响应的规则，更加灵活自如，而且零耦合。有关手势命中区域的计算方法请阅读我之前发表的一篇文章：&lt;a href=&quot;http://yulingtianxia.com/blog/2016/08/29/Some-Experience-of-Gesture/&quot;&gt;处理手势冲突和错乱的一点经验&lt;/a&gt;，我在这里详细阐述了各种情形下的手势命中计算方法。下图为手势识别引擎策略的流程图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/手势识别引擎.png&quot; alt=&quot;手势识别引擎&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;组件设计&quot;&gt;&lt;a href=&quot;#组件设计&quot; class=&quot;headerlink&quot; title=&quot;组件设计&quot;&gt;&lt;/a&gt;组件设计&lt;/h2&gt;&lt;h3 id=&quot;组件与元素&quot;&gt;&lt;a href=&quot;#组件与元素&quot; class=&quot;headerlink&quot; title=&quot;组件与元素&quot;&gt;&lt;/a&gt;组件与元素&lt;/h3&gt;&lt;p&gt;组件的 &lt;code&gt;baseZIndex&lt;/code&gt; 定义了组件所创建元素的 &lt;code&gt;zIndex&lt;/code&gt; 的基础值。元素容器会有一个计数器 &lt;code&gt;nextZIndexOfElement&lt;/code&gt;，每次获取时会自动加一。所以元素的 &lt;code&gt;zIndex&lt;/code&gt; 等于 &lt;code&gt;baseZIndex&lt;/code&gt; 与 &lt;code&gt;nextZIndexOfElement&lt;/code&gt; 之和。&lt;/p&gt;
+&lt;p&gt;之所以要给元素定义 &lt;code&gt;zIndex&lt;/code&gt; 这个属性是考虑到某些元素可能会在元素容器与组件容器之间切换层级。比如文字元素就是这种例子。所以当某个元素重新添加到元素容器后，元素容器需要根据每个元素的 &lt;code&gt;zIndex&lt;/code&gt; 属性来重新排序层级顺序。&lt;/p&gt;
+&lt;h3 id=&quot;组件与-EditView&quot;&gt;&lt;a href=&quot;#组件与-EditView&quot; class=&quot;headerlink&quot; title=&quot;组件与 EditView&quot;&gt;&lt;/a&gt;组件与 EditView&lt;/h3&gt;&lt;p&gt;组件不是必须要向 &lt;code&gt;MultimediaEditView&lt;/code&gt; 中的元素容器中添加元素的，它也可以不创建任何元素，而是直接操作多媒体资源（比如选择一些滤镜），也可以是做些其他事情，比如保存多媒体资源到本地。&lt;strong&gt;&lt;code&gt;MultimediaEditView&lt;/code&gt; 只是给组件提供了一个操作入口，而组件为 &lt;code&gt;MultimediaEditView&lt;/code&gt; 提供了很强的拓展性&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id=&quot;组件与数据&quot;&gt;&lt;a href=&quot;#组件与数据&quot; class=&quot;headerlink&quot; title=&quot;组件与数据&quot;&gt;&lt;/a&gt;组件与数据&lt;/h3&gt;&lt;p&gt;每个组件都有自己唯一的 ID，默认是类名。组件的按钮被点击后，会将自己设为 &lt;code&gt;currentEditComponent&lt;/code&gt;，&lt;code&gt;MultimediaEditView&lt;/code&gt; 会调用上一个组件的 &lt;code&gt;stop&lt;/code&gt; 方法，然后调用新组件的 &lt;code&gt;start&lt;/code&gt; 方法。组件在 &lt;code&gt;start&lt;/code&gt; 和 &lt;code&gt;stop&lt;/code&gt; 方法中完成组件内容的装载和卸载。组件产生的用户数据可以存放在 &lt;code&gt;componentInfos&lt;/code&gt; 中，可用于之后的发表等流程。&lt;code&gt;reset&lt;/code&gt; 方法用于清除组件数据以及持有的状态和元素。继承于 &lt;code&gt;MultimediaEditComponent&lt;/code&gt; 的子类需要覆写这些主要的方法。组件也可以直接操作多媒体资源，所以也可能会跟其他模块有数据流动。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/组件的数据流动.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;业务方&quot;&gt;&lt;a href=&quot;#业务方&quot; class=&quot;headerlink&quot; title=&quot;业务方&quot;&gt;&lt;/a&gt;业务方&lt;/h2&gt;&lt;p&gt;具体的业务一般是需要继承 &lt;code&gt;MultimediaEditView&lt;/code&gt; 加入一些自己特有的逻辑，并在自己的 ViewController 创建和注册组件。如果某个业务需要对具体的组件进行个性化修改，我建议具体的组件也需要再继承一下。如果以后所有业务统一组件的行为，那也可以再把之前子类的逻辑迁移回基类。这样做的好处是避免某个业务直接修改基类影响到所有业务的风险，之前就有过先例。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/业务方的使用.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;多媒体编辑模块重构概要&quot;&gt;&lt;a href=&quot;#多媒体编辑模块重构概要&quot; class=&quot;headerlink&quot; title=&quot;多媒体编辑模块重构概要&quot;&gt;&lt;/a&gt;多媒体编辑模块重构概要&lt;/h2&gt;&lt;p&gt;多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>pbxprojHelper--Xcode工程文件助手</title>
@@ -1896,146 +1931,6 @@
       <category term="RAC" scheme="http://yulingtianxia.com/tags/RAC/"/>
     
       <category term="翻译" scheme="http://yulingtianxia.com/tags/%E7%BF%BB%E8%AF%91/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>App与Extensions间通信共享数据</title>
-    <link href="http://yulingtianxia.com/blog/2015/04/06/Communication-between-your-App-and-Extensions/"/>
-    <id>http://yulingtianxia.com/blog/2015/04/06/Communication-between-your-App-and-Extensions/</id>
-    <published>2015-04-06T12:30:54.000Z</published>
-    <updated>2016-05-11T14:31:46.000Z</updated>
-    
-    <content type="html">&lt;p&gt;最近玩了玩Watch开发，而目前Watch的主要逻辑处理都是放在WatchKit Extension。真正的Host App，也就是WatchKit App只是用来在界面上显示数据的。于是实践了下containing app与app extension之间的通信和数据共享。  &lt;/p&gt;
-&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-&lt;h2 id=&quot;App-Groups-amp-Framework&quot;&gt;&lt;a href=&quot;#App-Groups-amp-Framework&quot; class=&quot;headerlink&quot; title=&quot;App Groups &amp;amp; Framework&quot;&gt;&lt;/a&gt;App Groups &amp;amp; Framework&lt;/h2&gt;&lt;p&gt;这两样兵器大家都很熟悉。想要共享数据就需要开启App Groups，给group起一个风骚的名字，这样无论是&lt;code&gt;NSUserDefaults&lt;/code&gt;还是&lt;code&gt;NSFileManager&lt;/code&gt;都能通过App Groups共享持久层数据了。Core Data也需要&lt;code&gt;NSFileManager&lt;/code&gt;提供存储的URL支持，而存取Core Data中的数据需要大量的模板代码，在持久层文件共享之后，代码也应该做到共享，所以将能够重用的代码打包成Framework就显得尤为重要。(除非是为了做毕设凑代码量)  &lt;/p&gt;
-&lt;p&gt;还是以&lt;a href=&quot;https://github.com/yulingtianxia/HardChoice&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;HardChoice&lt;/a&gt;为例，我新建了一个类型为Cocoa Touch Framework的target，名字叫DataKit。新建一个DataAccess.swift文件并将以前AppDelegate.swift中自动生成的Core Data模版代码转移过来。得益于Swift1.2的改进，构造一个线程安全的单例模式变得无比简单：  &lt;/p&gt;
-&lt;figure class=&quot;highlight smali&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;private&lt;span class=&quot;keyword&quot;&gt; static&lt;/span&gt; let&lt;span class=&quot;built_in&quot;&gt; instance &lt;/span&gt;= DataAccess()&lt;span class=&quot;keyword&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;public&lt;/span&gt; class var sharedInstance&lt;span class=&quot;keyword&quot;&gt; :&lt;/span&gt; DataAccess &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;built_in&quot;&gt; return &lt;/span&gt;instance&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;需要注意Swift的权限控制问题，我们需要在暴漏给框架使用者的公开接口和属性前加上&lt;code&gt;public&lt;/code&gt;关键字修饰。  &lt;/p&gt;
-&lt;p&gt;为了实现Core Data持久层共享，需要修改原先的&lt;code&gt;applicationDocumentsDirectory&lt;/code&gt;属性：  &lt;/p&gt;
-&lt;figure class=&quot;highlight objectivec&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;lazy var applicationDocumentsDirectory: &lt;span class=&quot;built_in&quot;&gt;NSURL&lt;/span&gt; = &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;comment&quot;&gt;// The directory the application uses to store the Core Data store file. This code uses a directory named &quot;com.yxy.iCloudCoreDataTest&quot; in the application&#39;s documents Application Support directory.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;comment&quot;&gt;//        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;comment&quot;&gt;//        return urls[urls.count-1] as! NSURL&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   var sharedContainerURL:&lt;span class=&quot;built_in&quot;&gt;NSURL&lt;/span&gt;? = &lt;span class=&quot;built_in&quot;&gt;NSFileManager&lt;/span&gt;.defaultManager().containerURLForSecurityApplicationGroupIdentifier(appGroupIdentifier)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; sharedContainerURL ?? &lt;span class=&quot;built_in&quot;&gt;NSURL&lt;/span&gt;()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &amp;#125;()&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;在这里&lt;code&gt;containerURLForSecurityApplicationGroupIdentifier&lt;/code&gt;方法起到了至关作用。  &lt;/p&gt;
-&lt;p&gt;同样能够共享的代码就是Model层，它们都是&lt;code&gt;NSManagedObject&lt;/code&gt;的子类，用于存储Core Data中的数据实例。在把它们从原来的位置拖拽过来时别忘了更改下文件的target：”File inspector”-&amp;gt;”Target Membership”，选中DataKit。  &lt;/p&gt;
-&lt;p&gt;在处理iCloud与Core Data同步数据时，我对&lt;code&gt;NSPersistentStoreCoordinatorStoresWillChangeNotification&lt;/code&gt;、&lt;code&gt;NSPersistentStoreCoordinatorStoresDidChangeNotification&lt;/code&gt;和&lt;code&gt;NSPersistentStoreDidImportUbiquitousContentChangesNotification&lt;/code&gt;这三个数据更新的通知进行了观察和处理，但是写在了&lt;code&gt;persistentStoreCoordinator&lt;/code&gt;计算属性的get方法中。现在使用&lt;code&gt;lazy&lt;/code&gt;关键字进行惰性加载，导致对这三个数据更新通知的观察延后，这会引发严重的错误。所以需要将那三个&lt;code&gt;addObserverForName(name, object, queue, usingBlock)&lt;/code&gt;方法挪到&lt;code&gt;init()&lt;/code&gt;方法中，在第一时间观察通知。&lt;/p&gt;
-&lt;p&gt;最后在AppDelegate.swift中添加&lt;code&gt;import DataKit&lt;/code&gt;，替换掉中的&lt;code&gt;application(application, didFinishLaunchingWithOptions) -&amp;gt; Bool&lt;/code&gt;方法中&lt;code&gt;controller.managedObjectContext = managedObjectContext&lt;/code&gt;为&lt;code&gt;controller.managedObjectContext = DataAccess.sharedInstance.managedObjectContext&lt;/code&gt;，也就是不再使用以前的模板代码中的上下文实例，而是用DataAccess单例中的&lt;code&gt;managedObjectContext&lt;/code&gt;。  &lt;/p&gt;
-&lt;p&gt;同理，&lt;code&gt;applicationWillTerminate(application)&lt;/code&gt;方法中的&lt;code&gt;saveContext()&lt;/code&gt;也要替换成&lt;code&gt;DataAccess.sharedInstance.saveContext()&lt;/code&gt;。  &lt;/p&gt;
-&lt;p&gt;于是我们也可以在App Extensions中import进来DataKit，进行地存取Core Data中的数据啦。而且用的是同一段代码，同一块数据。简直是同一个世界，同一个梦想啊。  &lt;/p&gt;
-&lt;h2 id=&quot;Container-app-与-Extension的通信&quot;&gt;&lt;a href=&quot;#Container-app-与-Extension的通信&quot; class=&quot;headerlink&quot; title=&quot;Container app 与 Extension的通信&quot;&gt;&lt;/a&gt;Container app 与 Extension的通信&lt;/h2&gt;&lt;p&gt;要知道之前做的共享数据只能是主动获取数据，并不能在数据变化时实时获取通知。如果用户在iPhone上更改了数据，我们需要在Watch上实时更改界面上数据的显示。这点&lt;code&gt;NSNotificationCenter&lt;/code&gt;是做不到的，因为它只在App内部工作而不会在两个App之间发通知。同样KVO也无能为力，自己手写委托什么的更是别想了(因为我试过了)。直到我在&lt;a href=&quot;https://medium.com/@saberjack/ios-sending-notifications-between-your-apps-3fe7422d6a41&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;这篇文章&lt;/a&gt;找到了救世主，问题迎刃而解：  &lt;/p&gt;
-&lt;h3 id=&quot;CFNotificationCenterGetDarwinNotifyCenter&quot;&gt;&lt;a href=&quot;#CFNotificationCenterGetDarwinNotifyCenter&quot; class=&quot;headerlink&quot; title=&quot;CFNotificationCenterGetDarwinNotifyCenter&quot;&gt;&lt;/a&gt;CFNotificationCenterGetDarwinNotifyCenter&lt;/h3&gt;&lt;p&gt;这是CoreFoundation库中一个系统级的通知中心，苹果的系统自己也在用它，看清了”Darwin”了没有？哈哈！看了下&lt;code&gt;CFNotificationCenter&lt;/code&gt;相关的API，跟&lt;code&gt;NSNotificationCenter&lt;/code&gt;有点像。需要用到Toll-Bridge的知识与CoreFoundation相关的类进行桥接，这虽不常用但也不难。还需要注意下个别参数的使用。  &lt;/p&gt;
-&lt;h3 id=&quot;MMWormhole&quot;&gt;&lt;a href=&quot;#MMWormhole&quot; class=&quot;headerlink&quot; title=&quot;MMWormhole&quot;&gt;&lt;/a&gt;MMWormhole&lt;/h3&gt;&lt;p&gt;更有趣的是几乎同时我也发现了&lt;a href=&quot;https://github.com/mutualmobile/MMWormhole&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MMWormhole&lt;/a&gt;这个开源库，它专门用于在Container app 与 Extension间传递消息。我读了下它的代码，虽然只有一个类，但是依然学到了很多。虽然在我的&lt;a href=&quot;https://github.com/yulingtianxia/HardChoice&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;HardChoice&lt;/a&gt;上完全可以只用&lt;code&gt;CFNotificationCenter&lt;/code&gt;进行通知就可以了，完全不需要使用MMWormhole来持久化数据和传递数据。但我觉得以后还可能会用到MMWormhole，于是我用Swift1.2重新写了一个&lt;a href=&quot;https://github.com/yulingtianxia/HardChoice/blob/master/HardChoice/DataKit/Wormhole.swift&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Wormhole.swift&lt;/a&gt;，放在了DataKit里。  &lt;/p&gt;
-&lt;h3 id=&quot;Swift与CoreFoundation&quot;&gt;&lt;a href=&quot;#Swift与CoreFoundation&quot; class=&quot;headerlink&quot; title=&quot;Swift与CoreFoundation&quot;&gt;&lt;/a&gt;Swift与CoreFoundation&lt;/h3&gt;&lt;p&gt;原来OC写的两百多行的MMWormhole被我用150行“清新优雅”的Swift代码取代。之所以打上引号是因为Swift与CoreFoundation之间的桥接有些不愉快。因为CoreFoundation中都是C的API，C中的指针和类型转换很出格，有安全隐患。Swift是一门安全的语言，但为了调用由历史原因造成的不安全的C的API，Swift中引入了很多类型来映射C中的类型，参考&lt;a href=&quot;https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html#//apple_ref/doc/uid/TP40014216-CH8-XID_11&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Interacting with C APIs&lt;/a&gt;  &lt;/p&gt;
-&lt;p&gt;Swift中不用像OC那样使用&lt;code&gt;__bridge&lt;/code&gt;和类型转换、内存管理交接，因为这些全都交给Swift了：如果Swift中存在类型映射到C的API所需的参数类型，那么可以直接将其传入API。此外内存管理也归Swift中的ARC统一管理。于是Swift大大简化了与CoreFoundation打交道的过程。  &lt;/p&gt;
-&lt;p&gt;我们最关心的是指针，&lt;code&gt;UnsafePointer&amp;lt;SwiftType&amp;gt;&lt;/code&gt;对应了&lt;code&gt;const CType *&lt;/code&gt;，&lt;code&gt;UnsafeMutablePointer&amp;lt;SwiftType&amp;gt;&lt;/code&gt;对应了&lt;code&gt;CType *&lt;/code&gt;。当然SwiftType与CType也是对应的：  &lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;C Type&lt;/th&gt;
-&lt;th style=&quot;text-align:center&quot;&gt;Swift Type&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;bool&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CBool&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;char, signed char&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CChar&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;unsigned char&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CUnsignedChar&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;short&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CShort&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;unsigned short&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CUnsignedShort&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;int&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CInt&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;unsigned int&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CUnsignedInt&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;long&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CLong&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;unsigned long&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CUnsignedLong&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;long long&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CLongLong&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;unsigned long long&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CUnsignedLongLong&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;wchar_t&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CWideChar&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;char16_t&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CChar16&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;char32_t&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CChar32&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;float&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CFloat&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;double&lt;/td&gt;
-&lt;td style=&quot;text-align:center&quot;&gt;CDouble&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;更多的转换规则，在上面提到的官方文档有很详细的描述，这里只说三个tips：  &lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;在Swift中将&lt;code&gt;self&lt;/code&gt;转成&lt;code&gt;UnsafePointer&amp;lt;Void&amp;gt;&lt;/code&gt;(也就是&lt;code&gt;const void *&lt;/code&gt;)只需用这个函数：&lt;code&gt;unsafeAddressOf(self)&lt;/code&gt;  &lt;/li&gt;
-&lt;li&gt;CoreFoundation库中后缀为”Ref”的类在Swift中已经去掉后缀。  &lt;/li&gt;
-&lt;li&gt;Swift中函数指针被表示为&lt;code&gt;CFunctionPointer&amp;lt;Type&amp;gt;&lt;/code&gt;，Type就是函数的类型，但还不允许你将Swift写的函数或闭包转化成&lt;code&gt;CFunctionPointer&lt;/code&gt;，也就是干脆没提供建立&lt;code&gt;CFunctionPointer&lt;/code&gt;实例的方法，只能通过外部引入C的函数。这就涉及到了Swift与OC混编，请戳&lt;a href=&quot;https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html#//apple_ref/doc/uid/TP40014216-CH10-XID_77&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Swift and Objective-C in the Same Project&lt;/a&gt;  &lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&quot;在Framework中混编OC&quot;&gt;&lt;a href=&quot;#在Framework中混编OC&quot; class=&quot;headerlink&quot; title=&quot;在Framework中混编OC&quot;&gt;&lt;/a&gt;在Framework中混编OC&lt;/h3&gt;&lt;p&gt;我之所以需要做这种破坏工程纯洁性的事儿，是因为要用到下面这个方法来对通知进行观察：  &lt;/p&gt;
-&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;CFNotificationCenterAddObserver&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(center: CFNotificationCenter!, observer: UnsafePointer&amp;lt;Void&amp;gt;, callBack: CFNotificationCallback, name: CFString!, object: UnsafePointer&amp;lt;Void&amp;gt;, suspensionBehavior: CFNotificationSuspensionBehavior)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;除了类型为&lt;code&gt;CFNotificationCallback&lt;/code&gt;的参数，其余的都好说：  &lt;/p&gt;
-&lt;figure class=&quot;highlight elm&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;typealias &lt;span class=&quot;type&quot;&gt;CFNotificationCallback&lt;/span&gt; = &lt;span class=&quot;type&quot;&gt;CFunctionPointer&lt;/span&gt;&amp;lt;((&lt;span class=&quot;type&quot;&gt;CFNotificationCenter&lt;/span&gt;!, &lt;span class=&quot;type&quot;&gt;UnsafeMutablePointer&lt;/span&gt;&amp;lt;&lt;span class=&quot;type&quot;&gt;Void&lt;/span&gt;&amp;gt;, &lt;span class=&quot;type&quot;&gt;CFString&lt;/span&gt;!, &lt;span class=&quot;type&quot;&gt;UnsafePointer&lt;/span&gt;&amp;lt;&lt;span class=&quot;type&quot;&gt;Void&lt;/span&gt;&amp;gt;, &lt;span class=&quot;type&quot;&gt;CFDictionary&lt;/span&gt;!) -&amp;gt; &lt;span class=&quot;type&quot;&gt;Void&lt;/span&gt;)&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;于是就回到了&lt;code&gt;CFunctionPointer&lt;/code&gt;这块蛋疼地上了，只好在OC里写C函数然后调用之：  &lt;/p&gt;
-&lt;figure class=&quot;highlight objectivec&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; * &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; WormholeNotificationName = &lt;span class=&quot;string&quot;&gt;@&quot;WormholeNotificationName&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;@implementation&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;HelpMethod&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (instancetype)init&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; = [&lt;span class=&quot;keyword&quot;&gt;super&lt;/span&gt; init];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _callback = wormholeNotificationCallback;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; wormholeNotificationCallback(&lt;span class=&quot;built_in&quot;&gt;CFNotificationCenterRef&lt;/span&gt; center,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                  &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; * observer,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                  &lt;span class=&quot;built_in&quot;&gt;CFStringRef&lt;/span&gt; name,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                  &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; * object,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                  &lt;span class=&quot;built_in&quot;&gt;CFDictionaryRef&lt;/span&gt; userInfo) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *identifier = (__bridge &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *)name;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [[&lt;span class=&quot;built_in&quot;&gt;NSNotificationCenter&lt;/span&gt; defaultCenter] postNotificationName:WormholeNotificationName&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                                        object:&lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                                      userInfo:@&amp;#123;&lt;span class=&quot;string&quot;&gt;@&quot;identifier&quot;&lt;/span&gt; : identifier&amp;#125;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;@end&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;然后在Swift中这样写就可以了：  &lt;/p&gt;
-&lt;figure class=&quot;highlight lisp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;CFNotificationCenterAddObserver(&lt;span class=&quot;name&quot;&gt;center&lt;/span&gt;, unsafeAddressOf(&lt;span class=&quot;name&quot;&gt;self&lt;/span&gt;), helpMethod.callback, identifier, &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt;, CFNotificationSuspensionBehavior.DeliverImmediately)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;在Swift中使用OC写的类本来是一件很easy的事儿，但是到了Framework中就变得不寻常。我在DataKit中新建了&lt;code&gt;HelpMethod&lt;/code&gt;类，并建立”DataKit-Bridging-Header.h”文件，将HelpMethod.h头文件引入，然后在DataKit target下的”Build Settings” -&amp;gt; “Swift Complier-Code Generation” -&amp;gt; “Objective-C Bridging Header”下填入”DataKit-Bridging-Header.h”，编译出错：&lt;strong&gt;using bridging headers with framework targets is unsupported&lt;/strong&gt;。  &lt;/p&gt;
-&lt;p&gt;在stackoverflow上找到了&lt;a href=&quot;http://stackoverflow.com/questions/24875745/xcode-6-beta-4-using-bridging-headers-with-framework-targets-is-unsupported&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;解决方案&lt;/a&gt;，于是删除之前的”DataKit-Bridging-Header.h”文件并清除”Build Settings”关于Bridging Header的引用；在DataKit.h添加&lt;code&gt;#import &amp;quot;HelpMethod.h&amp;quot;&lt;/code&gt;，并在HelpMethod.h文件的 “File inspector”-&amp;gt;”Target Membership”中DataKit右侧将”project”修改为”public”(否则会出现&lt;strong&gt;include of non-modular header inside framework module ‘DataKit’&lt;/strong&gt;的编译错误)。  &lt;/p&gt;
-&lt;p&gt;至此，我们可以在&lt;code&gt;HelpMethod&lt;/code&gt;类中实现一个函数指针，并在Wormhole.swift文件中直接使用这个函数指针来为&lt;code&gt;CFunctionPointer&lt;/code&gt;类型的参数传值。  &lt;/p&gt;
-&lt;h2 id=&quot;总结&quot;&gt;&lt;a href=&quot;#总结&quot; class=&quot;headerlink&quot; title=&quot;总结&quot;&gt;&lt;/a&gt;总结&lt;/h2&gt;&lt;p&gt;来个效果图：  &lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/hardchoice.gif&quot; alt=&quot;&quot;&gt;  &lt;/p&gt;
-&lt;p&gt;这是我第一次写Watch的App(废话谁不是第一次)，经验并不是很多，也因为Swift1.2还未正式发布，遇到了一些坑。好歹最后克服了，但也丢了贞操(毕竟不是纯Swift的App了)。有不对的地方还请多多指教。随着Swift的不断完善，希望以后能够支持创建&lt;code&gt;CFunctionPointer&lt;/code&gt;对象，这样它好我也好😄&lt;/p&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;最近玩了玩Watch开发，而目前Watch的主要逻辑处理都是放在WatchKit Extension。真正的Host App，也就是WatchKit App只是用来在界面上显示数据的。于是实践了下containing app与app extension之间的通信和数据共享。  &lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
-    
-      <category term="iOS" scheme="http://yulingtianxia.com/tags/iOS/"/>
-    
-      <category term="AppGroups" scheme="http://yulingtianxia.com/tags/AppGroups/"/>
-    
-      <category term="App Extensions" scheme="http://yulingtianxia.com/tags/App-Extensions/"/>
     
   </entry>
   

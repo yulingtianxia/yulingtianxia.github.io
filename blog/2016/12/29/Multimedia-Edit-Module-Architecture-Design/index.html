@@ -4,38 +4,34 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>MacOSX10.9上用Octopress和GitHub搭建个人博客 | yulingtianxia&#39;s blog</title>
+    <title>多媒体编辑模块架构设计 | yulingtianxia&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="杨萧玉">
     
 
     
-    <meta name="description" content="网上已经有很多关于搭建Octopress的文章了，但我写这篇文章的目的是帮助Mac新手们搭建自己的Octopress，尤其是最新的Mavericks系统
-这篇博文包括：
-
-Octopress搭建
-Github Page 部署
-Blog的美化工作">
+    <meta name="description" content="多媒体编辑模块重构概要多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的是一个平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。
+这里设想的场景是：用户录制好一段视频或拍照后进入编辑模块，编辑面板下方有几个按钮，点击后可以进入某种编辑模式，比如添加文字、表情、涂鸦、音乐等编辑功能。右下角会有个发表按钮，左">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MacOSX10.9上用Octopress和GitHub搭建个人博客">
-<meta property="og:url" content="http://yulingtianxia.com/blog/2014/04/05/macosx10-dot-9shang-yong-octopresshe-githubda-jian-ge-ren-bo-ke/index.html">
+<meta property="og:title" content="多媒体编辑模块架构设计">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="网上已经有很多关于搭建Octopress的文章了，但我写这篇文章的目的是帮助Mac新手们搭建自己的Octopress，尤其是最新的Mavericks系统
-这篇博文包括：
-
-Octopress搭建
-Github Page 部署
-Blog的美化工作">
-<meta property="og:updated_time" content="2016-08-27T03:30:16.000Z">
+<meta property="og:description" content="多媒体编辑模块重构概要多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的是一个平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。
+这里设想的场景是：用户录制好一段视频或拍照后进入编辑模块，编辑面板下方有几个按钮，点击后可以进入某种编辑模式，比如添加文字、表情、涂鸦、音乐等编辑功能。右下角会有个发表按钮，左">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/原型.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/简介.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/框架总体视图层级设计.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/多媒体编辑重构UML.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/手势识别引擎.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/组件的数据流动.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/业务方的使用.png">
+<meta property="og:updated_time" content="2016-12-28T15:40:01.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MacOSX10.9上用Octopress和GitHub搭建个人博客">
-<meta name="twitter:description" content="网上已经有很多关于搭建Octopress的文章了，但我写这篇文章的目的是帮助Mac新手们搭建自己的Octopress，尤其是最新的Mavericks系统
-这篇博文包括：
-
-Octopress搭建
-Github Page 部署
-Blog的美化工作">
+<meta name="twitter:title" content="多媒体编辑模块架构设计">
+<meta name="twitter:description" content="多媒体编辑模块重构概要多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的是一个平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。
+这里设想的场景是：用户录制好一段视频或拍照后进入编辑模块，编辑面板下方有几个按钮，点击后可以进入某种编辑模式，比如添加文字、表情、涂鸦、音乐等编辑功能。右下角会有个发表按钮，左">
+<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/原型.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -98,14 +94,14 @@ Blog的美化工作">
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/blog/2014/04/05/macosx10-dot-9shang-yong-octopresshe-githubda-jian-ge-ren-bo-ke/" title="MacOSX10.9上用Octopress和GitHub搭建个人博客" itemprop="url">MacOSX10.9上用Octopress和GitHub搭建个人博客</a>
+      <a href="/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/" title="多媒体编辑模块架构设计" itemprop="url">多媒体编辑模块架构设计</a>
   </h1>
   <p class="article-author">By
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
   <p class="article-time">
-    <time datetime="2014-04-05T06:28:54.000Z" itemprop="datePublished"> 发表于 2014-04-05</time>
+    <time datetime="2016-12-29T01:37:04.000Z" itemprop="datePublished"> 发表于 2016-12-29</time>
     
   </p>
 </header>
@@ -114,81 +110,32 @@ Blog的美化工作">
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#"><span class="toc-number">1.</span> <span class="toc-text"></span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Octopress搭建"><span class="toc-number"></span> <span class="toc-text">Octopress搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Github-Page-部署"><span class="toc-number"></span> <span class="toc-text">Github Page 部署</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Blog的美化工作"><span class="toc-number"></span> <span class="toc-text">Blog的美化工作</span></a>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#多媒体编辑模块重构概要"><span class="toc-number">1.</span> <span class="toc-text">多媒体编辑模块重构概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组件化总体设计"><span class="toc-number">2.</span> <span class="toc-text">组件化总体设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#视图层级图"><span class="toc-number">2.1.</span> <span class="toc-text">视图层级图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UML-架构图"><span class="toc-number">2.2.</span> <span class="toc-text">UML 架构图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#手势识别引擎"><span class="toc-number">3.</span> <span class="toc-text">手势识别引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组件设计"><span class="toc-number">4.</span> <span class="toc-text">组件设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#组件与元素"><span class="toc-number">4.1.</span> <span class="toc-text">组件与元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组件与-EditView"><span class="toc-number">4.2.</span> <span class="toc-text">组件与 EditView</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组件与数据"><span class="toc-number">4.3.</span> <span class="toc-text">组件与数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#业务方"><span class="toc-number">5.</span> <span class="toc-text">业务方</span></a></li></ol>
 		
 		</div>
 		
-		<p>网上已经有很多关于搭建Octopress的文章了，但我写这篇文章的目的是帮助Mac新手们搭建自己的Octopress，尤其是最新的Mavericks系统</p>
-<p>这篇博文包括：</p>
-<ul>
-<li>Octopress搭建</li>
-<li>Github Page 部署</li>
-<li>Blog的美化工作</li>
-</ul>
-<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h1 id="Octopress搭建"><a href="#Octopress搭建" class="headerlink" title="Octopress搭建"></a>Octopress搭建</h1><p>众所周知，MacOSX自带Ruby，10.9系统带了两个版本的Ruby：1.8和2.0，因为Octopress需要Ruby1.9.3以上的支持，所以Mavericks自带的Ruby2.0是可以胜任的，新手们可以松一口气了。<br>如果没有安装command line tools，可以直接安装Xcode。Xcode5之后，command line tools都是跟随Xcode自带的，不用单独安装，想卸载也就麻烦了，可以在Xcode中Preferences-&gt;Locations中查看command line tools版本。  </p>
-<p>系统没升级到最新版的童鞋，可以打开终端（terminal）通过下面的命令查看自己的Ruby版本：</p>
-<pre><code>ruby --version
-</code></pre><p>没安装RVM的童鞋运行下面的命令：</p>
-<pre><code>curl -L https://get.rvm.io | bash -s stable --ruby
-</code></pre><p>下面我们需要从Github上clone下Octopress</p>
-<pre><code>git clone git://github.com/imathis/octopress.git octopress
-</code></pre><p>这条命令将octopress的源码下载到了你个人文件夹下的octopress文件夹，如果对git命令不太熟，可以在<a href="https://mac.github.com" target="_blank" rel="external">这里</a>下载Github的Mac客户端，关于Github的使用，网上有很多教程。<br>下一步，安装依赖</p>
-<pre><code>cd octopress ＃进入octopress目录
-gem install bundler
-</code></pre><p>这里碰到的问题可能有两种：  </p>
-<ol>
-<li>权限不够，无法访问到一些文件夹  </li>
-<li><p>等了很久没有反应<br>如果你之前对Linux比较熟，第一个问题可以很简单的解决，这是因为一些文件夹需要root权限访问，运行</p>
-<p> sudo gem install bundler<br>提示输入密码的时候，输入你自己的MacOSX开机密码后回车，注意输入密码的过程中终端无任何显示，这跟Linux一样<br>如果半天都没有反应，这是因为rubygems.org 的文件资源被墙了，可以在<a href="http://ruby.taobao.org" target="_blank" rel="external">这里</a>查看解决方法，或者干脆翻墙，推荐<a href="http://tizipro.com/?r=ee0508bc191f5651" target="_blank" rel="external">云梯VPN</a>科学上网，我个人比较推荐翻墙。  </p>
-</li>
-</ol>
-<p>PS：云梯VPN优惠链接：<a href="http://tizipro.com/?r=ee0508bc191f5651" target="_blank" rel="external">http://tizipro.com/?r=ee0508bc191f5651</a></p>
-<p>接下来运行：    </p>
-<pre><code>bundle install
-</code></pre><p>不出意外，肯定会出错，最后一句应该是“Make sure that <code>gem install RedCloth -v &#39;4.2.9&#39;</code> succeeds before bundling.”再往前追寻问题的根源，会发现这么一句“clang: error: unknown argument: ‘-multiply_definedsuppress’ [-Wunused-command-line-argument-hard-err”。<br>这是因为Xcode 5.1的LLVM编译器将未识别的命令行选项认为是error，导致诸如Python本地拓展和Ruby Gem报错，解决方案：在执行命令行前加ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future，这样就忽略了报错。感谢<a href="http://www.andrewhay.ca/archives/2558?utm_source=tuicool" target="_blank" rel="external">Andrew Hay的文章</a>帮我解决了问题。<br>所以应该这样：</p>
-<pre><code>ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future bundle install
-</code></pre><p>问题解决<br>最后安装默认的主题</p>
-<pre><code>rake install    
-</code></pre><p>如果出现“You have already activated rake 10.3.1, but your Gemfile requires rake 0.9.6. Prepending <code>bundle exec</code> to your command may solve this.”这样的提示，有三种解决方法：  </p>
-<ol>
-<li>运行<code>bundle update</code></li>
-<li>按照提示在前面加上<code>bundle exec</code>，即运行<code>bundle exec rake install</code></li>
-<li>卸载不一样的版本 gem uninstall rake -v=10.3.1<br>这三种方法建议先用方法1，如果不行再用方法3，方法2是无奈之举  </li>
-</ol>
-<p><strong>关于创建博文</strong></p>
-<pre><code>rake new_post[&quot;first post&quot;]＃双引号中为博文标题，可以自己定义，生成markdown文件
-rake generate ＃生成HTML文件
-</code></pre><p>这里推荐一个markdown编辑器<a href="http://mouapp.com" target="_blank" rel="external">Mou</a>，markdown是用来编写我们博客的语言，文件后缀名为md或markdown，学过Latex的童鞋可能会了解得更快一些，用markdown编写HTML版面是再好不过得了，markdown速成<a href="http://www.ituring.com.cn/article/23" target="_blank" rel="external">传送门</a>。网上教程也挺多的，语法风格跟Latex有点像。  </p>
-<h1 id="Github-Page-部署"><a href="#Github-Page-部署" class="headerlink" title="Github Page 部署"></a>Github Page 部署</h1><p>首先要有一个Github账号，假设用户名为username，那么新建一个仓库，名字叫“username.github.io”，Github会自动识别它为你的个人页面。你可以通过username.github.io这个网址来访问你部署的静态网页。创建完成后，获取你这个仓库的Git Url，SSH或者Http协议的都可以，然后执行<code>rake setup_github_pages</code>，当提示你的时候输入你前面创建的仓库的Git Url。比如<code>git@github.com:username/username.github.com.git</code><br>你会发现octopress文件夹中多了_deploy目录，并将这个目录当作master分支，而其余的文件都作为新建立的source分支。octopress原理是在source分支保存框架所需要的文件，还有博客的markdown文件，然后每次将生成的html文件放入master分支，通过username.github.io访问到的是已经生成好的master分支的文件，也就是_deploy文件夹的内容。<br>运行下面代码来生成部署网页到Github：</p>
-<pre><code>rake generate
-rake deploy
-</code></pre><p>现在访问你的网站，已经有了一个页面，使用的是系统默认主题。为了避免博客的源码受到破坏，需要把source分支也commit上去。不会用git命令的同学可以用Github的Mac客户端。</p>
-<pre><code>git add .
-git commit -m &apos;your message&apos;
-git push origin source
-</code></pre><p>如果你有自己的域名，可以通过在仓库中新建CNAME文件进行配置映射，这里不再细说。</p>
-<h1 id="Blog的美化工作"><a href="#Blog的美化工作" class="headerlink" title="Blog的美化工作"></a>Blog的美化工作</h1><p>可以用<a href="https://github.com/shashankmehta/greyshade" target="_blank" rel="external">greyshade</a>或者<a href="https://github.com/tommy351/Octopress-Theme-Slash" target="_blank" rel="external">slash</a>主题美化博客，根据个人喜好了。需要注意的是，greyshade这个主题有些不足之处，比如，disqus实效，还有如何添加新浪微博链接，请看<a href="http://bryanone.com/blog/2014/03/01/problem-with-greyshade/" target="_blank" rel="external">这里</a>和<a href="http://imallen.com/blog/2013/05/12/add-support-for-weibo-and-dribbble-to-greyshade.html" target="_blank" rel="external">这里</a>。如果首页左侧没有显示title和subtitle等信息，可以修改/source/_includes/header.html文件，添加</p>
-<pre><code>&lt;h1&gt;&lt;a href=&quot;{{ root_url }}/&quot;&gt;{{ site.title }}&lt;/a&gt;&lt;/h1&gt;
-&lt;p class=&quot;subtitle&quot;&gt;{{ site.subtitle }}&lt;/p&gt;
-</code></pre><p>修改_config.yml文件，可以配置博客的参数，网上有很多详细的教程来说明每个属性是干什么的，需要注意的一点就是冒号后面一定要加空格，否则编译不通过。建议下载一个Sublime Text来打开这些前台文件，增加效率。博客头像和Github一样采用<a href="www.gravatar.com">gravatar</a>的头像托管服务，在_config.yml文件中的email属性中填入你在gravatar的邮件或者在email_md5属性中填入md5码也可。<br><strong>关于添加标签云效果</strong>  </p>
-<ol>
-<li>将<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/plugins/category_cloud.rb" target="_blank" rel="external">category_cloud.rb</a>复制到你的<code>/octopress/plugins/</code>文件夹下  </li>
-<li>拷贝<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/source/_includes/custom/asides/category_cloud.html" target="_blank" rel="external">category_cloud.html</a>到你的<code>octopress/source/_includes/custom/asides/</code>目录  </li>
-<li>在你的 <code>octopress/_config.yml</code> 文件中的<code>default_asides</code>项中加入第二步添加的路径：<code>custom/asides/category_cloud.html</code>  </li>
-<li>拷贝<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/source/javascripts/tagcloud.swf" target="_blank" rel="external">tagcloud.swf</a>到<code>source/javascripts/</code>文件夹<br>如果想修改标签云的颜色可以在<code>category_cloud.rb</code>文件中改变：  <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@opts</span>[<span class="string">'bgcolor'</span>] = <span class="string">'#3D4349'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'tcolor1'</span>] = <span class="string">'#8B85C3'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'tcolor2'</span>] = <span class="string">'#C03999'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'hicolor'</span>] = <span class="string">'#ffffff'</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p><code>tcolor1</code>为文章数量比较多的分类颜色<br><code>tcolor2</code>为普通分类颜色<br><code>hicolor</code>为鼠标高亮颜色<br>诸如添加Google Analyse和百度统计，添加分享和评论系统，还有版权信息，网上的教程也很多，参考<a href="http://www.cnblogs.com/oec2003/archive/2013/05/31/3109577.html" target="_blank" rel="external">oec2003</a>和<a href="http://beyondvincent.com/blog/2013/07/27/107-hello-page-of-github/" target="_blank" rel="external">破船</a>的文章，本文主要是介绍MacOSX上面的部署工作。</p>
+		<h2 id="多媒体编辑模块重构概要"><a href="#多媒体编辑模块重构概要" class="headerlink" title="多媒体编辑模块重构概要"></a>多媒体编辑模块重构概要</h2><p>多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的是一个平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。</p>
+<p>这里设想的场景是：用户录制好一段视频或拍照后进入编辑模块，编辑面板下方有几个按钮，点击后可以进入某种编辑模式，比如添加文字、表情、涂鸦、音乐等编辑功能。右下角会有个发表按钮，左上角有个重拍按钮：</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/原型.png" alt="原型"></p>
+<p>设计一个模块首先要明确它的职责，输入和输出都是什么。多媒体编辑简介如下图所示：</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/简介.png" alt="简介"></p>
+<h2 id="组件化总体设计"><a href="#组件化总体设计" class="headerlink" title="组件化总体设计"></a>组件化总体设计</h2><p>在明确了多媒体编辑模块的本质是 UI 操作面板后，首先要从视图层级入手，设计好整个模块各职责对应的层级，并兼顾触摸事件的传递。在视图层级交互策略设计好后，就可以进行 UML 的设计了。这次，要拒绝不规范的编程习惯，并对耦合几乎零容忍！将编辑组件与 EditView 解耦，把一些基础逻辑抽象出来，与具体业务剥离开。减少了多人改同一份代码带来的风险，并能更快定位bug来源。</p>
+<h3 id="视图层级图"><a href="#视图层级图" class="headerlink" title="视图层级图"></a>视图层级图</h3><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/框架总体视图层级设计.png" alt="框架总体视图层级设计"></p>
+<h3 id="UML-架构图"><a href="#UML-架构图" class="headerlink" title="UML 架构图"></a>UML 架构图</h3><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/多媒体编辑重构UML.png" alt="多媒体编辑重构UML"></p>
+<h2 id="手势识别引擎"><a href="#手势识别引擎" class="headerlink" title="手势识别引擎"></a>手势识别引擎</h2><p>手势引擎既要『大一统』式地管理，又要与具体响应手势的元素视图进行解耦，做法就是统一接口，制定标准。所有想响应手势的视图都需要继承 <code>InteractionElementView</code> 或者将其作为 <code>parentView</code>。可以配置元素对象来实现对手势响应的规则，更加灵活自如，而且零耦合。有关手势命中区域的计算方法请阅读我之前发表的一篇文章：<a href="http://yulingtianxia.com/blog/2016/08/29/Some-Experience-of-Gesture/">处理手势冲突和错乱的一点经验</a>，我在这里详细阐述了各种情形下的手势命中计算方法。下图为手势识别引擎策略的流程图：</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/手势识别引擎.png" alt="手势识别引擎"></p>
+<h2 id="组件设计"><a href="#组件设计" class="headerlink" title="组件设计"></a>组件设计</h2><h3 id="组件与元素"><a href="#组件与元素" class="headerlink" title="组件与元素"></a>组件与元素</h3><p>组件的 <code>baseZIndex</code> 定义了组件所创建元素的 <code>zIndex</code> 的基础值。元素容器会有一个计数器 <code>nextZIndexOfElement</code>，每次获取时会自动加一。所以元素的 <code>zIndex</code> 等于 <code>baseZIndex</code> 与 <code>nextZIndexOfElement</code> 之和。</p>
+<p>之所以要给元素定义 <code>zIndex</code> 这个属性是考虑到某些元素可能会在元素容器与组件容器之间切换层级。比如文字元素就是这种例子。所以当某个元素重新添加到元素容器后，元素容器需要根据每个元素的 <code>zIndex</code> 属性来重新排序层级顺序。</p>
+<h3 id="组件与-EditView"><a href="#组件与-EditView" class="headerlink" title="组件与 EditView"></a>组件与 EditView</h3><p>组件不是必须要向 <code>MultimediaEditView</code> 中的元素容器中添加元素的，它也可以不创建任何元素，而是直接操作多媒体资源（比如选择一些滤镜），也可以是做些其他事情，比如保存多媒体资源到本地。<strong><code>MultimediaEditView</code> 只是给组件提供了一个操作入口，而组件为 <code>MultimediaEditView</code> 提供了很强的拓展性</strong>。</p>
+<h3 id="组件与数据"><a href="#组件与数据" class="headerlink" title="组件与数据"></a>组件与数据</h3><p>每个组件都有自己唯一的 ID，默认是类名。组件的按钮被点击后，会将自己设为 <code>currentEditComponent</code>，<code>MultimediaEditView</code> 会调用上一个组件的 <code>stop</code> 方法，然后调用新组件的 <code>start</code> 方法。组件在 <code>start</code> 和 <code>stop</code> 方法中完成组件内容的装载和卸载。组件产生的用户数据可以存放在 <code>componentInfos</code> 中，可用于之后的发表等流程。<code>reset</code> 方法用于清除组件数据以及持有的状态和元素。继承于 <code>MultimediaEditComponent</code> 的子类需要覆写这些主要的方法。组件也可以直接操作多媒体资源，所以也可能会跟其他模块有数据流动。</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/组件的数据流动.png" alt=""></p>
+<h2 id="业务方"><a href="#业务方" class="headerlink" title="业务方"></a>业务方</h2><p>具体的业务一般是需要继承 <code>MultimediaEditView</code> 加入一些自己特有的逻辑，并在自己的 ViewController 创建和注册组件。如果某个业务需要对具体的组件进行个性化修改，我建议具体的组件也需要再继承一下。如果以后所有业务统一组件的行为，那也可以再把之前子类的逻辑迁移回基类。这样做的好处是避免某个业务直接修改基类影响到所有业务的风险，之前就有过先例。</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/业务方的使用.png" alt=""></p>
   
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/GitHub/">GitHub</a><a href="/tags/macOS/">macOS</a><a href="/tags/Octopress/">Octopress</a>
-  </div>
 
 </div>
 
@@ -196,7 +143,7 @@ git push origin source
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yulingtianxia.com/blog/2014/04/05/macosx10-dot-9shang-yong-octopresshe-githubda-jian-ge-ren-bo-ke/" data-title="MacOSX10.9上用Octopress和GitHub搭建个人博客 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  <div data-url="http://yulingtianxia.com/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/" data-title="多媒体编辑模块架构设计 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -209,20 +156,20 @@ git push origin source
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/blog/2014/04/06/xcodehe-objective-c-cheat-sheet/" title="Xcode,Swift和Objective-C Cheat Sheet">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Xcode,Swift和Objective-C Cheat Sheet</span>
+
+<div class="next">
+<a href="/blog/2016/11/28/pbxprojHelper/"  title="pbxprojHelper--Xcode工程文件助手">
+ <strong>下一篇：</strong><br/> 
+ <span>pbxprojHelper--Xcode工程文件助手
+</span>
 </a>
 </div>
-
 
 </nav>
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="blog/2014/04/05/macosx10-dot-9shang-yong-octopresshe-githubda-jian-ge-ren-bo-ke/" data-title="MacOSX10.9上用Octopress和GitHub搭建个人博客" data-url="http://yulingtianxia.com/blog/2014/04/05/macosx10-dot-9shang-yong-octopresshe-githubda-jian-ge-ren-bo-ke/"></div>
+	<div class="ds-thread" data-thread-key="blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/" data-title="多媒体编辑模块架构设计" data-url="http://yulingtianxia.com/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/"></div>
 </section>
 
 
@@ -238,7 +185,7 @@ git push origin source
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#"><span class="toc-number">1.</span> <span class="toc-text"></span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Octopress搭建"><span class="toc-number"></span> <span class="toc-text">Octopress搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Github-Page-部署"><span class="toc-number"></span> <span class="toc-text">Github Page 部署</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Blog的美化工作"><span class="toc-number"></span> <span class="toc-text">Blog的美化工作</span></a>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#多媒体编辑模块重构概要"><span class="toc-number">1.</span> <span class="toc-text">多媒体编辑模块重构概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组件化总体设计"><span class="toc-number">2.</span> <span class="toc-text">组件化总体设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#视图层级图"><span class="toc-number">2.1.</span> <span class="toc-text">视图层级图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UML-架构图"><span class="toc-number">2.2.</span> <span class="toc-text">UML 架构图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#手势识别引擎"><span class="toc-number">3.</span> <span class="toc-text">手势识别引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组件设计"><span class="toc-number">4.</span> <span class="toc-text">组件设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#组件与元素"><span class="toc-number">4.1.</span> <span class="toc-text">组件与元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组件与-EditView"><span class="toc-number">4.2.</span> <span class="toc-text">组件与 EditView</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组件与数据"><span class="toc-number">4.3.</span> <span class="toc-text">组件与数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#业务方"><span class="toc-number">5.</span> <span class="toc-text">业务方</span></a></li></ol>
  
   </div>
 
