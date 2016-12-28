@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2016-12-28T15:40:01.000Z</updated>
+  <updated>2016-12-28T15:48:23.000Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,9 +20,11 @@
     <link href="http://yulingtianxia.com/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/"/>
     <id>http://yulingtianxia.com/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/</id>
     <published>2016-12-29T01:37:04.000Z</published>
-    <updated>2016-12-28T15:40:01.000Z</updated>
+    <updated>2016-12-28T15:48:23.000Z</updated>
     
-    <content type="html">&lt;h2 id=&quot;多媒体编辑模块重构概要&quot;&gt;&lt;a href=&quot;#多媒体编辑模块重构概要&quot; class=&quot;headerlink&quot; title=&quot;多媒体编辑模块重构概要&quot;&gt;&lt;/a&gt;多媒体编辑模块重构概要&lt;/h2&gt;&lt;p&gt;多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的是一个平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。&lt;/p&gt;
+    <content type="html">&lt;p&gt;本文主要讲了下我在工作时对项目中多媒体编辑模块的架构设计心得，并剖析了一部分原理。目前框架主流程已经验证跑通，所以把一些关键的思想和概念记录下来。涉及到公司机密的已经略去，只说说思想，代码也就不公开了。&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;h2 id=&quot;多媒体编辑模块重构概要&quot;&gt;&lt;a href=&quot;#多媒体编辑模块重构概要&quot; class=&quot;headerlink&quot; title=&quot;多媒体编辑模块重构概要&quot;&gt;&lt;/a&gt;多媒体编辑模块重构概要&lt;/h2&gt;&lt;p&gt;多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的其实是一个跟移动端平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。&lt;/p&gt;
 &lt;p&gt;这里设想的场景是：用户录制好一段视频或拍照后进入编辑模块，编辑面板下方有几个按钮，点击后可以进入某种编辑模式，比如添加文字、表情、涂鸦、音乐等编辑功能。右下角会有个发表按钮，左上角有个重拍按钮：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/原型.png&quot; alt=&quot;原型&quot;&gt;&lt;/p&gt;
 &lt;p&gt;设计一个模块首先要明确它的职责，输入和输出都是什么。多媒体编辑简介如下图所示：&lt;/p&gt;
@@ -43,10 +45,12 @@
     
     <summary type="html">
     
-      &lt;h2 id=&quot;多媒体编辑模块重构概要&quot;&gt;&lt;a href=&quot;#多媒体编辑模块重构概要&quot; class=&quot;headerlink&quot; title=&quot;多媒体编辑模块重构概要&quot;&gt;&lt;/a&gt;多媒体编辑模块重构概要&lt;/h2&gt;&lt;p&gt;多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂
+      &lt;p&gt;本文主要讲了下我在工作时对项目中多媒体编辑模块的架构设计心得，并剖析了一部分原理。目前框架主流程已经验证跑通，所以把一些关键的思想和概念记录下来。涉及到公司机密的已经略去，只说说思想，代码也就不公开了。&lt;/p&gt;
     
     </summary>
     
+    
+      <category term="设计模式" scheme="http://yulingtianxia.com/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
     
   </entry>
   
@@ -858,9 +862,9 @@
     </summary>
     
     
-      <category term="iOS" scheme="http://yulingtianxia.com/tags/iOS/"/>
-    
       <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
+    
+      <category term="iOS" scheme="http://yulingtianxia.com/tags/iOS/"/>
     
       <category term="Reverse Engineering" scheme="http://yulingtianxia.com/tags/Reverse-Engineering/"/>
     

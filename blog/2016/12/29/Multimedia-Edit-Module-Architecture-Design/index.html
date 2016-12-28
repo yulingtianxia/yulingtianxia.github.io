@@ -11,14 +11,12 @@
     
 
     
-    <meta name="description" content="多媒体编辑模块重构概要多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的是一个平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。
-这里设想的场景是：用户录制好一段视频或拍照后进入编辑模块，编辑面板下方有几个按钮，点击后可以进入某种编辑模式，比如添加文字、表情、涂鸦、音乐等编辑功能。右下角会有个发表按钮，左">
+    <meta name="description" content="本文主要讲了下我在工作时对项目中多媒体编辑模块的架构设计心得，并剖析了一部分原理。目前框架主流程已经验证跑通，所以把一些关键的思想和概念记录下来。涉及到公司机密的已经略去，只说说思想，代码也就不公开了。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="多媒体编辑模块架构设计">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="多媒体编辑模块重构概要多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的是一个平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。
-这里设想的场景是：用户录制好一段视频或拍照后进入编辑模块，编辑面板下方有几个按钮，点击后可以进入某种编辑模式，比如添加文字、表情、涂鸦、音乐等编辑功能。右下角会有个发表按钮，左">
+<meta property="og:description" content="本文主要讲了下我在工作时对项目中多媒体编辑模块的架构设计心得，并剖析了一部分原理。目前框架主流程已经验证跑通，所以把一些关键的思想和概念记录下来。涉及到公司机密的已经略去，只说说思想，代码也就不公开了。">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/原型.png">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/简介.png">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/框架总体视图层级设计.png">
@@ -26,11 +24,10 @@
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/手势识别引擎.png">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/组件的数据流动.png">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/业务方的使用.png">
-<meta property="og:updated_time" content="2016-12-28T15:40:01.000Z">
+<meta property="og:updated_time" content="2016-12-28T15:48:23.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多媒体编辑模块架构设计">
-<meta name="twitter:description" content="多媒体编辑模块重构概要多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的是一个平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。
-这里设想的场景是：用户录制好一段视频或拍照后进入编辑模块，编辑面板下方有几个按钮，点击后可以进入某种编辑模式，比如添加文字、表情、涂鸦、音乐等编辑功能。右下角会有个发表按钮，左">
+<meta name="twitter:description" content="本文主要讲了下我在工作时对项目中多媒体编辑模块的架构设计心得，并剖析了一部分原理。目前框架主流程已经验证跑通，所以把一些关键的思想和概念记录下来。涉及到公司机密的已经略去，只说说思想，代码也就不公开了。">
 <meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/原型.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -114,7 +111,9 @@
 		
 		</div>
 		
-		<h2 id="多媒体编辑模块重构概要"><a href="#多媒体编辑模块重构概要" class="headerlink" title="多媒体编辑模块重构概要"></a>多媒体编辑模块重构概要</h2><p>多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的是一个平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。</p>
+		<p>本文主要讲了下我在工作时对项目中多媒体编辑模块的架构设计心得，并剖析了一部分原理。目前框架主流程已经验证跑通，所以把一些关键的思想和概念记录下来。涉及到公司机密的已经略去，只说说思想，代码也就不公开了。</p>
+<a id="more"></a>
+<h2 id="多媒体编辑模块重构概要"><a href="#多媒体编辑模块重构概要" class="headerlink" title="多媒体编辑模块重构概要"></a>多媒体编辑模块重构概要</h2><p>多媒体编辑包含了对图片和视频的编辑，比如在某个位置添加一些图片或者涂鸦等操作。这里讲的其实是一个跟移动端平台无关的架构，包含了操作面板组件化、手势引擎、业务解耦等内容。具体对图片和视频等内容的渲染等操作不做讨论。</p>
 <p>这里设想的场景是：用户录制好一段视频或拍照后进入编辑模块，编辑面板下方有几个按钮，点击后可以进入某种编辑模式，比如添加文字、表情、涂鸦、音乐等编辑功能。右下角会有个发表按钮，左上角有个重拍按钮：</p>
 <p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MultimediaEdit/原型.png" alt="原型"></p>
 <p>设计一个模块首先要明确它的职责，输入和输出都是什么。多媒体编辑简介如下图所示：</p>
@@ -136,6 +135,11 @@
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/设计模式/">设计模式</a>
+  </div>
 
 </div>
 
@@ -252,7 +256,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.5px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 12.5px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.75px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.25px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 12.5px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 12.5px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.5px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 12.5px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.75px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.25px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 12.5px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.75px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
