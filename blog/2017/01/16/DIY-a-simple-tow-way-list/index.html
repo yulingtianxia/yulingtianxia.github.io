@@ -11,30 +11,18 @@
     
 
     
-    <meta name="description" content="需求简介UI 上的主要内容就是一个 UITableView，其中一些 cell 内会嵌套一个横向滑动的 ListView，ListView 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。
-去掉一些跟本文内容无关的细枝末节，可以将原型抽象如下图：
-
-蓝色的为 ItemView，白色为 ListView，灰色为 TableView。
-竖向滑动会有分页加载和">
+    <meta name="description" content="公司项目中有个页面是双向滑动的列表，遂用 UIScrollView 手撸了之，把一些 UI 和数据上的心得记录下来。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DIY 双向滑动列表">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2017/01/16/DIY-a-simple-tow-way-list/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="需求简介UI 上的主要内容就是一个 UITableView，其中一些 cell 内会嵌套一个横向滑动的 ListView，ListView 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。
-去掉一些跟本文内容无关的细枝末节，可以将原型抽象如下图：
-
-蓝色的为 ItemView，白色为 ListView，灰色为 TableView。
-竖向滑动会有分页加载和">
+<meta property="og:description" content="公司项目中有个页面是双向滑动的列表，遂用 UIScrollView 手撸了之，把一些 UI 和数据上的心得记录下来。">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/原型.png">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/reusableitem.png">
-<meta property="og:updated_time" content="2017-01-16T05:38:06.000Z">
+<meta property="og:updated_time" content="2017-01-16T05:43:09.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DIY 双向滑动列表">
-<meta name="twitter:description" content="需求简介UI 上的主要内容就是一个 UITableView，其中一些 cell 内会嵌套一个横向滑动的 ListView，ListView 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。
-去掉一些跟本文内容无关的细枝末节，可以将原型抽象如下图：
-
-蓝色的为 ItemView，白色为 ListView，灰色为 TableView。
-竖向滑动会有分页加载和">
+<meta name="twitter:description" content="公司项目中有个页面是双向滑动的列表，遂用 UIScrollView 手撸了之，把一些 UI 和数据上的心得记录下来。">
 <meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/原型.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -118,7 +106,9 @@
 		
 		</div>
 		
-		<h2 id="需求简介"><a href="#需求简介" class="headerlink" title="需求简介"></a>需求简介</h2><p>UI 上的主要内容就是一个 <code>UITableView</code>，其中一些 cell 内会嵌套一个横向滑动的 <code>ListView</code>，<code>ListView</code> 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。</p>
+		<p>公司项目中有个页面是双向滑动的列表，遂用 <code>UIScrollView</code> 手撸了之，把一些 UI 和数据上的心得记录下来。</p>
+<a id="more"></a>
+<h2 id="需求简介"><a href="#需求简介" class="headerlink" title="需求简介"></a>需求简介</h2><p>UI 上的主要内容就是一个 <code>UITableView</code>，其中一些 cell 内会嵌套一个横向滑动的 <code>ListView</code>，<code>ListView</code> 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。</p>
 <p>去掉一些跟本文内容无关的细枝末节，可以将原型抽象如下图：</p>
 <p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/原型.png" alt=""></p>
 <p>蓝色的为 ItemView，白色为 <code>ListView</code>，灰色为 TableView。</p>

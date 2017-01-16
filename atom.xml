@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2017-01-16T05:38:06.000Z</updated>
+  <updated>2017-01-16T05:43:09.000Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,9 +20,11 @@
     <link href="http://yulingtianxia.com/blog/2017/01/16/DIY-a-simple-tow-way-list/"/>
     <id>http://yulingtianxia.com/blog/2017/01/16/DIY-a-simple-tow-way-list/</id>
     <published>2017-01-16T05:23:17.000Z</published>
-    <updated>2017-01-16T05:38:06.000Z</updated>
+    <updated>2017-01-16T05:43:09.000Z</updated>
     
-    <content type="html">&lt;h2 id=&quot;需求简介&quot;&gt;&lt;a href=&quot;#需求简介&quot; class=&quot;headerlink&quot; title=&quot;需求简介&quot;&gt;&lt;/a&gt;需求简介&lt;/h2&gt;&lt;p&gt;UI 上的主要内容就是一个 &lt;code&gt;UITableView&lt;/code&gt;，其中一些 cell 内会嵌套一个横向滑动的 &lt;code&gt;ListView&lt;/code&gt;，&lt;code&gt;ListView&lt;/code&gt; 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。&lt;/p&gt;
+    <content type="html">&lt;p&gt;公司项目中有个页面是双向滑动的列表，遂用 &lt;code&gt;UIScrollView&lt;/code&gt; 手撸了之，把一些 UI 和数据上的心得记录下来。&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;h2 id=&quot;需求简介&quot;&gt;&lt;a href=&quot;#需求简介&quot; class=&quot;headerlink&quot; title=&quot;需求简介&quot;&gt;&lt;/a&gt;需求简介&lt;/h2&gt;&lt;p&gt;UI 上的主要内容就是一个 &lt;code&gt;UITableView&lt;/code&gt;，其中一些 cell 内会嵌套一个横向滑动的 &lt;code&gt;ListView&lt;/code&gt;，&lt;code&gt;ListView&lt;/code&gt; 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。&lt;/p&gt;
 &lt;p&gt;去掉一些跟本文内容无关的细枝末节，可以将原型抽象如下图：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/原型.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;蓝色的为 ItemView，白色为 &lt;code&gt;ListView&lt;/code&gt;，灰色为 TableView。&lt;/p&gt;
@@ -65,7 +67,7 @@
     
     <summary type="html">
     
-      &lt;h2 id=&quot;需求简介&quot;&gt;&lt;a href=&quot;#需求简介&quot; class=&quot;headerlink&quot; title=&quot;需求简介&quot;&gt;&lt;/a&gt;需求简介&lt;/h2&gt;&lt;p&gt;UI 上的主要内容就是一个 &lt;code&gt;UITableView&lt;/code&gt;，其中一些 cell 内会嵌套一个横向滑动的 &lt;
+      &lt;p&gt;公司项目中有个页面是双向滑动的列表，遂用 &lt;code&gt;UIScrollView&lt;/code&gt; 手撸了之，把一些 UI 和数据上的心得记录下来。&lt;/p&gt;
     
     </summary>
     
@@ -919,9 +921,9 @@
     </summary>
     
     
-      <category term="iOS" scheme="http://yulingtianxia.com/tags/iOS/"/>
-    
       <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
+    
+      <category term="iOS" scheme="http://yulingtianxia.com/tags/iOS/"/>
     
       <category term="Reverse Engineering" scheme="http://yulingtianxia.com/tags/Reverse-Engineering/"/>
     
