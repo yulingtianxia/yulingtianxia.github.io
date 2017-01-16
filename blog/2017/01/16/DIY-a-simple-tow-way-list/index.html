@@ -1,0 +1,625 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>DIY 双向滑动列表 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="需求简介UI 上的主要内容就是一个 UITableView，其中一些 cell 内会嵌套一个横向滑动的 ListView，ListView 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。
+去掉一些跟本文内容无关的细枝末节，可以将原型抽象如下图：
+
+蓝色的为 ItemView，白色为 ListView，灰色为 TableView。
+竖向滑动会有分页加载和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DIY 双向滑动列表">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2017/01/16/DIY-a-simple-tow-way-list/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="需求简介UI 上的主要内容就是一个 UITableView，其中一些 cell 内会嵌套一个横向滑动的 ListView，ListView 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。
+去掉一些跟本文内容无关的细枝末节，可以将原型抽象如下图：
+
+蓝色的为 ItemView，白色为 ListView，灰色为 TableView。
+竖向滑动会有分页加载和">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/原型.png">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/reusableitem.png">
+<meta property="og:updated_time" content="2017-01-16T05:38:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DIY 双向滑动列表">
+<meta name="twitter:description" content="需求简介UI 上的主要内容就是一个 UITableView，其中一些 cell 内会嵌套一个横向滑动的 ListView，ListView 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。
+去掉一些跟本文内容无关的细枝末节，可以将原型抽象如下图：
+
+蓝色的为 ItemView，白色为 ListView，灰色为 TableView。
+竖向滑动会有分页加载和">
+<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/原型.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2017/01/16/DIY-a-simple-tow-way-list/" title="DIY 双向滑动列表" itemprop="url">DIY 双向滑动列表</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2017-01-16T05:23:17.000Z" itemprop="datePublished"> 发表于 2017-01-16</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#需求简介"><span class="toc-number">1.</span> <span class="toc-text">需求简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据请求"><span class="toc-number">2.</span> <span class="toc-text">数据请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#格式设计"><span class="toc-number">2.1.</span> <span class="toc-text">格式设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#请求时机"><span class="toc-number">2.2.</span> <span class="toc-text">请求时机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可重用的-ItemView"><span class="toc-number">3.</span> <span class="toc-text">可重用的 ItemView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受"><span class="toc-number">4.</span> <span class="toc-text">感受</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="需求简介"><a href="#需求简介" class="headerlink" title="需求简介"></a>需求简介</h2><p>UI 上的主要内容就是一个 <code>UITableView</code>，其中一些 cell 内会嵌套一个横向滑动的 <code>ListView</code>，<code>ListView</code> 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。</p>
+<p>去掉一些跟本文内容无关的细枝末节，可以将原型抽象如下图：</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/原型.png" alt=""></p>
+<p>蓝色的为 ItemView，白色为 <code>ListView</code>，灰色为 TableView。</p>
+<p>竖向滑动会有分页加载和转菊花停顿，横向滑动无分页加载停顿，要求细腻丝滑。</p>
+<p><strong>如果只是单纯一个双向滑动列表，<code>UICollectionView</code> 完全可以胜任。</strong>但是真正的需求里还掺杂着很多其他 UI 元素，所以只能 DIY 了。</p>
+<h2 id="数据请求"><a href="#数据请求" class="headerlink" title="数据请求"></a>数据请求</h2><h3 id="格式设计"><a href="#格式设计" class="headerlink" title="格式设计"></a>格式设计</h3><p>因为主体 UI 为竖向列表嵌套横向列表，所以两个方向都需要有数据请求。</p>
+<p>为了方便叙述，这里简化下数据格式。</p>
+<p>ItemView 对应的数据 <code>ItemModel</code> 包含唯一标识符 <code>itemID</code> 和图片地址 <code>imageURL</code>：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@interface</span> <span class="attribute">ItemModel</span>: NSObject</span><br><span class="line"><span class="variable">@property</span> (nonatomic, strong) NSString *itemID; <span class="comment">// Item 唯一标识符</span></span><br><span class="line"><span class="variable">@property</span> (nonatomic, strong) NSString *imageURL; <span class="comment">// 封面图片 URL</span></span><br><span class="line"><span class="variable">@end</span></span><br></pre></td></tr></table></figure>
+<p><code>ListView</code> 对应的数据 <code>ListModel</code> 包含分组唯一标识符 <code>listID</code>，首屏需要展现的 Item 数据 <code>items</code> 和列表所有 Item 的 ID <code>itemIDs</code>。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@interface</span> <span class="attribute">ListModel</span>: NSObject</span><br><span class="line"><span class="variable">@property</span> (nonatomic, strong) NSString *listID; <span class="comment">// List 唯一标识符</span></span><br><span class="line"><span class="variable">@property</span> (nonatomic, strong) NSArray&lt;ItemModel *&gt; *items; <span class="comment">// 包含首屏前几个 Item 数据</span></span><br><span class="line"><span class="variable">@property</span> (nonatomic, strong) NSArray&lt;NSString *&gt; *itemIDs; <span class="comment">// 包含整行 List 所有 Item 的 ID</span></span><br><span class="line"><span class="variable">@end</span></span><br></pre></td></tr></table></figure>
+<p>竖向滑动时，TableView 会从后台分页获取 <code>ListModel</code> 数组。<code>ListModel</code> 中的 <code>items</code> 填充了初始数据（此时不需要横向滑动拉取数据）。</p>
+<p>之所以不干脆在 <code>ListModel</code> 装填所有 <code>ItemModel</code>，是为了节省一次请求的数据流量，降低失败率。因为第一次展示页面时只需要填充前几个 ItemView 的数据，等用户横向滑动后再继续根据 <code>itemIDs</code> 请求滑动到的 ItemView 对应数据。</p>
+<h3 id="请求时机"><a href="#请求时机" class="headerlink" title="请求时机"></a>请求时机</h3><p>因为有了 <code>ListView</code> 中所有 ItemView 对应的 ID，所以横向滑动没有分页逻辑，就没有转菊花的停顿时间用来请求网络数据和等待接受处理数据。虽然可以用 ID 请求到对应的 <code>ItemModel</code>，但肯定不能在 <code>UITableView</code> 的 datasource 回调中为每个 cell 去单独请求数据。所以 <code>ListView</code> 即便直接使用 <code>UITableView</code> 或 <code>UICollectionView</code>，也无法享受到它带来的便捷，数据请求逻辑依然需要自己在 <code>UIScrollViewDelegate</code> 中实现。<strong>所以 <code>ListView</code> 是继承 <code>UIScrollView</code> 自己 DIY 了一个横向滑动列表。如何合理控制数据请求次数成为了性能优化的重点</strong></p>
+<p><em>文中示例代码均经过简化，去除了无关信息，并使用 MRC。</em></p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> `<span class="title">ListView</span>` : <span class="title">UIScrollView</span></span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, retain) ListModel *model;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, retain) <span class="built_in">NSMutableArray</span>&lt;ItemModel *&gt; *itemModels;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">static</span> <span class="built_in">CGFloat</span> itemWidth = <span class="number">80</span>; <span class="comment">// ItemView 宽度</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">static</span> <span class="built_in">CGFloat</span> itemHeight = <span class="number">128</span>; <span class="comment">// ItemView 高度</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">static</span> <span class="built_in">CGFloat</span> itemGap = <span class="number">2</span>; <span class="comment">// ItemView 间距</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">static</span> <span class="built_in">CGFloat</span> itemFirstToLeft = <span class="number">0</span>; <span class="comment">// 最左边的 ItemView 的 leftMargin</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#pragma mark - UIScrollViewDelegate</span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)scrollViewDidScroll:(<span class="built_in">UIScrollView</span> *)scrollView</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (scrollView.contentSize.width == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 计算滚动的区间</span></span><br><span class="line">    <span class="built_in">NSInteger</span> indexLeft = floorf((scrollView.contentOffset.x - itemFirstToLeft) / (itemWidth + itemGap)) - <span class="number">1</span>;</span><br><span class="line">    indexLeft = MAX(indexLeft, <span class="number">0</span>);</span><br><span class="line">    indexLeft = MIN(indexLeft, <span class="keyword">self</span>.model.itemIDs.count - <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSInteger</span> indexRight = ceilf((scrollView.contentOffset.x - itemFirstToLeft + scrollView.width) / (itemWidth + itemGap));</span><br><span class="line">    indexRight = MAX(indexRight, <span class="number">0</span>);</span><br><span class="line">    indexRight = MIN(indexRight, <span class="keyword">self</span>.model.itemIDs.count - <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSInteger</span> length = indexRight - indexLeft + <span class="number">1</span>;</span><br><span class="line">    length = MAX(length, <span class="number">0</span>);</span><br><span class="line">    length = MIN(length, <span class="keyword">self</span>.model.itemIDs.count);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 加载区间内的 Item</span></span><br><span class="line">    [<span class="keyword">self</span> loadItems:<span class="built_in">NSMakeRange</span>(indexLeft, length)];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)scrollViewWillBeginDragging:(<span class="built_in">UIScrollView</span> *)scrollView</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span> reloadItemModels];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)scrollViewDidEndDecelerating:(<span class="built_in">UIScrollView</span> *)scrollView</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span> reloadItemModels];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> 在指定范围内加载可重用 Item</span><br><span class="line"> 针对本地没有数据的 itemID 请求数据</span><br><span class="line"> @param range 加载的范围</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)loadItems:(<span class="built_in">NSRange</span>)range</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 省略...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> 刷新页面数据，如果页面上有数据缺失，则再次请求数据</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)reloadItemModels</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 省略...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 省略一堆逻辑...</span></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>在 <code>ListView</code> 中直接请求数据的位置有三处，但 <code>loadItems:</code> 和 <code>reloadItemModels</code> 这两个方法会被其他地方调用，所以可能间接请求数据的时机还是很多的。<code>reloadItemModels</code> 方法也会在接收到网络数据时被调用。<code>loadItems:</code> 计算滚动时屏幕上包含 <code>ItemView</code> 的区间的方法完全是根据 frame 坐标来计算的，并且会预留出屏幕外左右各一个 <code>ItemView</code>。<code>reloadItemModels</code> 方法只是重新装载下数据，因为 <code>itemID</code> 列表是完整的，但每个 <code>itemID</code> 不一定都缓存到了对应的 <code>ItemModel</code>，所以这个方法还对缺失数据进行请求，可以理解为『强刷』。</p>
+<p><code>UIScrollViewDelegate</code> 中实现策略如下：</p>
+<ol>
+<li>在列表滚动过程中计算当前显示在屏幕上的 ItemView 的区间，并调用 <code>loadItems:</code></li>
+<li>在列表即将开始滚动和停止滚动的时刻，调用 <code>reloadItemModels</code> 重新加载数据</li>
+</ol>
+<p>在计算需要加载的 <code>range</code> 的时候需要注意一些边界数值的处理，擅用 <code>floorf</code> 和 <code>ceilf</code> 函数进行取舍，并用 <code>MAX()</code> 和 <code>MIN()</code> 来检查边界值合法性。</p>
+<h2 id="可重用的-ItemView"><a href="#可重用的-ItemView" class="headerlink" title="可重用的 ItemView"></a>可重用的 <code>ItemView</code></h2><p>需要自己实现一个类似 <code>UICollectionView</code> 的 item 重用机制。</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/reusableitem.png" alt=""></p>
+<p>在用户横向滑动列表时，需要更新此时某个区间的 UI 和数据。这个任务是在 <code>loadItems:</code> 中实现的，原理是计算出需要被加载的 itemID 数组，并与已有的数据进行比较。将不再需要显示在屏幕上的 <code>ItemView</code> 进行回收（enqueue），并从根据 itemID 添加 <code>ItemView</code> 对象（dequeue）。因为一开始只加载了首屏的 <code>ItemModel</code> 数组，所以还需要对本地缓存中缺失的数据进行请求。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> 在指定范围内加载可重用 Item</span><br><span class="line"> 针对本地没有数据的 itemID 请求数据</span><br><span class="line"> @param range 加载的范围</span><br><span class="line"> */</span></span><br><span class="line">- (void)loadItems:(NSRange)range</span><br><span class="line">&#123;</span><br><span class="line">    NSMutableArray&lt;NSString *&gt; *<span class="keyword">itemIDsToLoad </span>= [[<span class="keyword">self.model.itemIDs </span><span class="keyword">subarrayWithRange:range] </span>mutableCopy]<span class="comment">;</span></span><br><span class="line">    NSMutableArray&lt;<span class="keyword">ItemView </span>*&gt; *<span class="keyword">itemsToEnqueue </span>= [NSMutableArray array]<span class="comment">;</span></span><br><span class="line">    // 比较需要加载的 <span class="keyword">itemID </span>数组和已经显示过的 <span class="keyword">itemID </span>数组，计算出需要新添加的 <span class="keyword">itemID </span>和不再需要显示而被回收的 <span class="keyword">Item</span><br><span class="line"></span>    for (<span class="keyword">ItemView </span>*<span class="keyword">item </span>in <span class="keyword">self.visibleItems) </span>&#123;</span><br><span class="line">        NSString *<span class="keyword">itemIDAlreadyLoad </span>= nil<span class="comment">;</span></span><br><span class="line">        for (NSString *<span class="keyword">itemIDToLoad </span>in <span class="keyword">itemIDsToLoad) </span>&#123;</span><br><span class="line">            <span class="meta">if</span> ([<span class="keyword">itemIDToLoad </span>isEqualToString:<span class="keyword">item.itemID]) </span>&#123;</span><br><span class="line">                <span class="keyword">itemIDAlreadyLoad </span>= <span class="keyword">itemIDToLoad;</span><br><span class="line"></span>            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">if</span> (!<span class="keyword">itemIDAlreadyLoad) </span>&#123;</span><br><span class="line">            [<span class="keyword">itemsToEnqueue </span><span class="keyword">addObject:item];</span><br><span class="line"></span>        &#125;</span><br><span class="line">        <span class="meta">else</span> &#123;</span><br><span class="line">            [<span class="keyword">itemIDsToLoad </span>removeObject:<span class="keyword">itemIDAlreadyLoad];</span><br><span class="line"></span>        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // 回收不需要显示的 <span class="keyword">Item</span><br><span class="line"></span>    for (<span class="keyword">ItemView </span>*<span class="keyword">item </span>in <span class="keyword">itemsToEnqueue) </span>&#123;</span><br><span class="line">        [<span class="keyword">item </span>removeFromSuperview]<span class="comment">;</span></span><br><span class="line">        [<span class="keyword">self.visibleItems </span>removeObject:<span class="keyword">item];</span><br><span class="line"></span>        [<span class="keyword">self </span>enqueueReusableItem:<span class="keyword">item];</span><br><span class="line"></span>    &#125;</span><br><span class="line">    // 添加需要显示的 <span class="keyword">Item</span><br><span class="line"></span>    NSMutableArray&lt;NSString *&gt; *<span class="keyword">itemIDsToRequest </span>= [NSMutableArray array]<span class="comment">;</span></span><br><span class="line">    for (NSString *<span class="keyword">itemID </span>in <span class="keyword">itemIDsToLoad) </span>&#123;</span><br><span class="line">        <span class="meta">if</span> (![<span class="keyword">self </span><span class="keyword">addItemViewWithID:itemID]) </span>&#123;</span><br><span class="line">            [<span class="keyword">itemIDsToRequest </span><span class="keyword">addObject:itemID];</span><br><span class="line"></span>        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // 针对本地没有数据的 <span class="keyword">itemID </span>请求数据</span><br><span class="line">    <span class="meta">if</span> (<span class="keyword">itemIDsToRequest.count </span>&gt; <span class="number">0</span>) &#123;</span><br><span class="line">        // 向后台请求 <span class="keyword">itemIDsToRequest </span>对应数据</span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="keyword">itemIDsToLoad </span>release]<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>addItemViewWithID:</code> 负责从 reusable items 获取 <code>ItemView</code> 并设置 <code>frame</code> 添加到 <code>ListView</code> 中。因为 <code>ItemView</code> 是重用的，所以如果 dequeue 出的对象正好是上一次刚刚 enqueue 的对象，那么就不用重新填充数据了；否则需要重置 <code>ItemView</code> 的占位图，并填充新数据。<code>ItemView</code> 被填充了数据后会对数据进行处理，比如异步拉取图片资源。</p>
+<p>当无法向 <code>ItemView</code> 填充数据时，<code>addItemViewWithID:</code> 会返回 <code>NO</code>，暗示调用方需要用该 itemID 请求数据。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> 添加 itemID 对应的 Item</span><br><span class="line"></span><br><span class="line"> @param itemID @param itemID 视频 ID</span><br><span class="line"> @return 是否成功向 Item 填充数据</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">BOOL)addItemViewWithID:(NSString </span>*)<span class="keyword">itemID</span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">ItemView </span>*<span class="keyword">item </span>= [<span class="keyword">self </span>dequeueReusableItem]<span class="comment">;</span></span><br><span class="line">    NSUInteger index = [<span class="keyword">self.model.itemIDs </span>indexOfObject:<span class="keyword">itemID];</span><br><span class="line"></span>    </span><br><span class="line">    CGFloat originX = <span class="keyword">itemFirstToLeft </span>+ index * (<span class="keyword">itemWidth </span>+ <span class="keyword">itemGap);</span><br><span class="line"></span>    <span class="keyword">item.frame </span>= CGRectMake(originX, <span class="number">0</span>, <span class="keyword">itemWidth, </span><span class="keyword">itemHeight);</span><br><span class="line"></span>    [<span class="keyword">self </span><span class="keyword">addSubview:item];</span><br><span class="line"></span>    [<span class="keyword">self.visibleItems </span><span class="keyword">addObject:item];</span><br><span class="line"></span>    <span class="meta">if</span> ([<span class="keyword">item.itemID </span>isEqualToString:<span class="keyword">itemID]) </span>&#123;</span><br><span class="line">        return YES<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="keyword">item </span>useDefaultCover]<span class="comment">;</span></span><br><span class="line">    <span class="keyword">item.itemID </span>= <span class="keyword">itemID;</span><br><span class="line"></span>    </span><br><span class="line">    for (<span class="keyword">ItemModel </span>*model in <span class="keyword">self.itemModels)</span><br><span class="line"></span>    &#123;</span><br><span class="line">        <span class="meta">if</span> ([model.<span class="keyword">itemID </span>isEqualToString:<span class="keyword">itemID])</span><br><span class="line"></span>        &#123;</span><br><span class="line">            <span class="keyword">item.model </span>= model<span class="comment">;</span></span><br><span class="line">            return YES<span class="comment">;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return NO<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可重用 Item 列表的 dequeue 和 enqueue 操作实现如下，dequeue 也负责在可重用列表不够用时创建新的 <code>ItemView</code>：</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> 从可重用队列中回收 Item</span><br><span class="line"> @param item  回收的 Item</span><br><span class="line"> */</span></span><br><span class="line">- (void)enqueueReusableItem:(<span class="keyword">ItemView </span>*)<span class="keyword">item</span><br><span class="line"></span>&#123;</span><br><span class="line">    [<span class="keyword">self.reusableItems </span><span class="keyword">addObject:item];</span><br><span class="line"></span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> 从可重用队列中取出 Item</span><br><span class="line"> @return  取出的 Item</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">ItemView </span>*)dequeueReusableItem</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">ItemView </span>*<span class="keyword">item </span>= [<span class="keyword">self.reusableItems.firstObject </span>retain]<span class="comment">;</span></span><br><span class="line">    <span class="meta">if</span> (<span class="keyword">item) </span>&#123;</span><br><span class="line">        [<span class="keyword">self.reusableItems </span>removeObject:<span class="keyword">item];</span><br><span class="line"></span>    &#125;</span><br><span class="line">    <span class="meta">else</span> &#123;</span><br><span class="line">        <span class="keyword">item </span>= [<span class="keyword">ItemView </span>new]<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">    return [<span class="keyword">item </span>autorelease]<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="感受"><a href="#感受" class="headerlink" title="感受"></a>感受</h2><p>不得不承认一开始想 DIY 个列表还是有装逼嫌疑的，但后来发现还是 DIY 来的爽，好多事情都掌握在自己手里，批量请求数据也更方便（虽说直接用 <code>UICollectionView</code> 也可以办到，只是有些绕，且依然得自己实现 <code>UIScrollViewDelegate</code>）。最大的收获就是对 <code>UIScrollView</code> 的理解更深刻，对 <code>UITableView</code> 的实现机制有了掌握。</p>
+<p>还有就是在做之前把一些事情想的太简单了，然后开始动工后就会发现：卧槽还真就是这么简单！23333333</p>
+<p>其实还是遇到了一些项目中的 API 上的坑的，比如工程里的异步加载图片 ImageView 会忽略第二次相同的 url 请求，导致调试时花了些时间。</p>
+<p>曾经还设想把可重用的范围扩大到整个屏幕，也就是屏幕上所有横向滑动的 <code>ListView</code> 全都共用一个可重用列表。但后来计算一下这样做收益不高，毕竟横向滑动的 <code>ListView</code> 在正常滑动时可重用列表中会有一到两个 <code>ItemView</code> 对象，而全屏最多同时存在 5 个 <code>ListView</code>，节省的内存很有限。</p>
+<p>其实还有许多细节实现没有叙述，比如记录 <code>ListView</code> 上次横向滑动位置，因为 <code>ListView</code> 是加在全屏 TableView 的每个 cell 中，而 cell 也是重用的，所以上次滑动偏移是需要每次 cell 消失时记录和 cell 出现时刷新的。</p>
+<p>在公司项目用了快半年的 MRC，有时还要切换到 ARC 做做其他事情，或者来一发 Swift 玩票儿，真是一种奇(dan)妙(teng)的体验。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2017/01/16/DIY-a-simple-tow-way-list/" data-title="DIY 双向滑动列表 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/"  title="多媒体编辑模块架构设计">
+ <strong>下一篇：</strong><br/> 
+ <span>多媒体编辑模块架构设计
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="blog/2017/01/16/DIY-a-simple-tow-way-list/" data-title="DIY 双向滑动列表" data-url="http://yulingtianxia.com/blog/2017/01/16/DIY-a-simple-tow-way-list/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#需求简介"><span class="toc-number">1.</span> <span class="toc-text">需求简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据请求"><span class="toc-number">2.</span> <span class="toc-text">数据请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#格式设计"><span class="toc-number">2.1.</span> <span class="toc-text">格式设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#请求时机"><span class="toc-number">2.2.</span> <span class="toc-text">请求时机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可重用的-ItemView"><span class="toc-number">3.</span> <span class="toc-text">可重用的 ItemView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受"><span class="toc-number">4.</span> <span class="toc-text">感受</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://pbxproj.yulingtianxia.com" target="_blank" title="pbxprojHelper">pbxprojHelper</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.5px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 12.5px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Message-Forwarding/" style="font-size: 10px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Objective-C/" style="font-size: 17.5px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 12.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.25px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.75px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.25px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 12.5px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.75px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"yulingtianxia"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
