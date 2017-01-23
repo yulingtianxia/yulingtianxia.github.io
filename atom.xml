@@ -209,11 +209,11 @@
     </summary>
     
     
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
+    
       <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
     
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
-    
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
   </entry>
   
@@ -424,9 +424,9 @@
     </summary>
     
     
-      <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
-    
       <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
+    
+      <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
     
   </entry>
   
@@ -988,9 +988,9 @@
     </summary>
     
     
-      <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
-    
       <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
+    
+      <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
     
       <category term="Algorithm" scheme="http://yulingtianxia.com/tags/Algorithm/"/>
     
@@ -1125,9 +1125,9 @@
     </summary>
     
     
-      <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
-    
       <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
+    
+      <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
     
       <category term="Algorithm" scheme="http://yulingtianxia.com/tags/Algorithm/"/>
     
@@ -1140,11 +1140,11 @@
     <link href="http://yulingtianxia.com/blog/2016/01/17/search-for-similar-images/"/>
     <id>http://yulingtianxia.com/blog/2016/01/17/search-for-similar-images/</id>
     <published>2016-01-17T07:13:18.000Z</published>
-    <updated>2016-10-31T15:14:49.000Z</updated>
+    <updated>2017-01-23T13:55:05.000Z</updated>
     
     <content type="html">&lt;p&gt;这周花了一天半的时间做了个 Mac OS X 上的小工具，用来查找相似内容的图片。起因是公司的 iOS 项目中已有的图片管理混乱，有些图片文件名不规范，还有一些内容重复但文件名不同的图片。现在视觉要给出一些 3x 分辨率的图片，如何与已有的低分辨率图片匹配，这又是个问题。人工一个个去找固然好，但这种技术含量低的体力活很浪费精力和时间。&lt;/p&gt;
 &lt;p&gt;Github 地址：&lt;a href=&quot;https://github.com/yulingtianxia/SimilarImageHunter&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/yulingtianxia/SimilarImageHunter&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/QQ20160117-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/SimilarImageHunter/blob/master/images/01.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
 &lt;p&gt;最新 Release 下载：&lt;a href=&quot;https://github.com/yulingtianxia/SimilarImageHunter/releases&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/yulingtianxia/SimilarImageHunter/releases&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;我开发的这款工具可以在目标路径中找出与原始路径中图片最为相似的图片。如果目标路径中有多张图片相似度相同且最大，这些图片都会被列出来。树形列表第一列的父节点内容为原始路径中的图片，子节点为目标路径中匹配到的最佳相似内容图片。列表第二列为相似度。双击图片路径即可打开该图片。点击 “HUNT” 按钮开始寻找相似图片，第一次使用时处理图片信息耗时较长，可在中途点击 “CANCEL” 按钮取消当前任务。“CLEAR” 按钮则可清除当前界面信息。&lt;/p&gt;
@@ -1189,7 +1189,7 @@
     
       &lt;p&gt;这周花了一天半的时间做了个 Mac OS X 上的小工具，用来查找相似内容的图片。起因是公司的 iOS 项目中已有的图片管理混乱，有些图片文件名不规范，还有一些内容重复但文件名不同的图片。现在视觉要给出一些 3x 分辨率的图片，如何与已有的低分辨率图片匹配，这又是个问题。人工一个个去找固然好，但这种技术含量低的体力活很浪费精力和时间。&lt;/p&gt;
 &lt;p&gt;Github 地址：&lt;a href=&quot;https://github.com/yulingtianxia/SimilarImageHunter&quot;&gt;https://github.com/yulingtianxia/SimilarImageHunter&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/QQ20160117-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/SimilarImageHunter/blob/master/images/01.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
     
     </summary>
     
