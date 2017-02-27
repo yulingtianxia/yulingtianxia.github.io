@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2017/02/28/Make-WeChat-Great-Again/</loc>
+    
+    <lastmod>2017-02-27T17:05:08.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2016/01/17/search-for-similar-images/</loc>
     
     <lastmod>2017-01-23T13:55:05.000Z</lastmod>
@@ -65,13 +72,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/about/index.html</loc>
-    
-    <lastmod>2016-08-27T03:30:16.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/04/05/macosx10-dot-9shang-yong-octopresshe-githubda-jian-ge-ren-bo-ke/</loc>
     
     <lastmod>2016-08-27T03:30:16.000Z</lastmod>
@@ -79,21 +79,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2016/04/28/Find-Convex-Hull-with-Graham-Scan-Swift/</loc>
-    
-    <lastmod>2016-08-27T03:30:16.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/</loc>
-    
-    <lastmod>2016-08-27T03:30:16.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/tags/index.html</loc>
+    
+    <lastmod>2016-08-27T03:30:16.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/about/index.html</loc>
     
     <lastmod>2016-08-27T03:30:16.000Z</lastmod>
     
@@ -114,7 +107,21 @@
   </url>
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2016/04/28/Find-Convex-Hull-with-Graham-Scan-Swift/</loc>
+    
+    <lastmod>2016-08-27T03:30:16.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/</loc>
+    
+    <lastmod>2016-08-27T03:30:16.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/</loc>
     
     <lastmod>2016-08-27T03:30:16.000Z</lastmod>
     
@@ -142,7 +149,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/17/han-shu-zhi-zhen-yu-zhi-zhen-han-shu/</loc>
+    <loc>http://yulingtianxia.com/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/</loc>
     
     <lastmod>2016-05-11T14:32:38.000Z</lastmod>
     
@@ -156,14 +163,28 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/06/17/swiftzhong-de-arc/</loc>
     
     <lastmod>2016-05-11T14:32:38.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/04/17/han-shu-zhi-zhen-yu-zhi-zhen-han-shu/</loc>
+    
+    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/04/24/ios7zi-ti-hui-zong/</loc>
+    
+    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/05/01/chu-shi-core-data-1/</loc>
     
     <lastmod>2016-05-11T14:32:38.000Z</lastmod>
     
@@ -177,35 +198,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/06/17/swiftzhong-de-arc/</loc>
-    
-    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2015/06/12/SpriteKit%E5%9C%A8iOS9%E5%92%8COSX10-11%E4%B8%AD%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7/</loc>
-    
-    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/07/03/chu-shi-core-data-3/</loc>
-    
-    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/06/17/optionals-and-optional-chaining-in-swift/</loc>
-    
-    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/07/17/a-ios-game-developed-by-swift-and-spritekit/</loc>
     
     <lastmod>2016-05-11T14:32:38.000Z</lastmod>
     
@@ -219,6 +212,20 @@
   </url>
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2014/07/17/a-ios-game-developed-by-swift-and-spritekit/</loc>
+    
+    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/04/24/objective-cjiao-cha-yin-yong-jie-jue-fang-fa/</loc>
+    
+    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2014/08/05/coredatachu-li-hai-liang-shu-ju/</loc>
     
     <lastmod>2016-05-11T14:32:38.000Z</lastmod>
@@ -226,7 +233,21 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/05/01/chu-shi-core-data-1/</loc>
+    <loc>http://yulingtianxia.com/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/</loc>
+    
+    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/06/17/optionals-and-optional-chaining-in-swift/</loc>
+    
+    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2015/06/12/SpriteKit%E5%9C%A8iOS9%E5%92%8COSX10-11%E4%B8%AD%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7/</loc>
     
     <lastmod>2016-05-11T14:32:38.000Z</lastmod>
     
@@ -247,20 +268,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/24/objective-cjiao-cha-yin-yong-jie-jue-fang-fa/</loc>
-    
-    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/24/ios7zi-ti-hui-zong/</loc>
-    
-    <lastmod>2016-05-11T14:32:38.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/09/26/building-assert-in-swift-2/</loc>
     
     <lastmod>2016-05-11T14:32:38.000Z</lastmod>
@@ -275,14 +282,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/07/25/%E5%88%9D%E8%AF%86Core-Data-4/</loc>
+    <loc>http://yulingtianxia.com/blog/2015/10/20/Try-to-implement-picture-browser-mode-on-webview/</loc>
     
     <lastmod>2016-05-11T14:31:49.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/10/20/Try-to-implement-picture-browser-mode-on-webview/</loc>
+    <loc>http://yulingtianxia.com/blog/2015/07/25/%E5%88%9D%E8%AF%86Core-Data-4/</loc>
     
     <lastmod>2016-05-11T14:31:49.000Z</lastmod>
     
@@ -359,14 +366,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/06/16/swiftzhong-zai-yun-suan-fu/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/05/12/objective-czhong-de-kvche-kvo/</loc>
     
     <lastmod>2016-05-11T14:31:33.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/05/12/objective-czhong-de-kvche-kvo/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/06/16/swiftzhong-zai-yun-suan-fu/</loc>
     
     <lastmod>2016-05-11T14:31:33.000Z</lastmod>
     
@@ -380,14 +387,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/05/04/spritekitzuo-biao-xi/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/05/10/zhuang-shi-zhe-mo-shi/</loc>
     
     <lastmod>2016-05-11T14:31:32.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/05/10/zhuang-shi-zhe-mo-shi/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/05/04/spritekitzuo-biao-xi/</loc>
     
     <lastmod>2016-05-11T14:31:32.000Z</lastmod>
     
@@ -436,13 +443,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/13/double-dispatchmo-shi-ji-qi-zai-ioskai-fa-zhong-shi-zhan/</loc>
-    
-    <lastmod>2016-05-11T14:31:27.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/04/17/shen-ru-li-jie-typedef/</loc>
     
     <lastmod>2016-05-11T14:31:27.000Z</lastmod>
@@ -450,14 +450,21 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/09/iosgua-gua-qia-de-shi-xian/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/04/13/double-dispatchmo-shi-ji-qi-zai-ioskai-fa-zhong-shi-zhan/</loc>
+    
+    <lastmod>2016-05-11T14:31:27.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/04/07/iosdan-li-mo-shi-ornsuserdefaults/</loc>
     
     <lastmod>2016-05-11T14:31:26.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/07/iosdan-li-mo-shi-ornsuserdefaults/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/04/09/iosgua-gua-qia-de-shi-xian/</loc>
     
     <lastmod>2016-05-11T14:31:26.000Z</lastmod>
     
