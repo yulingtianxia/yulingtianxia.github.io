@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2017-02-27T17:05:08.000Z</updated>
+  <updated>2017-02-28T06:13:40.000Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yulingtianxia.com/blog/2017/02/28/Make-WeChat-Great-Again/"/>
     <id>http://yulingtianxia.com/blog/2017/02/28/Make-WeChat-Great-Again/</id>
     <published>2017-02-27T17:08:05.000Z</published>
-    <updated>2017-02-27T17:05:08.000Z</updated>
+    <updated>2017-02-28T06:13:40.000Z</updated>
     
     <content type="html">&lt;p&gt;关闭朋友圈有一年多了，突然有一天微信的策略变了，在关闭朋友圈的同时也不让别人查看自己的朋友圈了。有妹子表示看不到我朋友圈很不爽，于是我决定对微信进行一番改造！初步实现效果：&lt;/p&gt;
 &lt;ol&gt;
@@ -104,7 +104,8 @@
 &lt;p&gt;这么辣眼睛的审美会被狂吐槽，就不贴代码了，有兴趣的去项目里查看哈哈。&lt;/p&gt;
 &lt;h3 id=&quot;阻止撤回消息-知道真相的我眼泪掉下来&quot;&gt;&lt;a href=&quot;#阻止撤回消息-知道真相的我眼泪掉下来&quot; class=&quot;headerlink&quot; title=&quot;阻止撤回消息 - 知道真相的我眼泪掉下来&quot;&gt;&lt;/a&gt;阻止撤回消息 - 知道真相的我眼泪掉下来&lt;/h3&gt;&lt;p&gt;有时候被撤回的消息看到了会后悔的，但这依然阻止不了我的好奇心+强迫症。&lt;/p&gt;
 &lt;p&gt;在 『&lt;a href=&quot;http://yulingtianxia.com/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/&quot;&gt;让你的微信不再被人撤回消息&lt;/a&gt;』 里我介绍过用 Hopper 逆向的方法。直接看汇编代码来的不那么直接，还是 hook OC 代码稳一些。&lt;/p&gt;
-&lt;figure class=&quot;highlight objectivec&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// 阻止撤回消息&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;CHOptimizedMethod1(&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;, CMessageMgr, onRevokeMsg, &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt;, msg)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSLog&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;@&quot;onRevokeMsg: %@&quot;&lt;/span&gt;, msg);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;撤回消息时会先调用 &lt;code&gt;-[CMessageMgr onRevokeMsg:]&lt;/code&gt; 方法，然后调用 &lt;code&gt;-[CMessageMgr DelMsg:MsgList: DelAll:]&lt;/code&gt; 方法删除消息。随意在撤回的时候记录下标志位就好，不影响删除消息功能。&lt;/p&gt;
+&lt;figure class=&quot;highlight objectivec&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// 阻止撤回消息&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;CHOptimizedMethod1(&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;, CMessageMgr, onRevokeMsg, &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt;, msg)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [FishConfigurationCenter sharedInstance].revokeMsg = &lt;span class=&quot;literal&quot;&gt;YES&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    CHSuper1(CMessageMgr, onRevokeMsg, msg);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;CHDeclareMethod3(&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;, CMessageMgr, DelMsg, &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt;, arg1, MsgList, &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt;, arg2, DelAll, &lt;span class=&quot;built_in&quot;&gt;BOOL&lt;/span&gt;, arg3)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; ([FishConfigurationCenter sharedInstance].revokeMsg) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        [FishConfigurationCenter sharedInstance].revokeMsg = &lt;span class=&quot;literal&quot;&gt;NO&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        CHSuper3(CMessageMgr, DelMsg, arg1, MsgList, arg2, DelAll, arg3);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;h2 id=&quot;后记&quot;&gt;&lt;a href=&quot;#后记&quot; class=&quot;headerlink&quot; title=&quot;后记&quot;&gt;&lt;/a&gt;后记&lt;/h2&gt;&lt;p&gt;若不是时间匆忙，或许还可以让微信变得更伟大。比如加个『彻底屏蔽群消息』入口，或者加个『彻底清理缓存』按钮。平时使用微信确实有很多不爽的地方，尤其是群功能太弱太弱了。我还想加个功能就是如果对方发了超过 30s 的语音，并且对方不是妹子也不是老板不是亲戚，此时自动回复 #&amp;amp;*DF@$@(M!…..我没太听清，请你重新再发一遍？&lt;/p&gt;
 &lt;p&gt;此项目仅用于逆向工程交流学习，黑产死开！&lt;/p&gt;
 </content>
@@ -133,7 +134,7 @@
     <link href="http://yulingtianxia.com/blog/2017/01/16/DIY-a-simple-two-way-list/"/>
     <id>http://yulingtianxia.com/blog/2017/01/16/DIY-a-simple-two-way-list/</id>
     <published>2017-01-16T05:23:17.000Z</published>
-    <updated>2017-01-16T05:43:09.000Z</updated>
+    <updated>2017-02-27T12:59:40.000Z</updated>
     
     <content type="html">&lt;p&gt;公司项目中有个页面是双向滑动的列表，遂用 &lt;code&gt;UIScrollView&lt;/code&gt; 手撸了之，把一些 UI 和数据上的心得记录下来。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
@@ -322,11 +323,11 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
     
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
   </entry>
   
@@ -537,9 +538,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
   </entry>
   
@@ -606,7 +607,7 @@
     <link href="http://yulingtianxia.com/blog/2016/07/18/TBActionSheet/"/>
     <id>http://yulingtianxia.com/blog/2016/07/18/TBActionSheet/</id>
     <published>2016-07-18T04:36:15.000Z</published>
-    <updated>2016-07-17T16:38:38.000Z</updated>
+    <updated>2017-02-27T15:36:27.000Z</updated>
     
     <content type="html">&lt;p&gt;iOS 系统自带的 &lt;code&gt;UIActionSheet&lt;/code&gt; 无法满足开发中高度个性化的 UI 风格和代码风格，所以我决定自己动手丰衣足食，于是 &lt;a href=&quot;https://github.com/yulingtianxia/TBActionSheet&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;code&gt;TBActionSheet&lt;/code&gt;&lt;/a&gt; 诞生了：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/TBActionSheet/blob/master/images/demo.gif?raw=true&quot; width=&quot;50%&quot; height=&quot;50%&quot;&gt;&lt;/p&gt;
@@ -1034,9 +1035,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="iOS" scheme="http://yulingtianxia.com/tags/iOS/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Reverse Engineering" scheme="http://yulingtianxia.com/tags/Reverse-Engineering/"/>
     
@@ -1101,9 +1102,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Algorithm" scheme="http://yulingtianxia.com/tags/Algorithm/"/>
     
@@ -1238,9 +1239,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Algorithm" scheme="http://yulingtianxia.com/tags/Algorithm/"/>
     

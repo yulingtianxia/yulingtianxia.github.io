@@ -38,7 +38,7 @@
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_setting_stepcount.PNG?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_mystepcount.PNG?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_about.PNG?raw=true">
-<meta property="og:updated_time" content="2017-02-27T17:05:08.000Z">
+<meta property="og:updated_time" content="2017-02-28T06:13:40.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Make WeChat Great Again">
 <meta name="twitter:description" content="关闭朋友圈有一年多了，突然有一天微信的策略变了，在关闭朋友圈的同时也不让别人查看自己的朋友圈了。有妹子表示看不到我朋友圈很不爽，于是我决定对微信进行一番改造！初步实现效果：
@@ -215,7 +215,8 @@
 <p>这么辣眼睛的审美会被狂吐槽，就不贴代码了，有兴趣的去项目里查看哈哈。</p>
 <h3 id="阻止撤回消息-知道真相的我眼泪掉下来"><a href="#阻止撤回消息-知道真相的我眼泪掉下来" class="headerlink" title="阻止撤回消息 - 知道真相的我眼泪掉下来"></a>阻止撤回消息 - 知道真相的我眼泪掉下来</h3><p>有时候被撤回的消息看到了会后悔的，但这依然阻止不了我的好奇心+强迫症。</p>
 <p>在 『<a href="http://yulingtianxia.com/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/">让你的微信不再被人撤回消息</a>』 里我介绍过用 Hopper 逆向的方法。直接看汇编代码来的不那么直接，还是 hook OC 代码稳一些。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 阻止撤回消息</span></span><br><span class="line">CHOptimizedMethod1(<span class="keyword">self</span>, <span class="keyword">void</span>, CMessageMgr, onRevokeMsg, <span class="keyword">id</span>, msg)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"onRevokeMsg: %@"</span>, msg);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>撤回消息时会先调用 <code>-[CMessageMgr onRevokeMsg:]</code> 方法，然后调用 <code>-[CMessageMgr DelMsg:MsgList: DelAll:]</code> 方法删除消息。随意在撤回的时候记录下标志位就好，不影响删除消息功能。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 阻止撤回消息</span></span><br><span class="line">CHOptimizedMethod1(<span class="keyword">self</span>, <span class="keyword">void</span>, CMessageMgr, onRevokeMsg, <span class="keyword">id</span>, msg)</span><br><span class="line">&#123;</span><br><span class="line">    [FishConfigurationCenter sharedInstance].revokeMsg = <span class="literal">YES</span>;</span><br><span class="line">    CHSuper1(CMessageMgr, onRevokeMsg, msg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CHDeclareMethod3(<span class="keyword">void</span>, CMessageMgr, DelMsg, <span class="keyword">id</span>, arg1, MsgList, <span class="keyword">id</span>, arg2, DelAll, <span class="built_in">BOOL</span>, arg3)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> ([FishConfigurationCenter sharedInstance].revokeMsg) &#123;</span><br><span class="line">        [FishConfigurationCenter sharedInstance].revokeMsg = <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        CHSuper3(CMessageMgr, DelMsg, arg1, MsgList, arg2, DelAll, arg3);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>若不是时间匆忙，或许还可以让微信变得更伟大。比如加个『彻底屏蔽群消息』入口，或者加个『彻底清理缓存』按钮。平时使用微信确实有很多不爽的地方，尤其是群功能太弱太弱了。我还想加个功能就是如果对方发了超过 30s 的语音，并且对方不是妹子也不是老板不是亲戚，此时自动回复 #&amp;*DF@$@(M!…..我没太听清，请你重新再发一遍？</p>
 <p>此项目仅用于逆向工程交流学习，黑产死开！</p>
   
@@ -672,20 +673,5 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+  </body>
 </html>
