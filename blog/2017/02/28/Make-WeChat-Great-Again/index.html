@@ -38,7 +38,7 @@
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_setting_stepcount.PNG?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_mystepcount.PNG?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_about.PNG?raw=true">
-<meta property="og:updated_time" content="2017-02-28T06:13:40.000Z">
+<meta property="og:updated_time" content="2017-03-04T12:43:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Make WeChat Great Again">
 <meta name="twitter:description" content="关闭朋友圈有一年多了，突然有一天微信的策略变了，在关闭朋友圈的同时也不让别人查看自己的朋友圈了。有妹子表示看不到我朋友圈很不爽，于是我决定对微信进行一番改造！初步实现效果：
@@ -163,6 +163,7 @@
 <li>Mac 上需要有唯一可用的 iPhone 开发者证书，如果有多个，默认选最后一个</li>
 <li><code>yololib</code> 工具用于注入 dylib 文件到二进制文件中</li>
 <li><code>mobiledevice</code> 可以将 ipa 安装到 USB 连接到 Mac 上的手机中</li>
+<li>一个可用的 mobileprovision 文件，十分关键，可以新建个工程在自己手机 Run 一下，新生成的 app 里面就有 mobileprovision 文件。</li>
 </ol>
 <p>在这里多再说几句：</p>
 <ol>
@@ -179,6 +180,9 @@
 <p>之前看的一些逆向的教程里，感觉前期工作都是装软件配环境，噼里啪啦命令一顿敲，整的挺玄乎，其实都是用人家现成儿的工具做些事情，美其名曰『站在巨人的肩膀上』，这里不再赘述。在我看来第一个真正意义上有难度的事情就是一个字儿：『猜』！</p>
 </blockquote>
 <p>是啊，头文件有了，UI 层级有了，该猜了！那么检验是否猜对需要做啥？Hook 呗！<code>CaptainHook</code> 的用法很简单，新建工程的模板注释里面已经写得很详细了，就不赘述了。</p>
+<blockquote>
+<p>Mac 上需要安装 <code>iOSOpenDev</code> 或 <code>theos</code>，本项目新建工程时使用 <code>iOSOpenDev</code> 的 <code>CaptainHook</code> 模板。编译的时候要选自己的手机，不要选模拟器。</p>
+</blockquote>
 <h3 id="关闭『发现』页面的各种入口-清君侧"><a href="#关闭『发现』页面的各种入口-清君侧" class="headerlink" title="关闭『发现』页面的各种入口 - 清君侧"></a>关闭『发现』页面的各种入口 - 清君侧</h3><p>在关掉各种乱码七糟的功能之后，发现页面仍留下几个无法关闭的入口。本次逆向微信的动机也由此引发：我只想关闭朋友圈入口，并没想关闭自己朋友圈内容，不过微信的这项策略也是很符合一些人的需求的。很多人真的想关闭自己朋友圈不让别人看，不过将这个需求跟旧的『关闭朋友圈入口』功能强绑定在一起，就有些绑架用户的味道了，鱼和熊掌不可兼得啊！不过关闭朋友圈后，别人依然能看到自己在 TimeLine 上新发的内容，但是一旦点击头像进入主页后就提示『该朋友暂未开启朋友圈』，奇怪的是回到自己的 TimeLine 上后，以前那条新发的内容就消失了。我觉得这不是 bug，而是产品策略。微信在努力保持用户粘性，不得不在用户需求和产品数据之间权衡。好吧，扯远了。。。</p>
 <p>我只保留了这俩『活儿好不粘人』的工具类入口：</p>
 <p><img src="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_discover.PNG?raw=true" width="50%" height="50%"></p>
@@ -673,5 +677,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>
