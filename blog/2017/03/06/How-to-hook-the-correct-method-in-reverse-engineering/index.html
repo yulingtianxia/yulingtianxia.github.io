@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_ignore_somone.PNG?raw=true">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/reverse%20engineering/original_method_address@2x.png">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/reverse%20engineering/wechat_base_address@2x.png">
-<meta property="og:updated_time" content="2017-03-05T15:29:17.000Z">
+<meta property="og:updated_time" content="2017-03-23T04:58:56.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何在逆向工程中 Hook 得更准 - 微信屏蔽好友&群消息实战">
 <meta name="twitter:description" content="在逆向工程中往往需要针对想要做的功能 Hook 到相应的方法和属性，小白面对 class-dump 后的大量头文件表示只能靠『猜』。这里我分享下逆向微信实现屏蔽群消息和好友消息的实战经验，适用于非越狱机，项目 GitHub 地址: FishChat。为了能读懂此文，建议先阅读我的上一篇文章：Make WeChat Great Again。">
@@ -169,15 +169,16 @@
 <h4 id="还原-Selector"><a href="#还原-Selector" class="headerlink" title="还原 Selector"></a>还原 Selector</h4><p>根据反汇编地址在 Hopper 中定位方法名，快捷键 <code>G</code>。</p>
 <p>最终得到的方法调用栈如下，调用次序是自底向上：</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-[CSyncBaseEvent <span class="string">BatchAddMsg:</span><span class="string">ShowPush:</span>]</span><br><span class="line">-[CSyncBaseEvent <span class="string">HandleBatch:</span><span class="string">ShowPush:</span>]</span><br><span class="line">-[NewSyncHandler <span class="string">HandleSyncResp:</span><span class="string">Push:</span><span class="string">ShowPush:</span><span class="string">ContinueFlag:</span><span class="string">Scene:</span><span class="string">syncKeyMd5:</span>]</span><br><span class="line">-[NewSyncService <span class="string">HandleSyncResp:</span><span class="string">Push:</span><span class="string">ShowPush:</span><span class="string">Scene:</span>]</span><br><span class="line">-[CNewSyncPrtl <span class="string">HandleResp:</span>]</span><br><span class="line">-[EventService <span class="string">HandleRespThread:</span>]</span><br></pre></td></tr></table></figure>
-<h2 id="从汇编代码继续猜"><a href="#从汇编代码继续猜" class="headerlink" title="从汇编代码继续猜"></a>从汇编代码继续猜</h2><p>虽然可以锁定添加消息的实现逻辑在 <code>-[CSyncBaseEvent BatchAddMsg:ShowPush:]</code> 方法里，但是查找头文件发现它的两个参数和一个返回值竟然都是 <code>BOOL</code> 类型。直接 Hook 掉并返回 <code>NO</code> 虽然可以屏蔽消息，但是却屏蔽了所有的消息，没有对消息来源进行筛选。可以肯定的是在其内部通过单例或者类方法获取和处理了消息对象，然后才调用的 <code>-[CMessageMgr GetMsg:LocalID:]</code> 方法。而真正添加消息的逻辑可能在 <code>-[CMessageMgr GetMsg:LocalID:]</code> 调用之前，也可能在它调用之后。而且好友消息和群消息的处理很可能还是两个不同的分支。</p>
-<p>在不能反编译的情况下，只能浏览下方法的汇编代码中调用到什么其他方法。消息被封装成 <code>CMessageWrap</code> 类，所以要格外注意这个类的一些属性名，或者 <code>MsgWrap</code> 这个词。进而找到 <code>BatchAddMsgInfo</code> 这个类有一些汇编中出现的消息处理的标志位（<code>isInsertNew</code>,<code>isNeedChangeDisplay</code>,<code>isNotify</code>,<code>isCanAddDB</code>） 和 <code>CMessageWrap</code>。又在汇编里找到 <code>MsgHelper</code> 的类，其类方法中带 <code>BatchAddMsgInfo</code> 中那些标志位的有两个，虽然按理说应该 Hook 参数更多的方法，但这里我为了偷懒，选的较短的 <code>+ AddMessageToDB:MsgWrap:Des:DB:Lock:GetChangeDisplay:InsertNew:</code>。PS：这也不短啊！</p>
-<p>拿到 <code>CMessageWrap</code> 就很好判断是否需要屏蔽消息了：</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">CHDeclareClassMethod7(<span class="keyword">BOOL, </span>MsgHelper, <span class="keyword">AddMessageToDB, </span>id, arg1, MsgWrap, id, arg2, Des, unsigned int, arg3, DB, id, arg4, Lock, id, arg5, GetChangeDisplay, <span class="keyword">BOOL </span>*, arg6, <span class="keyword">InsertNew, </span><span class="keyword">BOOL </span>*, arg7)</span><br><span class="line">&#123;</span><br><span class="line">    Ivar nsFromUsrIvar = class_getInstanceVariable(objc_getClass(<span class="string">"CMessageWrap"</span>), <span class="string">"m_nsFromUsr"</span>)<span class="comment">;</span></span><br><span class="line">    NSString *m_nsFromUsr = object_getIvar(arg2, nsFromUsrIvar)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">BOOL </span>result = !([FishConfigurationCenter <span class="keyword">sharedInstance].chatIgnoreInfo[m_nsFromUsr].boolValue);</span><br><span class="line"></span>    if (result) &#123;</span><br><span class="line">        CHSuper7(MsgHelper, <span class="keyword">AddMessageToDB, </span>arg1, MsgWrap, arg2, Des, arg3, DB, arg4, Lock, arg5, GetChangeDisplay, arg6, <span class="keyword">InsertNew, </span>arg7)<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">    *arg6 = result<span class="comment">;</span></span><br><span class="line">    *arg7 = result<span class="comment">;</span></span><br><span class="line">    return result<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="从汇编代码继续猜"><a href="#从汇编代码继续猜" class="headerlink" title="从汇编代码继续猜"></a>从汇编代码继续猜</h2><p>虽然可以锁定添加消息的实现逻辑在 <code>-[CSyncBaseEvent BatchAddMsg:ShowPush:]</code> 方法里，但是查找头文件发现它的两个参数和一个返回值竟然都是 <code>BOOL</code> 类型。直接 Hook 掉并返回 <code>NO</code> 虽然可以屏蔽消息，但是却屏蔽了所有的消息，没有对消息来源进行筛选。可以肯定的是在其内部已经获取到了 <code>CMessageWrap</code> 消息数组（Batch 暗示批量），然后才调用的 <code>-[CMessageMgr GetMsg:LocalID:]</code> 方法。而真正添加消息的逻辑可能在 <code>-[CMessageMgr GetMsg:LocalID:]</code> 调用之前，也可能在它调用之后。</p>
+<p>在不能反编译的情况下，只能浏览下方法的汇编代码中调用到什么其他方法。消息被封装成 <code>CMessageWrap</code> 类，所以要格外注意这个类的一些属性名，或者 <code>MsgWrap</code> 这个词。进而找到 <code>BatchAddMsgInfo</code> 这个类有一些汇编中出现的消息处理的标志位（<code>isInsertNew</code>,<code>isNeedChangeDisplay</code>,<code>isNotify</code>,<code>isCanAddDB</code>） 和 <code>CMessageWrap</code>。打开头文件，一眼就看到一个成员变量 <code>m_arrMsgList</code>，果然是我我想要的消息数组，过滤下即可：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CHDeclareClass(CSyncBaseEvent)</span><br><span class="line">CHDeclareMethod2(<span class="keyword">BOOL, </span>CSyncBaseEvent, <span class="keyword">BatchAddMsg, </span><span class="keyword">BOOL, </span>arg1, <span class="keyword">ShowPush, </span><span class="keyword">BOOL, </span>arg2)</span><br><span class="line">&#123;</span><br><span class="line">    NSMutableArray *msgList = [self valueForKeyPath:@<span class="string">"m_arrMsgList"</span>]<span class="comment">;</span></span><br><span class="line">    NSMutableArray *msgListResult = filtMessageWrapArr(msgList)<span class="comment">;</span></span><br><span class="line">    [self setValue:msgListResult forKeyPath:@<span class="string">"m_arrMsgList"</span>]<span class="comment">;</span></span><br><span class="line">    return CHSuper2(CSyncBaseEvent, <span class="keyword">BatchAddMsg, </span>arg1, <span class="keyword">ShowPush, </span>arg2)<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>写过滤函数时注意 MRC 下的内存管理，不要产生内存泄露。拿到 <code>CMessageWrap</code> 对象时判断消息来源是否需要被屏蔽，删掉数组中需要被屏蔽的消息对象。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSMutableArray</span> * filtMessageWrapArr(<span class="built_in">NSMutableArray</span> *msgList) &#123;</span><br><span class="line">    <span class="built_in">NSMutableArray</span> *msgListResult = [msgList mutableCopy];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">id</span> msgWrap <span class="keyword">in</span> msgList) &#123;</span><br><span class="line">        Ivar nsFromUsrIvar = class_getInstanceVariable(objc_getClass(<span class="string">"CMessageWrap"</span>), <span class="string">"m_nsFromUsr"</span>);</span><br><span class="line">        <span class="built_in">NSString</span> *m_nsFromUsr = object_getIvar(msgWrap, nsFromUsrIvar);</span><br><span class="line">        <span class="keyword">if</span> ([FishConfigurationCenter sharedInstance].chatIgnoreInfo[m_nsFromUsr].boolValue) &#123;</span><br><span class="line">            [msgListResult removeObject:msgWrap];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> [msgListResult autorelease];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>最终屏蔽消息功能大功告成。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这里只是做个示范，并不代表我 Hook 得最准。因为条条大路通罗马，只要达到目的就好。本来逆向工程就是在没有源码的情况下揣测和分析，所以不同的人会给出不同的逆向过程，这就像从南坡和北坡一起爬山一样。</p>
 <p>由于篇幅有限，没能讲解实现屏蔽消息功能的所有代码。源码 GitHub 地址 <a href="https://github.com/yulingtianxia/FishChat" target="_blank" rel="external">FishChat</a>，欢迎提 PR 一起切磋，钻研。</p>
 <p>本人是个 iOS 逆向新手，基本是现学现卖，如有疏漏，还请大牛们指正。</p>
-<p>本项目仅做学习研究用途，禁止用于黑产获利等行为。屏蔽消息功能还不稳定，应该还会有很多 bug，仅做为学习逆向工程的例子，如果对生活造成影响，后果自负哦。</p>
+<p>本项目仅做学习研究用途，禁止用于黑产获利等行为。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -215,16 +216,6 @@
 </nav>
 
 	
-<section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="blog/2017/03/06/How-to-hook-the-correct-method-in-reverse-engineering/" data-title="如何在逆向工程中 Hook 得更准 - 微信屏蔽好友&群消息实战" data-url="http://yulingtianxia.com/blog/2017/03/06/How-to-hook-the-correct-method-in-reverse-engineering/"></div>
-</section>
-
-
-<section id="comments" class="comment">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
 
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
@@ -520,38 +511,6 @@ $(document).ready(function(){
 
 
 
-<script type="text/javascript">
-  var duoshuoQuery = {short_name:"yulingtianxia"};
-  (function() {
-    var ds = document.createElement('script');
-    ds.type = 'text/javascript';ds.async = true;
-    ds.src = '//static.duoshuo.com/embed.js';
-    ds.charset = 'UTF-8';
-    (document.getElementsByTagName('head')[0] 
-    || document.getElementsByTagName('body')[0]).appendChild(ds);
-  })();
-</script> 
-
-
-<script type="text/javascript">
-
-var disqus_shortname = 'yulingtianxia';
-
-(function(){
-  var dsq = document.createElement('script');
-  dsq.type = 'text/javascript';
-  dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-}());
-(function(){
-  var dsq = document.createElement('script');
-  dsq.type = 'text/javascript';
-  dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-}());
-</script>
 
 
 

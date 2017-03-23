@@ -40,7 +40,7 @@
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_setting_stepcount.PNG?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_mystepcount.PNG?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_about.PNG?raw=true">
-<meta property="og:updated_time" content="2017-03-05T03:42:55.000Z">
+<meta property="og:updated_time" content="2017-03-23T04:58:56.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Make WeChat Great Again">
 <meta name="twitter:description" content="关闭朋友圈有一年多了，突然有一天微信的策略变了，在关闭朋友圈的同时也不让别人查看自己的朋友圈了。有妹子表示看不到我朋友圈很不爽，于是我决定对微信进行一番改造！初步实现效果：
@@ -178,6 +178,7 @@
 <li>可以使用 <code>Cycript</code> 来完成一些调试工作，这样就不用一次次打 Log 了。同样也可以打印出视图层级，不过建议有条件的同学用 Reveal 2，已经支持 USB 调试了。<code>Cycript</code> 只支持在同网段下连接到手机 IP 的 <code>8888</code> 端口，cy 脚本还是跟 <code>lldb</code> 命令有一些差别的。如果 <code>Cycript</code> 官网的 sdk 不好用，那就用用我上传的吧：<a href="https://github.com/yulingtianxia/FishChat/tree/master/Cycript.framework" target="_blank" rel="external"><code>Cycript.framework</code></a></li>
 <li>找到视图对应的类之后，就需要在 <code>class-dump</code> 得到的头文件寻找蛛丝马迹了。Dump 出的文件：<a href="https://github.com/yulingtianxia/FishChat/tree/master/WeChat-Headers" target="_blank" rel="external">WeChat-Headers</a></li>
 <li>查看设备 Log 最简单的方式当然是从 Xcode-&gt;Devices-&gt;你的设备。 </li>
+<li>安装时如果遇到 <code>AMDeviceSecureInstallApplication</code> 安装失败，可以将工程 Clean 和 Clean Build Folder 后重新编译，再跑一次我的脚本。如果还不行，尝试用 iTools 等软件安装 ipa 到手机上。</li>
 </ol>
 <h2 id="之后就是不停地-Hook"><a href="#之后就是不停地-Hook" class="headerlink" title="之后就是不停地 Hook"></a>之后就是不停地 Hook</h2><p>我曾经在『<a href="http://yulingtianxia.com/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/">让你的微信不再被人撤回消息</a>』这篇文章中说过：</p>
 <blockquote>
@@ -258,6 +259,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/blog/2017/03/06/How-to-hook-the-correct-method-in-reverse-engineering/" title="如何在逆向工程中 Hook 得更准 - 微信屏蔽好友&amp;群消息实战">
+  <strong>上一篇：</strong><br/>
+  <span>
+  如何在逆向工程中 Hook 得更准 - 微信屏蔽好友&amp;群消息实战</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/blog/2017/01/16/DIY-a-simple-two-way-list/"  title="DIY 双向滑动列表">
@@ -270,16 +279,6 @@
 </nav>
 
 	
-<section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="blog/2017/02/28/Make-WeChat-Great-Again/" data-title="Make WeChat Great Again" data-url="http://yulingtianxia.com/blog/2017/02/28/Make-WeChat-Great-Again/"></div>
-</section>
-
-
-<section id="comments" class="comment">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
 
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
@@ -575,38 +574,6 @@ $(document).ready(function(){
 
 
 
-<script type="text/javascript">
-  var duoshuoQuery = {short_name:"yulingtianxia"};
-  (function() {
-    var ds = document.createElement('script');
-    ds.type = 'text/javascript';ds.async = true;
-    ds.src = '//static.duoshuo.com/embed.js';
-    ds.charset = 'UTF-8';
-    (document.getElementsByTagName('head')[0] 
-    || document.getElementsByTagName('body')[0]).appendChild(ds);
-  })();
-</script> 
-
-
-<script type="text/javascript">
-
-var disqus_shortname = 'yulingtianxia';
-
-(function(){
-  var dsq = document.createElement('script');
-  dsq.type = 'text/javascript';
-  dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-}());
-(function(){
-  var dsq = document.createElement('script');
-  dsq.type = 'text/javascript';
-  dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-}());
-</script>
 
 
 
