@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2017-03-23T04:58:56.000Z</updated>
+  <updated>2017-04-16T16:15:35.000Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -14,6 +14,200 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Objective-C Method Swizzling</title>
+    <link href="http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/"/>
+    <id>http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/</id>
+    <published>2017-04-16T16:11:48.000Z</published>
+    <updated>2017-04-16T16:15:35.000Z</updated>
+    
+    <content type="html">&lt;p&gt;Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 &lt;code&gt;+ load&lt;/code&gt; 方法中，这是利用它调用时机较提前等性质。&lt;/p&gt;
+&lt;p&gt;有时候需要 Hook 子类和父类的同一个方法，但是它们的 &lt;code&gt;+ load&lt;/code&gt; 方法调用顺序不同。一个常见的顺序可能是：父类-&amp;gt;子类-&amp;gt;子类类别-&amp;gt;父类类别。所以 Hook 的顺序并不能保证，就不能保证 Hook 后方法调用的顺序是对的。而且使用不同方法 Method Swizzling 也会带来不同的结果。本文将会对这些情况下的 Hook 结果进行分析和总结。&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;h2 id=&quot;Method-Swizzling-常用实现方案&quot;&gt;&lt;a href=&quot;#Method-Swizzling-常用实现方案&quot; class=&quot;headerlink&quot; title=&quot;Method Swizzling 常用实现方案&quot;&gt;&lt;/a&gt;Method Swizzling 常用实现方案&lt;/h2&gt;&lt;p&gt;目前有两类常用的 Method Swizzling 实现方案，诸如 &lt;a href=&quot;https://github.com/rabovik/RSSwizzle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;RSSwizzle&lt;/a&gt; 和 &lt;a href=&quot;https://github.com/rentzsch/jrswizzle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;jrswizzle&lt;/a&gt; 这种较为复杂且周全的一些实现方案这里暂且不提。&lt;/p&gt;
+&lt;h3 id=&quot;方案-A&quot;&gt;&lt;a href=&quot;#方案-A&quot; class=&quot;headerlink&quot; title=&quot;方案 A&quot;&gt;&lt;/a&gt;方案 A&lt;/h3&gt;&lt;p&gt;如果类中没有实现 Original &lt;code&gt;selector&lt;/code&gt; 对应的方法，那就先添加 &lt;code&gt;Method&lt;/code&gt;，并将其 &lt;code&gt;IMP&lt;/code&gt; 映射为 Swizzle 的实现。然后替换 Swizzle &lt;code&gt;selector&lt;/code&gt; 的 &lt;code&gt;IMP&lt;/code&gt; 为 Original 的实现；否则交换二者 &lt;code&gt;IMP&lt;/code&gt;。&lt;/p&gt;
+&lt;figure class=&quot;highlight mipsasm&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;+ (void)load&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    static &lt;span class=&quot;keyword&quot;&gt;dispatch_once_t &lt;/span&gt;onceToken&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;dispatch_once(&amp;amp;onceToken, &lt;/span&gt;^&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Class aClass = [self class]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        SEL &lt;span class=&quot;keyword&quot;&gt;originalSelector &lt;/span&gt;= @selector(method_original:)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        SEL &lt;span class=&quot;keyword&quot;&gt;swizzledSelector &lt;/span&gt;= @selector(method_swizzle:)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Method &lt;span class=&quot;keyword&quot;&gt;originalMethod &lt;/span&gt;= class_getInstanceMethod(aClass, &lt;span class=&quot;keyword&quot;&gt;originalSelector);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        Method &lt;span class=&quot;keyword&quot;&gt;swizzledMethod &lt;/span&gt;= class_getInstanceMethod(aClass, &lt;span class=&quot;keyword&quot;&gt;swizzledSelector);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        &lt;span class=&quot;keyword&quot;&gt;BOOL &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;didAddMethod &lt;/span&gt;=&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        class_addMethod(aClass,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                        &lt;span class=&quot;keyword&quot;&gt;originalSelector,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;                        method_getImplementation(&lt;span class=&quot;keyword&quot;&gt;swizzledMethod),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;                        method_getTypeEncoding(&lt;span class=&quot;keyword&quot;&gt;swizzledMethod));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        if (&lt;span class=&quot;keyword&quot;&gt;didAddMethod) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            class_replaceMethod(aClass,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                               &lt;span class=&quot;keyword&quot;&gt;swizzledSelector,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;                                               method_getImplementation(&lt;span class=&quot;keyword&quot;&gt;originalMethod),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;                                               method_getTypeEncoding(&lt;span class=&quot;keyword&quot;&gt;originalMethod));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        &amp;#125; else &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            method_exchangeImplementations(&lt;span class=&quot;keyword&quot;&gt;originalMethod, &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;swizzledMethod);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;有时为了避免方法命名冲突和参数 &lt;code&gt;_cmd&lt;/code&gt; 被篡改，也会使用下面这种『静态方法版本』的 Method Swizzle。CaptainHook 中的宏定义也是采用这种方式，比较推荐：&lt;/p&gt;
+&lt;figure class=&quot;highlight objectivec&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;typedef&lt;/span&gt; IMP *I&lt;span class=&quot;built_in&quot;&gt;MPPointer&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; MethodSwizzle(&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, SEL _cmd, &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; arg1);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; (*MethodOriginal)(&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, SEL _cmd, &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; arg1);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; MethodSwizzle(&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, SEL _cmd, &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; arg1) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// do custom work&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    MethodOriginal(&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, _cmd, arg1);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;BOOL&lt;/span&gt; class_swizzleMethodAndStore(Class class, SEL original, IMP replacement, I&lt;span class=&quot;built_in&quot;&gt;MPPointer&lt;/span&gt; store) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    IMP imp = &lt;span class=&quot;literal&quot;&gt;NULL&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Method method = class_getInstanceMethod(class, original);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (method) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;char&lt;/span&gt; *type = method_getTypeEncoding(method);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        imp = class_replaceMethod(class, original, replacement, type);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (!imp) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            imp = method_getImplementation(method);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (imp &amp;amp;&amp;amp; store) &amp;#123; *store = imp; &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; (imp != &lt;span class=&quot;literal&quot;&gt;NULL&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;+ (&lt;span class=&quot;built_in&quot;&gt;BOOL&lt;/span&gt;)swizzle:(SEL)original with:(IMP)replacement store:(I&lt;span class=&quot;built_in&quot;&gt;MPPointer&lt;/span&gt;)store &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; class_swizzleMethodAndStore(&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, original, replacement, store);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;+ (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)load &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; swizzle:&lt;span class=&quot;keyword&quot;&gt;@selector&lt;/span&gt;(originalMethod:) with:(IMP)MethodSwizzle store:(IMP *)&amp;amp;MethodOriginal];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;然而上面的代码依然不是 Method Swizzling 的最佳实现。&lt;/p&gt;
+&lt;h3 id=&quot;方案-B&quot;&gt;&lt;a href=&quot;#方案-B&quot; class=&quot;headerlink&quot; title=&quot;方案 B&quot;&gt;&lt;/a&gt;方案 B&lt;/h3&gt;&lt;p&gt;其实就是方案 A 的阉割版：&lt;/p&gt;
+&lt;figure class=&quot;highlight mipsasm&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;+ (void)load&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    static &lt;span class=&quot;keyword&quot;&gt;dispatch_once_t &lt;/span&gt;onceToken&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;dispatch_once(&amp;amp;onceToken, &lt;/span&gt;^&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Class aClass = [self class]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        SEL &lt;span class=&quot;keyword&quot;&gt;originalSelector &lt;/span&gt;= @selector(method_original:)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        SEL &lt;span class=&quot;keyword&quot;&gt;swizzledSelector &lt;/span&gt;= @selector(method_swizzle:)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Method &lt;span class=&quot;keyword&quot;&gt;originalMethod &lt;/span&gt;= class_getInstanceMethod(aClass, &lt;span class=&quot;keyword&quot;&gt;originalSelector);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        Method &lt;span class=&quot;keyword&quot;&gt;swizzledMethod &lt;/span&gt;= class_getInstanceMethod(aClass, &lt;span class=&quot;keyword&quot;&gt;swizzledSelector);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;       method_exchangeImplementations(&lt;span class=&quot;keyword&quot;&gt;originalMethod, &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;swizzledMethod);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;    &amp;#125;)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;直接交换 &lt;code&gt;IMP&lt;/code&gt; 是很危险的。因为如果这个类中没有实现这个方法，&lt;code&gt;class_getInstanceMethod()&lt;/code&gt; 返回的是某个父类的 &lt;code&gt;Method&lt;/code&gt; 对象，这样 &lt;code&gt;method_exchangeImplementations()&lt;/code&gt; 就把父类的原始实现（&lt;code&gt;IMP&lt;/code&gt;）跟这个类的 Swizzle 实现交换了。这样其他父类及其其他子类的方法调用就会出问题，最严重的就是 Crash。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;但如果这个类中实现了此方法，那么方案 A 等价于方案 B&lt;/strong&gt;。&lt;/p&gt;
+&lt;h2 id=&quot;研究背景&quot;&gt;&lt;a href=&quot;#研究背景&quot; class=&quot;headerlink&quot; title=&quot;研究背景&quot;&gt;&lt;/a&gt;研究背景&lt;/h2&gt;&lt;p&gt;这里对本文的研究背景进行一些假设和约定：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;有三个类，Child 类继承 Super 类，Super 类继承 Base 类。&lt;/li&gt;
+&lt;li&gt;我们 Hook 了 Child 和 Super 的某个方法（而且是同一个方法）。&lt;/li&gt;
+&lt;li&gt;为了方便表示，Child 的原始方法被称作 &lt;code&gt;Child_Original&lt;/code&gt;，Hook 后的方法被称作 &lt;code&gt;Child_Swizzle&lt;/code&gt;。Super 以此类推。&lt;/li&gt;
+&lt;li&gt;为了让 Swizzle 的实现调用 Original 实现，&lt;code&gt;Child_Swizzle&lt;/code&gt; 的  IMP 中会调用 &lt;code&gt;Child_Swizzle&lt;/code&gt; 的 &lt;code&gt;selector&lt;/code&gt;。Super 以此类推。&lt;/li&gt;
+&lt;li&gt;我们期望执行 Child 对象的 &lt;code&gt;Child_Original&lt;/code&gt; 方法时的 IMP 执行顺序是：&lt;code&gt;Child_Swizzle&lt;/code&gt;-&amp;gt;&lt;code&gt;Child_Original&lt;/code&gt;-&amp;gt;&lt;code&gt;Super_Swizzle&lt;/code&gt;-&amp;gt;&lt;code&gt;Super_Original&lt;/code&gt;-&amp;gt;&lt;code&gt;Base&lt;/code&gt;。我们只需关注其中 Swizzle 的部分，所以约定简写为：Child-&amp;gt;Super-&amp;gt;Base。&lt;/li&gt;
+&lt;li&gt;本文会按 Hook 顺序、类是否实现方法、Hook 方案(A/B) 来细分不同情况下的结果。一共细分为 18 种情况。&lt;/li&gt;
+&lt;li&gt;本文会使用图例表示每种情况下的方法调用和映射关系，分为三个维度（Super/Child;Original/Swizzle;&lt;code&gt;Selector&lt;/code&gt;/&lt;code&gt;Method&lt;/code&gt;/&lt;code&gt;IMP&lt;/code&gt;）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/模板.png&quot; alt=&quot;模板&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;下文中的图例均为 Hook 后的结果(Hook 前的太简单了懒得画)。如果不理解 &lt;code&gt;Selector&lt;/code&gt;,&lt;code&gt;Method&lt;/code&gt; 与 &lt;code&gt;IMP&lt;/code&gt; 三者的关系，甚至不理解 Method Swizzling 原理，请先阅读 &lt;a href=&quot;http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/&quot;&gt;Objective-C Runtime&lt;/a&gt;！如果还是看不懂，那就再看一遍吧！&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&quot;Hook-顺序：先-Child-后-Super&quot;&gt;&lt;a href=&quot;#Hook-顺序：先-Child-后-Super&quot; class=&quot;headerlink&quot; title=&quot;Hook 顺序：先 Child 后 Super&quot;&gt;&lt;/a&gt;Hook 顺序：先 Child 后 Super&lt;/h2&gt;&lt;p&gt;这个顺序本身就不被大众认可却又不得不广泛被使用，因为很多想 Hook 系统 API 只能从 Category 下手。当子类同样的方法也被 Hook 后，奇怪的事情便发生了。&lt;/p&gt;
+&lt;h3 id=&quot;Super-未实现方法-Child-未实现方法&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-未实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 未实现方法&lt;/h3&gt;&lt;h4 id=&quot;Super-Plan-A-Child-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperAChildA.png&quot; alt=&quot;CS_SuperAChildA&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
+&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;Super-Plan-B-Child-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan B,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperBChildA.png&quot; alt=&quot;CS_SuperBChildA&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
+&lt;li&gt;Super 对象正常&lt;/li&gt;
+&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;Super-Plan-A-Child-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan A,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperAChildB.png&quot; alt=&quot;CS_SuperAChildB&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
+&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则会一直调用 Child_Swizzle 进入死循环&lt;/li&gt;
+&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦间接等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;Super-Plan-B-Child-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan B,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperBChildB.png&quot; alt=&quot;CS_SuperBChildB&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象：Super-&amp;gt;Child-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则会一直调用 Child_Swizzle 进入死循环&lt;/li&gt;
+&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;Super-实现方法-Child-未实现方法&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-未实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 未实现方法&lt;/h3&gt;&lt;p&gt;由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。&lt;/p&gt;
+&lt;h4 id=&quot;Child-Plan-A&quot;&gt;&lt;a href=&quot;#Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan A&quot;&gt;&lt;/a&gt;Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_ChildA.png&quot; alt=&quot;CS_ChildA&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
+&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;Child-Plan-B&quot;&gt;&lt;a href=&quot;#Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan B&quot;&gt;&lt;/a&gt;Child:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_ChildB.png&quot; alt=&quot;CS_ChildB&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象：Super-&amp;gt;Child-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则会一直调用 Child_Swizzle 进入死循环&lt;/li&gt;
+&lt;li&gt;Base 对象正常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;Super-未实现方法-Child-实现方法&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperA.png&quot; alt=&quot;CS_SuperA&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;Super-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B&quot;&gt;&lt;/a&gt;Super:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperB.png&quot; alt=&quot;CS_SuperB&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 对象正常：Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;Super-实现方法-Child-实现方法&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_Perfect.png&quot; alt=&quot;CS_Perfect&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;Hook-顺序：先-Super-后-Child&quot;&gt;&lt;a href=&quot;#Hook-顺序：先-Super-后-Child&quot; class=&quot;headerlink&quot; title=&quot;Hook 顺序：先 Super 后 Child&quot;&gt;&lt;/a&gt;Hook 顺序：先 Super 后 Child&lt;/h2&gt;&lt;p&gt;并不是 Hook 顺序对了就能保平安，姿势也同样重要。&lt;/p&gt;
+&lt;h3 id=&quot;Super-未实现方法-Child-未实现方法-1&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-未实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 未实现方法&lt;/h3&gt;&lt;h4 id=&quot;Super-Plan-A-Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperAChildA.png&quot; alt=&quot;SC_SuperAChildA&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;Super-Plan-B-Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan B,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperBChildA.png&quot; alt=&quot;SC_SuperBChildA&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 对象正常：Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;Super-Plan-A-Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan A,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperAChildB.png&quot; alt=&quot;SC_SuperAChildB&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则 Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
+&lt;li&gt;Base 对象正常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;Super-Plan-B-Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan B,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperBChildB.png&quot; alt=&quot;SC_SuperBChildB&quot;&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则 Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
+&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;Super-实现方法-Child-未实现方法-1&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-未实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 未实现方法&lt;/h3&gt;&lt;p&gt;由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。&lt;/p&gt;
+&lt;h4 id=&quot;Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan A&quot;&gt;&lt;/a&gt;Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_ChildA.png&quot; alt=&quot;SC_ChildA&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan B&quot;&gt;&lt;/a&gt;Child:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_ChildB.png&quot; alt=&quot;SC_ChildB&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则 Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
+&lt;li&gt;Base 对象正常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;Super-未实现方法-Child-实现方法-1&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperA.png&quot; alt=&quot;SC_SuperA&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;Super-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B&quot;&gt;&lt;/a&gt;Super:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperB.png&quot; alt=&quot;SC_SuperB&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 对象正常：Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;Super-实现方法-Child-实现方法-1&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_Perfect.png&quot; alt=&quot;SC_Perfect&quot;&gt;&lt;/p&gt;
+&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
+&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;结论&quot;&gt;&lt;a href=&quot;#结论&quot; class=&quot;headerlink&quot; title=&quot;结论&quot;&gt;&lt;/a&gt;结论&lt;/h2&gt;&lt;h3 id=&quot;Hook-顺序：先-Child-类后-Super-类&quot;&gt;&lt;a href=&quot;#Hook-顺序：先-Child-类后-Super-类&quot; class=&quot;headerlink&quot; title=&quot;Hook 顺序：先 Child 类后 Super 类&quot;&gt;&lt;/a&gt;Hook 顺序：先 Child 类后 Super 类&lt;/h3&gt;&lt;p&gt;为了保证 Hook 后方法调用顺序是对的，需要同时满足以下两个条件：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Child 类实现被 Hook 的方法&lt;/li&gt;
+&lt;li&gt;Super 类实现被 Hook 的方法或使用 A 方案 Hook&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;Hook-顺序：先-Super-类后-Child-类&quot;&gt;&lt;a href=&quot;#Hook-顺序：先-Super-类后-Child-类&quot; class=&quot;headerlink&quot; title=&quot;Hook 顺序：先 Super 类后 Child 类&quot;&gt;&lt;/a&gt;Hook 顺序：先 Super 类后 Child 类&lt;/h3&gt;&lt;p&gt;因为 Hook 的顺序是正确的，所以只需满足以下任意一个条件即可：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;实现被 Hook 的方法&lt;/li&gt;
+&lt;li&gt;使用方案 A 进行 Hook&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;Objective-C-Method-Swizzling-最佳实践&quot;&gt;&lt;a href=&quot;#Objective-C-Method-Swizzling-最佳实践&quot; class=&quot;headerlink&quot; title=&quot;Objective-C Method Swizzling 最佳实践&quot;&gt;&lt;/a&gt;Objective-C Method Swizzling 最佳实践&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;Hook 顺序并不能保证结果一定正确，但先 Super 后 Child 效果更佳&lt;/li&gt;
+&lt;li&gt;方案 A 明显优于方案 B&lt;/li&gt;
+&lt;li&gt;方案 A 中的『静态方法版本』固然更缜密，但操作复杂。为了提升开发效率，建议参考 CaptainHook 的宏定义实现。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/rabovik/RSSwizzle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;RSSwizzle&lt;/a&gt; 被很多人推荐，它用很复杂的方式解决了 &lt;a href=&quot;http://stackoverflow.com/questions/5339276/what-are-the-dangers-of-method-swizzling-in-objective-c&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;What are the Dangers of Method Swizzling in Objective C?&lt;/a&gt; 中提到的一系列问题。不过引入它还是有一些成本的，建议在本文列举的那些极端特殊情况下才使用它，毕竟方案 A 已经能 Cover 到大部分情况了。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/rentzsch/jrswizzle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;jrswizzle&lt;/a&gt; 尝试解决在不同平台和系统版本上的 Method Swizzling 与类继承关系的冲突。对各平台低版本系统兼容性较强。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;我觉得最适合项目的方案才是最佳实践。&lt;/p&gt;
+&lt;h2 id=&quot;Reference&quot;&gt;&lt;a href=&quot;#Reference&quot; class=&quot;headerlink&quot; title=&quot;Reference&quot;&gt;&lt;/a&gt;Reference&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://stackoverflow.com/questions/5339276/what-are-the-dangers-of-method-swizzling-in-objective-c&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;What are the Dangers of Method Swizzling in Objective C?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 &lt;code&gt;+ load&lt;/code&gt; 方法中，这是利用它调用时机较提前等性质。&lt;/p&gt;
+&lt;p&gt;有时候需要 Hook 子类和父类的同一个方法，但是它们的 &lt;code&gt;+ load&lt;/code&gt; 方法调用顺序不同。一个常见的顺序可能是：父类-&amp;gt;子类-&amp;gt;子类类别-&amp;gt;父类类别。所以 Hook 的顺序并不能保证，就不能保证 Hook 后方法调用的顺序是对的。而且使用不同方法 Method Swizzling 也会带来不同的结果。本文将会对这些情况下的 Hook 结果进行分析和总结。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Objective-C" scheme="http://yulingtianxia.com/tags/Objective-C/"/>
+    
+      <category term="Runtime" scheme="http://yulingtianxia.com/tags/Runtime/"/>
+    
+  </entry>
   
   <entry>
     <title>如何在逆向工程中 Hook 得更准 - 微信屏蔽好友&amp;群消息实战</title>
@@ -420,11 +614,11 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
     
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
   </entry>
   
@@ -635,9 +829,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
   </entry>
   
@@ -1199,9 +1393,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Algorithm" scheme="http://yulingtianxia.com/tags/Algorithm/"/>
     
@@ -1336,9 +1530,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Algorithm" scheme="http://yulingtianxia.com/tags/Algorithm/"/>
     
@@ -1761,94 +1955,6 @@
     
     
       <category term="iOS" scheme="http://yulingtianxia.com/tags/iOS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>When to Use Swift Structs and Classes</title>
-    <link href="http://yulingtianxia.com/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/"/>
-    <id>http://yulingtianxia.com/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/</id>
-    <published>2015-08-12T02:05:20.000Z</published>
-    <updated>2016-05-11T14:32:38.000Z</updated>
-    
-    <content type="html">&lt;p&gt;本文翻译自 Mike Ash 的 &lt;a href=&quot;https://www.mikeash.com/pyblog/friday-qa-2015-07-17-when-to-use-swift-structs-and-classes.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Friday Q&amp;amp;A 2015-07-17: When to Use Swift Structs and Classes&lt;/a&gt;  &lt;/p&gt;
-&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-&lt;p&gt;Swift 圈中有一个被反复讨论的话题已经成为了:何时使用&lt;code&gt;class&lt;/code&gt;,何时使用&lt;code&gt;struct&lt;/code&gt;.我觉得今天我也要给出我的个人观点.&lt;/p&gt;
-&lt;h2 id=&quot;值-VS-引用&quot;&gt;&lt;a href=&quot;#值-VS-引用&quot; class=&quot;headerlink&quot; title=&quot;值 VS 引用&quot;&gt;&lt;/a&gt;值 VS 引用&lt;/h2&gt;&lt;p&gt;答案真的很简单了:当你需要用值语义的时候使用&lt;code&gt;struct&lt;/code&gt;,需要用引用语义使用&lt;code&gt;class&lt;/code&gt;.就是这样!&lt;/p&gt;
-&lt;p&gt;我们下周再见…&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;等下&lt;/strong&gt;&lt;br&gt;干啥?&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;还没回答我的问题呢&lt;/strong&gt;&lt;br&gt;你啥意思?答案不明摆着么?&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;哦,但是…&lt;/strong&gt;&lt;br&gt;啥?&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;什么是值/引用语义?&lt;/strong&gt;&lt;br&gt;哦我明白了,我可能接下来会探讨下.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;还有他们是如何关联到&lt;code&gt;class&lt;/code&gt;和&lt;code&gt;struct&lt;/code&gt;上的&lt;/strong&gt;&lt;br&gt;嗯&lt;/p&gt;
-&lt;p&gt;所有都归根结底到数据以及数据存储的位置.我们把东西存在局部变量,参数,属性和全局变量中.从根本上又划分为两种不同的&lt;em&gt;方式&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;对于值语义来说,数据直接存在于存储单元中.对于引用语义,数据存在于其他地方,存储单元存储一个对数据的&lt;em&gt;引用&lt;/em&gt;.当你存储数据的时候这种差异不一定明显.要注意的是拷贝存储的时候.对于值语义,你得到的是数据一份新拷贝.对于引用语义,你得到的是一份指向相同数据引用的新拷贝.&lt;/p&gt;
-&lt;p&gt;真是抽象,我们来看个例子吧.我们暂时先把 Swift 这茬放下,我们先看个 Objective-C 的例子:&lt;/p&gt;
-&lt;figure class=&quot;highlight autoit&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;symbol&quot;&gt;@interface&lt;/span&gt; SomeClass : NSObject &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;symbol&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;symbol&quot;&gt;@end&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;symbol&quot;&gt;@implementation&lt;/span&gt; SomeClass&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;symbol&quot;&gt;@end&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;struct SomeStruct &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;SomeClass *reference = [[SomeClass alloc] init]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;reference.&lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt; = &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;SomeClass *reference2 = reference&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;reference.&lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt; = &lt;span class=&quot;number&quot;&gt;43&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;NSLog(@&lt;span class=&quot;string&quot;&gt;&quot;The number in reference2 is %d&quot;&lt;/span&gt;, reference2.&lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt;)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;struct SomeStruct value = &amp;#123;&amp;#125;&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;value.&lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt; = &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;struct SomeStruct value2 = value&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;value.&lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt; = &lt;span class=&quot;number&quot;&gt;43&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;NSLog(@&lt;span class=&quot;string&quot;&gt;&quot;The number in value2 is %d&quot;&lt;/span&gt;, value2.&lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt;)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;打印结果:&lt;/p&gt;
-&lt;figure class=&quot;highlight applescript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;The &lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; reference2 &lt;span class=&quot;keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;43&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;The &lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; value2 &lt;span class=&quot;keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;为啥不一样呢?&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;SomeClass *reference = [[SomeClass alloc] init]&lt;/code&gt; 这行代码在内存中创建了一个 &lt;code&gt;SomeClass&lt;/code&gt; 的新实例,然后在变量中放置了一个对那个实例的引用. &lt;code&gt;reference2 = reference&lt;/code&gt; 这行代码在新变量中放置了对相同对象的引用. &lt;code&gt;reference.number = 43&lt;/code&gt; 这行代码修改的是两个变量当前一起指向的对象中存储的数字.结果就是日志打印的是对象中的值,即&lt;code&gt;43&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;struct SomeStruct value = {}&lt;/code&gt; 这行代码在变量中创建了一个 &lt;code&gt;SomeStruct&lt;/code&gt; 的新实例. &lt;code&gt;value2 = value&lt;/code&gt; 将实例拷贝到第二个变量.每个变量有各自的数据块.&lt;/p&gt;
-&lt;p&gt;Swift 对应的例子:&lt;/p&gt;
-&lt;figure class=&quot;highlight stylus&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;class SomeClass &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; number: Int = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;struct SomeStruct &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; number: Int = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; reference = SomeClass()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;reference&lt;span class=&quot;selector-class&quot;&gt;.number&lt;/span&gt; = &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; reference2 = reference&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;reference&lt;span class=&quot;selector-class&quot;&gt;.number&lt;/span&gt; = &lt;span class=&quot;number&quot;&gt;43&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;title&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;string&quot;&gt;&quot;The number in reference2 is \(reference2.number)&quot;&lt;/span&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; value = SomeStruct()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;value&lt;span class=&quot;selector-class&quot;&gt;.number&lt;/span&gt; = &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; value2 = value&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;value&lt;span class=&quot;selector-class&quot;&gt;.number&lt;/span&gt; = &lt;span class=&quot;number&quot;&gt;43&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;title&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;string&quot;&gt;&quot;The number in value2 is \(value2.number)&quot;&lt;/span&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;输出结果跟以前一样:&lt;/p&gt;
-&lt;figure class=&quot;highlight applescript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;The &lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; reference2 &lt;span class=&quot;keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;43&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;The &lt;span class=&quot;built_in&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; value2 &lt;span class=&quot;keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h2 id=&quot;值类型的经验&quot;&gt;&lt;a href=&quot;#值类型的经验&quot; class=&quot;headerlink&quot; title=&quot;值类型的经验&quot;&gt;&lt;/a&gt;值类型的经验&lt;/h2&gt;&lt;p&gt;值类型并不是新鲜事物,但是对于很多人来说觉得它是新的.这是怎么回事呢?&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;struct&lt;/code&gt; 在绝大部分 Objective-C 代码中并不是很常用.我们偶尔以 &lt;code&gt;CGRect&lt;/code&gt; 和 &lt;code&gt;CGPoint&lt;/code&gt; 等方式接触到它们,但很少会自己去写.首先,它们不是很实用.用 Objective-C 在 &lt;code&gt;struct&lt;/code&gt; 中正确地存储对象的引用的确很难,尤其是使用 ARC 的时候.&lt;/p&gt;
-&lt;p&gt;很多其他语言干脆没有类似 &lt;code&gt;struct&lt;/code&gt; 的东东.许多语言如同 Python 和 JavaScript 一样”万物皆对象”,只有引用类型.如果你是从这类语言转型到 Swift 的, 你可能对 &lt;code&gt;struct&lt;/code&gt; 的概念就更陌生了.&lt;/p&gt;
-&lt;p&gt;等一下!有种情况下几乎所有语言都使用的值类型:数字!稍微有点编程经验的程序员都不会对下面的行为感到惊讶,这跟语言无关:&lt;/p&gt;
-&lt;figure class=&quot;highlight stylus&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; x = &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; x2 = x&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;x++&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;title&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;string&quot;&gt;&quot;x=\(x) x2=\(x2)&quot;&lt;/span&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// prints: x=43 x2=42&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;很对我们来说如此显而易见和自然以至于我们甚至没意识到结果的差异,但它就在我们眼前.你从开始编程之日起一直在使用值类型,即使你没意识到.&lt;/p&gt;
-&lt;p&gt;很多语言实际上将数字实现为引用类型,因为它们是”万物皆对象”哲学的死忠粉.然而,它们是&lt;em&gt;不可变&lt;/em&gt;类型,值类型与不可变引用类型之间的差异很难察觉.它们表现得与值类型相同,尽管实现方式可能不同.&lt;/p&gt;
-&lt;p&gt;这是理解值和引用类型重要的一环.当数据变化时,差异主要关系到语法方面.假如数据是不可变的,那么值和引用的差别就消失了,或至少变成了仅是性能问题而不是语法差异.&lt;/p&gt;
-&lt;p&gt;实际上 Objective-C 的 &lt;a href=&quot;https://www.mikeash.com/pyblog/friday-qa-2012-07-27-lets-build-tagged-pointers.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;tagged pointers&lt;/a&gt; 对此提到过.一个对象遇上了 tagged pointer 的处理,然后存储在指针的值中,就成了值类型.拷贝操作这时拷贝的就是对象内容了.表面上没差异,因为 Objective-C 函数库小心翼翼地仅将不可变类型放到 tagged pointer 中.有些 &lt;code&gt;NSNumber&lt;/code&gt; 对象是引用类型而有些是值类型,但用起来没什么差别.&lt;/p&gt;
-&lt;h2 id=&quot;做出抉择&quot;&gt;&lt;a href=&quot;#做出抉择&quot; class=&quot;headerlink&quot; title=&quot;做出抉择&quot;&gt;&lt;/a&gt;做出抉择&lt;/h2&gt;&lt;p&gt;既然我们知道了值类型的工作原理,我们改为自己的数据类型选择那种方式呢?&lt;/p&gt;
-&lt;p&gt;这两种类型根本的区别就是当对其使用&lt;code&gt;=&lt;/code&gt;时会发生什么.值类型是被拷贝,而引用类型只是得到另一个新引用.&lt;/p&gt;
-&lt;p&gt;因此在选择使用哪种类型时面对的根本问题是:拷贝它有意义么?拷贝操作是你想要变得简单,并经常使用的么?&lt;/p&gt;
-&lt;p&gt;我们先看些极端的,显而易见的例子.整型数明显是可以拷贝的,应该是值类型.网络套接字感觉是不能被拷贝,应该是引用类型.像是用 x,y 对儿的点坐标是可拷贝的,应该是值类型.用来表示磁盘的控制器感觉上不太容易被拷贝,应该是引用类型.&lt;/p&gt;
-&lt;p&gt;有些类型可以被拷贝,但它们不总是你希望的那样.建议把它们设为引用类型.比如屏幕上的一个按钮从概念上讲是可以拷贝的.副本按钮不会跟原来的按钮完全一样.点击副本按钮将不会激活原来的按钮.副本不会占用相同的屏幕位置.如果你将按钮传递到周围或放到一个新的变量里,你大概将想引用原本的按钮,除非明确被请求要做一份拷贝.这意味着你的按钮类型应该是一个引用类型.&lt;/p&gt;
-&lt;p&gt;视图和窗口控制器是类似的例子.它们可能想象上是能拷贝的,但它几乎从来都不是你想要的那样.它们应该是引用类型.&lt;/p&gt;
-&lt;p&gt;用于 Model 的类型该怎么搞?比方你有个 &lt;code&gt;User&lt;/code&gt; 类型来表示系统中的用户,或者 &lt;code&gt;Crime&lt;/code&gt; 类型来表示用户的活动.这些都是可完美拷贝的,所以它们或许应该是值类型.然而,你可能希望你程序中某处对 &lt;code&gt;User&lt;/code&gt; 的 &lt;code&gt;Crime&lt;/code&gt; 上的更新在程序的其他地方也可见.这就建议 &lt;code&gt;User&lt;/code&gt; 应该被某种用户控制器来管理,而且它应该是引用类型.&lt;/p&gt;
-&lt;p&gt;集合是个有趣的例子.这包括比如数组和字典之类的东西,以及字符串.它们是可拷贝的么?显而易见.你想要做的拷贝操作是否易发生且经常发生呢?这不好说.&lt;/p&gt;
-&lt;p&gt;大多数语言对此说”不”,而是实现为引用类型. Objective-C,Java,Python,JavaScript 和几乎其他所有我能想到的语言都是这么干的.(一个主要的例外就是 C++ 的 STL 中的集合类型,但是 C++ 是语言世界中胡言乱语的疯子,它不走寻常路.)&lt;/p&gt;
-&lt;p&gt;Swift 说”不错”,这意味着如 &lt;code&gt;Array&lt;/code&gt;,&lt;code&gt;Dictionary&lt;/code&gt; 和 &lt;code&gt;String&lt;/code&gt; 都是 &lt;code&gt;struct&lt;/code&gt; 而不是 &lt;code&gt;class&lt;/code&gt;. 它们在赋值和作为参数传递时被拷贝.只要拷贝的开销小,这就是个彻底明智的选择,而Swift费了很大力气去实现这点.&lt;/p&gt;
-&lt;h2 id=&quot;嵌套类型&quot;&gt;&lt;a href=&quot;#嵌套类型&quot; class=&quot;headerlink&quot; title=&quot;嵌套类型&quot;&gt;&lt;/a&gt;嵌套类型&lt;/h2&gt;&lt;p&gt;嵌套使用值类型和引用类型会有四种组合方式.只是其中一个比较有趣.&lt;/p&gt;
-&lt;p&gt;如果一个引用类型包含了另一个引用类型,没有什么有趣的发生.任何指向其内部或外部值的引用通常都能修改它.每个人都会看到发生的变更.&lt;/p&gt;
-&lt;p&gt;如果一个值类型包含了另一个值类型,这实际上只是让其占用空间更多.内部值是外部值的一部分.如果你将外部值放进某个新的存储区,所有的值都会被拷贝,包括内部值.如果你将内部值放入某个新的存储,它会被拷贝.&lt;/p&gt;
-&lt;p&gt;一个引用类型包含了一个值类型实际上让被引用的值占用空间更大了.拥有对外部值的引用就可以操作全部值,包括被嵌入的值.被嵌入值的所有变更对指向外部值的引用是可见的.如果你将内部值放入某个新的存储区,它会被拷贝至那里.&lt;/p&gt;
-&lt;p&gt;一个值类型包含着一个引用类型那就不这么简单了.你实际上暗地里破坏了你想要用的值类型语义.这样做或好后坏,取决于你怎样去做.当你把一个引用类型放入到一个值类型中,当你把它放入新的存储区时外部值会被拷贝,但是拷贝后的副本有一个指向&lt;em&gt;相同内嵌的原始对象&lt;/em&gt;的引用.这有个例子:&lt;/p&gt;
-&lt;figure class=&quot;highlight stylus&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;class Inner &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; value = &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;struct Outer &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; value = &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; inner = Inner()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; outer = Outer()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;selector-tag&quot;&gt;var&lt;/span&gt; outer2 = outer&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;outer&lt;span class=&quot;selector-class&quot;&gt;.value&lt;/span&gt; = &lt;span class=&quot;number&quot;&gt;43&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;outer&lt;span class=&quot;selector-class&quot;&gt;.inner&lt;/span&gt;&lt;span class=&quot;selector-class&quot;&gt;.value&lt;/span&gt; = &lt;span class=&quot;number&quot;&gt;43&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;title&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;string&quot;&gt;&quot;outer2.value=\(outer2.value) outer2.inner.value=\(outer2.inner.value)&quot;&lt;/span&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;输出是:&lt;/p&gt;
-&lt;figure class=&quot;highlight ceylon&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;outer&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;.&lt;span class=&quot;keyword&quot;&gt;value&lt;/span&gt;=&lt;span class=&quot;number&quot;&gt;42&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;outer&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;.inner.&lt;span class=&quot;keyword&quot;&gt;value&lt;/span&gt;=&lt;span class=&quot;number&quot;&gt;43&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;虽然 &lt;code&gt;outer2&lt;/code&gt; 得到一份 &lt;code&gt;value&lt;/code&gt; 的拷贝,但它只拷贝了 &lt;code&gt;inner&lt;/code&gt; 的*引用,于是这两个 &lt;code&gt;struct&lt;/code&gt; 最终共享同一个 &lt;code&gt;Inner&lt;/code&gt; 实例.因此对 &lt;code&gt;outer.inner.value&lt;/code&gt; 的更新会影响到 &lt;code&gt;outer2.inner.value&lt;/code&gt;. 唉呀妈呀!&lt;/p&gt;
-&lt;p&gt;这种做法真的很方便.用这个方法可以创建个能够执行写时拷贝的 &lt;code&gt;struct&lt;/code&gt;,还能实现让值语义实际上不到处拷贝一坨坨的数据.这就是 Swift 中的集合的工作原理,你自己也可以实现自己的集合类型.想要知道更多详细信息,可以看看 &lt;a href=&quot;https://www.mikeash.com/pyblog/friday-qa-2015-04-17-lets-build-swiftarray.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Let’s Build Swift.Array&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;这么做也可能变得极其危险.比方说你创建了个 &lt;code&gt;Person&lt;/code&gt; 类型.它被用作 Model 类当然也是可拷贝的,所以可以用 &lt;code&gt;struct&lt;/code&gt; 实现咯.突发一阵对 OC 的怀旧,你决定用 &lt;code&gt;NSString&lt;/code&gt; 作为 &lt;code&gt;Person&lt;/code&gt; 的 &lt;code&gt;name&lt;/code&gt;:&lt;/p&gt;
-&lt;figure class=&quot;highlight capnproto&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Person&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   var name: NSString&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;然后你创建按了一对儿 &lt;code&gt;Person&lt;/code&gt; 实例,拼接字符串构建出 &lt;code&gt;name&lt;/code&gt;:&lt;/p&gt;
-&lt;figure class=&quot;highlight applescript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;let &lt;span class=&quot;built_in&quot;&gt;name&lt;/span&gt; = NSMutableString()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;name&lt;/span&gt;.appendString(&lt;span class=&quot;string&quot;&gt;&quot;Bob&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;name&lt;/span&gt;.appendString(&lt;span class=&quot;string&quot;&gt;&quot; &quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;name&lt;/span&gt;.appendString(&lt;span class=&quot;string&quot;&gt;&quot;Josephsonson&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;let bob = Person(&lt;span class=&quot;built_in&quot;&gt;name&lt;/span&gt;: &lt;span class=&quot;built_in&quot;&gt;name&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;name&lt;/span&gt;.appendString(&lt;span class=&quot;string&quot;&gt;&quot;, Jr.&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;let bobjr = Person(&lt;span class=&quot;built_in&quot;&gt;name&lt;/span&gt;: &lt;span class=&quot;built_in&quot;&gt;name&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;然后输出它们:&lt;/p&gt;
-&lt;figure class=&quot;highlight stylus&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;title&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(bob.name)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;title&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(bobjr.name)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;结果产生了:&lt;/p&gt;
-&lt;figure class=&quot;highlight mipsasm&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;Bob &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;Josephsonson, &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;Jr.&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;Bob &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;Josephsonson, &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;Jr.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;靠!&lt;/p&gt;
-&lt;p&gt;发生了什么?区别于 Swift 的 &lt;code&gt;String&lt;/code&gt; 类型, &lt;code&gt;NSString&lt;/code&gt; 是一个引用类型.它是不可变的,但它有个可变的子类, &lt;code&gt;NSMutableString&lt;/code&gt;. 当 &lt;code&gt;bob&lt;/code&gt; 创建时,它创建了一个对 &lt;code&gt;name&lt;/code&gt; 字符串的引用.当那个字符串随后被修改时,变更会通过 &lt;code&gt;bob&lt;/code&gt; 展现出来.要注意到即使 &lt;code&gt;bob&lt;/code&gt; 是被 &lt;code&gt;let&lt;/code&gt; 约束的值类型,但实际上改变了 &lt;code&gt;bob&lt;/code&gt;.这&lt;em&gt;算不上真的&lt;/em&gt;修改了 &lt;code&gt;bob&lt;/code&gt;,只是修改了 &lt;code&gt;bob&lt;/code&gt; 中引用的一个值,但因为那个值是 &lt;code&gt;bob&lt;/code&gt; 数据的一部分,从语义上让人感到像是对 &lt;code&gt;bob&lt;/code&gt; 作了修改.&lt;/p&gt;
-&lt;p&gt;这种事情在 Objective-C 中&lt;em&gt;一直&lt;/em&gt;在发生.每个有经验的 Objective-C 程序员都有到处写防御拷贝的习惯.因为一个 &lt;code&gt;NSString&lt;/code&gt; 实例可能实际上却是 &lt;code&gt;NSMutableString&lt;/code&gt;, 为了避免灾难,你要将属性定义为 &lt;code&gt;copy&lt;/code&gt;,或者在初始化时显式调用 &lt;code&gt;copy&lt;/code&gt; 方法.这同样适用于 Cocoa 中各种各样的集合类型.&lt;/p&gt;
-&lt;p&gt;在 Swift 中解决方案更简单些:使用值类型而不是引用类型.在这种情况下,让 &lt;code&gt;name&lt;/code&gt; 成为 &lt;code&gt;String&lt;/code&gt;.再也不用担心无意中把引用共享咯.&lt;/p&gt;
-&lt;p&gt;在其他情况下,解决方案可能更简单.比如,你创建了一个包含视图的 &lt;code&gt;struct&lt;/code&gt;,而视图是引用类型且不能改成值类型.这&lt;em&gt;或许&lt;/em&gt;是个好的迹象表明你不该用 &lt;code&gt;struct&lt;/code&gt;, 因为你不管怎样都不能维持值语义.&lt;/p&gt;
-&lt;h2 id=&quot;结论&quot;&gt;&lt;a href=&quot;#结论&quot; class=&quot;headerlink&quot; title=&quot;结论&quot;&gt;&lt;/a&gt;结论&lt;/h2&gt;&lt;p&gt;当移动值类型时它们会被拷贝,然而引用类型只是得到了一个对相同底层对象新引用.这意味着对引用类型的修改在每个引用上都看的到,然而对值类型的修改只会影响你修改的那块存储区.当选择使用哪种类型时,思考下如何拷贝你的类型比较恰当,如果需要深层拷贝就倾向于选择值类型.最后,谨防值类型中嵌入的引用类型,稍有不慎就会遭殃.&lt;/p&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文翻译自 Mike Ash 的 &lt;a href=&quot;https://www.mikeash.com/pyblog/friday-qa-2015-07-17-when-to-use-swift-structs-and-classes.html&quot;&gt;Friday Q&amp;amp;A 2015-07-17: When to Use Swift Structs and Classes&lt;/a&gt;  &lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
-    
-      <category term="翻译" scheme="http://yulingtianxia.com/tags/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
