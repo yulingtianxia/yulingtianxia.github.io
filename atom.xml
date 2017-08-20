@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2017-07-16T09:08:56.000Z</updated>
+  <updated>2017-07-17T14:55:22.000Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -16,11 +16,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>What&#39;s New in LLVM 9</title>
+    <title>What&#39;s New in LLVM</title>
     <link href="http://yulingtianxia.com/blog/2017/07/17/What-s-New-in-LLVM-2017/"/>
     <id>http://yulingtianxia.com/blog/2017/07/17/What-s-New-in-LLVM-2017/</id>
     <published>2017-07-16T16:04:37.000Z</published>
-    <updated>2017-07-16T09:08:56.000Z</updated>
+    <updated>2017-07-17T14:55:22.000Z</updated>
     
     <content type="html">&lt;p&gt;这&lt;strong&gt;绝不仅仅&lt;/strong&gt;是一篇 WWDC 2017 Session 411 学习笔记。除了有关 LLVM  9.0 的新特性之外，还有关于静态分析器和 Clang 5 Objective-C ARC 的一点看法和经验。&lt;/p&gt;
 &lt;p&gt;我觉得 LLVM 9 的亮点如下：&lt;/p&gt;
@@ -1143,7 +1143,7 @@
     <link href="http://yulingtianxia.com/blog/2016/10/30/Optimizing-App-Startup-Time/"/>
     <id>http://yulingtianxia.com/blog/2016/10/30/Optimizing-App-Startup-Time/</id>
     <published>2016-10-30T05:11:10.000Z</published>
-    <updated>2016-10-31T15:19:52.000Z</updated>
+    <updated>2017-08-20T07:18:30.000Z</updated>
     
     <content type="html">&lt;p&gt;这是一篇 WWDC 2016 Session 406 的学习笔记，从原理到实践讲述了如何优化 App 的启动时间。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
@@ -1211,7 +1211,7 @@
 &lt;li&gt;调用 &lt;code&gt;rebase()&lt;/code&gt; 方法，这才是真正做 Rebasing 工作的方法。如果开启 &lt;code&gt;TEXT_RELOC_SUPPORT&lt;/code&gt; 宏，会允许 &lt;code&gt;rebase()&lt;/code&gt; 方法对 &lt;code&gt;__TEXT&lt;/code&gt; 段做写操作来对其进行 Fix-up。所以其实 &lt;code&gt;__TEXT&lt;/code&gt; 只读属性并不是绝对的。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;code&gt;ImageLoaderMachOClassic&lt;/code&gt; 和 &lt;code&gt;ImageLoaderMachOCompressed&lt;/code&gt; 分别实现了自己的 &lt;code&gt;doRebase()&lt;/code&gt; 方法。实现逻辑大同小异，同样会判断是否使用预绑定，并在真正的 Binding 工作时判断 &lt;code&gt;TEXT_RELOC_SUPPORT&lt;/code&gt; 宏来决定是否对 &lt;code&gt;__TEXT&lt;/code&gt; 段做写操作。最后都会调用 &lt;code&gt;setupLazyPointerHandler&lt;/code&gt; 在镜像中设置 &lt;code&gt;dyld&lt;/code&gt; 的 entry point，放在最后调用是为了让主可执行文件设置好 &lt;code&gt;__dyld&lt;/code&gt; 或 &lt;code&gt;__program_vars&lt;/code&gt;。&lt;/p&gt;
-&lt;h4 id=&quot;Rebasing&quot;&gt;&lt;a href=&quot;#Rebasing&quot; class=&quot;headerlink&quot; title=&quot;Rebasing&quot;&gt;&lt;/a&gt;Rebasing&lt;/h4&gt;&lt;p&gt;在过去，会把 dylib 加载到指定地址，所有指针和数据对于代码来说都是对的，&lt;code&gt;dyld&lt;/code&gt; 就无需做任何 fix-up 了。如今用了 ASLR 后悔将 dylib 加载到新的随机地址(actual_address)，这个随机的地址跟代码和数据指向的旧地址(preferred_address)会有偏差，&lt;code&gt;dyld&lt;/code&gt; 需要修正这个偏差(slide)，做法就是将 dylib 内部的指针地址都加上这个偏移量，偏移量的计算方法如下：&lt;/p&gt;
+&lt;h4 id=&quot;Rebasing&quot;&gt;&lt;a href=&quot;#Rebasing&quot; class=&quot;headerlink&quot; title=&quot;Rebasing&quot;&gt;&lt;/a&gt;Rebasing&lt;/h4&gt;&lt;p&gt;在过去，会把 dylib 加载到指定地址，所有指针和数据对于代码来说都是对的，&lt;code&gt;dyld&lt;/code&gt; 就无需做任何 fix-up 了。如今用了 ASLR 后会将 dylib 加载到新的随机地址(actual_address)，这个随机的地址跟代码和数据指向的旧地址(preferred_address)会有偏差，&lt;code&gt;dyld&lt;/code&gt; 需要修正这个偏差(slide)，做法就是将 dylib 内部的指针地址都加上这个偏移量，偏移量的计算方法如下：&lt;/p&gt;
 &lt;p&gt;Slide = actual_address - preferred_address&lt;/p&gt;
 &lt;p&gt;然后就是重复不断地对 &lt;code&gt;__DATA&lt;/code&gt; 段中需要 rebase 的指针加上这个偏移量。这就又涉及到 page fault 和 COW。这可能会产生 I/O 瓶颈，但因为 rebase 的顺序是按地址排列的，所以从内核的角度来看这是个有次序的任务，它会预先读入数据，减少 I/O 消耗。&lt;/p&gt;
 &lt;h4 id=&quot;Binding&quot;&gt;&lt;a href=&quot;#Binding&quot; class=&quot;headerlink&quot; title=&quot;Binding&quot;&gt;&lt;/a&gt;Binding&lt;/h4&gt;&lt;p&gt;Binding 是处理那些指向 dylib 外部的指针，它们实际上被符号（symbol）名称绑定，也就是个字符串。之前提到 &lt;code&gt;__LINKEDIT&lt;/code&gt; 段中也存储了需要 bind 的指针，以及指针需要指向的符号。&lt;code&gt;dyld&lt;/code&gt; 需要找到 symbol 对应的实现，这需要很多计算，去符号表里查找。找到后会将内容存储到 &lt;code&gt;__DATA&lt;/code&gt; 段中的那个指针中。Binding 看起来计算量比 Rebasing 更大，但其实需要的 I/O 操作很少，因为之前 Rebasing 已经替 Binding 做过了。&lt;/p&gt;
