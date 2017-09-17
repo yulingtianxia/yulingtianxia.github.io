@@ -21,7 +21,7 @@
 <meta property="og:description" content="Threading Programming Guide 的学习笔记&amp;amp;翻译，第一部分。
 其实苹果建议使用对线程的高级封装，比如 operation objects and Grand Central Dispatch，它们使用方便更加高效，可以参考 Concurrency Programming Guide。
 但了解更底层一些的内容其实更有趣，难道不是么？">
-<meta property="og:updated_time" content="2017-08-27T16:44:35.000Z">
+<meta property="og:updated_time" content="2017-09-09T15:41:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Threading Programming Guide(1)">
 <meta name="twitter:description" content="Threading Programming Guide 的学习笔记&amp;amp;翻译，第一部分。
@@ -149,7 +149,7 @@
 <li>直接发消息: <code>performSelector:onThread:withObject:waitUntilDone:modes:</code> 等方法。</li>
 <li>全局变量，共用内存和对象: 相比直接发消息更快更容易，但也更脆弱。需要加锁之类的同步机制来确保代码的正确性，否则可能会导致竞态条件、错乱数据和crash。</li>
 <li>Conditions: 之前说过它也是一种线程同步工具，只有当符合某个条件时才让线程执行下去，相当于守门员的作用。</li>
-<li>Run loop sources: run loop input sources 有两种：port-based和 custom。这里说的是使用 custom run loop source 在某个线程上接收应用特定的消息。整个事件分发机制需要自己实现，包括设置 handler 函数，为 custom run loop source 提供数据，并手动将其 signal。</li>
+<li>Run loop sources: run loop input sources 有两种：port-based和 custom。这里说的是使用 custom run loop source 在某个线程上接收应用特定的消息。整个事件分发机制需要自己实现，包括设置 handler 函数，为 custom run loop source 提供数据，并手动给它发信号（signal）。</li>
 <li>端口和套接字: 基于端口的跨线程通信技术更复杂但也更可靠。更重要的是端口和套接字也可以与外部实体通信，比如其他进程和服务。为了高效，端口使用 port-based run loop sources 实现。</li>
 <li>消息队列: 古老的 Multiprocessing Services 定义了一个简单方便的 FIFO 队列来管理数据进出，但没其他跨线程通信技术效率高。</li>
 <li>Cocoa distributed objects: 对端口通信进行高级封装的 Cocoa API，其开销之大更适合跨进程通信。不建议用于跨线程通信，杀鸡用牛刀。</li>
@@ -310,6 +310,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/blog/2017/09/17/Threading-Programming-Guide-2/" title="Threading Programming Guide(2)">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Threading Programming Guide(2)</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/blog/2017/07/17/What-s-New-in-LLVM-2017/"  title="What&#39;s New in LLVM">
