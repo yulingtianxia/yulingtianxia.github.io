@@ -11,18 +11,27 @@
     
 
     
-    <meta name="description" content="Threading Programming Guide 的学习笔记&amp;amp;翻译，第二部分。关于 Run Loop 的内容。">
+    <meta name="description" content="Threading Programming Guide 的学习笔记&amp;amp;翻译，第二部分。关于 Run Loop 的内容。
+
+Threading Programming Guide(1)
+Threading Programming Guide(3)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Threading Programming Guide(2)">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2017/09/17/Threading-Programming-Guide-2/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="Threading Programming Guide 的学习笔记&amp;amp;翻译，第二部分。关于 Run Loop 的内容。">
+<meta property="og:description" content="Threading Programming Guide 的学习笔记&amp;amp;翻译，第二部分。关于 Run Loop 的内容。
+
+Threading Programming Guide(1)
+Threading Programming Guide(3)">
 <meta property="og:image" content="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/Art/runloop.jpg">
 <meta property="og:image" content="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/Art/custominputsource.jpg">
-<meta property="og:updated_time" content="2017-09-17T06:28:02.000Z">
+<meta property="og:updated_time" content="2017-10-08T09:15:47.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Threading Programming Guide(2)">
-<meta name="twitter:description" content="Threading Programming Guide 的学习笔记&amp;amp;翻译，第二部分。关于 Run Loop 的内容。">
+<meta name="twitter:description" content="Threading Programming Guide 的学习笔记&amp;amp;翻译，第二部分。关于 Run Loop 的内容。
+
+Threading Programming Guide(1)
+Threading Programming Guide(3)">
 <meta name="twitter:image" content="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/Art/runloop.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -107,6 +116,10 @@
 		</div>
 		
 		<p><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html#//apple_ref/doc/uid/10000057i-CH16-SW1" target="_blank" rel="external">Threading Programming Guide</a> 的学习笔记&amp;翻译，第二部分。关于 Run Loop 的内容。</p>
+<ul>
+<li><a href="http://yulingtianxia.com/blog/2017/08/28/Threading-Programming-Guide-1/">Threading Programming Guide(1)</a></li>
+<li><a href="http://yulingtianxia.com/blog/2017/10/08/Threading-Programming-Guide-3/">Threading Programming Guide(3)</a></li>
+</ul>
 <a id="more"></a>
 <h2 id="Run-Loops"><a href="#Run-Loops" class="headerlink" title="Run Loops"></a>Run Loops</h2><p>Run Loop 作为线程相关基础设施的一部分，充当着循环处理、调度事件/消息的角色。它使得线程不会执行完单个任务后就立刻结束，而是让线程在没有任务时保持休眠状态，在需要处理消息时被立刻唤醒。</p>
 <p>Run Loop 其实是个对象，但不需要主动去创建它，而且每个线程都有对应的 run loop 对象。Run Loop 的管理机制并不完全是自动的，有时需要设计好 run loop 的运行时间和事件处理回调。次级线程需要开发者手动去配置并运行它的 run loop，在应用启动过程中主线程的 run loop 已经自动配置并运行了。</p>
