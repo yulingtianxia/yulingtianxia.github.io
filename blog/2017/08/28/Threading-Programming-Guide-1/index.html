@@ -25,7 +25,7 @@ Threading Progra">
 但了解更底层一些的内容其实更有趣，难道不是么？
 
 Threading Progra">
-<meta property="og:updated_time" content="2017-10-08T09:14:40.000Z">
+<meta property="og:updated_time" content="2017-10-10T16:08:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Threading Programming Guide(1)">
 <meta name="twitter:description" content="Threading Programming Guide 的学习笔记&amp;amp;翻译，第一部分。
@@ -184,7 +184,7 @@ Threading Progra">
 <p>detached 类型的线程结束之后系统会自动回收其资源。假如在 A 线程中使用 <code>pthread_create</code> 创建线程 B，不传入线程属性的话默认是 joinable 类型的线程。需要在线程 A 调用 <code>pthread_join</code> 来连接，这样才会在线程 B 结束后回收其资源。</p>
 <p>默认情况下只有主线程是 joinable 的，当所有 joinable 线程都结束了，它们所属的进程也就终止执行了。因为系统会认为 detached 线程做的都是可选的任务，所以当用户退出了一个应用时，通常会立刻结束所有的 detached 线程。</p>
 <p>如果想让线程在后台做一些诸如保存数据到磁盘之类的重要工作，需要使用 joinable 类型的线程，以防止应用退出时数据丢失。但大多数的对线程高层封装的 API 不会默认创建 joinable 线程，所以需要使用 POSIX API 的 <code>pthread_create</code> 创建 joinable 线程。</p>
-<p>在使用 Cocoa API 时，<code>applicationShouldTerminate:</code> delegate 方法可以延迟一阵子退出应用或取消退出。如果需要延迟退出程序，还要在所有关键线程完成任务之后调用 <code>applicationShouldTerminate:</code> 方法告诉 <code>NSApplication</code> 对象是否可以真的退出了。</p>
+<p>在使用 Cocoa API 时，<code>applicationShouldTerminate:</code> delegate 方法可以延迟一阵子退出应用或取消退出。如果需要延迟退出程序，还要在所有关键线程完成任务之后调用 <code>replyToApplicationShouldTerminate:</code> 方法告诉 <code>NSApplication</code> 对象是否可以真的退出了。</p>
 <h4 id="处理异常"><a href="#处理异常" class="headerlink" title="处理异常"></a>处理异常</h4><p>每个线程都负责捕获和处理其调用栈上抛出的异常，任何线程上没被捕获的异常都能终止其所属进程。不能将没捕获的线程抛给其他线程处理。</p>
 <p>如果想要通知其他线程有异常，应该先捕获异常，然后给其他线程发消息。异常被捕获后可能会继续执行，或者等待命令，或者退出。</p>
 <p>Cocoa 的 <code>NSException</code> 被捕获后可以在线程之间传递。</p>

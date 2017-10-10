@@ -538,7 +538,7 @@
     <link href="http://yulingtianxia.com/blog/2017/08/28/Threading-Programming-Guide-1/"/>
     <id>http://yulingtianxia.com/blog/2017/08/28/Threading-Programming-Guide-1/</id>
     <published>2017-08-28T01:20:24.000Z</published>
-    <updated>2017-10-08T09:14:40.000Z</updated>
+    <updated>2017-10-10T16:08:13.000Z</updated>
     
     <content type="html">&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/Introduction/Introduction.html#//apple_ref/doc/uid/10000057i-CH1-SW1&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Threading Programming Guide&lt;/a&gt; 的学习笔记&amp;amp;翻译，第一部分。&lt;/p&gt;
 &lt;p&gt;其实苹果建议使用对线程的高级封装，比如 operation objects and Grand Central Dispatch，它们使用方便更加高效，可以参考 &lt;a href=&quot;https://developer.apple.com/library/content/documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Concurrency Programming Guide&lt;/a&gt;。&lt;/p&gt;
@@ -609,7 +609,7 @@
 &lt;p&gt;detached 类型的线程结束之后系统会自动回收其资源。假如在 A 线程中使用 &lt;code&gt;pthread_create&lt;/code&gt; 创建线程 B，不传入线程属性的话默认是 joinable 类型的线程。需要在线程 A 调用 &lt;code&gt;pthread_join&lt;/code&gt; 来连接，这样才会在线程 B 结束后回收其资源。&lt;/p&gt;
 &lt;p&gt;默认情况下只有主线程是 joinable 的，当所有 joinable 线程都结束了，它们所属的进程也就终止执行了。因为系统会认为 detached 线程做的都是可选的任务，所以当用户退出了一个应用时，通常会立刻结束所有的 detached 线程。&lt;/p&gt;
 &lt;p&gt;如果想让线程在后台做一些诸如保存数据到磁盘之类的重要工作，需要使用 joinable 类型的线程，以防止应用退出时数据丢失。但大多数的对线程高层封装的 API 不会默认创建 joinable 线程，所以需要使用 POSIX API 的 &lt;code&gt;pthread_create&lt;/code&gt; 创建 joinable 线程。&lt;/p&gt;
-&lt;p&gt;在使用 Cocoa API 时，&lt;code&gt;applicationShouldTerminate:&lt;/code&gt; delegate 方法可以延迟一阵子退出应用或取消退出。如果需要延迟退出程序，还要在所有关键线程完成任务之后调用 &lt;code&gt;applicationShouldTerminate:&lt;/code&gt; 方法告诉 &lt;code&gt;NSApplication&lt;/code&gt; 对象是否可以真的退出了。&lt;/p&gt;
+&lt;p&gt;在使用 Cocoa API 时，&lt;code&gt;applicationShouldTerminate:&lt;/code&gt; delegate 方法可以延迟一阵子退出应用或取消退出。如果需要延迟退出程序，还要在所有关键线程完成任务之后调用 &lt;code&gt;replyToApplicationShouldTerminate:&lt;/code&gt; 方法告诉 &lt;code&gt;NSApplication&lt;/code&gt; 对象是否可以真的退出了。&lt;/p&gt;
 &lt;h4 id=&quot;处理异常&quot;&gt;&lt;a href=&quot;#处理异常&quot; class=&quot;headerlink&quot; title=&quot;处理异常&quot;&gt;&lt;/a&gt;处理异常&lt;/h4&gt;&lt;p&gt;每个线程都负责捕获和处理其调用栈上抛出的异常，任何线程上没被捕获的异常都能终止其所属进程。不能将没捕获的线程抛给其他线程处理。&lt;/p&gt;
 &lt;p&gt;如果想要通知其他线程有异常，应该先捕获异常，然后给其他线程发消息。异常被捕获后可能会继续执行，或者等待命令，或者退出。&lt;/p&gt;
 &lt;p&gt;Cocoa 的 &lt;code&gt;NSException&lt;/code&gt; 被捕获后可以在线程之间传递。&lt;/p&gt;
