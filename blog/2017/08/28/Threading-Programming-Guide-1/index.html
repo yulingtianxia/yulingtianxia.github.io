@@ -25,7 +25,7 @@ Threading Progra">
 但了解更底层一些的内容其实更有趣，难道不是么？
 
 Threading Progra">
-<meta property="og:updated_time" content="2017-10-10T16:08:13.000Z">
+<meta property="og:updated_time" content="2017-10-14T16:40:58.512Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Threading Programming Guide(1)">
 <meta name="twitter:description" content="Threading Programming Guide 的学习笔记&amp;amp;翻译，第一部分。
@@ -123,7 +123,7 @@ Threading Progra">
 <li><a href="http://yulingtianxia.com/blog/2017/10/08/Threading-Programming-Guide-3/">Threading Programming Guide(3)</a></li>
 </ul>
 <a id="more"></a>
-<h2 id="线程相关概念"><a href="#线程相关概念" class="headerlink" title="线程相关概念"></a>线程相关概念</h2><h3 id="概要和术语"><a href="#概要和术语" class="headerlink" title="概要和术语"></a>概要和术语</h3><p>线程的概念在计算机组成原理中学过，在各个系统中的实现和行为也都大同小异。多线程编程有利也有弊：在提升程序运行效率和用户体验的同时也带来了线程间同步的种种问题。现在大多出 CPU 都是多核的，所以很多程序都是并发执行来提升性能。多线程编程的代码更复杂，尤其是在存取同一个数据时更需要注意。这里讲一讲 macOS 和 iOS 提供的有关线程的 API 以及同步机制。</p>
+<h2 id="线程相关概念"><a href="#线程相关概念" class="headerlink" title="线程相关概念"></a>线程相关概念</h2><h3 id="概要和术语"><a href="#概要和术语" class="headerlink" title="概要和术语"></a>概要和术语</h3><p>线程的概念在计算机组成原理中学过，在各个系统中的实现和行为也都大同小异。多线程编程有利也有弊：在提升程序运行效率和用户体验的同时也带来了线程间同步的种种问题。现在大多数 CPU 都是多核的，所以很多程序都是并发执行来提升性能。多线程编程的代码更复杂，尤其是在存取同一个数据时更需要注意。这里讲一讲 macOS 和 iOS 提供的有关线程的 API 以及同步机制。</p>
 <p>如果把进程(process)理解为一个运行着多个线程(thread)的程序，线程运算调度一条独立路径的代码。任务(work)可以理解成需要被执行的代码块或函数之类的抽象概念。</p>
 <h3 id="替代技术"><a href="#替代技术" class="headerlink" title="替代技术"></a>替代技术</h3><p>亲自去创建底层意义上的线程很难操作，也很容易出问题。创建一个新的线程会消耗很多 CPU 和内存资源，所以尽可能先考虑下是否真的有必要创建线程。对于直接手动创建线程执行任务来说，可以替代的技术还有很多：</p>
 <ul>

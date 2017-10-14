@@ -538,7 +538,7 @@
     <link href="http://yulingtianxia.com/blog/2017/08/28/Threading-Programming-Guide-1/"/>
     <id>http://yulingtianxia.com/blog/2017/08/28/Threading-Programming-Guide-1/</id>
     <published>2017-08-28T01:20:24.000Z</published>
-    <updated>2017-10-10T16:08:13.000Z</updated>
+    <updated>2017-10-14T16:40:58.512Z</updated>
     
     <content type="html">&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/Introduction/Introduction.html#//apple_ref/doc/uid/10000057i-CH1-SW1&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Threading Programming Guide&lt;/a&gt; 的学习笔记&amp;amp;翻译，第一部分。&lt;/p&gt;
 &lt;p&gt;其实苹果建议使用对线程的高级封装，比如 operation objects and Grand Central Dispatch，它们使用方便更加高效，可以参考 &lt;a href=&quot;https://developer.apple.com/library/content/documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Concurrency Programming Guide&lt;/a&gt;。&lt;/p&gt;
@@ -548,7 +548,7 @@
 &lt;li&gt;&lt;a href=&quot;http://yulingtianxia.com/blog/2017/10/08/Threading-Programming-Guide-3/&quot;&gt;Threading Programming Guide(3)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-&lt;h2 id=&quot;线程相关概念&quot;&gt;&lt;a href=&quot;#线程相关概念&quot; class=&quot;headerlink&quot; title=&quot;线程相关概念&quot;&gt;&lt;/a&gt;线程相关概念&lt;/h2&gt;&lt;h3 id=&quot;概要和术语&quot;&gt;&lt;a href=&quot;#概要和术语&quot; class=&quot;headerlink&quot; title=&quot;概要和术语&quot;&gt;&lt;/a&gt;概要和术语&lt;/h3&gt;&lt;p&gt;线程的概念在计算机组成原理中学过，在各个系统中的实现和行为也都大同小异。多线程编程有利也有弊：在提升程序运行效率和用户体验的同时也带来了线程间同步的种种问题。现在大多出 CPU 都是多核的，所以很多程序都是并发执行来提升性能。多线程编程的代码更复杂，尤其是在存取同一个数据时更需要注意。这里讲一讲 macOS 和 iOS 提供的有关线程的 API 以及同步机制。&lt;/p&gt;
+&lt;h2 id=&quot;线程相关概念&quot;&gt;&lt;a href=&quot;#线程相关概念&quot; class=&quot;headerlink&quot; title=&quot;线程相关概念&quot;&gt;&lt;/a&gt;线程相关概念&lt;/h2&gt;&lt;h3 id=&quot;概要和术语&quot;&gt;&lt;a href=&quot;#概要和术语&quot; class=&quot;headerlink&quot; title=&quot;概要和术语&quot;&gt;&lt;/a&gt;概要和术语&lt;/h3&gt;&lt;p&gt;线程的概念在计算机组成原理中学过，在各个系统中的实现和行为也都大同小异。多线程编程有利也有弊：在提升程序运行效率和用户体验的同时也带来了线程间同步的种种问题。现在大多数 CPU 都是多核的，所以很多程序都是并发执行来提升性能。多线程编程的代码更复杂，尤其是在存取同一个数据时更需要注意。这里讲一讲 macOS 和 iOS 提供的有关线程的 API 以及同步机制。&lt;/p&gt;
 &lt;p&gt;如果把进程(process)理解为一个运行着多个线程(thread)的程序，线程运算调度一条独立路径的代码。任务(work)可以理解成需要被执行的代码块或函数之类的抽象概念。&lt;/p&gt;
 &lt;h3 id=&quot;替代技术&quot;&gt;&lt;a href=&quot;#替代技术&quot; class=&quot;headerlink&quot; title=&quot;替代技术&quot;&gt;&lt;/a&gt;替代技术&lt;/h3&gt;&lt;p&gt;亲自去创建底层意义上的线程很难操作，也很容易出问题。创建一个新的线程会消耗很多 CPU 和内存资源，所以尽可能先考虑下是否真的有必要创建线程。对于直接手动创建线程执行任务来说，可以替代的技术还有很多：&lt;/p&gt;
 &lt;ul&gt;
@@ -1851,11 +1851,11 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
     
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
   </entry>
   
@@ -2066,9 +2066,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
   </entry>
   
@@ -2630,9 +2630,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Algorithm" scheme="http://yulingtianxia.com/tags/Algorithm/"/>
     
