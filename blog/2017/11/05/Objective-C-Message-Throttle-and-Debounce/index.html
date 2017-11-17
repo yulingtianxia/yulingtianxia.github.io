@@ -17,7 +17,7 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="在实际项目中经常会遇到因方法调用频繁而导致的 UI 闪动问题和性能问题，这时用某种策略需要控制调用频率，以达到节流和防抖的效果。MessageThrottle 是我实现的一个 Objective-C 消息节流和防抖的轻量级工具库，使用便捷且业务无关。">
-<meta property="og:updated_time" content="2017-11-17T17:30:09.754Z">
+<meta property="og:updated_time" content="2017-11-17T17:38:39.107Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Objective-C Message Throttle and Debounce">
 <meta name="twitter:description" content="在实际项目中经常会遇到因方法调用频繁而导致的 UI 闪动问题和性能问题，这时用某种策略需要控制调用频率，以达到节流和防抖的效果。MessageThrottle 是我实现的一个 Objective-C 消息节流和防抖的轻量级工具库，使用便捷且业务无关。">
@@ -112,6 +112,8 @@
 <h2 id="使用姿势"><a href="#使用姿势" class="headerlink" title="使用姿势"></a>使用姿势</h2><p>假如我创建了一个 <code>Stub</code> 类的实例 <code>s</code>，我想限制它调用 <code>foo:</code> 方法的频率。先要创建并配置一个 <code>MTRule</code>，并将规则应用到 <code>MTEngine</code> 单例中：</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Stub *s = [Stub <span class="keyword">new</span>];</span><br><span class="line">MTRule *rule = [MTRule <span class="keyword">new</span>];</span><br><span class="line">rule.target = s; <span class="comment">// You can also assign `Stub.class` or `mt_metaClass(Stub.class)`</span></span><br><span class="line">rule.selector = <span class="meta">@selector</span>(<span class="string">foo:</span>);</span><br><span class="line">rule.durationThreshold = <span class="number">0.01</span>;</span><br><span class="line">[MTEngine.defaultEngine <span class="string">applyRule:</span>rule];</span><br></pre></td></tr></table></figure>
 <p><code>target</code> 可以是一个实例对象，也可以是一个类或元类。这样可以更灵活地控制限制策略，既可以只控制某个对象的消息发送频率，也可以控制某个类的实例方法和类方法的频率。当然，规则的 <code>target</code> 为实例对象的优先级比类更高，也不会发生冲突。</p>
+<p>当然还有更简单的用法，跟上面那段代码作用相同：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[s <span class="string">limitSelector:</span><span class="meta">@selector</span>(<span class="string">foo:</span>) <span class="string">oncePerDuration:</span><span class="number">0.01</span>]; <span class="comment">// returns MTRule instance</span></span><br></pre></td></tr></table></figure>
 <p>无论是节流还是防抖，都需要设定一个时间 <code>durationThreshold</code> 阈值来限制频率，都意味着方法在最后会延迟调用。<code>MTRule</code> 默认的模式是 <code>MTPerformModeDebounce</code>，也就是防抖模式，需要等消息不再连续频繁发送后才执行。<code>MTPerformModeLast</code> 和 <code>MTPerformModeFirstly</code> 对应着节流模式，也就是控制一定时间内只执行一次。区别在于前者执行的是这段时间内最后发送的消息，后者执行第一次发送的消息。</p>
 <p>比如我想要控制界面上某个 Label 内容的更新频率，给用户更好的体验，这时候很适合使用 <code>MTPerformModeLast</code> 模式：</p>
 <figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">rule</span>.mode = MTPerformModeLast;</span><br></pre></td></tr></table></figure>

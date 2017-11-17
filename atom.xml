@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2017-11-17T17:30:09.754Z</updated>
+  <updated>2017-11-17T17:38:39.107Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/"/>
     <id>http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/</id>
     <published>2017-11-04T16:39:44.000Z</published>
-    <updated>2017-11-17T17:30:09.754Z</updated>
+    <updated>2017-11-17T17:38:39.107Z</updated>
     
     <content type="html">&lt;p&gt;在实际项目中经常会遇到因方法调用频繁而导致的 UI 闪动问题和性能问题，这时用某种策略需要控制调用频率，以达到节流和防抖的效果。&lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MessageThrottle&lt;/a&gt; 是我实现的一个 Objective-C 消息节流和防抖的轻量级工具库，使用便捷且业务无关。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
@@ -31,6 +31,8 @@
 &lt;h2 id=&quot;使用姿势&quot;&gt;&lt;a href=&quot;#使用姿势&quot; class=&quot;headerlink&quot; title=&quot;使用姿势&quot;&gt;&lt;/a&gt;使用姿势&lt;/h2&gt;&lt;p&gt;假如我创建了一个 &lt;code&gt;Stub&lt;/code&gt; 类的实例 &lt;code&gt;s&lt;/code&gt;，我想限制它调用 &lt;code&gt;foo:&lt;/code&gt; 方法的频率。先要创建并配置一个 &lt;code&gt;MTRule&lt;/code&gt;，并将规则应用到 &lt;code&gt;MTEngine&lt;/code&gt; 单例中：&lt;/p&gt;
 &lt;figure class=&quot;highlight groovy&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Stub *s = [Stub &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;MTRule *rule = [MTRule &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;rule.target = s; &lt;span class=&quot;comment&quot;&gt;// You can also assign `Stub.class` or `mt_metaClass(Stub.class)`&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;rule.selector = &lt;span class=&quot;meta&quot;&gt;@selector&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;foo:&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;rule.durationThreshold = &lt;span class=&quot;number&quot;&gt;0.01&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;[MTEngine.defaultEngine &lt;span class=&quot;string&quot;&gt;applyRule:&lt;/span&gt;rule];&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;&lt;code&gt;target&lt;/code&gt; 可以是一个实例对象，也可以是一个类或元类。这样可以更灵活地控制限制策略，既可以只控制某个对象的消息发送频率，也可以控制某个类的实例方法和类方法的频率。当然，规则的 &lt;code&gt;target&lt;/code&gt; 为实例对象的优先级比类更高，也不会发生冲突。&lt;/p&gt;
+&lt;p&gt;当然还有更简单的用法，跟上面那段代码作用相同：&lt;/p&gt;
+&lt;figure class=&quot;highlight groovy&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;[s &lt;span class=&quot;string&quot;&gt;limitSelector:&lt;/span&gt;&lt;span class=&quot;meta&quot;&gt;@selector&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;foo:&lt;/span&gt;) &lt;span class=&quot;string&quot;&gt;oncePerDuration:&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;0.01&lt;/span&gt;]; &lt;span class=&quot;comment&quot;&gt;// returns MTRule instance&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;无论是节流还是防抖，都需要设定一个时间 &lt;code&gt;durationThreshold&lt;/code&gt; 阈值来限制频率，都意味着方法在最后会延迟调用。&lt;code&gt;MTRule&lt;/code&gt; 默认的模式是 &lt;code&gt;MTPerformModeDebounce&lt;/code&gt;，也就是防抖模式，需要等消息不再连续频繁发送后才执行。&lt;code&gt;MTPerformModeLast&lt;/code&gt; 和 &lt;code&gt;MTPerformModeFirstly&lt;/code&gt; 对应着节流模式，也就是控制一定时间内只执行一次。区别在于前者执行的是这段时间内最后发送的消息，后者执行第一次发送的消息。&lt;/p&gt;
 &lt;p&gt;比如我想要控制界面上某个 Label 内容的更新频率，给用户更好的体验，这时候很适合使用 &lt;code&gt;MTPerformModeLast&lt;/code&gt; 模式：&lt;/p&gt;
 &lt;figure class=&quot;highlight crmsh&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;rule&lt;/span&gt;.mode = MTPerformModeLast;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
@@ -2637,9 +2639,9 @@
     </summary>
     
     
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
-    
       <category term="iOS" scheme="http://yulingtianxia.com/tags/iOS/"/>
+    
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
       <category term="Reverse Engineering" scheme="http://yulingtianxia.com/tags/Reverse-Engineering/"/>
     
