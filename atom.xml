@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2017-12-14T16:17:54.164Z</updated>
+  <updated>2017-12-14T16:19:38.963Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -17,10 +17,10 @@
   
   <entry>
     <title>Associated Object 与 Dealloc</title>
-    <link href="http://yulingtianxia.com/blog/2017/12/12/Associated-Object-and-Dealloc/"/>
-    <id>http://yulingtianxia.com/blog/2017/12/12/Associated-Object-and-Dealloc/</id>
-    <published>2017-12-12T15:19:21.000Z</published>
-    <updated>2017-12-14T16:17:54.164Z</updated>
+    <link href="http://yulingtianxia.com/blog/2017/12/15/Associated-Object-and-Dealloc/"/>
+    <id>http://yulingtianxia.com/blog/2017/12/15/Associated-Object-and-Dealloc/</id>
+    <published>2017-12-14T16:19:21.000Z</published>
+    <updated>2017-12-14T16:19:38.963Z</updated>
     
     <content type="html">&lt;p&gt;我的 Objective-C 消息节流防抖库 &lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MessageThrottle&lt;/a&gt; 需要实现一个特性：当 &lt;code&gt;MTRule&lt;/code&gt; 的 &lt;code&gt;target&lt;/code&gt; 释放后，自动调用 &lt;code&gt;MTRule&lt;/code&gt; 的 &lt;code&gt;discard&lt;/code&gt; 方法。后来使用了业界很早就已有的方案：Associated Object，在这里整理下相关的知识点。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
