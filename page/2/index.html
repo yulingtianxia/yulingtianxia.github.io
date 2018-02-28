@@ -84,6 +84,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2017/04/17/Objective-C-Method-Swizzling/" title="Objective-C Method Swizzling" itemprop="url">Objective-C Method Swizzling</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-16T16:11:48.000Z" itemprop="datePublished"> 发表于 2017-04-17</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 <code>+ load</code> 方法中，这是利用它调用时机较提前等性质。</p>
+<p>有时候需要 Hook 子类和父类的同一个方法，但是它们的 <code>+ load</code> 方法调用顺序不同。一个常见的顺序可能是：父类-&gt;子类-&gt;子类类别-&gt;父类类别。所以 Hook 的顺序并不能保证，就不能保证 Hook 后方法调用的顺序是对的。而且使用不同方法 Method Swizzling 也会带来不同的结果。本文将会对这些情况下的 Hook 结果进行分析和总结。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2017/04/17/Objective-C-Method-Swizzling/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Runtime/">Runtime</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2017/04/17/Objective-C-Method-Swizzling/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2017/03/06/How-to-hook-the-correct-method-in-reverse-engineering/" title="如何在逆向工程中 Hook 得更准 - 微信屏蔽好友&amp;群消息实战" itemprop="url">如何在逆向工程中 Hook 得更准 - 微信屏蔽好友&amp;群消息实战</a>
   </h1>
   <p class="article-author">By
@@ -348,7 +408,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/Xcode/">Xcode</a><a href="/tags/Swift/">Swift</a>
+  <span></span> <a href="/tags/Xcode/">Xcode</a><a href="/tags/Swift/">Swift</a><a href="/tags/macOS/">macOS</a>
   </div>
 
 </div>
@@ -467,7 +527,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/Xcode/">Xcode</a>
+  <span></span> <a href="/tags/Xcode/">Xcode</a><a href="/tags/macOS/">macOS</a>
   </div>
 
 </div>
@@ -623,66 +683,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/" title="Objective-C 消息发送与转发机制原理" itemprop="url">Objective-C 消息发送与转发机制原理</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2016-06-15T12:12:48.000Z" itemprop="datePublished"> 发表于 2016-06-15</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>消息发送和转发流程可以概括为：消息发送（Messaging）是 Runtime 通过 selector 快速查找 IMP 的过程，有了函数指针就可以执行对应的方法实现；消息转发（Message Forwarding）是在查找 IMP 失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。</p>
-<p><strong>本文不讲述开发者在消息发送和转发流程中需要做的事，而是讲述原理。能够很好地阅读本文的前提是你对 <a href="http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/">Objective-C Runtime</a> 已经有一定的了解，关于什么是消息，Class 的结构，selector、IMP、元类等概念将不再赘述</strong>。本文用到的源码为 objc4-680 和 CF-1153.18，逆向 CoreFoundation.framework 的系统版本为 macOS 10.11.5，汇编语言架构为 x86_64。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Runtime/">Runtime</a><a href="/tags/Message-Forwarding/">Message Forwarding</a><a href="/tags/Messaging/">Messaging</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
@@ -753,7 +753,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.22px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.44px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 12.22px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 10px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 11.11px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 10px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 17.78px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.11px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 11.11px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 15.56px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.67px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.89px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.33px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.67px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 10px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.56px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.33px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.5px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 12.5px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 10px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 11.25px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 10px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 18.75px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.25px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 11.25px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 16.25px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 17.5px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.75px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.75px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 17.5px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 10px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 16.25px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.75px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
