@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2018-03-31T15:49:10.049Z</updated>
+  <updated>2018-04-01T15:23:14.592Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/"/>
     <id>http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/</id>
     <published>2018-03-31T15:44:39.000Z</published>
-    <updated>2018-03-31T15:49:10.049Z</updated>
+    <updated>2018-04-01T15:23:14.592Z</updated>
     
     <content type="html">&lt;p&gt;很多方法最后一个参数是类似于 &lt;code&gt;completionBlock&lt;/code&gt; 这种回调，然而有些 API 实现一些异常逻辑时会忘记调用传入的 Block 参数（当然这肯定是 bug 啦），或者存在多次调用。在调试的时候可能会碰到这种大坑，需要追踪下 Block 参数何时调用了，甚至是否调用过。如果不方便直接在 Block 实现中加代码，或者没有源码的情况下，就需要无侵入式地追踪 Block 参数对象。&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/BlockTracker&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;BlockTracker&lt;/a&gt; 可以追踪方法调用时传入的 Block 类型的参数的执行和销毁。基于 &lt;a href=&quot;https://github.com/yulingtianxia/BlockHook&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;BlockHook&lt;/a&gt; 实现。本文讲述了它的使用方法和实现原理。&lt;/p&gt;
@@ -55,7 +55,7 @@
 &lt;figure class=&quot;highlight groovy&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)&lt;span class=&quot;string&quot;&gt;test:&lt;/span&gt;(&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;(^)(&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;))block;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)&lt;span class=&quot;string&quot;&gt;foo:&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;(^)(&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)) block &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    block();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (NSMethodSignature *)&lt;span class=&quot;string&quot;&gt;methodSignatureForSelector:&lt;/span&gt;(SEL)aSelector&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; [NSMethodSignature &lt;span class=&quot;string&quot;&gt;signatureWithObjCTypes:&lt;/span&gt;&lt;span class=&quot;string&quot;&gt;&quot;v@:@?&quot;&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)&lt;span class=&quot;string&quot;&gt;forwardInvocation:&lt;/span&gt;(NSInvocation *)anInvocation&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//    [anInvocation retainArguments];&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; **invocationFrame = ((__bridge struct BTInvocaton *)anInvocation)-&amp;gt;frame;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; *blockFromFrame = invocationFrame[&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; *block;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [anInvocation &lt;span class=&quot;string&quot;&gt;getArgument:&lt;/span&gt;&amp;amp;block &lt;span class=&quot;string&quot;&gt;atIndex:&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    BTDealloc *btDealloc = [BTDealloc &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    objc_setAssociatedObject((__bridge id)block, &lt;span class=&quot;meta&quot;&gt;@selector&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;foo:&lt;/span&gt;), btDealloc, OBJC_ASSOCIATION_RETAIN);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    anInvocation.selector = &lt;span class=&quot;meta&quot;&gt;@selector&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;foo:&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [anInvocation invoke];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;通过对 &lt;code&gt;NSInvocation&lt;/code&gt; 对象的解析，我发现 &lt;code&gt;NSInvocation&lt;/code&gt; 的参数存储于一个私有成员变量 &lt;code&gt;_frame&lt;/code&gt; 中，试着将其强转为二级指针，也就是指针数组。拿到对应 index 的值 &lt;code&gt;blockFromFrame&lt;/code&gt; 跟 &lt;code&gt;block&lt;/code&gt; 作比较，发现是一样的。这里获取 &lt;code&gt;_frame&lt;/code&gt; 需要强转下，&lt;code&gt;NSInvocation&lt;/code&gt; 的内存模型如下：&lt;/p&gt;
 &lt;figure class=&quot;highlight mipsasm&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;struct &lt;span class=&quot;keyword&quot;&gt;BTInvocaton &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    void *isa&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    void *frame&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    void *retdata&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    void *signature&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    void *container&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    uint8_t retainedArgs&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    uint8_t reserved[&lt;span class=&quot;number&quot;&gt;15&lt;/span&gt;]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h2 id=&quot;总结&quot;&gt;&lt;a href=&quot;#总结&quot; class=&quot;headerlink&quot; title=&quot;总结&quot;&gt;&lt;/a&gt;总结&lt;/h2&gt;&lt;p&gt;由于 Hook Method 的逻辑是在消息转发流程搞事情，所以跟 Aspects 一样不能同时 Hook 父类和子类类相同方法。因为如果子类调用父类的实现，就会死循环。如果 Hook 方法这部分使用 &lt;a href=&quot;http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/&quot;&gt;Method Swizzling&lt;/a&gt; 等交换 IMP 的方式实现，也会有着严重依赖 Hook 顺序导致调用错乱的问题。还是五子棋基于桥的 Hook 牛逼，汇编跳板，天下第一，我这辈子是看不懂了。&lt;/p&gt;
+&lt;h2 id=&quot;总结&quot;&gt;&lt;a href=&quot;#总结&quot; class=&quot;headerlink&quot; title=&quot;总结&quot;&gt;&lt;/a&gt;总结&lt;/h2&gt;&lt;p&gt;由于 Hook Method 的逻辑是在消息转发流程搞事情，所以跟 Aspects 一样不能同时 Hook 父类和子类类相同方法。因为如果子类调用父类的实现，就会死循环。如果 Hook 方法这部分使用 &lt;a href=&quot;http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/&quot;&gt;Method Swizzling&lt;/a&gt; 等交换 IMP 的方式实现，也会有着严重依赖 Hook 顺序导致调用错乱的问题。还是基于桥的 Hook 牛逼，汇编跳板，我这辈子是看不懂了。&lt;/p&gt;
 &lt;p&gt;老子终于在这个月最后一天快结束的时候憋出来一篇大水文！搬砖累死了没时间研究技术，你们尽管喷！&lt;/p&gt;
 </content>
     
@@ -2143,11 +2143,11 @@
     </summary>
     
     
+      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
+    
       <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
     
       <category term="Swift" scheme="http://yulingtianxia.com/tags/Swift/"/>
-    
-      <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
     
   </entry>
   
@@ -2358,9 +2358,9 @@
     </summary>
     
     
-      <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
-    
       <category term="macOS" scheme="http://yulingtianxia.com/tags/macOS/"/>
+    
+      <category term="Xcode" scheme="http://yulingtianxia.com/tags/Xcode/"/>
     
   </entry>
   
