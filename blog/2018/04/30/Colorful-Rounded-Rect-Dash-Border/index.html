@@ -1,0 +1,605 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Colorful Rounded Rect Dash Border | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="产品经理要求做个能展示进度的分段彩色外环，大概长这样：
+
+花了两天左右来实现和优化，记录下踩坑经历。
+组件已经开源，取个名字叫 YXYDashLayer 吧：https://github.com/yulingtianxia/YXYDashLayer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Colorful Rounded Rect Dash Border">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2018/04/30/Colorful-Rounded-Rect-Dash-Border/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="产品经理要求做个能展示进度的分段彩色外环，大概长这样：
+
+花了两天左右来实现和优化，记录下踩坑经历。
+组件已经开源，取个名字叫 YXYDashLayer 吧：https://github.com/yulingtianxia/YXYDashLayer">
+<meta property="og:image" content="https://github.com/yulingtianxia/YXYDashLayer/blob/master/Assets/YXYDashLayer.gif?raw=true">
+<meta property="og:updated_time" content="2018-04-30T09:21:47.810Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Colorful Rounded Rect Dash Border">
+<meta name="twitter:description" content="产品经理要求做个能展示进度的分段彩色外环，大概长这样：
+
+花了两天左右来实现和优化，记录下踩坑经历。
+组件已经开源，取个名字叫 YXYDashLayer 吧：https://github.com/yulingtianxia/YXYDashLayer">
+<meta name="twitter:image" content="https://github.com/yulingtianxia/YXYDashLayer/blob/master/Assets/YXYDashLayer.gif?raw=true">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2018/04/30/Colorful-Rounded-Rect-Dash-Border/" title="Colorful Rounded Rect Dash Border" itemprop="url">Colorful Rounded Rect Dash Border</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-30T09:25:44.000Z" itemprop="datePublished"> 发表于 2018-04-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#接口设计"><span class="toc-number">1.</span> <span class="toc-text">接口设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思路很重要"><span class="toc-number">2.</span> <span class="toc-text">思路很重要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#技术实现"><span class="toc-number">3.</span> <span class="toc-text">技术实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#画圆角矩形的坑"><span class="toc-number">3.1.</span> <span class="toc-text">画圆角矩形的坑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#处理边界值"><span class="toc-number">3.2.</span> <span class="toc-text">处理边界值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dash-策略"><span class="toc-number">3.3.</span> <span class="toc-text">Dash 策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>产品经理要求做个能展示进度的分段彩色外环，大概长这样：</p>
+<p><img src="https://github.com/yulingtianxia/YXYDashLayer/blob/master/Assets/YXYDashLayer.gif?raw=true" alt=""></p>
+<p>花了两天左右来实现和优化，记录下踩坑经历。</p>
+<p>组件已经开源，取个名字叫 <code>YXYDashLayer</code> 吧：<a href="https://github.com/yulingtianxia/YXYDashLayer" target="_blank" rel="external">https://github.com/yulingtianxia/YXYDashLayer</a></p>
+<a id="more"></a>
+<h2 id="接口设计"><a href="#接口设计" class="headerlink" title="接口设计"></a>接口设计</h2><p>因为考虑到要做成稍微通用一些的组件，最底层的 <code>YXYMaskDashLayer</code> 接口设计如下。其他类的属性也都是对它的封装。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> 分段的间隙</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">CGFloat</span> dashGap;</span><br><span class="line"><span class="comment">/**</span><br><span class="line"> 线宽</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">CGFloat</span> dashWidth;</span><br><span class="line"><span class="comment">/**</span><br><span class="line"> 矩形的圆角半径</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">CGFloat</span> dashCornerRadius;</span><br><span class="line"><span class="comment">/**</span><br><span class="line"> 分段总数</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">NSUInteger</span> totalCount;</span><br><span class="line"><span class="comment">/**</span><br><span class="line"> 需要显示哪些分段的 index</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>) <span class="built_in">NSArray</span>&lt;<span class="built_in">NSNumber</span> *&gt; *showIndexes;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> 刷新整个Layer</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)refresh;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> 仅刷新 Dash 的 totalCount、dashGap 和 showIndexes</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)refreshDash;</span><br></pre></td></tr></table></figure>
+<p>因为有些属性改变后并不需要重新绘制 path，为了实现更好的性能，所以还提供了一个只刷新 dash 数据的接口 <code>refreshDash</code>。</p>
+<p>具体使用的例子可以运行 Demo 程序。</p>
+<h2 id="思路很重要"><a href="#思路很重要" class="headerlink" title="思路很重要"></a>思路很重要</h2><p>之前的样式是个圆形的分段外环，而且是纯色的，看了下以前的代码，是按照弧度均分后，从顶部开始按顺时针一段一段 path 组合起来的。用 <code>UIBezierPath</code> 的 <code>+ bezierPathWithArcCenter:radius:startAngle:endAngle:clockwise:</code> 方法即可画出来。</p>
+<p>然而现在改成了圆角矩形的，要按照周长均分来画分段，实现方式完全不同。因为圆形只是圆角矩形的一种特殊情况，所以需要另一种更通用的实现方式。因为借鉴了圆形分段一段段画的思想，最开始想到的也是一段段画圆角矩形，需要把整个圆角矩形划分成 9 个区域（四个四分之一圆弧，四条直线，顶部直线需要分成两块），还要对圆角和直线部分的边界处理，涉及到大量的计算。我刚开始要这么干的时候，觉得这么做有点笨，肯定有更简单的方案。</p>
+<p><code>CAShapeLayer</code> 的 <code>lineDashPattern</code> 和 <code>lineDashPhase</code> 属性就可以实现这个需求了，之前一直被旧代码的方案限制了思路。真是退一步海阔天空啊。原本跟产品说这有 5 天工作量，结果半个小时就写出个 demo，哈哈。然后用剩下的时间继续完善打磨，做成通用组件。</p>
+<h2 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h2><ol>
+<li>先用贝塞尔曲线画一个圆角矩形(就叫 <code>path</code> 吧)</li>
+<li><code>path.CGPath</code> 赋值给 <code>CAShapeLayer</code> 实例（就叫 <code>maskLayer</code> 吧）</li>
+<li>根据线宽、分段间隙、<code>path</code> 周长、总分段数、要展示的分段 index，可计算出 <code>lineDashPattern</code> 和 <code>lineDashPhase</code> 的值，刷新 <code>maskLayer</code></li>
+<li>将 <code>maskLayer</code> 赋值给 <code>CAGradientLayer</code> 实例的 <code>mask</code>。调整 <code>colors</code> 等属性即可实现一个彩色渐变分段圆角矩形外圈。</li>
+<li>将多个这样的 <code>CAGradientLayer</code> 实例重叠在一起，即可实现个别分段『高亮』效果。比如一个 layer 当做底色，另一个放上面当做灰色进度条。（PS：本文最开始的 gif 就是这样）</li>
+</ol>
+<p>这里面踩坑最多的就是前 3 个步骤，计算时需要考虑到一些边界条件。</p>
+<h3 id="画圆角矩形的坑"><a href="#画圆角矩形的坑" class="headerlink" title="画圆角矩形的坑"></a>画圆角矩形的坑</h3><p><code>+ bezierPathWithRoundedRect:cornerRadius:</code> 方法是可以直接画出一个圆角矩形的，但是路径的起始点并没确定。表面上看上去是从顶部直线左端开始顺时针画，然而会有向右的一些偏差。这样就无法精确计算出 <code>lineDashPhase</code> 的值，导致画出来的效果不对称了。</p>
+<p>于是我这里干脆自己画个圆角矩形，代码也很简单。由于要考虑到线宽，所以需要计算下真正的圆角半径和外接矩形尺寸，顺时针画四段直线四段四分之一圆弧即可。下面的代码是写在 <code>CAShapeLayer</code> 子类里的：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">UIBezierPath</span> *path = [<span class="built_in">UIBezierPath</span> bezierPath];</span><br><span class="line"><span class="keyword">self</span>.dashRect = <span class="built_in">CGRectInset</span>(<span class="keyword">self</span>.bounds, <span class="keyword">self</span>.dashWidth / <span class="number">2</span>, <span class="keyword">self</span>.dashWidth / <span class="number">2</span>);</span><br><span class="line"><span class="built_in">CGFloat</span> width = <span class="keyword">self</span>.dashRect.size.width;</span><br><span class="line"><span class="built_in">CGFloat</span> height = <span class="keyword">self</span>.dashRect.size.height;</span><br><span class="line"><span class="keyword">self</span>.realDashCornerRadius = MIN(<span class="keyword">self</span>.dashCornerRadius - <span class="keyword">self</span>.dashWidth / <span class="number">2</span>, width / <span class="number">2</span>);</span><br><span class="line"><span class="keyword">self</span>.realDashCornerRadius = MAX(<span class="number">0</span>, <span class="keyword">self</span>.realDashCornerRadius);</span><br><span class="line"><span class="built_in">CGPoint</span> center = <span class="built_in">CGPointMake</span>(<span class="keyword">self</span>.frame.size.width / <span class="number">2</span>, <span class="keyword">self</span>.frame.size.height / <span class="number">2</span>);</span><br><span class="line">    </span><br><span class="line">[path moveToPoint:<span class="built_in">CGPointMake</span>(center.x - width / <span class="number">2</span> + <span class="keyword">self</span>.realDashCornerRadius, center.y - height / <span class="number">2</span>)];</span><br><span class="line">    </span><br><span class="line">[path addLineToPoint:<span class="built_in">CGPointMake</span>(center.x + width / <span class="number">2</span> - <span class="keyword">self</span>.realDashCornerRadius, center.y - height / <span class="number">2</span>)];</span><br><span class="line">    </span><br><span class="line">[path addArcWithCenter:<span class="built_in">CGPointMake</span>(center.x + width / <span class="number">2</span> - <span class="keyword">self</span>.realDashCornerRadius, center.y - height / <span class="number">2</span> + <span class="keyword">self</span>.realDashCornerRadius) radius:<span class="keyword">self</span>.realDashCornerRadius startAngle:M_PI_2 * <span class="number">3</span> endAngle:<span class="number">0</span> clockwise:<span class="literal">YES</span>];</span><br><span class="line">    </span><br><span class="line">[path addLineToPoint:<span class="built_in">CGPointMake</span>(center.x + width / <span class="number">2</span>, center.y + height / <span class="number">2</span> - <span class="keyword">self</span>.realDashCornerRadius)];</span><br><span class="line">    </span><br><span class="line">[path addArcWithCenter:<span class="built_in">CGPointMake</span>(center.x + width / <span class="number">2</span> - <span class="keyword">self</span>.realDashCornerRadius, center.y + height / <span class="number">2</span> - <span class="keyword">self</span>.realDashCornerRadius) radius:<span class="keyword">self</span>.realDashCornerRadius startAngle:<span class="number">0</span> endAngle:M_PI_2 clockwise:<span class="literal">YES</span>];</span><br><span class="line">    </span><br><span class="line">[path addLineToPoint:<span class="built_in">CGPointMake</span>(center.x - width / <span class="number">2</span> + <span class="keyword">self</span>.realDashCornerRadius, center.y + height / <span class="number">2</span>)];</span><br><span class="line">    </span><br><span class="line">[path addArcWithCenter:<span class="built_in">CGPointMake</span>(center.x - width / <span class="number">2</span> + <span class="keyword">self</span>.realDashCornerRadius, center.y + height / <span class="number">2</span> - <span class="keyword">self</span>.realDashCornerRadius) radius:<span class="keyword">self</span>.realDashCornerRadius startAngle:M_PI_2 endAngle:M_PI clockwise:<span class="literal">YES</span>];</span><br><span class="line">    </span><br><span class="line">[path addLineToPoint:<span class="built_in">CGPointMake</span>(center.x - width / <span class="number">2</span>, center.y - height / <span class="number">2</span> + <span class="keyword">self</span>.realDashCornerRadius)];</span><br><span class="line">    </span><br><span class="line">[path addArcWithCenter:<span class="built_in">CGPointMake</span>(center.x - width / <span class="number">2</span> + <span class="keyword">self</span>.realDashCornerRadius, center.y - height / <span class="number">2</span> + <span class="keyword">self</span>.realDashCornerRadius) radius:<span class="keyword">self</span>.realDashCornerRadius startAngle:M_PI endAngle:M_PI_2 * <span class="number">3</span> clockwise:<span class="literal">YES</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">self</span>.totalLength = (width + height) * <span class="number">2</span> - <span class="keyword">self</span>.realDashCornerRadius * <span class="number">8</span> + M_PI * <span class="keyword">self</span>.realDashCornerRadius * <span class="number">2</span>;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">self</span>.lineWidth = <span class="keyword">self</span>.dashWidth;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">self</span>.path = path.CGPath;</span><br></pre></td></tr></table></figure>
+<p>上面的代码也计算出了周长，用于下一步的分段长度计算。</p>
+<h3 id="处理边界值"><a href="#处理边界值" class="headerlink" title="处理边界值"></a>处理边界值</h3><p>圆角矩形的周长已经算出来了，外部提供了 <code>dashGap</code>，但是绘制时真正的分段间隙是需要考虑到线宽和分段总数的。因为线的边缘会有个半圆，半径为二分之一线宽。当只有一个分段的时候画一个完整的圆角矩形，不需要有间隙了。如果分段总数过多导致计算的分段长度 <code>pieceLength</code> 小于 0，需要计算能展示出来分段数的最大值 <code>realTotalCount</code>，并重新计算分段长度 <code>pieceLength</code>。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CGFloat</span> realDashGap = (<span class="keyword">self</span>.totalCount == <span class="number">1</span>) ? <span class="number">0</span> : <span class="keyword">self</span>.dashGap + <span class="keyword">self</span>.dashWidth;</span><br><span class="line"><span class="built_in">NSUInteger</span> realTotalCount = <span class="keyword">self</span>.totalCount;</span><br><span class="line"><span class="built_in">CGFloat</span> pieceLength = <span class="keyword">self</span>.totalLength / <span class="keyword">self</span>.totalCount - realDashGap;</span><br><span class="line"><span class="keyword">if</span> (pieceLength &lt; <span class="number">0</span>) &#123;</span><br><span class="line">   pieceLength = <span class="number">0</span>;</span><br><span class="line">   realTotalCount = <span class="keyword">self</span>.totalLength / realDashGap;</span><br><span class="line">   pieceLength = <span class="keyword">self</span>.totalLength / realTotalCount - realDashGap;</span><br><span class="line">   <span class="built_in">NSLog</span>(<span class="string">@"Can't show! Reduce total count or dash gap! Real Total Count: %lu, Real Dash Gap:%ff"</span>, (<span class="keyword">unsigned</span> <span class="keyword">long</span>)realTotalCount, realDashGap);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Dash-策略"><a href="#Dash-策略" class="headerlink" title="Dash 策略"></a>Dash 策略</h3><p><code>lineDashPhase</code> 可以理解为 dash 距离 path 起始点的距离，想让 dash 从顶部中间开始，需要设置初始值：二分之一外接矩形宽度的减去圆角半径，再加上二分之一 <code>realDashGap</code>。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">self.lineDashPhase </span>= - (<span class="keyword">self.dashRect.size.width </span>/ <span class="number">2</span> - <span class="keyword">self.realDashCornerRadius </span>+ realDashGap / <span class="number">2</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>然后就是顺时针画需要展示的分段。输入是一个 <code>showIndexes</code> 数组，比如一共有 10 个分段，想展示的是前两个和最后一个分段，那么 <code>showIndexes</code> 的内容就是 <code>@[@0, @1, @9]</code>。此时 <code>lineDashPattern</code> 的值就应该是（<code>pieceLength</code> 就是每个分段的长度）：</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@[</span><span class="meta">@pieceLength,</span> <span class="meta">@realDashGap,</span> <span class="meta">@pieceLength,</span> <span class="meta">@(realDashGap</span> <span class="symbol">*</span> 8 + pieceLength <span class="symbol">*</span> 7), <span class="meta">@pieceLength,</span> <span class="meta">@realDashGap]</span></span><br></pre></td></tr></table></figure>
+<p>如果 <code>showIndexes</code> 的内容是 <code>@[@1, @2, @9]</code>，可不可以让 <code>lineDashPattern</code> 数组前面填 <code>@0</code> 呢？</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@[</span><span class="meta">@0,</span> <span class="meta">@(pieceLength</span> + realDashGap), <span class="meta">@pieceLength,</span> <span class="meta">@realDashGap,</span> <span class="meta">@pieceLength,</span> <span class="meta">@(realDashGap</span> <span class="symbol">*</span> 7 + pieceLength <span class="symbol">*</span> 6), <span class="meta">@pieceLength,</span> <span class="meta">@realDashGap]</span></span><br></pre></td></tr></table></figure>
+<p>因为把 <code>lineCap</code> 设为了 <code>kCALineCapRound</code>，即便长度为 0 路径也会展示成为一个圆点，半径就是线宽。然而安卓系统对应的 API 在这种情况就不会绘制出圆点。为此 iOS 更麻烦一点，需要再次调整<code>lineDashPhase</code> 的值来『越过』前面几个分段。具体的实现代码如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">NSMutableArray</span>&lt;<span class="type">NSNumber</span> *&gt; *dashPattern = [<span class="type">NSMutableArray</span> arrayWithCapacity:<span class="number">2</span> * realTotalCount];</span><br><span class="line"><span class="type">NSInteger</span> needsMovePhaseCount = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; realTotalCount; i ++) &#123;</span><br><span class="line">   <span class="keyword">if</span> ([<span class="keyword">self</span>.showIndexes containsObject:@(i)]) &#123;</span><br><span class="line">       [dashPattern addObject:@(pieceLength)];</span><br><span class="line">       [dashPattern addObject:@(realDashGap)];</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span> &#123;</span><br><span class="line">       <span class="keyword">if</span> (dashPattern.<span class="built_in">count</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">           dashPattern[dashPattern.<span class="built_in">count</span> - <span class="number">1</span>] = @(dashPattern[dashPattern.<span class="built_in">count</span> - <span class="number">1</span>].doubleValue + pieceLength + realDashGap);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">else</span> &#123;</span><br><span class="line">           <span class="keyword">self</span>.lineDashPhase -= (pieceLength + realDashGap);</span><br><span class="line">           needsMovePhaseCount ++;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (needsMovePhaseCount &gt; <span class="number">0</span> &amp;&amp; dashPattern.<span class="built_in">count</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">   dashPattern[dashPattern.<span class="built_in">count</span> - <span class="number">1</span>] = @(dashPattern[dashPattern.<span class="built_in">count</span> - <span class="number">1</span>].doubleValue + (pieceLength + realDashGap) * needsMovePhaseCount);</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">self</span>.showIndexes.<span class="built_in">count</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">   <span class="keyword">self</span>.lineDashPattern = dashPattern;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>一开始做这种需求我是拒绝的，交互有点复杂啊，用户看不懂啊，说白了还是不知道咋实现心里没底啊！然而要是没有这种需求，也就没有这篇月末大水文了。</p>
+<p>我真是越来越水了，只会写 UI 了，还是搞底层的逆向大佬们牛逼啊！Hank 老师教教我！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2018/04/30/Colorful-Rounded-Rect-Dash-Border/" data-title="Colorful Rounded Rect Dash Border | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/"  title="追踪 Objective-C 方法中的 Block 参数对象">
+ <strong>下一篇：</strong><br/> 
+ <span>追踪 Objective-C 方法中的 Block 参数对象
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#接口设计"><span class="toc-number">1.</span> <span class="toc-text">接口设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思路很重要"><span class="toc-number">2.</span> <span class="toc-text">思路很重要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#技术实现"><span class="toc-number">3.</span> <span class="toc-text">技术实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#画圆角矩形的坑"><span class="toc-number">3.1.</span> <span class="toc-text">画圆角矩形的坑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#处理边界值"><span class="toc-number">3.2.</span> <span class="toc-text">处理边界值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dash-策略"><span class="toc-number">3.3.</span> <span class="toc-text">Dash 策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://pbxproj.yulingtianxia.com" target="_blank" title="pbxprojHelper">pbxprojHelper</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.22px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.44px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 12.22px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 10px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 11.11px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 10px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 18.89px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.11px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 11.11px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 15.56px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.67px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 17.78px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.33px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.67px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 10px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.56px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.33px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
