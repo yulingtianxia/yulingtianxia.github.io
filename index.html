@@ -84,6 +84,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2018/06/24/Objective-C-Block-Mangle-Name/" title="追踪 Objective-C Block 代码定义的位置" itemprop="url">追踪 Objective-C Block 代码定义的位置</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2018-06-24T09:19:03.000Z" itemprop="datePublished"> 发表于 2018-06-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>之前写了一篇文章<a href="http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/">《追踪 Objective-C 方法中的 Block 参数对象》</a>，利用 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，利用对 Mach-O 文件和 Clang 源码的静态分析实现了对定义 block 代码位置的追踪。</p>
+<p>主要代码已经整合到 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 1.0.2 版本中。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2018/06/24/Objective-C-Block-Mangle-Name/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2018/06/24/Objective-C-Block-Mangle-Name/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/" title="MessageThrottle Performance Benchmark and Optimization" itemprop="url">MessageThrottle Performance Benchmark and Optimization</a>
   </h1>
   <p class="article-author">By
@@ -110,6 +170,11 @@
     <footer class="article-footer clearfix">
 <div class="article-catetags">
 
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
+  </div>
 
 </div>
 
@@ -167,6 +232,11 @@
     <footer class="article-footer clearfix">
 <div class="article-catetags">
 
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/iOS/">iOS</a>
+  </div>
 
 </div>
 
@@ -600,71 +670,6 @@
 	
 	  	<span></span>
 		<a href="/blog/2017/09/17/Threading-Programming-Guide-2/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2017/08/28/Threading-Programming-Guide-1/" title="Threading Programming Guide(1)" itemprop="url">Threading Programming Guide(1)</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2017-08-28T01:20:24.000Z" itemprop="datePublished"> 发表于 2017-08-28</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/Introduction/Introduction.html#//apple_ref/doc/uid/10000057i-CH1-SW1">Threading Programming Guide</a> 的学习笔记&amp;翻译，第一部分。</p>
-<p>其实苹果建议使用对线程的高级封装，比如 operation objects and Grand Central Dispatch，它们使用方便更加高效，可以参考 <a href="https://developer.apple.com/library/content/documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091">Concurrency Programming Guide</a>。</p>
-<p>但了解更底层一些的内容其实更有趣，难道不是么？</p>
-<ul>
-<li><a href="http://yulingtianxia.com/blog/2017/09/17/Threading-Programming-Guide-2/">Threading Programming Guide(2)</a></li>
-<li><a href="http://yulingtianxia.com/blog/2017/10/08/Threading-Programming-Guide-3/">Threading Programming Guide(3)</a></li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2017/08/28/Threading-Programming-Guide-1/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/翻译/">翻译</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2017/08/28/Threading-Programming-Guide-1/#disqus_thread" class="comments-count-link">Comments</a>
 	
 </div>
 

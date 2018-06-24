@@ -1,0 +1,600 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>追踪 Objective-C Block 代码定义的位置 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="之前写了一篇文章《追踪 Objective-C 方法中的 Block 参数对象》，利用 BlockHook 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，利用对 Mach-O 文件和 Clang 源码的静态分析实现了对定义 block 代码位置的追踪。
+主要代码已经整合到 BlockHook 1.0.2 版本中。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="追踪 Objective-C Block 代码定义的位置">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2018/06/24/Objective-C-Block-Mangle-Name/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="之前写了一篇文章《追踪 Objective-C 方法中的 Block 参数对象》，利用 BlockHook 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，利用对 Mach-O 文件和 Clang 源码的静态分析实现了对定义 block 代码位置的追踪。
+主要代码已经整合到 BlockHook 1.0.2 版本中。">
+<meta property="og:updated_time" content="2018-06-24T09:44:43.338Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="追踪 Objective-C Block 代码定义的位置">
+<meta name="twitter:description" content="之前写了一篇文章《追踪 Objective-C 方法中的 Block 参数对象》，利用 BlockHook 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，利用对 Mach-O 文件和 Clang 源码的静态分析实现了对定义 block 代码位置的追踪。
+主要代码已经整合到 BlockHook 1.0.2 版本中。">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2018/06/24/Objective-C-Block-Mangle-Name/" title="追踪 Objective-C Block 代码定义的位置" itemprop="url">追踪 Objective-C Block 代码定义的位置</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2018-06-24T09:19:03.000Z" itemprop="datePublished"> 发表于 2018-06-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#解决思路"><span class="toc-number">1.</span> <span class="toc-text">解决思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mach-O-文件格式"><span class="toc-number">2.</span> <span class="toc-text">Mach-O 文件格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Block-Mangle-Name"><span class="toc-number">3.</span> <span class="toc-text">Block Mangle Name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>之前写了一篇文章<a href="http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/">《追踪 Objective-C 方法中的 Block 参数对象》</a>，利用 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="external">BlockHook</a> 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，利用对 Mach-O 文件和 Clang 源码的静态分析实现了对定义 block 代码位置的追踪。</p>
+<p>主要代码已经整合到 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="external">BlockHook</a> 1.0.2 版本中。</p>
+<a id="more"></a>
+<h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><p>能想到的最直接的方法就是获取 block 内部 invoke 函数的内存地址，并找到这个地址对应的 image，然后根据对基地址的偏移量，利用 dYSM 文件存储的符号表查找到对应代码位置。这属于很常规的操作了，即便没有 dYSM 文件，用 Mach-O 反汇编也能知道 block 定义在哪个方法的大概位置。</p>
+<p>本文完？？？</p>
+<p>太水了！！！</p>
+<p>如果只需要知道 block 定义在哪个方法里的话，其实有更简单的方法呀！在程序运行时就能知道的，不用那么多麻烦的后续操作。解决思路如下：</p>
+<ol>
+<li>通过读取每个 Mach-O 镜像文件的符号表，建立 block invoke 函数偏移地址到符号名的映射。</li>
+<li>获取到的符号名是经过 Clang 处理后的 mangle name，根据生成规则反推出 block invoke 函数实现代码位置。</li>
+</ol>
+<h2 id="Mach-O-文件格式"><a href="#Mach-O-文件格式" class="headerlink" title="Mach-O 文件格式"></a>Mach-O 文件格式</h2><p>网上关于 Mach-O 文件的介绍一大堆，这里不再赘述。其实就是个二进制文件格式定义，照着文档写代码读二进制内容罢了。苹果也提供了 Mach-O 文件数据结构的定义，直接用就行了。当二进制镜像被加载到虚拟内存中后，就可以通过计算各种偏移量来按图索骥了。下面的代码将 <code>_hunt_blocks_for_image</code> 注册为镜像加载后的回调函数，这行代码执行前已经加载的镜像也会回调此函数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_dyld_register_func_<span class="keyword">for</span>_add_image(_hunt_blocks_<span class="keyword">for</span>_image);</span><br></pre></td></tr></table></figure>
+<p><code>_hunt_blocks_for_image</code> 函数会读取一个 Mach-O 文件中的符号表。具体操作是先从遍历 Load Commands 入手，找到 <code>__LINKEDIT</code> 段的基地址以及符号表数据的偏移量及其字符串表的偏移量。然后遍历符号表，获取到符号地址和符号名的偏移量。如果符号名中包含 <code>_block_invoke</code> 则说明是 block 实现函数，然后用字典保存符号地址到符号名的映射。</p>
+<p>遍历 Load Commands 时要注意，不同类型的 Load Command 数据类型也不一样，但是肯定会有 <code>cmd</code> 和 <code>cmdsize</code> 这两个字段。可以凭借 <code>cmd</code> 简单区分其数据结构。比如符号表的 <code>cmd</code> 是 <code>LC_SYMTAB</code>，其数据结构为 <code>symtab_command</code>。比如常见的 <code>cmd</code> 为 <code>LC_SEGMENT</code> 的『段』可以靠 <code>segname</code> 区分，类型有 <code>__PAGEZERO</code> <code>__TEXT</code> <code>__DATA</code> <code>__LINKEDIT</code> <code>__OBJC</code> 等等，有的『段』下面还有很多『节』(Section)。<code>__PAGEZERO</code> 段在可执行文件才有，大小跟架构有关，是虚拟内存基地址。符号表是一个 <code>nlist</code> 数组，保存着每个符号的一些信息，这里只用到了符号地址和符号名。</p>
+<p>因为使用 <code>NSMapTable</code> 存储符号地址和符号名的映射，所以需要用 <code>pthread_mutex_t</code> 确保线程安全。</p>
+<p><code>_hunt_blocks_for_image</code> 函数实现如下。我觉得我思想解释的够明白了，对于看过 fishhook 源码的人来说应该很简单。实在看不懂就自己对照着 MachOView 和苹果文档，随便找个方法计算一遍偏移量就好了。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> NSMapTable *block_invoke_mangle_cache;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">pthread_mutex_t</span> block_invoke_mangle_cache_mutex;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> _hunt_blocks_for_image(<span class="keyword">const</span> <span class="keyword">struct</span> mach_header *header, <span class="keyword">intptr_t</span> slide) &#123;</span><br><span class="line">    Dl_info info;</span><br><span class="line">    <span class="keyword">if</span> (dladdr(header, &amp;info) == <span class="number">0</span>) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">segment_command_t</span> *cur_seg_cmd;</span><br><span class="line">    <span class="keyword">segment_command_t</span> *linkedit_segment = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">segment_command_t</span> *pagezero_segment = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">struct</span> symtab_command* symtab_cmd = <span class="literal">NULL</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">uintptr_t</span> cur = (<span class="keyword">uintptr_t</span>)header + <span class="keyword">sizeof</span>(<span class="keyword">mach_header_t</span>);</span><br><span class="line">    <span class="keyword">for</span> (uint i = <span class="number">0</span>; i &lt; header-&gt;ncmds; i++, cur += cur_seg_cmd-&gt;cmdsize) &#123;</span><br><span class="line">        cur_seg_cmd = (<span class="keyword">segment_command_t</span> *)cur;</span><br><span class="line">        <span class="keyword">if</span> (cur_seg_cmd-&gt;cmd == LC_SEGMENT_ARCH_DEPENDENT) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">strcmp</span>(cur_seg_cmd-&gt;segname, SEG_LINKEDIT) == <span class="number">0</span>) &#123;</span><br><span class="line">                linkedit_segment = cur_seg_cmd;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (strcmp(SEG_PAGEZERO, cur_seg_cmd-&gt;segname) == <span class="number">0</span>) &#123;</span><br><span class="line">                pagezero_segment = (<span class="keyword">segment_command_t</span>*)cur_seg_cmd;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur_seg_cmd-&gt;cmd == LC_SYMTAB) &#123;</span><br><span class="line">            symtab_cmd = (struct symtab_command*)cur_seg_cmd;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!symtab_cmd || !linkedit_segment ) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">uintptr_t</span> linkedit_base = (<span class="keyword">uintptr_t</span>)slide + linkedit_segment-&gt;vmaddr - linkedit_segment-&gt;fileoff;</span><br><span class="line">    <span class="keyword">nlist_t</span> *symtab = (<span class="keyword">nlist_t</span> *)(linkedit_base + symtab_cmd-&gt;symoff);</span><br><span class="line">    <span class="keyword">char</span> *strtab = (char *)(linkedit_base + symtab_cmd-&gt;stroff);</span><br><span class="line">    </span><br><span class="line">    pthread_mutex_lock(&amp;block_invoke_mangle_cache_mutex);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!block_invoke_mangle_cache) &#123;</span><br><span class="line">        block_invoke_mangle_cache = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsOpaqueMemory | NSMapTableObjectPointerPersonality valueOptions:NSPointerFunctionsCopyIn];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (uint i = <span class="number">0</span>; i &lt; symtab_cmd-&gt;nsyms; i++) &#123;</span><br><span class="line">        <span class="keyword">uint32_t</span> strtab_offset = symtab[i].n_un.n_strx;</span><br><span class="line">        <span class="keyword">char</span> *symbol_name = strtab + strtab_offset;</span><br><span class="line">        <span class="keyword">bool</span> symbol_name_longer_than_1 = symbol_name[<span class="number">0</span>] &amp;&amp; symbol_name[<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span> (!symbol_name_longer_than_1) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">uintptr_t</span> block_addr = (<span class="keyword">uintptr_t</span>)info.dli_fbase + symtab[i].n_value - (pagezero_segment ? pagezero_segment-&gt;vmsize : <span class="number">0</span>);</span><br><span class="line">        NSString *symbolName = [NSString stringWithUTF8String:&amp;symbol_name[<span class="number">1</span>]];</span><br><span class="line">        NSRange range = [symbolName rangeOfString:@<span class="string">"_block_invoke"</span>];</span><br><span class="line">        <span class="keyword">if</span> (range.location != NSNotFound &amp;&amp; range.location &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            [block_invoke_mangle_cache setObject:symbolName forKey:(__bridge id)(<span class="keyword">void</span> *)block_addr];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    pthread_mutex_unlock(&amp;block_invoke_mangle_cache_mutex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Block-Mangle-Name"><a href="#Block-Mangle-Name" class="headerlink" title="Block Mangle Name"></a>Block Mangle Name</h2><p>Clang 7.0.0 源码的 <a href="https://clang.llvm.org/doxygen/Mangle_8cpp_source.html#l00060" target="_blank" rel="external">Mangle.cpp</a> 文件实现了 Objective-C 和 block 的 mangle name。只需要看 <code>mangleBlock</code> 和 <code>mangleGlobalBlock</code> 两个函数即可大概了解 block mangle name 的生成规则。</p>
+<ol>
+<li>全局 block：block 变量名 + <code>_block_invoke</code> + <code>discriminator</code>。详见 <code>mangleGlobalBlock</code> 函数实现。</li>
+<li>其他 block：<code>__</code> + block 代码所处的函数或方法的 mangle name + <code>_block_invoke</code> + <code>discriminator</code>。详见 <code>mangleBlock</code> 函数实现。</li>
+</ol>
+<p>需要注意的是 <code>discriminator</code> 是从第二个才开始显示的。比如在 <code>Foo</code> 类的 <code>bar</code> 方法中定义了两个 block，那么这两个 block 的 mangle name 就是 <code>__10_-[Foo bar]_block_invoke</code> 和 <code>__10_-[Foo bar]_block_invoke_2</code>。在 gcc 里稍有区别，第一个 block 的 mangle name 也会显示 <code>discriminator</code>。前面的 “10” 是方法名 <code>-[Foo bar]</code> 的字符串长度。这部分属于 Objective-C 方法名的 mangle name 规则，C++ 函数也有类似的规则，不仅用数字保存字符串长度，还有其他字母表示方法类型和参数类型等。这里不展开细讲了，看源码都能找到。</p>
+<p>于是只要能拿到 mangle name，就能推断出定义 block 代码所处的位置咯。不带 <code>__</code> 的就是全局 block 咯？我并没有打算写代码来解析下 mangle name 的规则，还是交给调用方去使用吧。</p>
+<p><a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="external">BlockHook</a> 的 <code>BHToken</code> 类新增了 <code>mangleName</code> 属性，只需要使用原始的 invoke 函数地址作为 Key 即可从字典里获得这个 block 对应的 <code>mangleName</code>:</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- <span class="params">(NSString *)</span>mangleName</span><br><span class="line">&#123;</span><br><span class="line">    if <span class="params">(!_mangleName)</span> &#123;</span><br><span class="line">        pthread_mutex_lock<span class="params">(&amp;block_invoke_mangle_cache_mutex)</span>;</span><br><span class="line">        if <span class="params">(_originInvoke)</span> &#123;</span><br><span class="line">            _mangleName = [block_invoke_mangle_cache objectForKey:<span class="params">(__bridge id)</span>_originInvoke];</span><br><span class="line">        &#125;</span><br><span class="line">        pthread_mutex_unlock<span class="params">(&amp;block_invoke_mangle_cache_mutex)</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    return _mangleName;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有个多次 hook 的问题。所谓的 <code>_originInvoke</code> 只是这次 hook 相对的原始实现函数，它可能处在多次 hook 中的一环，而不是最原始的 block 实现，此时是拿不到 <code>mangleName</code>。所以需要用第一次 hook block 的 token 来获取 <code>mangleName</code>。PS:想搞倒是可以搞，把 hook block 产生的 token 都保存起来，然后按照 <code>_originInvoke</code> 和 <code>_replacementInvoke</code> 顺藤摸瓜就行，不难，顺便还能解决 <code>remove</code> 操作的顺序问题。我懒的搞，目前场景太小意义不大。</p>
+<p>想了解 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="external">BlockHook</a> 原理的，可以看这篇文章：<a href="http://yulingtianxia.com/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/">Hook Objective-C Block with Libffi</a>。（继续疯狂炒冷饭。。。）</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>目前 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="external">BlockHook</a> 和 <a href="https://github.com/yulingtianxia/BlockTracker" target="_blank" rel="external">BlockTracker</a> 都已经支持获取 block 的 mangle name 了。</p>
+<p>不知道 dyld 3 强制应用后会不会对此有影响，我就是遍历这个二进制文件自己的符号表而已呀，动态重定向的我又不 care。反正 fishhook 到时候估计是 gg 了，因为 dyld 3 会在加载时解析所有符号表，也就是固定下来了，没跳板了。</p>
+<p>然而我还是这么菜，赶在月底前写了个篇幅短小全是常识的大水文。。。</p>
+<p>本文完。。。</p>
+<p>太水了！！！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2018/06/24/Objective-C-Block-Mangle-Name/" data-title="追踪 Objective-C Block 代码定义的位置 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/"  title="MessageThrottle Performance Benchmark and Optimization">
+ <strong>下一篇：</strong><br/> 
+ <span>MessageThrottle Performance Benchmark and Optimization
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#解决思路"><span class="toc-number">1.</span> <span class="toc-text">解决思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mach-O-文件格式"><span class="toc-number">2.</span> <span class="toc-text">Mach-O 文件格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Block-Mangle-Name"><span class="toc-number">3.</span> <span class="toc-text">Block Mangle Name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://pbxproj.yulingtianxia.com" target="_blank" title="pbxprojHelper">pbxprojHelper</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.22px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.44px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 12.22px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 10px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 11.11px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 10px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 18.89px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.11px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 11.11px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 15.56px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.67px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 17.78px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.33px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.67px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 10px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.56px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.33px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
