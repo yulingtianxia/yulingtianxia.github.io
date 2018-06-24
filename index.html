@@ -97,7 +97,7 @@
 </header>
     <div class="article-content">
         
-        <p>之前写了一篇文章<a href="http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/">《追踪 Objective-C 方法中的 Block 参数对象》</a>，利用 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，利用对 Mach-O 文件和 Clang 源码的静态分析实现了对定义 block 代码位置的追踪。</p>
+        <p>之前写了一篇文章<a href="http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/">《追踪 Objective-C 方法中的 Block 参数对象》</a>，利用 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。</p>
 <p>主要代码已经整合到 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 1.0.2 版本中。</p>
         
         
