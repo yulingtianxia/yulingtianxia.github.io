@@ -12,21 +12,21 @@
 
     
     <meta name="description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。
-新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有">
+新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MessageThrottle Safety">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2018/07/31/MessageThrottle-Safety/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。
-新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有">
+新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MessageThrottle1.png">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MessageThrottle2.png">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MessageThrottle3.png">
-<meta property="og:updated_time" content="2018-07-31T16:47:26.993Z">
+<meta property="og:updated_time" content="2018-07-31T16:50:57.576Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MessageThrottle Safety">
 <meta name="twitter:description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。
-新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有">
+新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业">
 <meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MessageThrottle1.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -111,7 +111,7 @@
 		</div>
 		
 		<p><a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="external">MessageThrottle</a> 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。</p>
-<p>新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，并对 KVO 等场景进行兼容。<a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="external">MessageThrottle</a> 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有发现和解决的。</p>
+<p>新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。<a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="external">MessageThrottle</a> 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有发现和解决的。</p>
 <p>本文是关于 <a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="external">MessageThrottle</a> 的第四篇文章。前三篇如下：</p>
 <ul>
 <li><a href="http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/">Objective-C Message Throttle and Debounce</a></li>

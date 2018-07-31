@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2018-07-31T16:47:26.993Z</updated>
+  <updated>2018-07-31T16:50:57.576Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,10 +20,10 @@
     <link href="http://yulingtianxia.com/blog/2018/07/31/MessageThrottle-Safety/"/>
     <id>http://yulingtianxia.com/blog/2018/07/31/MessageThrottle-Safety/</id>
     <published>2018-07-30T16:50:24.000Z</published>
-    <updated>2018-07-31T16:47:26.993Z</updated>
+    <updated>2018-07-31T16:50:57.576Z</updated>
     
     <content type="html">&lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MessageThrottle&lt;/a&gt; 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。&lt;/p&gt;
-&lt;p&gt;新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，并对 KVO 等场景进行兼容。&lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MessageThrottle&lt;/a&gt; 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有发现和解决的。&lt;/p&gt;
+&lt;p&gt;新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。&lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MessageThrottle&lt;/a&gt; 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有发现和解决的。&lt;/p&gt;
 &lt;p&gt;本文是关于 &lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MessageThrottle&lt;/a&gt; 的第四篇文章。前三篇如下：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/&quot;&gt;Objective-C Message Throttle and Debounce&lt;/a&gt;&lt;/li&gt;
@@ -103,7 +103,7 @@
     <summary type="html">
     
       &lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot;&gt;MessageThrottle&lt;/a&gt; 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。&lt;/p&gt;
-&lt;p&gt;新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，并对 KVO 等场景进行兼容。&lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot;&gt;MessageThrottle&lt;/a&gt; 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有发现和解决的。&lt;/p&gt;
+&lt;p&gt;新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。&lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot;&gt;MessageThrottle&lt;/a&gt; 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有发现和解决的。&lt;/p&gt;
 &lt;p&gt;本文是关于 &lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot;&gt;MessageThrottle&lt;/a&gt; 的第四篇文章。前三篇如下：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/&quot;&gt;Objective-C Message Throttle and Debounce&lt;/a&gt;&lt;/li&gt;
