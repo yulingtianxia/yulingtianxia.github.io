@@ -18,8 +18,8 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="这其实是一篇 WWDC 2015 Session 220 的学习笔记,顺便整理了下 Core Data 批量操作和聚合操作的小技巧.">
 <meta property="og:image" content="http://www.cimgf.com/wp-content/uploads/2015/06/AcmeHatCoDataTable.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20150726-1@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
-<meta property="og:updated_time" content="2016-05-11T14:31:49.000Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20150726-1@2x.png">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.997Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="初识Core Data(4)">
 <meta name="twitter:description" content="这其实是一篇 WWDC 2015 Session 220 的学习笔记,顺便整理了下 Core Data 批量操作和聚合操作的小技巧.">
@@ -151,7 +151,7 @@
 <figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">managedObjectContext.performBlock &#123;</span><br><span class="line">	<span class="keyword">let</span> <span class="attr">createRequest</span> = NSFetchRequest(entityName: <span class="string">"Recipe"</span>)</span><br><span class="line">	createRequest.<span class="attr">resultType</span> = ManagedObjectIDResultType</span><br><span class="line">	<span class="keyword">let</span> <span class="attr">predicate</span> = NSPredicate(format: <span class="string">"source = %@"</span>, source)</span><br><span class="line">	<span class="keyword">let</span> <span class="attr">results</span> = managedObjectContext.executeFetchRequest(createRequest)</span><br><span class="line">	<span class="keyword">if</span> (results.count) &#123;</span><br><span class="line">		//update it!</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		//create it!</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>现在 Core Data 可以搞定这个事情了.我们设定属性的值唯一,类似于 SQL 中的 <code>unique</code> 约束.诸如电子邮件,电话号, ISBN 等场景都适用此.同时别忘了 Core Data 的对象图中实体的继承关系,这里规定子类会从父类继承到具有 Unique 约束的属性,并可以将更多的属性设为 Unique.</p>
 <p>为实体设置 Unique 属性十分简单,只需要在 Xcode 中选中对应的实体,打开 “Data Model inspector” 就可以看到 “Constraints”, 点击加号添加就好:</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20150726-1@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/QQ20150726-1@2x.png" alt=""></p>
 <h3 id="Model-Caching"><a href="#Model-Caching" class="headerlink" title="Model Caching"></a>Model Caching</h3><p>这是个轻量级的数据版本自动迁移解决方案.它会缓存旧版本数据中已创建的 <code>NSManagedObject</code> 对象会被缓存到 store 中,并被迁移到合适的 store 中.</p>
 <h3 id="Generated-Subclasses"><a href="#Generated-Subclasses" class="headerlink" title="Generated Subclasses"></a>Generated Subclasses</h3><p>在 Xcode7 中,自动创建 <code>NSManagedObject</code> 子类时将不再在对应实体子类文件中自动填充模板代码,而是同时创建Category(Objective-C文件) 或 extension(Swift文件),并将模板代码自动填写进去.这样带来的好处是将我们自己写的代码跟 Xcode 生成的模板代码分开,更易于更新维护.</p>
   

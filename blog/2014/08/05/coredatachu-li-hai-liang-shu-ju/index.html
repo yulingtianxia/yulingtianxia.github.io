@@ -17,12 +17,12 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/08/05/coredatachu-li-hai-liang-shu-ju/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="随着iOS8和OSX10.10的发布，Core Data也迎来了更新。这次的更新可谓是重量级的，它使得程序员能够更加直接高效的操作数据库，在处理大量数据时速度明显提升（这在以前不知有多少程序员因为Core Data批量更新数据效率之低而不得不放弃使用它）。Batch Updates可用于批量快速更新数据，Asynchronous Fetching可用于异步抓取海量数据，并可以通过NSProgres">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/IMG_1439.jpg">
-<meta property="og:updated_time" content="2016-05-11T14:32:38.000Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/IMG_1439.jpg">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.664Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CoreData处理海量数据">
 <meta name="twitter:description" content="随着iOS8和OSX10.10的发布，Core Data也迎来了更新。这次的更新可谓是重量级的，它使得程序员能够更加直接高效的操作数据库，在处理大量数据时速度明显提升（这在以前不知有多少程序员因为Core Data批量更新数据效率之低而不得不放弃使用它）。Batch Updates可用于批量快速更新数据，Asynchronous Fetching可用于异步抓取海量数据，并可以通过NSProgres">
-<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/IMG_1439.jpg">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/IMG_1439.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -124,7 +124,7 @@
 <figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">managedObjectContext?.performBlock<span class="function"><span class="params">(&#123; () -&gt; Void <span class="keyword">in</span></span><br><span class="line">    managedObjectContext?.refreshObject(managedObject, mergeChanges: <span class="literal">false</span>)</span><br><span class="line">&#125;)</span></span></span><br></pre></td></tr></table></figure>
 <p>在 Swift 中如果不采用异步执行 block 的策略, UI 就不会更新.但在 Objective-C 上可以不用<code>performBlock</code>方法,直接调用<code>refreshObject: mergeChanges:</code>方法就行.  </p>
 <p>最后看看效果,点击红色的重置权重按钮,所有选项右侧都变成1:  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/IMG_1439.jpg" alt="重置权重">  </p>
+<p><img src="http://yulingtianxia.com/resources/IMG_1439.jpg" alt="重置权重">  </p>
 <p>Batch Updates的优势在于其效率，在处理上万条数据的时候，它执行的时间跟SQL语句执行时间相当。毕竟它绕开了<code>NSManagedObjectContext</code>直接修改底层数据库,节省内存,但千万别忘了手动更新 UI.  </p>
 <h2 id="Asynchronous-Fetching"><a href="#Asynchronous-Fetching" class="headerlink" title="Asynchronous Fetching"></a>Asynchronous Fetching</h2><p>Asynchronous Fetching的加入依然是为了解决CoreData读取海量数据所带来的问题。通过使用Asynchronous Fetching，我们可以在抓取数据的同时不阻塞占用<code>NSManagedObjectContext</code>，并可以随时取消抓取行为，随时跟踪抓取数据的进度。  </p>
 <p>设想我们平时用<code>NSFetchRequest</code>抓取数据的时候，我们会先用<code>NSManagedObjectContext</code>的<code>executeFetchRequest:error:</code>方法传入一个<code>NSFetchRequest</code>，然后请求会被发送到<code>NSPersistentStore</code>，然后执行一段时间后返回一个数组，在<code>NSManagedObjectContext</code>更新后，这个数组被当做<code>executeFetchRequest:error:</code>的返回值返回到我们这里。  </p>

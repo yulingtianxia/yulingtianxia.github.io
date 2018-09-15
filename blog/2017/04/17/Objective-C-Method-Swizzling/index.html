@@ -19,31 +19,31 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 + load 方法中，这是利用它调用时机较提前等性质。
 有时候需要 Hook 子类和父类的同一个方法，但是它们的 + load 方法调用顺序不同。一个常见的顺序可能是：父类-&amp;gt;子类-&amp;gt;子类类别-&amp;gt;父类类别。所">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/模板.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperAChildA.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperBChildA.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperAChildB.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperBChildB.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_ChildA.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_ChildB.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperA.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperB.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_Perfect.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperAChildA.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperBChildA.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperAChildB.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperBChildB.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_ChildA.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_ChildB.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperA.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperB.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_Perfect.png">
-<meta property="og:updated_time" content="2017-04-16T16:15:35.000Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/模板.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_Perfect.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_Perfect.png">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.652Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Objective-C Method Swizzling">
 <meta name="twitter:description" content="Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 + load 方法中，这是利用它调用时机较提前等性质。
 有时候需要 Hook 子类和父类的同一个方法，但是它们的 + load 方法调用顺序不同。一个常见的顺序可能是：父类-&amp;gt;子类-&amp;gt;子类类别-&amp;gt;父类类别。所">
-<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/模板.png">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/MethodSwizzling/模板.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -149,30 +149,30 @@
 <li>本文会按 Hook 顺序、类是否实现方法、Hook 方案(A/B) 来细分不同情况下的结果。一共细分为 18 种情况。</li>
 <li>本文会使用图例表示每种情况下的方法调用和映射关系，分为三个维度（Super/Child;Original/Swizzle;<code>Selector</code>/<code>Method</code>/<code>IMP</code>）</li>
 </ol>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/模板.png" alt="模板"></p>
+<p><img src="http://yulingtianxia.com/resources/MethodSwizzling/模板.png" alt="模板"></p>
 <p><strong>下文中的图例均为 Hook 后的结果(Hook 前的太简单了懒得画)。如果不理解 <code>Selector</code>,<code>Method</code> 与 <code>IMP</code> 三者的关系，甚至不理解 Method Swizzling 原理，请先阅读 <a href="http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/">Objective-C Runtime</a>！如果还是看不懂，那就再看一遍吧！</strong></p>
 <h2 id="Hook-顺序：先-Child-后-Super"><a href="#Hook-顺序：先-Child-后-Super" class="headerlink" title="Hook 顺序：先 Child 后 Super"></a>Hook 顺序：先 Child 后 Super</h2><p>这个顺序本身就不被大众认可却又不得不广泛被使用，因为很多想 Hook 系统 API 只能从 Category 下手。当子类同样的方法也被 Hook 后，奇怪的事情便发生了。</p>
-<h3 id="Super-未实现方法-Child-未实现方法"><a href="#Super-未实现方法-Child-未实现方法" class="headerlink" title="Super 未实现方法,Child 未实现方法"></a>Super 未实现方法,Child 未实现方法</h3><h4 id="Super-Plan-A-Child-Plan-A"><a href="#Super-Plan-A-Child-Plan-A" class="headerlink" title="Super:Plan A,Child:Plan A"></a>Super:Plan A,Child:Plan A</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperAChildA.png" alt="CS_SuperAChildA"></p>
+<h3 id="Super-未实现方法-Child-未实现方法"><a href="#Super-未实现方法-Child-未实现方法" class="headerlink" title="Super 未实现方法,Child 未实现方法"></a>Super 未实现方法,Child 未实现方法</h3><h4 id="Super-Plan-A-Child-Plan-A"><a href="#Super-Plan-A-Child-Plan-A" class="headerlink" title="Super:Plan A,Child:Plan A"></a>Super:Plan A,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildA.png" alt="CS_SuperAChildA"></p>
 <p>方法执行结果：</p>
 <ol>
 <li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
-<h4 id="Super-Plan-B-Child-Plan-A"><a href="#Super-Plan-B-Child-Plan-A" class="headerlink" title="Super:Plan B,Child:Plan A"></a>Super:Plan B,Child:Plan A</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperBChildA.png" alt="CS_SuperBChildA"></p>
+<h4 id="Super-Plan-B-Child-Plan-A"><a href="#Super-Plan-B-Child-Plan-A" class="headerlink" title="Super:Plan B,Child:Plan A"></a>Super:Plan B,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildA.png" alt="CS_SuperBChildA"></p>
 <p>方法执行结果：</p>
 <ol>
 <li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
 <li>Super 对象正常</li>
 <li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
 </ol>
-<h4 id="Super-Plan-A-Child-Plan-B"><a href="#Super-Plan-A-Child-Plan-B" class="headerlink" title="Super:Plan A,Child Plan B"></a>Super:Plan A,Child Plan B</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperAChildB.png" alt="CS_SuperAChildB"></p>
+<h4 id="Super-Plan-A-Child-Plan-B"><a href="#Super-Plan-A-Child-Plan-B" class="headerlink" title="Super:Plan A,Child Plan B"></a>Super:Plan A,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildB.png" alt="CS_SuperAChildB"></p>
 <p>方法执行结果：</p>
 <ol>
 <li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
 <li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则会一直调用 Child_Swizzle 进入死循环</li>
 <li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦间接等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
 </ol>
-<h4 id="Super-Plan-B-Child-Plan-B"><a href="#Super-Plan-B-Child-Plan-B" class="headerlink" title="Super:Plan B,Child Plan B"></a>Super:Plan B,Child Plan B</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperBChildB.png" alt="CS_SuperBChildB"></p>
+<h4 id="Super-Plan-B-Child-Plan-B"><a href="#Super-Plan-B-Child-Plan-B" class="headerlink" title="Super:Plan B,Child Plan B"></a>Super:Plan B,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildB.png" alt="CS_SuperBChildB"></p>
 <p>方法执行结果：</p>
 <ol>
 <li>Child 对象：Super-&gt;Child-&gt;Base</li>
@@ -180,13 +180,13 @@
 <li>Base 对象产生 <code>unrecognized selector</code> 异常</li>
 </ol>
 <h3 id="Super-实现方法-Child-未实现方法"><a href="#Super-实现方法-Child-未实现方法" class="headerlink" title="Super 实现方法,Child 未实现方法"></a>Super 实现方法,Child 未实现方法</h3><p>由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。</p>
-<h4 id="Child-Plan-A"><a href="#Child-Plan-A" class="headerlink" title="Child:Plan A"></a>Child:Plan A</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_ChildA.png" alt="CS_ChildA"></p>
+<h4 id="Child-Plan-A"><a href="#Child-Plan-A" class="headerlink" title="Child:Plan A"></a>Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildA.png" alt="CS_ChildA"></p>
 <p>方法执行结果：</p>
 <ol>
 <li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
-<h4 id="Child-Plan-B"><a href="#Child-Plan-B" class="headerlink" title="Child:Plan B"></a>Child:Plan B</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_ChildB.png" alt="CS_ChildB"></p>
+<h4 id="Child-Plan-B"><a href="#Child-Plan-B" class="headerlink" title="Child:Plan B"></a>Child:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildB.png" alt="CS_ChildB"></p>
 <p>方法执行结果：</p>
 <ol>
 <li>Child 对象：Super-&gt;Child-&gt;Base</li>
@@ -194,13 +194,13 @@
 <li>Base 对象正常</li>
 </ol>
 <h3 id="Super-未实现方法-Child-实现方法"><a href="#Super-未实现方法-Child-实现方法" class="headerlink" title="Super 未实现方法,Child 实现方法"></a>Super 未实现方法,Child 实现方法</h3><p>由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。</p>
-<h4 id="Super-Plan-A"><a href="#Super-Plan-A" class="headerlink" title="Super:Plan A"></a>Super:Plan A</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperA.png" alt="CS_SuperA"></p>
+<h4 id="Super-Plan-A"><a href="#Super-Plan-A" class="headerlink" title="Super:Plan A"></a>Super:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperA.png" alt="CS_SuperA"></p>
 <p>方法执行结果（一切正常）：</p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
-<h4 id="Super-Plan-B"><a href="#Super-Plan-B" class="headerlink" title="Super:Plan B"></a>Super:Plan B</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperB.png" alt="CS_SuperB"></p>
+<h4 id="Super-Plan-B"><a href="#Super-Plan-B" class="headerlink" title="Super:Plan B"></a>Super:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperB.png" alt="CS_SuperB"></p>
 <p>方法执行结果：</p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
@@ -208,47 +208,47 @@
 <li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
 </ol>
 <h3 id="Super-实现方法-Child-实现方法"><a href="#Super-实现方法-Child-实现方法" class="headerlink" title="Super 实现方法,Child 实现方法"></a>Super 实现方法,Child 实现方法</h3><p>相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_Perfect.png" alt="CS_Perfect"></p>
+<p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_Perfect.png" alt="CS_Perfect"></p>
 <p>方法执行结果（一切正常）：</p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
 <h2 id="Hook-顺序：先-Super-后-Child"><a href="#Hook-顺序：先-Super-后-Child" class="headerlink" title="Hook 顺序：先 Super 后 Child"></a>Hook 顺序：先 Super 后 Child</h2><p>并不是 Hook 顺序对了就能保平安，姿势也同样重要。</p>
-<h3 id="Super-未实现方法-Child-未实现方法-1"><a href="#Super-未实现方法-Child-未实现方法-1" class="headerlink" title="Super 未实现方法,Child 未实现方法"></a>Super 未实现方法,Child 未实现方法</h3><h4 id="Super-Plan-A-Child-Plan-A-1"><a href="#Super-Plan-A-Child-Plan-A-1" class="headerlink" title="Super:Plan A,Child:Plan A"></a>Super:Plan A,Child:Plan A</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperAChildA.png" alt="SC_SuperAChildA"></p>
+<h3 id="Super-未实现方法-Child-未实现方法-1"><a href="#Super-未实现方法-Child-未实现方法-1" class="headerlink" title="Super 未实现方法,Child 未实现方法"></a>Super 未实现方法,Child 未实现方法</h3><h4 id="Super-Plan-A-Child-Plan-A-1"><a href="#Super-Plan-A-Child-Plan-A-1" class="headerlink" title="Super:Plan A,Child:Plan A"></a>Super:Plan A,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildA.png" alt="SC_SuperAChildA"></p>
 <p>方法执行结果（一切正常）：</p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
-<h4 id="Super-Plan-B-Child-Plan-A-1"><a href="#Super-Plan-B-Child-Plan-A-1" class="headerlink" title="Super:Plan B,Child:Plan A"></a>Super:Plan B,Child:Plan A</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperBChildA.png" alt="SC_SuperBChildA"></p>
+<h4 id="Super-Plan-B-Child-Plan-A-1"><a href="#Super-Plan-B-Child-Plan-A-1" class="headerlink" title="Super:Plan B,Child:Plan A"></a>Super:Plan B,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildA.png" alt="SC_SuperBChildA"></p>
 <p>方法执行结果：</p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
 <li>Super 对象正常：Super-&gt;Base</li>
 <li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
 </ol>
-<h4 id="Super-Plan-A-Child-Plan-B-1"><a href="#Super-Plan-A-Child-Plan-B-1" class="headerlink" title="Super:Plan A,Child Plan B"></a>Super:Plan A,Child Plan B</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperAChildB.png" alt="SC_SuperAChildB"></p>
+<h4 id="Super-Plan-A-Child-Plan-B-1"><a href="#Super-Plan-A-Child-Plan-B-1" class="headerlink" title="Super:Plan A,Child Plan B"></a>Super:Plan A,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildB.png" alt="SC_SuperAChildB"></p>
 <p>方法执行结果：</p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
 <li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则 Child-&gt;Base (Super 被忽略)</li>
 <li>Base 对象正常</li>
 </ol>
-<h4 id="Super-Plan-B-Child-Plan-B-1"><a href="#Super-Plan-B-Child-Plan-B-1" class="headerlink" title="Super:Plan B,Child Plan B"></a>Super:Plan B,Child Plan B</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperBChildB.png" alt="SC_SuperBChildB"></p>
+<h4 id="Super-Plan-B-Child-Plan-B-1"><a href="#Super-Plan-B-Child-Plan-B-1" class="headerlink" title="Super:Plan B,Child Plan B"></a>Super:Plan B,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildB.png" alt="SC_SuperBChildB"></p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
 <li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则 Child-&gt;Base (Super 被忽略)</li>
 <li>Base 对象产生 <code>unrecognized selector</code> 异常</li>
 </ol>
 <h3 id="Super-实现方法-Child-未实现方法-1"><a href="#Super-实现方法-Child-未实现方法-1" class="headerlink" title="Super 实现方法,Child 未实现方法"></a>Super 实现方法,Child 未实现方法</h3><p>由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。</p>
-<h4 id="Child-Plan-A-1"><a href="#Child-Plan-A-1" class="headerlink" title="Child:Plan A"></a>Child:Plan A</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_ChildA.png" alt="SC_ChildA"></p>
+<h4 id="Child-Plan-A-1"><a href="#Child-Plan-A-1" class="headerlink" title="Child:Plan A"></a>Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildA.png" alt="SC_ChildA"></p>
 <p>方法执行结果（一切正常）：</p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
-<h4 id="Child-Plan-B-1"><a href="#Child-Plan-B-1" class="headerlink" title="Child:Plan B"></a>Child:Plan B</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_ChildB.png" alt="SC_ChildB"></p>
+<h4 id="Child-Plan-B-1"><a href="#Child-Plan-B-1" class="headerlink" title="Child:Plan B"></a>Child:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildB.png" alt="SC_ChildB"></p>
 <p>方法执行结果：</p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
@@ -256,13 +256,13 @@
 <li>Base 对象正常</li>
 </ol>
 <h3 id="Super-未实现方法-Child-实现方法-1"><a href="#Super-未实现方法-Child-实现方法-1" class="headerlink" title="Super 未实现方法,Child 实现方法"></a>Super 未实现方法,Child 实现方法</h3><p>由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。</p>
-<h4 id="Super-Plan-A-1"><a href="#Super-Plan-A-1" class="headerlink" title="Super:Plan A"></a>Super:Plan A</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperA.png" alt="SC_SuperA"></p>
+<h4 id="Super-Plan-A-1"><a href="#Super-Plan-A-1" class="headerlink" title="Super:Plan A"></a>Super:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperA.png" alt="SC_SuperA"></p>
 <p>方法执行结果（一切正常）：</p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
-<h4 id="Super-Plan-B-1"><a href="#Super-Plan-B-1" class="headerlink" title="Super:Plan B"></a>Super:Plan B</h4><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperB.png" alt="SC_SuperB"></p>
+<h4 id="Super-Plan-B-1"><a href="#Super-Plan-B-1" class="headerlink" title="Super:Plan B"></a>Super:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperB.png" alt="SC_SuperB"></p>
 <p>方法执行结果：</p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
@@ -270,7 +270,7 @@
 <li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
 </ol>
 <h3 id="Super-实现方法-Child-实现方法-1"><a href="#Super-实现方法-Child-实现方法-1" class="headerlink" title="Super 实现方法,Child 实现方法"></a>Super 实现方法,Child 实现方法</h3><p>相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_Perfect.png" alt="SC_Perfect"></p>
+<p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_Perfect.png" alt="SC_Perfect"></p>
 <p>方法执行结果（一切正常）：</p>
 <ol>
 <li>Child 对象正常：Child-&gt;Super-&gt;Base</li>

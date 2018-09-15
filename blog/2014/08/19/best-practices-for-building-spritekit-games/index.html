@@ -17,15 +17,15 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/08/19/best-practices-for-building-spritekit-games/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="本文会从拓展性、游戏构造和性能三个方面分别讲述建立SpriteKit游戏时的一些实践经验和范例。建议先阅读SpriteKit在iOS8和OSX10.10中的新特性有助于理解本文内容。">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140844930564.png?imageView2/2/w/800/q/75">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140845151467.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140845150994.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/14084531435.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
-<meta property="og:updated_time" content="2016-05-11T14:31:41.000Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140844930564.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140845151467.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140845150994.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/14084531435.png">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.833Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="创建SpriteKit游戏的最佳范例">
 <meta name="twitter:description" content="本文会从拓展性、游戏构造和性能三个方面分别讲述建立SpriteKit游戏时的一些实践经验和范例。建议先阅读SpriteKit在iOS8和OSX10.10中的新特性有助于理解本文内容。">
-<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140844930564.png?imageView2/2/w/800/q/75">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/140844930564.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -172,15 +172,15 @@
 <h3 id="Physics"><a href="#Physics" class="headerlink" title="Physics"></a>Physics</h3><p>模拟物理世界需要很多的硬件计算，当务之急就是减少能耗。  </p>
 <p>静态物体耗能较小，即使他们外形复杂。所以尽可能的将物理体的<code>dynamic</code>属性设为NO  </p>
 <p>物理体的外形复杂程度也决定着能耗。圆形是最简单的，耗能最少，再往上依次是矩形、多边形、复合图形、alpha像素图形：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140844930564.png?imageView2/2/w/800/q/75" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140844930564.png" alt="">  </p>
 <p>所以你需要权衡利弊来设计你游戏中物理体的外形。上图的后两种外形是iOS8新加入的，你可以在<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>中的New Physics-&gt;Per-Pixel Physics和Improvements-&gt;Physics Updates这两个小节中学到有关它们的更多知识。  </p>
 <p>在设置碰撞掩码（mask）时，尽量将相同类别的物体归为一类，用尽可能少得类别来划分你游戏中的物体。这样能减少很多能耗。  </p>
 <p>尽可能使用iOS8新加入的<code>SKFieldNode</code>来模拟一些物理场景，而不是通过传统代码方式（自己向各种物体施加各种力）。有关<code>SKFieldNode</code>的知识可以查看<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>中New Physics-&gt;Physics Fields那节。  </p>
 <p>将<code>SKView</code>的<code>showsFields</code>属性设为YES可以将<code>SKFieldNode</code>的debug信息显示出来：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140845151467.png" alt=""><br><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140845150994.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140845151467.png" alt=""><br><img src="http://yulingtianxia.com/resources/140845150994.png" alt="">  </p>
 <p>上面两个场景是我的一个SpriteKit游戏<a href="http://coloratom.yulingtianxia.com" target="_blank" rel="external">ColorAtom</a>中的秘密模式和黑洞模式截图，欢迎Star和Follow。  </p>
 <h3 id="Shapes"><a href="#Shapes" class="headerlink" title="Shapes"></a>Shapes</h3><p><code>SKShapeNode</code>的耗能层级图如下：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/14084531435.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/14084531435.png" alt="">  </p>
 <p>上图中的分界线区分了低功耗和高功耗的Shape。绘制分段的linear strok所需的功耗也很少。  </p>
 <h3 id="Effects"><a href="#Effects" class="headerlink" title="Effects"></a>Effects</h3><p><code>SKEffectNode</code>可以将它的子节点渲染的更加出彩，比如用CoreImage滤镜等合成出复杂的特效。但这也会对性能有很大影响，请谨慎使用。  </p>
 <p>Shader是一个不错的选择，它不需要离屏渲染，想用就用，节能环保。有关<code>SKShader</code>的知识可以查看<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>中Shader那节。  </p>

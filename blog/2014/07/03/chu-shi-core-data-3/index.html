@@ -29,14 +29,14 @@ UITextFi">
 Swift与Objective-C桥接
 NSFetchedResultsController
 UITextFi">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140435701469.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/1404357012.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140436356516.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/14043675716.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140436793089.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140435701469.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/1404357012.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140436356516.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/14043675716.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140436793089.png">
 <meta property="og:image" content="http://img41.wal8.com/img41/425047_20140623222918/140353389167.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140438530596.png">
-<meta property="og:updated_time" content="2016-05-11T14:32:38.000Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140438530596.png">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.857Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="初识Core Data(3)">
 <meta name="twitter:description" content="在Swift发布后，我尝试用Swift和Core Data做了一个小Demo，名字叫“HardChoice”。它用于帮助人们随机生成一个问题的结果，当然结果是预设好的，并可以加入权值。本文将通过这个Demo来进一步阐述Core Data的知识。  
@@ -46,7 +46,7 @@ UITextFi">
 Swift与Objective-C桥接
 NSFetchedResultsController
 UITextFi">
-<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/140435701469.png">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/140435701469.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -143,17 +143,17 @@ UITextFi">
 <p>在没弄懂Core Data的基础知识之前，我建议你先阅读我之前的两篇博文：  </p>
 <p><a href="http://yulingtianxia.com/blog/2014/05/01/chu-shi-core-data-1/">初识Core Data(1)</a><br><a href="http://yulingtianxia.com/blog/2014/05/02/chu-shi-core-data-2/">初识Core Data(2)</a>  </p>
 <p>如果你不懂Swift也没关系，只要了解OC和Core Data，总是能看懂的  </p>
-<p>在写代码前先了解下我们要做什么：<br><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140435701469.png" alt=""><br><img src="http://7ni3rk.com1.z0.glb.clouddn.com/1404357012.png" alt="">  </p>
+<p>在写代码前先了解下我们要做什么：<br><img src="http://yulingtianxia.com/resources/140435701469.png" alt=""><br><img src="http://yulingtianxia.com/resources/1404357012.png" alt="">  </p>
 <p>先在第一个页面添加问题（吃啥？），然后点击问题进入到第二个添加选项（鸭子，蛋，猪）的页面。每个选项左边是选项名，右边是该选项的权值。摇动手机就能随机从所有选项中选出答案（就像第二张图那样）。  </p>
 <h2 id="建立数据模型"><a href="#建立数据模型" class="headerlink" title="建立数据模型"></a>建立数据模型</h2><p>还是像以前那样新建一个Master-Detail Application，勾选Use Core Data选项，语言选择Swift，然后Xcode会自动生成一个具有<code>UITableView</code>的Demo，这些内容之前说过。下面我们需要打开xcdatamodeld文件来建立我们的数据模型：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140436356516.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140436356516.png" alt="">  </p>
 <p><code>Question</code>这个实体只具有一个属性，那就是问题内容<code>content</code>，类型为<code>String</code>；<code>Choice</code>实体有一个类型为<code>String</code>的<code>name</code>属性和一个类型为<code>Integer32</code>的<code>weight</code>属性，分别代表问题选项的名字和权重。  </p>
 <p>下面我们来建立<code>Question</code>和<code>Choice</code>这两个实体之间的关系：  </p>
 <p>假设每个问题都对应多个选项，也可以没有选项：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/14043675716.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/14043675716.png" alt="">  </p>
 <p><code>Optional</code>被打钩是因为问题可以没有任何选项，在Tpye那里我们选择<code>To Many</code>  </p>
 <p>相反，每个选项一定会对应一个问题，并且是唯一的问题：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140436793089.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140436793089.png" alt="">  </p>
 <p><code>Optional</code>那里不打钩是为了避免关系的目标为空，在<code>Tpye</code>那里我们选择了<code>To One</code></p>
 <p><strong>关于<code>Delete Rule</code>的选择</strong>  </p>
 <p>下面会通过部门与员工的例子来阐述<code>Delete Rule</code>的用法  </p>
@@ -191,7 +191,7 @@ UITextFi">
 <p>当用户点击<code>alertView</code>的OK按钮时，判断<code>alertView</code>对象是<code>addAV</code>还是<code>modifyAV</code>，然后对应通过不同途径（新插入到<code>ManagedObjectContext</code>还是从<code>ManagedObjectContext</code>中取出）产生<code>Question</code>实例<code>newManagedObject</code>，最后的结果会保存回<code>ManagedObjectContext</code>中，最后关闭<code>alertView</code>。  </p>
 <p>添加<code>Question</code>时使用的<code>insertNewObjectForEntityForName(entityName: String!, inManagedObjectContext context: NSManagedObjectContext!) -&gt; AnyObject!</code>方法是一个配置和添加实体，并返回该实体对应<code>NSManagedObject</code>子类（在这里是<code>Question</code>类）的便捷方法，这是一个很强大的类方法，我们无需知道创建<code>Question</code>类的细节就能创建并添加一个<code>Question</code>实例到<code>NSManagedObjectContext</code>中，在保存前我们还可以对这个方法返回的<code>Question</code>实例做修改，然后再通过<code>save(error: NSErrorPointer) -&gt; Bool</code>方法保存。  </p>
 <p>修改<code>Question</code>的过程其实就是先通过<code>objectAtIndexPath(indexPath: NSIndexPath!) -&gt; AnyObject!</code>方法取出数据请求结果当中的某一项并转换成<code>Question</code>对象，对其进行修改后再保存。在界面中通过点击cell右侧带有字母i的蓝色圆圈来修改<code>Question</code>内容：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/140438530596.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140438530596.png" alt="">  </p>
 <p>上图的中的蓝色圆圈是<code>AccessoryButton</code>，需要在IB中设置<code>TableViewCell</code>的<code>Identifier</code>为<code>QuestionCell</code>，<code>Accessory</code>为<code>Detail Disclosure</code>，这样我们就能在<code>UITableViewDelegate</code>的<code>tableView(tableView: UITableView!, accessoryButtonTappedForRowWithIndexPath indexPath: NSIndexPath!)</code>方法中响应<code>AccessoryButton</code>了：  </p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">tableView</span><span class="params">(tableView: UITableView!, accessoryButtonTappedForRowWithIndexPath indexPath: NSIndexPath!)</span></span>&#123;</span><br><span class="line">       selectedIndexPath = indexPath</span><br><span class="line">       modifyObject(indexPath)</span><br><span class="line">       </span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 <p>导航栏右侧的添加<code>Question</code>按钮已经通过下面的代码配置了响应函数：  </p>

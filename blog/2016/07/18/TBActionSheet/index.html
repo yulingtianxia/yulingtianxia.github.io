@@ -24,10 +24,10 @@ TBActionSheet 不仅还原了 UIActionSheet 的几乎所有功能和 API，还�
 Github：https://github.com/yulingtianxia/TBActionSheet
 TBActionSheet 不仅还原了 UIActionSheet 的几乎所有功能和 API，还在此基础上支持如下功能：">
 <meta property="og:image" content="https://github.com/yulingtianxia/TBActionSheet/blob/master/images/demo.gif?raw=true">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/TBActionSheet/overview.jpg">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/TBActionSheet/ambientColor.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/TBActionSheet/overview.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/TBActionSheet/ambientColor.png">
 <meta property="og:image" content="https://github.com/yulingtianxia/TBActionSheet/blob/master/images/addButton.gif?raw=true">
-<meta property="og:updated_time" content="2017-02-27T15:36:27.000Z">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.810Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自制一款强大的 ActionSheet">
 <meta name="twitter:description" content="iOS 系统自带的 UIActionSheet 无法满足开发中高度个性化的 UI 风格和代码风格，所以我决定自己动手丰衣足食，于是 TBActionSheet 诞生了：
@@ -145,7 +145,7 @@ TBActionSheet 不仅还原了 UIActionSheet 的几乎所有功能和 API，还�
 <li><code>customView</code> 属性是个普通的 <code>UIView</code>，供使用者传入自定义视图</li>
 <li><code>TBActionButton</code> 是对应着每个 Action 的按钮</li>
 </ol>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/TBActionSheet/overview.jpg" alt="视图层级"></p>
+<p><img src="http://yulingtianxia.com/resources/TBActionSheet/overview.jpg" alt="视图层级"></p>
 <p>所有的坐标和尺寸都是代码计算出来的，没有用自动布局，容器的大小是根据其子视图的 frame 决定的，这其中包含很多计算。</p>
 <p>在实际使用时只需使用 <code>TBActionSheet</code> 就可以了，所以上面提到的类都是幕后工作者。我将会讲述每部分具体实现和一些功能点的实现。</p>
 <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>背景是 <code>TBActionSheet</code> 的子视图中最底层的视图。</p>
@@ -246,7 +246,7 @@ TBActionSheet 不仅还原了 UIActionSheet 的几乎所有功能和 API，还�
 <figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> *  从图片中切图</span><br><span class="line"> *</span><br><span class="line"> *  @param image 要被切的图片</span><br><span class="line"> *  @param rect  这里可以设置想要截图的区域</span><br><span class="line"> *</span><br><span class="line"> *  @return 截图</span><br><span class="line"> */</span></span><br><span class="line">- (UIImage *)cutFromImage:(UIImage *)<span class="built_in">image</span> inRect:(CGRect) <span class="built_in">rect</span></span><br><span class="line">&#123;</span><br><span class="line">    CGImageRef imageRef = <span class="built_in">image</span>.CGImage;</span><br><span class="line">    CGRect transRect = CGRectMake(<span class="built_in">rect</span>.origin.x*<span class="built_in">image</span>.<span class="built_in">scale</span>, <span class="built_in">rect</span>.origin.y*<span class="built_in">image</span>.<span class="built_in">scale</span>, <span class="built_in">rect</span>.<span class="built_in">size</span>.<span class="built_in">width</span>*<span class="built_in">image</span>.<span class="built_in">scale</span>, <span class="built_in">rect</span>.<span class="built_in">size</span>.<span class="built_in">height</span>*<span class="built_in">image</span>.<span class="built_in">scale</span>);</span><br><span class="line">    CGImageRef imageRefRect =CGImageCreateWithImageInRect(imageRef, transRect);</span><br><span class="line">    UIImage *sendImage = [[UIImage alloc] initWithCGImage:imageRefRect <span class="built_in">scale</span>:<span class="built_in">image</span>.<span class="built_in">scale</span> orientation:UIImageOrientationUp];</span><br><span class="line">    NSData *imageViewData = UIImagePNGRepresentation(sendImage);</span><br><span class="line">    CGImageRelease(imageRefRect);</span><br><span class="line">    <span class="keyword">return</span> [UIImage imageWithData:imageViewData];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h5 id="ambientColor"><a href="#ambientColor" class="headerlink" title="ambientColor"></a>ambientColor</h5><p>环境色其实就是容器的背景颜色，但不能叫 <code>backgroundColor</code>，因为 <code>UIView</code> 中已经有个 <code>backgroundColor</code> 属性了，如果我们自己强制声明重名的属性会导致奇怪的问题。比如设置好的背景色在程序运行中自动被设成其他颜色（一般是黑色），而且是随机出现的，而且一旦出现就会一直复现，除非杀进程。PS：别问我为啥知道这么多，都是泪啊！用在公司项目中被测试同学提过好多次 bug！</p>
 <p>回归正题！如何将环境色加入到容器中呢？毕竟有多种情况，但其思想跟毛玻璃模糊的思路差不多：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/TBActionSheet/ambientColor.png" alt="环境色设置策略"></p>
+<p><img src="http://yulingtianxia.com/resources/TBActionSheet/ambientColor.png" alt="环境色设置策略"></p>
 <p>值得一提的是在倒数第二个分支『在 <code>UIVisualEffectView</code> 后插入环境色视图』。是在控件的后面插入<br><code>UIVisualEffectView</code> 后再插入一层背景颜色为 <code>ambientColor</code> 的 <code>UIView</code>。如果控件类型为 <code>TBActionButton</code>，那么需要将其 <code>behindColorView</code> 属性设为背景色为 <code>ambientColor</code> 的 <code>UIView</code> 对象。原因是按钮此时无背景色，高亮状态需要调节 <code>behindColorView</code> 的 <code>alpha</code>。</p>
 <p>这部分的代码逻辑其实略复杂，但还不是最烧脑的。</p>
 <h5 id="Separator"><a href="#Separator" class="headerlink" title="Separator"></a>Separator</h5><p>在 <code>setupLayout</code> 中创建的 Separator 都会添加到 <code>separators</code> 数组中，并作为容器的子视图参与 UI 绘制：</p>

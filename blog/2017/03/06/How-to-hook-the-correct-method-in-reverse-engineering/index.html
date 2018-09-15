@@ -19,9 +19,9 @@
 <meta property="og:description" content="在逆向工程中往往需要针对想要做的功能 Hook 到相应的方法和属性，小白面对 class-dump 后的大量头文件表示只能靠『猜』。这里我分享下逆向微信实现屏蔽群消息和好友消息的实战经验，适用于非越狱机，项目 GitHub 地址: FishChat。为了能读懂此文，建议先阅读我的上一篇文章：Make WeChat Great Again。">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/weichat_ignore_chatroom.PNG?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_ignore_somone.PNG?raw=true">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/reverse%20engineering/original_method_address@2x.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/reverse%20engineering/wechat_base_address@2x.png">
-<meta property="og:updated_time" content="2017-03-23T04:58:56.000Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/reverse%20engineering/original_method_address@2x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/reverse%20engineering/wechat_base_address@2x.png">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.960Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何在逆向工程中 Hook 得更准 - 微信屏蔽好友&群消息实战">
 <meta name="twitter:description" content="在逆向工程中往往需要针对想要做的功能 Hook 到相应的方法和属性，小白面对 class-dump 后的大量头文件表示只能靠『猜』。这里我分享下逆向微信实现屏蔽群消息和好友消息的实战经验，适用于非越狱机，项目 GitHub 地址: FishChat。为了能读懂此文，建议先阅读我的上一篇文章：Make WeChat Great Again。">
@@ -138,9 +138,9 @@
 </ol>
 <p>记得在<strong>选择 FAT 架构时选择跟手机 CPU 相匹配的架构</strong>，有 armv7 和 aarch64 两种可选。我这里以 aarch64 为例。</p>
 <p><code>-[CMessageMgr GetMsg:LocalID:]</code> 在 Hopper 中的地址 <code>0x000000010280e1d4</code>：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/reverse%20engineering/original_method_address@2x.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/reverse%20engineering/original_method_address@2x.png" alt=""></p>
 <p>WeChat Mach-O 在 Hopper 中的基地址 <code>0x0000000100000000</code>：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/reverse%20engineering/wechat_base_address@2x.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/reverse%20engineering/wechat_base_address@2x.png" alt=""></p>
 <p>得出 <code>-[CMessageMgr GetMsg:LocalID:]</code> 在 WeChat 中的相对地址为 <code>0x280E1D4</code>：</p>
 <p><code>0x000000010280e1d4 - 0x0000000100000000 = 0x280E1D4</code></p>
 <ol>

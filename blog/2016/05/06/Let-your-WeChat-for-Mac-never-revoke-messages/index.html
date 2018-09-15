@@ -17,16 +17,16 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp;amp; iOS。">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-findfuntion@2x.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-pseudocode@2x.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-revokemsg@2x.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-NewExecutable@2x.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineering/wechat-ios.png">
-<meta property="og:updated_time" content="2016-08-27T03:30:16.000Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-findfuntion@2x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-pseudocode@2x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-revokemsg@2x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-NewExecutable@2x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineering/wechat-ios.png">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.886Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="让你的微信不再被人撤回消息">
 <meta name="twitter:description" content="处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp;amp; iOS。">
-<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-findfuntion@2x.png">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-findfuntion@2x.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -117,23 +117,23 @@
 <p>今天在家无聊顺手也吧 iOS 的微信搞定了，只是比 Mac 的稍微麻烦一点罢了。</p>
 <h1 id="脑洞和胆子都要大"><a href="#脑洞和胆子都要大" class="headerlink" title="脑洞和胆子都要大"></a>脑洞和胆子都要大</h1><p>之前看的一些逆向的教程里，感觉前期工作都是装软件配环境，噼里啪啦命令一顿敲，整的挺玄乎，其实都是用人家现成儿的工具做些事情，美其名曰『站在巨人的肩膀上』，这里不再赘述。在我看来第一个真正意义上有难度的事情就是一个字儿：『猜』！</p>
 <p>想要凭 dump 出的头文件里面的一堆函数名类名来猜出想要动手脚的地方，的确是个技术活儿。不仅考验脑洞，有时候还得运气好。把应用程序中的微信拖到 Hopper 中，搜下 “revoke”。这不，我一下子就猜出在哪个方法里面处理撤回消息逻辑的了：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-findfuntion@2x.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-findfuntion@2x.png" alt=""></p>
 <p>我凭借直觉，认为 <code>-[MessageService onRevokeMsg:]</code> 就是我们要找的方法。事实也证明我是对的，一次成功！先看看这个方法的伪代码：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-pseudocode@2x.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-pseudocode@2x.png" alt=""></p>
 <p>伪代码里面包含着好多层复杂的 <code>if</code> 判断逻辑，想必是这里复杂的业务逻辑让微信的同事无比抓狂，不要怕，我们不想让后面的事情发生，直接来个 <code>return</code> 就万事大吉！按快捷键 『option+A』 或者选择 Hopper 菜单栏的 『Modify -&gt; Assemble Instruction…』来修改第一行汇编语句：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-revokemsg@2x.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-revokemsg@2x.png" alt=""></p>
 <p>可能觉得这里直接 <code>return</code> 掉是不是胆子也太大了，其实我还是看了函数里这坨代码的。那么多的 <code>if</code> 判断伴随着的是各种出错场景下的数据上报，真正核心业务逻辑也就是下面这坨：</p>
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">r12</span> = [[MessageData alloc] initWithMsgType:<span class="number">0x2710</span>]<span class="comment">;</span></span><br><span class="line"><span class="built_in">rax</span> = [<span class="built_in">r12</span> isSendFromSelf]<span class="comment">;</span></span><br><span class="line"><span class="built_in">rsi</span> = @selector(toUsrName)<span class="comment">;</span></span><br><span class="line">if (LOBYTE(<span class="built_in">rax</span>) != <span class="number">0x0</span>) &#123;</span><br><span class="line">      <span class="built_in">rbx</span> = [[<span class="built_in">r13</span> toUsrName] retain]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">r12</span> setFromUsrName:<span class="built_in">rbx</span>]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">rbx</span> release]<span class="comment">;</span></span><br><span class="line">      <span class="built_in">rbx</span> = [[<span class="built_in">r13</span> fromUsrName] retain]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">r12</span> setToUsrName:<span class="built_in">rbx</span>]<span class="comment">;</span></span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">      <span class="built_in">rbx</span> = [[<span class="built_in">r13</span> toUsrName] retain]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">r12</span> setFromUsrName:<span class="built_in">rbx</span>]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">rbx</span> release]<span class="comment">;</span></span><br><span class="line">      <span class="built_in">rbx</span> = [[<span class="built_in">r13</span> fromUsrName] retain]<span class="comment">;</span></span><br><span class="line">      [<span class="built_in">r12</span> setToUsrName:<span class="built_in">rbx</span>]<span class="comment">;</span></span><br><span class="line">&#125;</span><br><span class="line">[<span class="built_in">rbx</span> release]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r12</span> setMsgStatus:<span class="number">0x4</span>]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r12</span> setMsgContent:var_58]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r12</span> setMsgCreateTime:LODWORD([<span class="built_in">r13</span> msgCreateTime])]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r15</span> AddLocalMsg:var_50 msgData:<span class="built_in">r12</span>]<span class="comment">;</span></span><br><span class="line"><span class="built_in">rbx</span> = [[NSArray arrayWithObject:<span class="built_in">r13</span>] retain]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r15</span> DelMsg:var_50 msgList:<span class="built_in">rbx</span> isDelAll:<span class="number">0x0</span>]<span class="comment">;</span></span><br><span class="line"><span class="built_in">r15</span> = *objc_release<span class="comment">;</span></span><br><span class="line">[<span class="built_in">rbx</span> release]<span class="comment">;</span></span><br><span class="line">[<span class="built_in">r12</span> release]<span class="comment">;</span></span><br></pre></td></tr></table></figure>
 <p>这段代码先是判断下撤回消息的人是不是自己，然后分情况更新 UI，最后生成并更新数据。既然没有啥重要操作，那就放心地忽略吧哈哈。</p>
 <p>现在需要将修改后的汇编重新生成新的可执行文件。选择 Hopper 菜单里的 『File -&gt; Produce New Executable…』 后点 Yes：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineeringwechat-NewExecutable@2x.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-NewExecutable@2x.png" alt=""></p>
 <p>最后将生成的可执行文件替换到 <code>/Applications/WeChat.app/Contents/MacOS/WeChat</code></p>
 <p>唯一让我不解的是无需对新的 <code>WeChat</code> 可执行文件进行代码签名微信依然可以正常运行。我是第一次玩逆向，还请前辈大神们指教。做了一系列撤回消息的尝试后，手机上面显示撤回，但 Mac 版微信的消息依然还在。一次猜中，成功！</p>
 <h1 id="iOS-要稍微折腾一些"><a href="#iOS-要稍微折腾一些" class="headerlink" title="iOS 要稍微折腾一些"></a>iOS 要稍微折腾一些</h1><p>前提是有一个已经砸壳的 ipa，要么自己在越狱机中用 dumpdecrypted 砸壳，或者干脆从第三方工具下一个已经砸壳的（也就是给越狱机安装的）。我一开始从同步助手下的有点问题，后来从PP助手下的。</p>
 <p>有了被砸壳的 ipa 就可以继续了，解压后找到里面的 WeChat.app ，注意用 <code>codesign -dvvv WeChat.app</code> 验证下签名。正版的 app 签名是腾讯的。。。</p>
 <p><strong>第一步</strong>，猜，嗯，是 <code>-[CMessageMgr onRevokeMsg:]</code> 这个方法。类名换了而已。</p>
 <p><strong>第二步</strong>，改汇编代码。这里需要改的是 Thumb 指令集。其实它是较新的 ARM 处理器的一种模式。我们比较关心的是各种指令的含义，尤其是如何从 Thumb 切换回 ARM，没错，就是用 <code>bx</code>：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/WeChatReverseEngineering/wechat-ios.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/WeChatReverseEngineering/wechat-ios.png" alt=""></p>
 <p>这有一个<a href="http://infocenter.arm.com/help/topic/com.arm.doc.qrc0006ec/QRC0006_UAL16.pdf" target="_blank" rel="external">Thumb® 16 位指令集快速参考卡</a></p>
 <p>最后还是跟之前一样替换生成的可执行文件。</p>
 <p><strong>第三步</strong>，签名！建议先阅读 <a href="http://objccn.io/issue-17-2/" target="_blank" rel="external">代码签名探析</a>，了解下授权机制 (Entitlements) 和配置文件 (Provisioning)。这一步的前提是拥有一个合法证书，个人或企业都可以！</p>

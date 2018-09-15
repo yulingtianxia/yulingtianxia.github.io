@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2018-08-12T16:27:18.195Z</updated>
+  <updated>2018-09-15T08:28:13.645Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yulingtianxia.com/blog/2018/08/13/TBUIAutoTest-Usage/"/>
     <id>http://yulingtianxia.com/blog/2018/08/13/TBUIAutoTest-Usage/</id>
     <published>2018-08-12T16:24:45.000Z</published>
-    <updated>2018-08-12T16:27:18.195Z</updated>
+    <updated>2018-09-15T08:28:13.645Z</updated>
     
     <content type="html">&lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/TBUIAutoTest&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;TBUIAutoTest&lt;/a&gt; 可以帮开发人员生成UI 控件的标签，便于自动化测试。只需一行代码或一个配置，几乎所有的 iOS Native UI 都会在运行时生成一个页面内唯一且不变的标签。不仅节省了开发人员手动为每个 UI 控件加标签的时间，也节省了测试人员与开发人员的沟通成本。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
@@ -76,7 +76,7 @@
     <link href="http://yulingtianxia.com/blog/2018/07/31/MessageThrottle-Safety/"/>
     <id>http://yulingtianxia.com/blog/2018/07/31/MessageThrottle-Safety/</id>
     <published>2018-07-30T16:50:24.000Z</published>
-    <updated>2018-07-31T16:50:57.576Z</updated>
+    <updated>2018-09-15T08:28:13.897Z</updated>
     
     <content type="html">&lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MessageThrottle&lt;/a&gt; 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。&lt;/p&gt;
 &lt;p&gt;新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。&lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MessageThrottle&lt;/a&gt; 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有发现和解决的。&lt;/p&gt;
@@ -88,15 +88,15 @@
 &lt;/ul&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
 &lt;p&gt;主要类的关系如下图，虚线为 &lt;code&gt;weak&lt;/code&gt; 属性。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MessageThrottle1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MessageThrottle1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;h2 id=&quot;继承链消息转发缺陷&quot;&gt;&lt;a href=&quot;#继承链消息转发缺陷&quot; class=&quot;headerlink&quot; title=&quot;继承链消息转发缺陷&quot;&gt;&lt;/a&gt;继承链消息转发缺陷&lt;/h2&gt;&lt;p&gt;由于是在消息转发流程搞事情，把所有消息都经由一个统一的路由函数 &lt;code&gt;mt_forwardInvocation&lt;/code&gt; 进行处理。子类和父类不能同时 Hook 同一个方法，原因是如果子类的方法调用了父类方法，那么父类的方法调用走到统一路由函数 &lt;code&gt;mt_forwardInvocation&lt;/code&gt; 的时候，『调用父类方法』这一信息早已经丢失了，接着会转发给子类的方法实现，从而造成死循环。最后 crash。&lt;/p&gt;
 &lt;p&gt;解决方法就是在 Hook 之前判断关系链，如果已经有子类或者父类被 Hook 了就报错，无法继续 Hook。&lt;/p&gt;
 &lt;p&gt;在消息转发流程将所有消息通过统一的路由函数处理并转发这件事的缺陷就是丢失了类的信息，因为全都『统一』到同一个函数处理了，而不是在各自类的内部处理。诸如 Aspects 等业界知名开源库也有此问题。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MessageThrottle2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MessageThrottle2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;h2 id=&quot;兼容-KVO、其他-Hook-框架&quot;&gt;&lt;a href=&quot;#兼容-KVO、其他-Hook-框架&quot; class=&quot;headerlink&quot; title=&quot;兼容 KVO、其他 Hook 框架&quot;&gt;&lt;/a&gt;兼容 KVO、其他 Hook 框架&lt;/h2&gt;&lt;p&gt;首先先了解下 KVO 的原理：当监听类型为 &lt;code&gt;A&lt;/code&gt; 的对象 &lt;code&gt;a&lt;/code&gt; 时，会动态创建 &lt;code&gt;A&lt;/code&gt; 的子类 &lt;code&gt;NSKVONotifying_A&lt;/code&gt;，并把 &lt;code&gt;a&lt;/code&gt; 的类型改成 &lt;code&gt;NSKVONotifying_A&lt;/code&gt;。&lt;code&gt;NSKVONotifying_A&lt;/code&gt; 会覆写监听的属性村粗方法，以及 &lt;code&gt;class&lt;/code&gt; 方法，让外部以为 &lt;code&gt;a&lt;/code&gt; 的类型依然是 &lt;code&gt;A&lt;/code&gt;。&lt;/p&gt;
 &lt;p&gt;其余开源框架在 hook 一个对象的时候，也是通过加前缀或后缀动态创建子类，然后覆写相关方法。继承链总有先来后到，这时候问题就来了。&lt;/p&gt;
 &lt;p&gt;使用 &lt;code&gt;class&lt;/code&gt; 方法获取到的类型可能是被『篡改过』的类，使用 &lt;code&gt;objc_getClass()&lt;/code&gt; 函数获取到的才是真正的类。KVO 的做法是在用 &lt;code&gt;objc_getClass()&lt;/code&gt; 获取到真正的类之后，直接创建带 &lt;code&gt;NSKVONotifying_&lt;/code&gt; 前缀的子类。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MessageThrottle3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MessageThrottle3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;如图所示，MessageThrottle 在 hook 一个对象的时候也会动态创建带前缀 &lt;code&gt;MTSubclassPrefix&lt;/code&gt; 的子类，但是不会像 KVO 那样无脑创建，而是先判断通过 &lt;code&gt;class&lt;/code&gt; 与 &lt;code&gt;objc_getClass()&lt;/code&gt; 获取到的类是否相同。如果不同，则说明已经有现成的子类了，直接在 &lt;code&gt;objc_getClass()&lt;/code&gt; 获取的类中 hook 就行了。这里是借鉴了 Aspects 的做法。&lt;/p&gt;
 &lt;figure class=&quot;highlight mipsasm&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Class cls&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Class statedClass = [target class]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Class &lt;span class=&quot;keyword&quot;&gt;baseClass &lt;/span&gt;= object_getClass(target)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;NSString *className = NSStringFromClass(&lt;span class=&quot;keyword&quot;&gt;baseClass);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;if ([className hasPrefix:MTSubclassPrefix]) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   cls = &lt;span class=&quot;keyword&quot;&gt;baseClass;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;else if (mt_object_isClass(target)) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   cls = target&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;else if (statedClass != &lt;span class=&quot;keyword&quot;&gt;baseClass) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   cls = &lt;span class=&quot;keyword&quot;&gt;baseClass;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;else &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   const char *&lt;span class=&quot;keyword&quot;&gt;subclassName &lt;/span&gt;= [MTSubclassPrefix stringByAppendingString:className].UTF8String&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   Class &lt;span class=&quot;keyword&quot;&gt;subclass &lt;/span&gt;= objc_getClass(&lt;span class=&quot;keyword&quot;&gt;subclassName);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;   &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   if (&lt;span class=&quot;keyword&quot;&gt;subclass &lt;/span&gt;== nil) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;keyword&quot;&gt;subclass &lt;/span&gt;= objc_allocateClassPair(&lt;span class=&quot;keyword&quot;&gt;baseClass, &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;subclassName, &lt;/span&gt;&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       if (&lt;span class=&quot;keyword&quot;&gt;subclass &lt;/span&gt;== nil) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;           NSLog(@&lt;span class=&quot;string&quot;&gt;&quot;objc_allocateClassPair failed to allocate class %s.&quot;&lt;/span&gt;, &lt;span class=&quot;keyword&quot;&gt;subclassName);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;           return NO&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       mt_hookedGetClass(&lt;span class=&quot;keyword&quot;&gt;subclass, &lt;/span&gt;statedClass)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       mt_hookedGetClass(object_getClass(&lt;span class=&quot;keyword&quot;&gt;subclass), &lt;/span&gt;statedClass)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       objc_registerClassPair(&lt;span class=&quot;keyword&quot;&gt;subclass);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;   &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   object_setClass(target, &lt;span class=&quot;keyword&quot;&gt;subclass);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;   cls = &lt;span class=&quot;keyword&quot;&gt;subclass;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;有来就有回，如果要 remove KVO 或 hook 呢？肯定无法确保各个框架或 KVO add 和 remove『先入后出』的顺序，所以必然要做兼容处理。&lt;/p&gt;
@@ -179,7 +179,7 @@
     <link href="http://yulingtianxia.com/blog/2018/06/24/Objective-C-Block-Mangle-Name/"/>
     <id>http://yulingtianxia.com/blog/2018/06/24/Objective-C-Block-Mangle-Name/</id>
     <published>2018-06-24T09:19:03.000Z</published>
-    <updated>2018-06-24T09:53:33.568Z</updated>
+    <updated>2018-09-15T08:28:13.753Z</updated>
     
     <content type="html">&lt;p&gt;之前写了一篇文章&lt;a href=&quot;http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/&quot;&gt;《追踪 Objective-C 方法中的 Block 参数对象》&lt;/a&gt;，利用 &lt;a href=&quot;https://github.com/yulingtianxia/BlockHook&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;BlockHook&lt;/a&gt; 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。&lt;/p&gt;
 &lt;p&gt;主要代码已经整合到 &lt;a href=&quot;https://github.com/yulingtianxia/BlockHook&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;BlockHook&lt;/a&gt; 1.0.2 版本中。&lt;/p&gt;
@@ -234,7 +234,7 @@
     <link href="http://yulingtianxia.com/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/"/>
     <id>http://yulingtianxia.com/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/</id>
     <published>2018-05-30T18:01:50.000Z</published>
-    <updated>2018-07-25T16:58:47.586Z</updated>
+    <updated>2018-09-15T08:28:13.562Z</updated>
     
     <content type="html">&lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MessageThrottle&lt;/a&gt; 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，所以相比直接调用方法，会有一些性能上的损耗。本篇文章记录了对其性能进行测试的结果，并通过使用 &lt;code&gt;NSMapTable&lt;/code&gt; 改进存储结构和缓存来对性能进行大幅度的优化。&lt;/p&gt;
 &lt;p&gt;这是你从未体验过的船新版本。&lt;/p&gt;
@@ -347,7 +347,7 @@
     <link href="http://yulingtianxia.com/blog/2018/04/30/Colorful-Rounded-Rect-Dash-Border/"/>
     <id>http://yulingtianxia.com/blog/2018/04/30/Colorful-Rounded-Rect-Dash-Border/</id>
     <published>2018-04-30T09:25:44.000Z</published>
-    <updated>2018-06-24T09:53:33.567Z</updated>
+    <updated>2018-09-15T08:28:13.549Z</updated>
     
     <content type="html">&lt;p&gt;产品经理要求做个能展示进度的分段彩色外环，大概长这样：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/YXYDashLayer/blob/master/Assets/YXYDashLayer.gif?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
@@ -406,7 +406,7 @@
     <link href="http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/"/>
     <id>http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/</id>
     <published>2018-03-31T15:44:39.000Z</published>
-    <updated>2018-04-01T15:23:14.592Z</updated>
+    <updated>2018-09-15T08:28:13.796Z</updated>
     
     <content type="html">&lt;p&gt;很多方法最后一个参数是类似于 &lt;code&gt;completionBlock&lt;/code&gt; 这种回调，然而有些 API 实现一些异常逻辑时会忘记调用传入的 Block 参数（当然这肯定是 bug 啦），或者存在多次调用。在调试的时候可能会碰到这种大坑，需要追踪下 Block 参数何时调用了，甚至是否调用过。如果不方便直接在 Block 实现中加代码，或者没有源码的情况下，就需要无侵入式地追踪 Block 参数对象。&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/BlockTracker&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;BlockTracker&lt;/a&gt; 可以追踪方法调用时传入的 Block 类型的参数的执行和销毁。基于 &lt;a href=&quot;https://github.com/yulingtianxia/BlockHook&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;BlockHook&lt;/a&gt; 实现。本文讲述了它的使用方法和实现原理。&lt;/p&gt;
@@ -462,7 +462,7 @@
     <link href="http://yulingtianxia.com/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/"/>
     <id>http://yulingtianxia.com/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/</id>
     <published>2018-02-28T11:05:24.000Z</published>
-    <updated>2018-03-26T16:24:18.836Z</updated>
+    <updated>2018-09-15T08:28:13.567Z</updated>
     
     <content type="html">&lt;p&gt;本文通过参照 &lt;code&gt;MABlockClosure&lt;/code&gt; 的实现和 &lt;code&gt;Aspects&lt;/code&gt; 的 API 设计，基于 libffi 实现了对 Objective-C Block 的 hook。GitHub 地址：&lt;a href=&quot;https://github.com/yulingtianxia/BlockHook&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/yulingtianxia/BlockHook&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;什么场景下需要 hook block 呢？在有源码的情况下，大部分程序员会选择直接在 block 中插代码。假如方法 A 的入参是个 block 对象，方法 A 将 block 传给方法 B,C…等。如果只有方法 A 的源码，上层传入的 block 和下层方法实现都是黑盒的话，想追踪 block 调用的时机，打印些 log，就得 hook 这个 block 对象了。&lt;/p&gt;
@@ -532,7 +532,7 @@
     <link href="http://yulingtianxia.com/blog/2018/01/15/How-to-make-a-Pebble-watchface/"/>
     <id>http://yulingtianxia.com/blog/2018/01/15/How-to-make-a-Pebble-watchface/</id>
     <published>2018-01-14T16:00:17.000Z</published>
-    <updated>2018-01-14T15:22:23.743Z</updated>
+    <updated>2018-09-15T08:28:13.892Z</updated>
     
     <content type="html">&lt;p&gt;之前的 leader 送了我一块 Pebble 智能手表，俗话说『穷玩车，富玩表』，希望自己能在 2018 年里『变有钱』，那就多玩玩表吧！&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
@@ -578,7 +578,7 @@
     <link href="http://yulingtianxia.com/blog/2017/12/15/Associated-Object-and-Dealloc/"/>
     <id>http://yulingtianxia.com/blog/2017/12/15/Associated-Object-and-Dealloc/</id>
     <published>2017-12-14T16:19:21.000Z</published>
-    <updated>2017-12-14T16:19:38.963Z</updated>
+    <updated>2018-09-15T08:28:13.669Z</updated>
     
     <content type="html">&lt;p&gt;我的 Objective-C 消息节流防抖库 &lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MessageThrottle&lt;/a&gt; 需要实现一个特性：当 &lt;code&gt;MTRule&lt;/code&gt; 的 &lt;code&gt;target&lt;/code&gt; 释放后，自动调用 &lt;code&gt;MTRule&lt;/code&gt; 的 &lt;code&gt;discard&lt;/code&gt; 方法。后来使用了业界很早就已有的方案：Associated Object，在这里整理下相关的知识点。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
@@ -622,7 +622,7 @@
     <link href="http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/"/>
     <id>http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/</id>
     <published>2017-11-04T16:39:44.000Z</published>
-    <updated>2017-11-28T03:22:24.669Z</updated>
+    <updated>2018-09-15T08:28:13.802Z</updated>
     
     <content type="html">&lt;p&gt;在实际项目中经常会遇到因方法调用频繁而导致的 UI 闪动问题和性能问题，这时用某种策略需要控制调用频率，以达到节流和防抖的效果。&lt;a href=&quot;https://github.com/yulingtianxia/MessageThrottle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MessageThrottle&lt;/a&gt; 是我实现的一个 Objective-C 消息节流和防抖的轻量级工具库，使用便捷且业务无关。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
@@ -698,7 +698,7 @@
     <link href="http://yulingtianxia.com/blog/2017/10/08/Threading-Programming-Guide-3/"/>
     <id>http://yulingtianxia.com/blog/2017/10/08/Threading-Programming-Guide-3/</id>
     <published>2017-10-08T09:03:54.000Z</published>
-    <updated>2017-10-10T16:02:37.000Z</updated>
+    <updated>2018-09-15T08:28:13.573Z</updated>
     
     <content type="html">&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Threading Programming Guide&lt;/a&gt; 的学习笔记&amp;amp;翻译，第三部分。关于同步的内容。&lt;/p&gt;
 &lt;ul&gt;
@@ -929,7 +929,7 @@
     <link href="http://yulingtianxia.com/blog/2017/09/17/Threading-Programming-Guide-2/"/>
     <id>http://yulingtianxia.com/blog/2017/09/17/Threading-Programming-Guide-2/</id>
     <published>2017-09-17T06:07:13.000Z</published>
-    <updated>2017-10-10T16:02:37.000Z</updated>
+    <updated>2018-09-15T08:28:13.707Z</updated>
     
     <content type="html">&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html#//apple_ref/doc/uid/10000057i-CH16-SW1&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Threading Programming Guide&lt;/a&gt; 的学习笔记&amp;amp;翻译，第二部分。关于 Run Loop 的内容。&lt;/p&gt;
 &lt;ul&gt;
@@ -1216,7 +1216,7 @@
     <link href="http://yulingtianxia.com/blog/2017/08/28/Threading-Programming-Guide-1/"/>
     <id>http://yulingtianxia.com/blog/2017/08/28/Threading-Programming-Guide-1/</id>
     <published>2017-08-28T01:20:24.000Z</published>
-    <updated>2017-10-14T16:41:52.086Z</updated>
+    <updated>2018-09-15T08:28:13.542Z</updated>
     
     <content type="html">&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/Introduction/Introduction.html#//apple_ref/doc/uid/10000057i-CH1-SW1&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Threading Programming Guide&lt;/a&gt; 的学习笔记&amp;amp;翻译，第一部分。&lt;/p&gt;
 &lt;p&gt;其实苹果建议使用对线程的高级封装，比如 operation objects and Grand Central Dispatch，它们使用方便更加高效，可以参考 &lt;a href=&quot;https://developer.apple.com/library/content/documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Concurrency Programming Guide&lt;/a&gt;。&lt;/p&gt;
@@ -1417,7 +1417,7 @@
     <link href="http://yulingtianxia.com/blog/2017/07/17/What-s-New-in-LLVM-2017/"/>
     <id>http://yulingtianxia.com/blog/2017/07/17/What-s-New-in-LLVM-2017/</id>
     <published>2017-07-16T16:04:37.000Z</published>
-    <updated>2017-09-09T15:40:06.000Z</updated>
+    <updated>2018-09-15T08:28:13.597Z</updated>
     
     <content type="html">&lt;p&gt;这&lt;strong&gt;绝不仅仅&lt;/strong&gt;是一篇 WWDC 2017 Session 411 学习笔记。除了有关 LLVM  9.0 的新特性之外，还有关于静态分析器和 Clang 5 Objective-C ARC 的一点看法和经验。&lt;/p&gt;
 &lt;p&gt;我觉得 LLVM 9 的亮点如下：&lt;/p&gt;
@@ -1503,7 +1503,7 @@
 &lt;h3 id=&quot;无参数函数的声明&quot;&gt;&lt;a href=&quot;#无参数函数的声明&quot; class=&quot;headerlink&quot; title=&quot;无参数函数的声明&quot;&gt;&lt;/a&gt;无参数函数的声明&lt;/h3&gt;&lt;p&gt;如果函数没有参数，需要用 &lt;code&gt;void&lt;/code&gt; 显式声明。否则可能调用方会传入其他类型和数量的参数，在运行时引发 crash。如果用 &lt;code&gt;void&lt;/code&gt; 显式声明，在编译阶段就会产生 error。&lt;/p&gt;
 &lt;figure class=&quot;highlight arduino&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; foo() &lt;span class=&quot;comment&quot;&gt;// warning:This function declaration is not a prototype&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; foo(&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;) &lt;span class=&quot;comment&quot;&gt;// OK&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;h2 id=&quot;C-Refactoring&quot;&gt;&lt;a href=&quot;#C-Refactoring&quot; class=&quot;headerlink&quot; title=&quot;C++ Refactoring&quot;&gt;&lt;/a&gt;C++ Refactoring&lt;/h2&gt;&lt;p&gt;对于一个带有 C++ 或 Objective-C++ 代码的工程来说，想重命名某个类名真的是艰难，Xcode 会提示不支持 C++！现在，各种操作也支持 C++ 咯：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/C++%20Refactoring.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/LLVM/C++%20Refactoring.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;LLVM 的重构代码功能极大节省了开发者的时间。&lt;/p&gt;
 &lt;h2 id=&quot;Features-from-C-17&quot;&gt;&lt;a href=&quot;#Features-from-C-17&quot; class=&quot;headerlink&quot; title=&quot;Features from C++17&quot;&gt;&lt;/a&gt;Features from C++17&lt;/h2&gt;&lt;p&gt;其实这些都是 C++17 的新特性罢了，LLVM 9.0 积极响应支持。可以在编译选项 C++ Language Dialect 中选择使用的 C++ 标准库。GNU++17 比 C++17 多了语言扩展。&lt;/p&gt;
 &lt;h3 id=&quot;Structured-Binding&quot;&gt;&lt;a href=&quot;#Structured-Binding&quot; class=&quot;headerlink&quot; title=&quot;Structured Binding&quot;&gt;&lt;/a&gt;Structured Binding&lt;/h3&gt;&lt;p&gt;解析 Tuple 可以一句搞定了：&lt;/p&gt;
@@ -1515,11 +1515,11 @@
 &lt;figure class=&quot;highlight gcode&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;comment&quot;&gt;(auto a = getNumber()&lt;/span&gt;; a &amp;gt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;) &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	foo&lt;span class=&quot;comment&quot;&gt;()&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;...&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;a = &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;; &lt;span class=&quot;comment&quot;&gt;// error! a 只在上面的 if 作用域中有效。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;h3 id=&quot;constexpr-if&quot;&gt;&lt;a href=&quot;#constexpr-if&quot; class=&quot;headerlink&quot; title=&quot;constexpr if&quot;&gt;&lt;/a&gt;constexpr if&lt;/h3&gt;&lt;p&gt;以 &lt;code&gt;if constexpr&lt;/code&gt; 开始的语句被称为 &lt;code&gt;constexpr if&lt;/code&gt; 语句。– &lt;a href=&quot;http://zh.cppreference.com/w/cpp/language/if&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;cppreference.com&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;举个栗子：&lt;code&gt;advance&lt;/code&gt; 函数可以向前或向后迭代指定步数，但对于字符串和数组来说有更快的方式：无需一步步迭代，可以直接访问。但 &lt;code&gt;advance&lt;/code&gt; 的参数是通用的，编译不通过：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/constexpr%20if%200.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/LLVM/constexpr%20if%200.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;传统解决方法是 Compile Time Dispatch：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/constexpr%20if%201.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/LLVM/constexpr%20if%201.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;C++17 的 &lt;code&gt;constexpr if&lt;/code&gt; 可以一行搞定：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/constexpr%20if%202.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/LLVM/constexpr%20if%202.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;详见 &lt;a href=&quot;http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0292r2.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;constexpr if&lt;/a&gt;。&lt;/p&gt;
 &lt;h3 id=&quot;string-view&quot;&gt;&lt;a href=&quot;#string-view&quot; class=&quot;headerlink&quot; title=&quot;string_view&quot;&gt;&lt;/a&gt;string_view&lt;/h3&gt;&lt;p&gt;简单来说它是指向字符串的指针，但不会拷贝一份字符串。一旦指向的字符串被修改或者被释放了，&lt;code&gt;string_view&lt;/code&gt; 的内容也会跟跟着变，毕竟是同一份内存。所以，虽然会优化性能，慎用。就像 OC 中的字符串和数组传递赋值时一般都 &lt;code&gt;copy&lt;/code&gt;，string_view 相当于是 &lt;code&gt;assign&lt;/code&gt;，搞不好野指针呢。&lt;/p&gt;
 &lt;p&gt;详见 &lt;a href=&quot;http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4480.html#string.view&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;string_view&lt;/a&gt;。&lt;/p&gt;
@@ -1549,27 +1549,27 @@
     <link href="http://yulingtianxia.com/blog/2017/06/19/Core-ML-and-Vision-Framework-on-iOS-11/"/>
     <id>http://yulingtianxia.com/blog/2017/06/19/Core-ML-and-Vision-Framework-on-iOS-11/</id>
     <published>2017-06-19T02:05:41.000Z</published>
-    <updated>2017-07-05T15:04:45.000Z</updated>
+    <updated>2018-09-15T08:28:13.748Z</updated>
     
     <content type="html">&lt;p&gt;机器学习和计算机视觉在 iOS 上虽然早已有了系统级的支持，但 WWDC 17 发布的 iOS 11 将它们的使用门槛大大降低。苹果提供了设计合理且容易上手的 API，让那些对基础理论知识一窍不通的门外汉也能玩转高大上的前沿科技，这是苹果一贯的风格。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
 &lt;p&gt;这是一篇 WWDC 2017 Session 506，608，703 和 710 的学习笔记，以及分享自己尝试写的 Demo &lt;a href=&quot;https://github.com/yulingtianxia/Core-ML-Sample&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Core-ML-Sample&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/Core-ML-Sample/blob/master/coreml.gif?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;h2 id=&quot;Core-ML&quot;&gt;&lt;a href=&quot;#Core-ML&quot; class=&quot;headerlink&quot; title=&quot;Core ML&quot;&gt;&lt;/a&gt;Core ML&lt;/h2&gt;&lt;h3 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h3&gt;&lt;p&gt;Core ML 大大降低了开发者在苹果设备上使用机器学习技术预测模型的门槛和成本。苹果制定了自己的模型文件格式，统一的格式和全新的 API 设计使得 Core ML 支持苹果生态下多个平台。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/iOS11/coreml1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/iOS11/coreml1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;将数据经过预处理后输入 MLMODEL 文件，输出为模型的预测结果。使用 Core ML 只需要很少的代码就可以构建起一个机器学习的应用。只需关注代码即可，无需关注模型的定义，网络的构成。这跟以前写 MPS 代码时构成了强烈的反差：开发者需要写大量 MPS 代码用于构建和描述一个完整的网络，而加载的文件仅仅是模型的权重而已。MLMODEL 文件包含了权重和模型结构等信息，并可以自动生成相关的代码，节省开发者大量时间。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/iOS11/coreml2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/iOS11/coreml2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;h3 id=&quot;Model-转换工具&quot;&gt;&lt;a href=&quot;#Model-转换工具&quot; class=&quot;headerlink&quot; title=&quot;Model 转换工具&quot;&gt;&lt;/a&gt;Model 转换工具&lt;/h3&gt;&lt;p&gt;苹果提供了一个 Python 工具，可以将业内一些常用的机器学习框架导出的 Model 转成 MLMODEL 文件。代码会编译成可执行二进制文件，而 MLMODEL 会编译成 Bundle 文件，在代码文件中可以直接调用 MLMODEL 生成的类，这些都是需要 Xcode 9 做支撑，也就是说，现阶段并不支持动态下发 MLMODEL 文件。Core ML 的预测过程全都在客户端进行，保证用户隐私不会泄露。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/iOS11/coreml4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/iOS11/coreml4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;Core ML 支持 DNN,RNN,CNN,SVM,Tree ensembles,Generalized linear models,Pipeline models 等，对应的模型转换工具 &lt;a href=&quot;https://pypi.python.org/pypi/coremltools&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Core ML Tools&lt;/a&gt; 也支持了一些常用机器学习框架模型的转换。虽然目前没有直接支持 Google 的 TensorFlow，但可以使用 Keras 曲线救国。&lt;code&gt;coremltools&lt;/code&gt; 已经开源，并提供可拓展性的底层接口，可以编写适配其他机器学习框架模型的转换工具。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/iOS11/coreml3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/iOS11/coreml3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;MLMODEL 文件中还包含了很多元数据，比如作者，License，输入输出的描述文字。这些元数据都可以通过 &lt;code&gt;coremltools&lt;/code&gt; 的接口进行设置。&lt;code&gt;coremltools&lt;/code&gt; 上手很简单，可以查看完整详细的&lt;a href=&quot;https://pythonhosted.org/coremltools/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;使用文档&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;把 MLMODEL 文件拖拽到 Xcode 工程中后，记得要勾选对应的 target，这样 Xcode 才会自动生成对应的代码。生成的类名就是 MLMODEL 文件名，输入和输出的变量名和类型也可以在 Xcode 中查看：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/iOS11/coreml5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/iOS11/coreml5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;h3 id=&quot;底层计算性能&quot;&gt;&lt;a href=&quot;#底层计算性能&quot; class=&quot;headerlink&quot; title=&quot;底层计算性能&quot;&gt;&lt;/a&gt;底层计算性能&lt;/h3&gt;&lt;p&gt;Core ML 的底层是 Accelerate BNNS 和 MPS，并可以根据实际情况进行无缝切换。比如在处理图片的场景下使用 MPS，处理文字场景下使用 Accelerate，甚至可以在同一个 model 的不同层使用不同的底层技术来预测。Vision 和 NLP 可以结合 Core ML 一起使用。Core ML 对硬件做了性能优化，而且支持的模型种类更多，开发者不用关注底层的一些细节，苹果全都封装好了。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/iOS11/coreml6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/iOS11/coreml6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;当然，这些也都是建立在 MPS 更新的基础上，MPS 在 iOS 11 中拓展了支持向量和矩阵的数据结构 &lt;code&gt;MPSVector&lt;/code&gt; 与 &lt;code&gt;MPSMatrix&lt;/code&gt;，以及它们之间相乘的 API。而且提供了更多的神经网络类型（比如 RNN 等），在卷积神经网络中也提供了更多种类的卷积核，用于满足更多特殊场景。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/iOS11/608_using_metal_2_for_compute_%E9%A1%B5%E9%9D%A2_065.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/iOS11/608_using_metal_2_for_compute_%E9%A1%B5%E9%9D%A2_065.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;苹果在 Metal 2 中补充 MPS 大量功能的同时，也提供了用于描述神经网络结构的语言：Neural Network Graph API。使用它可以极大简化代码逻辑，代码量缩减到以前的四分之一（以 Inception V3 为例）。并且使用 NN Graph API 可以并行使用 CPU 和 GPU。这种图语言跟主流的分布式机器学习框架的使用很像：先用简单的 Python 语言描述好网络结构，定义好输入输出格式，然后一次性提交到后端去执行。后端对底层性能做了很多细节优化，然而开发者完全不用关心这些。新增的 &lt;code&gt;MPSNNGraph&lt;/code&gt; 提供了异步接口使得 CPU 不用再等待 GPU 的执行结果，性能也得到提升。&lt;/p&gt;
 &lt;p&gt;Metal 2 使用 MPS 进行图像处理的性能也得到了提升，在不同的设备上大约提升了百分之二十多。&lt;/p&gt;
 &lt;h3 id=&quot;Demo-数据预处理&quot;&gt;&lt;a href=&quot;#Demo-数据预处理&quot; class=&quot;headerlink&quot; title=&quot;Demo: 数据预处理&quot;&gt;&lt;/a&gt;Demo: 数据预处理&lt;/h3&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/Core-ML-Sample&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Core-ML-Sample&lt;/a&gt; 使用了 Core ML 和 Vision 技术实现对摄像头拍摄的图像实时预测物体种类。因为图像来源是摄像头，所以需要将 &lt;code&gt;CMSampleBuffer&lt;/code&gt; 转成 &lt;code&gt;CVPixelBuffer&lt;/code&gt;。因为 Xcode 9 已经生成好了代码，直接调用 &lt;code&gt;Inceptionv3&lt;/code&gt; 类的 &lt;code&gt;prediction&lt;/code&gt; 方法即可完成预测。生成的 &lt;code&gt;Inceptionv3Output&lt;/code&gt; 类含有 &lt;code&gt;classLabel&lt;/code&gt; 和 &lt;code&gt;classLabelProbs&lt;/code&gt; 两个属性，可以获取预测的分类标签名以及每种标签的可能性。可以点击 Xcode Model View 中 Model Class 的生成源码箭头来查看这些类的信息。&lt;/p&gt;
@@ -1594,8 +1594,8 @@
 &lt;/ol&gt;
 &lt;h3 id=&quot;Vision-使用姿势&quot;&gt;&lt;a href=&quot;#Vision-使用姿势&quot; class=&quot;headerlink&quot; title=&quot;Vision 使用姿势&quot;&gt;&lt;/a&gt;Vision 使用姿势&lt;/h3&gt;&lt;p&gt;将各种功能的 Request 提供给一个 RequestHandler，Handler 持有图片信息，并将处理结果分发给每个 Request 的 completion Block 中。可以从 &lt;code&gt;results&lt;/code&gt; 属性中得到 Observation 数组，然后进行更新 UI 等操作。因为 completion Block 所执行的队列跟 perform request 的队列相同，所以更新 UI 时记得使用主队列。&lt;/p&gt;
 &lt;p&gt;Vision 操作流水线分为两类：分析图片和跟踪队列。可以使用图片检测出的物体或矩形结果（Observation）来作为跟踪队列请求（Request）的参数。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/iOS11/506_vision_framework_building_on_core_ml_%E9%A1%B5%E9%9D%A2_36.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/iOS11/506_vision_framework_building_on_core_ml_%E9%A1%B5%E9%9D%A2_40.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/iOS11/506_vision_framework_building_on_core_ml_%E9%A1%B5%E9%9D%A2_36.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/iOS11/506_vision_framework_building_on_core_ml_%E9%A1%B5%E9%9D%A2_40.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;Vision 支持的图片数据类型：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;CVPixelBufferRef&lt;/code&gt;&lt;/li&gt;
@@ -1612,7 +1612,7 @@
 &lt;li&gt;&lt;code&gt;VNImageCropAndScaleOptionScaleFill&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Vision 与 iOS 上其他几种带人脸检测功能框架的对比：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/iOS11/506_vision_framework_building_on_core_ml_%E9%A1%B5%E9%9D%A2_72.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/iOS11/506_vision_framework_building_on_core_ml_%E9%A1%B5%E9%9D%A2_72.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;h3 id=&quot;Demo-与-Core-ML-集成&quot;&gt;&lt;a href=&quot;#Demo-与-Core-ML-集成&quot; class=&quot;headerlink&quot; title=&quot;Demo: 与 Core ML 集成&quot;&gt;&lt;/a&gt;Demo: 与 Core ML 集成&lt;/h3&gt;&lt;p&gt;Core ML 具有更好的性能，Vision 可为其提供图片处理的流程。Core ML 生成的代码中含有 &lt;code&gt;MLModel&lt;/code&gt; 类型的 &lt;code&gt;model&lt;/code&gt; 对象，可以用它初始化 &lt;code&gt;VNCoreMLModel&lt;/code&gt; 对象，这样就将 Core ML 的 Model 集成进 Vision 框架中了：&lt;/p&gt;
 &lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; requests = [&lt;span class=&quot;type&quot;&gt;VNRequest&lt;/span&gt;]()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;setupVision&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;keyword&quot;&gt;guard&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; visionModel = &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt;? &lt;span class=&quot;type&quot;&gt;VNCoreMLModel&lt;/span&gt;(&lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt;: inceptionv3model.model) &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;built_in&quot;&gt;fatalError&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&quot;can&#39;t load Vision ML model&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; classificationRequest = &lt;span class=&quot;type&quot;&gt;VNCoreMLRequest&lt;/span&gt;(model: visionModel) &amp;#123; (request: &lt;span class=&quot;type&quot;&gt;VNRequest&lt;/span&gt;, error: &lt;span class=&quot;type&quot;&gt;Error&lt;/span&gt;?) &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;keyword&quot;&gt;guard&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; observations = request.results &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;           &lt;span class=&quot;built_in&quot;&gt;print&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&quot;no results:&lt;span class=&quot;subst&quot;&gt;\(error!)&lt;/span&gt;&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;           &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; classifications = observations[&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;...&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;           .flatMap(&amp;#123; $&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt;? &lt;span class=&quot;type&quot;&gt;VNClassificationObservation&lt;/span&gt; &amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;           .&lt;span class=&quot;built_in&quot;&gt;filter&lt;/span&gt;(&amp;#123; $&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;.confidence &amp;gt; &lt;span class=&quot;number&quot;&gt;0.2&lt;/span&gt; &amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;           .&lt;span class=&quot;built_in&quot;&gt;map&lt;/span&gt;(&amp;#123; &lt;span class=&quot;string&quot;&gt;&quot;&lt;span class=&quot;subst&quot;&gt;\($&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;.identifier)&lt;/span&gt; &lt;span class=&quot;subst&quot;&gt;\($&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;.confidence)&lt;/span&gt;&quot;&lt;/span&gt; &amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;type&quot;&gt;DispatchQueue&lt;/span&gt;.main.async &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;           &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.predictLabel.text = classifications.joined(separator: &lt;span class=&quot;string&quot;&gt;&quot;\n&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   classificationRequest.imageCropAndScaleOption = &lt;span class=&quot;type&quot;&gt;VNImageCropAndScaleOptionCenterCrop&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.requests = [classificationRequest]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;上面的代码实现了 Vision 的工作流，并在 completion Block 中对预测结果进行了处理：从 top5 中筛选可能性大于 0.2 的结果，并转成文本描述。因为所有结果的可能性总和为 1，所以最终的结果不会达到 5 个，实际测试中其实结果往往只有 1-2 个。&lt;/p&gt;
@@ -1648,7 +1648,7 @@
     <link href="http://yulingtianxia.com/blog/2017/05/30/Implementing-CNN-with-MPS/"/>
     <id>http://yulingtianxia.com/blog/2017/05/30/Implementing-CNN-with-MPS/</id>
     <published>2017-05-30T09:20:32.000Z</published>
-    <updated>2017-06-17T02:55:01.000Z</updated>
+    <updated>2018-09-15T08:28:13.821Z</updated>
     
     <content type="html">&lt;p&gt;最近一个月从零开始自学了下有关 iOS 上的机器学习相关知识，亲身实践了从数据采集到训练模型再到移动端预测的流程。理论知识学习路径为：&lt;strong&gt;机器学习-&amp;gt;深度学习-&amp;gt;迁移学习&lt;/strong&gt;；实践框架学习路径为：&lt;strong&gt;TensorFlow-&amp;gt;Keras-&amp;gt;MPS(iOS 10)&lt;/strong&gt;。最终完成一个简单的手势图像五分类问题，并预测 iOS 摄像头采集的图片。最终结果，训练集准确率 96.26%，交叉验证集准确率 73.86%。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
@@ -1831,7 +1831,7 @@
 &lt;/blockquote&gt;
 &lt;h2 id=&quot;数据采集&quot;&gt;&lt;a href=&quot;#数据采集&quot; class=&quot;headerlink&quot; title=&quot;数据采集&quot;&gt;&lt;/a&gt;数据采集&lt;/h2&gt;&lt;p&gt;因为网上提供的一些用于训练的海量图片数据都是格式整齐像素较低的图片，比如28x28这种，且特征明显，都为某种物体，这种专用于比赛挑战的图片分类数量一般都是10，100，1000等，更专注于算法的准确率，忽视了真实的场景。&lt;/p&gt;
 &lt;p&gt;为了模拟真实场景，我使用 Web 程序调用 iMac 前置摄像头采集 320x240 尺寸的照片。为了更高效采集图片数据，我采用连拍的方式拍摄并保存图片到本地：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/training_data.png&quot; alt=&quot;帅是我的无奈&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MachineLearning/training_data.png&quot; alt=&quot;帅是我的无奈&quot;&gt;&lt;/p&gt;
 &lt;p&gt;需要去除少量过于模糊和手指不小心跑出屏幕外的图片，尽可能提高数据的质量。&lt;/p&gt;
 &lt;p&gt;因为不同平台和浏览器对 Html5 规范支持程度不同，建议在 Mac 上使用 Firefox，Windows 上应该 Chrome 也好使，但没试过。&lt;/p&gt;
 &lt;p&gt;图像采集的代码放在 &lt;a href=&quot;https://github.com/yulingtianxia/HandGestureCNN/tree/master/captureImages&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;captureImages&lt;/a&gt; 目录里。&lt;/p&gt;
@@ -1840,14 +1840,14 @@
 &lt;p&gt;其实苹果爸爸已经帮我们用 Swift 和 Metal Performance Shaders 实现了个使用 Inception V3 网络预测图像类别的 Demo:&lt;a href=&quot;https://developer.apple.com/library/content/samplecode/MetalImageRecognition/Introduction/Intro.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MetalImageRecognition: Performing Image Recognition with Inception_v3 Network using Metal Performance Shaders Convolutional Neural Network routines&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;所以我决定使用 &lt;a href=&quot;https://arxiv.org/pdf/1512.00567v3.pdf&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Inception V3 Network&lt;/a&gt; 来 fine-tuning，这样在后续的 MPS 代码编写上就会省很多时间。TensorFlow 官方也有相应 &lt;a href=&quot;https://www.tensorflow.org/tutorials/image_recognition#image-recognition&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;教程&lt;/a&gt;。&lt;/p&gt;
 &lt;h3 id=&quot;bottleneck-features&quot;&gt;&lt;a href=&quot;#bottleneck-features&quot; class=&quot;headerlink&quot; title=&quot;bottleneck features&quot;&gt;&lt;/a&gt;bottleneck features&lt;/h3&gt;&lt;p&gt;下图展示了 Inception V3 网络的结构，其中的 top 部分就是 Final part 所指的部分，我们可以将其替换成我们自己的全连接层，利用前面 Input 预测的结果来作为输入数据，训练我们自己的分类器。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/Inception V3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MachineLearning/Inception V3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;上图中的 Inception mudules 使用的是&lt;a href=&quot;https://arxiv.org/pdf/1512.00567v3.pdf&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;论文&lt;/a&gt;中提到的图 6 的结构，实际代码中则使用的图 5。&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;Keras 有很多使用 ImageNet 预训练的模型，我们这里只需要 Inception V3 去掉 Final part 的剩余部分，一行代码搞定：&lt;/p&gt;
 &lt;figure class=&quot;highlight ini&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attr&quot;&gt;model&lt;/span&gt; = applications.InceptionV3(include_top=&lt;span class=&quot;literal&quot;&gt;False&lt;/span&gt;, weights=&lt;span class=&quot;string&quot;&gt;&#39;imagenet&#39;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;在 TensorFlow 中读取文件数据需要通过 &lt;code&gt;QueueRunner&lt;/code&gt; 和 &lt;code&gt;Coordinator&lt;/code&gt; 构造队列来实现 data flow，比较麻烦：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/AnimatedFileQueues.gif&quot; alt=&quot;图片来源 TensorFlow&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MachineLearning/AnimatedFileQueues.gif&quot; alt=&quot;图片来源 TensorFlow&quot;&gt;&lt;/p&gt;
 &lt;p&gt;Keras 真是太方便了，用生成器把图片数据标准化，使用加载好的 &lt;code&gt;model&lt;/code&gt; 预测出结果，并保存到 npy 文件中。&lt;/p&gt;
 &lt;figure class=&quot;highlight nix&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attr&quot;&gt;datagen&lt;/span&gt; = ImageDataGenerator(&lt;span class=&quot;attr&quot;&gt;rescale=1.&lt;/span&gt; / &lt;span class=&quot;number&quot;&gt;255&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attr&quot;&gt;generator&lt;/span&gt; = datagen.flow_from_directory(&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   train_data_dir,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;attr&quot;&gt;target_size=(img_width,&lt;/span&gt; img_height),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;attr&quot;&gt;batch_size=batch_size,&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;attr&quot;&gt;class_mode=None,&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &lt;span class=&quot;attr&quot;&gt;shuffle=False)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attr&quot;&gt;bottleneck_features_train&lt;/span&gt; = model.predict_generator(&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   generator, nb_train_samples // batch_size)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;np.save(open(&#39;bottleneck_features_train.npy&#39;, &#39;w&#39;),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       bottleneck_features_train)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;这里保存的结果并不是 one-hot 格式的分类结果，只是作为 Final part 的输入，所以叫做 bottleneck features。&lt;/p&gt;
@@ -1871,7 +1871,7 @@
 &lt;p&gt;HDF（英语：Hierarchical Data Format）指一种为存储和处理大容量科学数据设计的文件格式及相应库文件。HDF最早由NCSA开发，目前在非盈利组织 HDF 小组维护下继续发展。当前流行的版本是HDF5。&lt;br&gt;    – 维基百科&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;&lt;a href=&quot;https://www.hdfgroup.org&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;HDF Group&lt;/a&gt; 提供了可视化查看 HDF 文件的工具：&lt;a href=&quot;https://support.hdfgroup.org/products/java/release/download.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;HDFView&lt;/a&gt;，因为是用 java 写的，所以是跨平台的。Mac 版本有个已知的 bug：双击一个 &lt;code&gt;.h5&lt;/code&gt; 文件后 HDFView 界面是空的，需要把 &lt;code&gt;.h5&lt;/code&gt; 文件拖动到 HDFView 左边栏才能打开。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/HDFView.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MachineLearning/HDFView.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;Keras 可以将训练处的权重结果高存成 HDF5 格式，但苹果提供的 Demo 使用的权重文件是 memory-mapped 二进制文件，每层网络都对应一个 &lt;code&gt;.dat&lt;/code&gt; 文件。&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://support.hdfgroup.org/products/hdf5_tools/index.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;SOFTWARE USING HDF5&lt;/a&gt; 列举了很多用于操作 HDF 文件和格式转换的工具。可以用一些工具将存有权重的 HDF 文件先转化成若干 &lt;code&gt;.dat&lt;/code&gt; 文件，然后再打包到 iOS App 中。还有一种做法是将 HDF 文件打包到 iOS App 中，然后在客户端完成格式导出。&lt;a href=&quot;https://github.com/aleph7/HDF5Kit&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;HDF5Kit&lt;/a&gt; 是对 &lt;a href=&quot;https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;HDF 源码&lt;/a&gt;的 Swift 封装，不过还有些 crash。我采用了第二种做法，因为我懒，替换权重文件的时候只需要一个 HDF 文件，不用替换一堆 &lt;code&gt;.dat&lt;/code&gt; 文件🙄。实际应用中千万别这么干。&lt;/p&gt;
 &lt;p&gt;可以根据上图中 HDFView 展示的树状层级递归遍历 Group，并拼接好正确的名称。比如 “bias:0” 和 “kernel:0”。将 HDF5 转换成二进制文件的代码如下：&lt;/p&gt;
@@ -1935,7 +1935,7 @@
     <link href="http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/"/>
     <id>http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/</id>
     <published>2017-04-16T16:11:48.000Z</published>
-    <updated>2017-04-16T16:15:35.000Z</updated>
+    <updated>2018-09-15T08:28:13.652Z</updated>
     
     <content type="html">&lt;p&gt;Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 &lt;code&gt;+ load&lt;/code&gt; 方法中，这是利用它调用时机较提前等性质。&lt;/p&gt;
 &lt;p&gt;有时候需要 Hook 子类和父类的同一个方法，但是它们的 &lt;code&gt;+ load&lt;/code&gt; 方法调用顺序不同。一个常见的顺序可能是：父类-&amp;gt;子类-&amp;gt;子类类别-&amp;gt;父类类别。所以 Hook 的顺序并不能保证，就不能保证 Hook 后方法调用的顺序是对的。而且使用不同方法 Method Swizzling 也会带来不同的结果。本文将会对这些情况下的 Hook 结果进行分析和总结。&lt;/p&gt;
@@ -1960,30 +1960,30 @@
 &lt;li&gt;本文会按 Hook 顺序、类是否实现方法、Hook 方案(A/B) 来细分不同情况下的结果。一共细分为 18 种情况。&lt;/li&gt;
 &lt;li&gt;本文会使用图例表示每种情况下的方法调用和映射关系，分为三个维度（Super/Child;Original/Swizzle;&lt;code&gt;Selector&lt;/code&gt;/&lt;code&gt;Method&lt;/code&gt;/&lt;code&gt;IMP&lt;/code&gt;）&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/模板.png&quot; alt=&quot;模板&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/模板.png&quot; alt=&quot;模板&quot;&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;下文中的图例均为 Hook 后的结果(Hook 前的太简单了懒得画)。如果不理解 &lt;code&gt;Selector&lt;/code&gt;,&lt;code&gt;Method&lt;/code&gt; 与 &lt;code&gt;IMP&lt;/code&gt; 三者的关系，甚至不理解 Method Swizzling 原理，请先阅读 &lt;a href=&quot;http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/&quot;&gt;Objective-C Runtime&lt;/a&gt;！如果还是看不懂，那就再看一遍吧！&lt;/strong&gt;&lt;/p&gt;
 &lt;h2 id=&quot;Hook-顺序：先-Child-后-Super&quot;&gt;&lt;a href=&quot;#Hook-顺序：先-Child-后-Super&quot; class=&quot;headerlink&quot; title=&quot;Hook 顺序：先 Child 后 Super&quot;&gt;&lt;/a&gt;Hook 顺序：先 Child 后 Super&lt;/h2&gt;&lt;p&gt;这个顺序本身就不被大众认可却又不得不广泛被使用，因为很多想 Hook 系统 API 只能从 Category 下手。当子类同样的方法也被 Hook 后，奇怪的事情便发生了。&lt;/p&gt;
-&lt;h3 id=&quot;Super-未实现方法-Child-未实现方法&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-未实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 未实现方法&lt;/h3&gt;&lt;h4 id=&quot;Super-Plan-A-Child-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperAChildA.png&quot; alt=&quot;CS_SuperAChildA&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Super-未实现方法-Child-未实现方法&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-未实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 未实现方法&lt;/h3&gt;&lt;h4 id=&quot;Super-Plan-A-Child-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildA.png&quot; alt=&quot;CS_SuperAChildA&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
 &lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B-Child-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan B,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperBChildA.png&quot; alt=&quot;CS_SuperBChildA&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-B-Child-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan B,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildA.png&quot; alt=&quot;CS_SuperBChildA&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
 &lt;li&gt;Super 对象正常&lt;/li&gt;
 &lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-A-Child-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan A,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperAChildB.png&quot; alt=&quot;CS_SuperAChildB&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-A-Child-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan A,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildB.png&quot; alt=&quot;CS_SuperAChildB&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
 &lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则会一直调用 Child_Swizzle 进入死循环&lt;/li&gt;
 &lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦间接等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B-Child-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan B,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperBChildB.png&quot; alt=&quot;CS_SuperBChildB&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-B-Child-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan B,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildB.png&quot; alt=&quot;CS_SuperBChildB&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象：Super-&amp;gt;Child-&amp;gt;Base&lt;/li&gt;
@@ -1991,13 +1991,13 @@
 &lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&quot;Super-实现方法-Child-未实现方法&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-未实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 未实现方法&lt;/h3&gt;&lt;p&gt;由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。&lt;/p&gt;
-&lt;h4 id=&quot;Child-Plan-A&quot;&gt;&lt;a href=&quot;#Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan A&quot;&gt;&lt;/a&gt;Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_ChildA.png&quot; alt=&quot;CS_ChildA&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Child-Plan-A&quot;&gt;&lt;a href=&quot;#Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan A&quot;&gt;&lt;/a&gt;Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildA.png&quot; alt=&quot;CS_ChildA&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
 &lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&quot;Child-Plan-B&quot;&gt;&lt;a href=&quot;#Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan B&quot;&gt;&lt;/a&gt;Child:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_ChildB.png&quot; alt=&quot;CS_ChildB&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Child-Plan-B&quot;&gt;&lt;a href=&quot;#Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan B&quot;&gt;&lt;/a&gt;Child:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildB.png&quot; alt=&quot;CS_ChildB&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象：Super-&amp;gt;Child-&amp;gt;Base&lt;/li&gt;
@@ -2005,13 +2005,13 @@
 &lt;li&gt;Base 对象正常&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&quot;Super-未实现方法-Child-实现方法&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。&lt;/p&gt;
-&lt;h4 id=&quot;Super-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperA.png&quot; alt=&quot;CS_SuperA&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperA.png&quot; alt=&quot;CS_SuperA&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
 &lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B&quot;&gt;&lt;/a&gt;Super:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_SuperB.png&quot; alt=&quot;CS_SuperB&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B&quot;&gt;&lt;/a&gt;Super:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperB.png&quot; alt=&quot;CS_SuperB&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
@@ -2019,47 +2019,47 @@
 &lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&quot;Super-实现方法-Child-实现方法&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/CS_Perfect.png&quot; alt=&quot;CS_Perfect&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_Perfect.png&quot; alt=&quot;CS_Perfect&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
 &lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&quot;Hook-顺序：先-Super-后-Child&quot;&gt;&lt;a href=&quot;#Hook-顺序：先-Super-后-Child&quot; class=&quot;headerlink&quot; title=&quot;Hook 顺序：先 Super 后 Child&quot;&gt;&lt;/a&gt;Hook 顺序：先 Super 后 Child&lt;/h2&gt;&lt;p&gt;并不是 Hook 顺序对了就能保平安，姿势也同样重要。&lt;/p&gt;
-&lt;h3 id=&quot;Super-未实现方法-Child-未实现方法-1&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-未实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 未实现方法&lt;/h3&gt;&lt;h4 id=&quot;Super-Plan-A-Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperAChildA.png&quot; alt=&quot;SC_SuperAChildA&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Super-未实现方法-Child-未实现方法-1&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-未实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 未实现方法&lt;/h3&gt;&lt;h4 id=&quot;Super-Plan-A-Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildA.png&quot; alt=&quot;SC_SuperAChildA&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
 &lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B-Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan B,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperBChildA.png&quot; alt=&quot;SC_SuperBChildA&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-B-Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan B,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildA.png&quot; alt=&quot;SC_SuperBChildA&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
 &lt;li&gt;Super 对象正常：Super-&amp;gt;Base&lt;/li&gt;
 &lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-A-Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan A,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperAChildB.png&quot; alt=&quot;SC_SuperAChildB&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-A-Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan A,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildB.png&quot; alt=&quot;SC_SuperAChildB&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
 &lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则 Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
 &lt;li&gt;Base 对象正常&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B-Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan B,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperBChildB.png&quot; alt=&quot;SC_SuperBChildB&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-B-Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan B,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildB.png&quot; alt=&quot;SC_SuperBChildB&quot;&gt;&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
 &lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则 Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
 &lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&quot;Super-实现方法-Child-未实现方法-1&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-未实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 未实现方法&lt;/h3&gt;&lt;p&gt;由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。&lt;/p&gt;
-&lt;h4 id=&quot;Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan A&quot;&gt;&lt;/a&gt;Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_ChildA.png&quot; alt=&quot;SC_ChildA&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan A&quot;&gt;&lt;/a&gt;Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildA.png&quot; alt=&quot;SC_ChildA&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
 &lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&quot;Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan B&quot;&gt;&lt;/a&gt;Child:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_ChildB.png&quot; alt=&quot;SC_ChildB&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan B&quot;&gt;&lt;/a&gt;Child:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildB.png&quot; alt=&quot;SC_ChildB&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
@@ -2067,13 +2067,13 @@
 &lt;li&gt;Base 对象正常&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&quot;Super-未实现方法-Child-实现方法-1&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。&lt;/p&gt;
-&lt;h4 id=&quot;Super-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperA.png&quot; alt=&quot;SC_SuperA&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperA.png&quot; alt=&quot;SC_SuperA&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
 &lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B&quot;&gt;&lt;/a&gt;Super:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_SuperB.png&quot; alt=&quot;SC_SuperB&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;Super-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B&quot;&gt;&lt;/a&gt;Super:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperB.png&quot; alt=&quot;SC_SuperB&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
@@ -2081,7 +2081,7 @@
 &lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&quot;Super-实现方法-Child-实现方法-1&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/MethodSwizzling/SC_Perfect.png&quot; alt=&quot;SC_Perfect&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_Perfect.png&quot; alt=&quot;SC_Perfect&quot;&gt;&lt;/p&gt;
 &lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
@@ -2129,7 +2129,7 @@
     <link href="http://yulingtianxia.com/blog/2017/03/06/How-to-hook-the-correct-method-in-reverse-engineering/"/>
     <id>http://yulingtianxia.com/blog/2017/03/06/How-to-hook-the-correct-method-in-reverse-engineering/</id>
     <published>2017-03-05T16:06:51.000Z</published>
-    <updated>2017-03-23T04:58:56.000Z</updated>
+    <updated>2018-09-15T08:28:13.960Z</updated>
     
     <content type="html">&lt;p&gt;在逆向工程中往往需要针对想要做的功能 Hook 到相应的方法和属性，小白面对 &lt;code&gt;class-dump&lt;/code&gt; 后的大量头文件表示只能靠『猜』。这里我分享下逆向微信实现屏蔽群消息和好友消息的实战经验，适用于&lt;strong&gt;非越狱机&lt;/strong&gt;，项目 GitHub 地址: &lt;a href=&quot;https://github.com/yulingtianxia/FishChat&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;FishChat&lt;/a&gt;。为了能读懂此文，建议先阅读我的上一篇文章：&lt;a href=&quot;http://yulingtianxia.com/blog/2017/02/28/Make-WeChat-Great-Again/&quot;&gt;Make WeChat Great Again&lt;/a&gt;。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
@@ -2161,9 +2161,9 @@
 &lt;/ol&gt;
 &lt;p&gt;记得在&lt;strong&gt;选择 FAT 架构时选择跟手机 CPU 相匹配的架构&lt;/strong&gt;，有 armv7 和 aarch64 两种可选。我这里以 aarch64 为例。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;-[CMessageMgr GetMsg:LocalID:]&lt;/code&gt; 在 Hopper 中的地址 &lt;code&gt;0x000000010280e1d4&lt;/code&gt;：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/reverse%20engineering/original_method_address@2x.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/reverse%20engineering/original_method_address@2x.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;WeChat Mach-O 在 Hopper 中的基地址 &lt;code&gt;0x0000000100000000&lt;/code&gt;：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/reverse%20engineering/wechat_base_address@2x.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/reverse%20engineering/wechat_base_address@2x.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;得出 &lt;code&gt;-[CMessageMgr GetMsg:LocalID:]&lt;/code&gt; 在 WeChat 中的相对地址为 &lt;code&gt;0x280E1D4&lt;/code&gt;：&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;0x000000010280e1d4 - 0x0000000100000000 = 0x280E1D4&lt;/code&gt;&lt;/p&gt;
 &lt;ol&gt;
@@ -2218,7 +2218,7 @@
     <link href="http://yulingtianxia.com/blog/2017/02/28/Make-WeChat-Great-Again/"/>
     <id>http://yulingtianxia.com/blog/2017/02/28/Make-WeChat-Great-Again/</id>
     <published>2017-02-27T17:08:05.000Z</published>
-    <updated>2017-03-23T04:58:56.000Z</updated>
+    <updated>2018-09-15T08:28:13.677Z</updated>
     
     <content type="html">&lt;p&gt;关闭朋友圈有一年多了，突然有一天微信的策略变了，在关闭朋友圈的同时也不让别人查看自己的朋友圈了。有妹子表示看不到我朋友圈很不爽，于是我决定对微信进行一番改造！初步实现效果：&lt;/p&gt;
 &lt;ol&gt;
@@ -2340,13 +2340,13 @@
     <link href="http://yulingtianxia.com/blog/2017/01/16/DIY-a-simple-two-way-list/"/>
     <id>http://yulingtianxia.com/blog/2017/01/16/DIY-a-simple-two-way-list/</id>
     <published>2017-01-16T05:23:17.000Z</published>
-    <updated>2017-02-27T12:59:40.000Z</updated>
+    <updated>2018-09-15T08:28:13.966Z</updated>
     
     <content type="html">&lt;p&gt;公司项目中有个页面是双向滑动的列表，遂用 &lt;code&gt;UIScrollView&lt;/code&gt; 手撸了之，把一些 UI 和数据上的心得记录下来。&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
 &lt;h2 id=&quot;需求简介&quot;&gt;&lt;a href=&quot;#需求简介&quot; class=&quot;headerlink&quot; title=&quot;需求简介&quot;&gt;&lt;/a&gt;需求简介&lt;/h2&gt;&lt;p&gt;UI 上的主要内容就是一个 &lt;code&gt;UITableView&lt;/code&gt;，其中一些 cell 内会嵌套一个横向滑动的 &lt;code&gt;ListView&lt;/code&gt;，&lt;code&gt;ListView&lt;/code&gt; 中包含一些尺寸相同可点击的 ItemView，ItemView 中的图片内容需要从网络加载。&lt;/p&gt;
 &lt;p&gt;去掉一些跟本文内容无关的细枝末节，可以将原型抽象如下图：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/原型.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/QQStoryMemory/原型.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;蓝色的为 ItemView，白色为 &lt;code&gt;ListView&lt;/code&gt;，灰色为 TableView。&lt;/p&gt;
 &lt;p&gt;竖向滑动会有分页加载和转菊花停顿，横向滑动无分页加载停顿，要求细腻丝滑。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;如果只是单纯一个双向滑动列表，&lt;code&gt;UICollectionView&lt;/code&gt; 完全可以胜任。&lt;/strong&gt;但是真正的需求里还掺杂着很多其他 UI 元素，所以只能 DIY 了。&lt;/p&gt;
@@ -2369,7 +2369,7 @@
 &lt;/ol&gt;
 &lt;p&gt;在计算需要加载的 &lt;code&gt;range&lt;/code&gt; 的时候需要注意一些边界数值的处理，擅用 &lt;code&gt;floorf&lt;/code&gt; 和 &lt;code&gt;ceilf&lt;/code&gt; 函数进行取舍，并用 &lt;code&gt;MAX()&lt;/code&gt; 和 &lt;code&gt;MIN()&lt;/code&gt; 来检查边界值合法性。&lt;/p&gt;
 &lt;h2 id=&quot;可重用的-ItemView&quot;&gt;&lt;a href=&quot;#可重用的-ItemView&quot; class=&quot;headerlink&quot; title=&quot;可重用的 ItemView&quot;&gt;&lt;/a&gt;可重用的 &lt;code&gt;ItemView&lt;/code&gt;&lt;/h2&gt;&lt;p&gt;需要自己实现一个类似 &lt;code&gt;UICollectionView&lt;/code&gt; 的 item 重用机制。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://7ni3rk.com1.z0.glb.clouddn.com/QQStoryMemory/reusableitem.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/QQStoryMemory/reusableitem.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;在用户横向滑动列表时，需要更新此时某个区间的 UI 和数据。这个任务是在 &lt;code&gt;loadItems:&lt;/code&gt; 中实现的，原理是计算出需要被加载的 itemID 数组，并与已有的数据进行比较。将不再需要显示在屏幕上的 &lt;code&gt;ItemView&lt;/code&gt; 进行回收（enqueue），并从根据 itemID 添加 &lt;code&gt;ItemView&lt;/code&gt; 对象（dequeue）。因为一开始只加载了首屏的 &lt;code&gt;ItemModel&lt;/code&gt; 数组，所以还需要对本地缓存中缺失的数据进行请求。&lt;/p&gt;
 &lt;figure class=&quot;highlight armasm&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;38&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;39&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;40&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;41&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;42&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;43&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/**&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; 在指定范围内加载可重用 Item&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; 针对本地没有数据的 itemID 请求数据&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; @param range 加载的范围&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; */&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (void)loadItems:(NSRange)range&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    NSMutableArray&amp;lt;NSString *&amp;gt; *&lt;span class=&quot;keyword&quot;&gt;itemIDsToLoad &lt;/span&gt;= [[&lt;span class=&quot;keyword&quot;&gt;self.model.itemIDs &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;subarrayWithRange:range] &lt;/span&gt;mutableCopy]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    NSMutableArray&amp;lt;&lt;span class=&quot;keyword&quot;&gt;ItemView &lt;/span&gt;*&amp;gt; *&lt;span class=&quot;keyword&quot;&gt;itemsToEnqueue &lt;/span&gt;= [NSMutableArray array]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    // 比较需要加载的 &lt;span class=&quot;keyword&quot;&gt;itemID &lt;/span&gt;数组和已经显示过的 &lt;span class=&quot;keyword&quot;&gt;itemID &lt;/span&gt;数组，计算出需要新添加的 &lt;span class=&quot;keyword&quot;&gt;itemID &lt;/span&gt;和不再需要显示而被回收的 &lt;span class=&quot;keyword&quot;&gt;Item&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;    for (&lt;span class=&quot;keyword&quot;&gt;ItemView &lt;/span&gt;*&lt;span class=&quot;keyword&quot;&gt;item &lt;/span&gt;in &lt;span class=&quot;keyword&quot;&gt;self.visibleItems) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        NSString *&lt;span class=&quot;keyword&quot;&gt;itemIDAlreadyLoad &lt;/span&gt;= nil&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        for (NSString *&lt;span class=&quot;keyword&quot;&gt;itemIDToLoad &lt;/span&gt;in &lt;span class=&quot;keyword&quot;&gt;itemIDsToLoad) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;meta&quot;&gt;if&lt;/span&gt; ([&lt;span class=&quot;keyword&quot;&gt;itemIDToLoad &lt;/span&gt;isEqualToString:&lt;span class=&quot;keyword&quot;&gt;item.itemID]) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &lt;span class=&quot;keyword&quot;&gt;itemIDAlreadyLoad &lt;/span&gt;= &lt;span class=&quot;keyword&quot;&gt;itemIDToLoad;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;            &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;meta&quot;&gt;if&lt;/span&gt; (!&lt;span class=&quot;keyword&quot;&gt;itemIDAlreadyLoad) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            [&lt;span class=&quot;keyword&quot;&gt;itemsToEnqueue &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;addObject:item];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;meta&quot;&gt;else&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            [&lt;span class=&quot;keyword&quot;&gt;itemIDsToLoad &lt;/span&gt;removeObject:&lt;span class=&quot;keyword&quot;&gt;itemIDAlreadyLoad];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    // 回收不需要显示的 &lt;span class=&quot;keyword&quot;&gt;Item&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;    for (&lt;span class=&quot;keyword&quot;&gt;ItemView &lt;/span&gt;*&lt;span class=&quot;keyword&quot;&gt;item &lt;/span&gt;in &lt;span class=&quot;keyword&quot;&gt;itemsToEnqueue) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        [&lt;span class=&quot;keyword&quot;&gt;item &lt;/span&gt;removeFromSuperview]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        [&lt;span class=&quot;keyword&quot;&gt;self.visibleItems &lt;/span&gt;removeObject:&lt;span class=&quot;keyword&quot;&gt;item];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        [&lt;span class=&quot;keyword&quot;&gt;self &lt;/span&gt;enqueueReusableItem:&lt;span class=&quot;keyword&quot;&gt;item];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    // 添加需要显示的 &lt;span class=&quot;keyword&quot;&gt;Item&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;    NSMutableArray&amp;lt;NSString *&amp;gt; *&lt;span class=&quot;keyword&quot;&gt;itemIDsToRequest &lt;/span&gt;= [NSMutableArray array]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    for (NSString *&lt;span class=&quot;keyword&quot;&gt;itemID &lt;/span&gt;in &lt;span class=&quot;keyword&quot;&gt;itemIDsToLoad) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;meta&quot;&gt;if&lt;/span&gt; (![&lt;span class=&quot;keyword&quot;&gt;self &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;addItemViewWithID:itemID]) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            [&lt;span class=&quot;keyword&quot;&gt;itemIDsToRequest &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;addObject:itemID];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    // 针对本地没有数据的 &lt;span class=&quot;keyword&quot;&gt;itemID &lt;/span&gt;请求数据&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;meta&quot;&gt;if&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;itemIDsToRequest.count &lt;/span&gt;&amp;gt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        // 向后台请求 &lt;span class=&quot;keyword&quot;&gt;itemIDsToRequest &lt;/span&gt;对应数据&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;keyword&quot;&gt;itemIDsToLoad &lt;/span&gt;release]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;&lt;code&gt;addItemViewWithID:&lt;/code&gt; 负责从 reusable items 获取 &lt;code&gt;ItemView&lt;/code&gt; 并设置 &lt;code&gt;frame&lt;/code&gt; 添加到 &lt;code&gt;ListView&lt;/code&gt; 中。因为 &lt;code&gt;ItemView&lt;/code&gt; 是重用的，所以如果 dequeue 出的对象正好是上一次刚刚 enqueue 的对象，那么就不用重新填充数据了；否则需要重置 &lt;code&gt;ItemView&lt;/code&gt; 的占位图，并填充新数据。&lt;code&gt;ItemView&lt;/code&gt; 被填充了数据后会对数据进行处理，比如异步拉取图片资源。&lt;/p&gt;

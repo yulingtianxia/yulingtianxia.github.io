@@ -17,16 +17,16 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2015/02/10/When-CoreData-meets-iCloud/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="尽管苹果把iCloud与CoreData之间的完美配合吹的天花乱坠，但在iOS7之前，想用iCloud同步CoreData数据简直就是噩梦，苹果自己也承认了之前的诸多bug和不稳定性，这让苹果不得不重新站出来说他们的工程师已经在iOS7中修复了bug，增强了体验，balabala，关键是对于程序员来说，将iCloud集成到CoreData变得无比简单。">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20150210-1@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20150210-4@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20150210-6@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20150210-5@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/52D3D9B3C9688FB91EDAEB5F88BF102C.jpg?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
-<meta property="og:updated_time" content="2016-05-11T14:32:38.000Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20150210-1@2x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20150210-4@2x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20150210-6@2x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20150210-5@2x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/52D3D9B3C9688FB91EDAEB5F88BF102C.jpg">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.682Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CoreData遇见iCloud的那些坑">
 <meta name="twitter:description" content="尽管苹果把iCloud与CoreData之间的完美配合吹的天花乱坠，但在iOS7之前，想用iCloud同步CoreData数据简直就是噩梦，苹果自己也承认了之前的诸多bug和不稳定性，这让苹果不得不重新站出来说他们的工程师已经在iOS7中修复了bug，增强了体验，balabala，关键是对于程序员来说，将iCloud集成到CoreData变得无比简单。">
-<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20150210-1@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/QQ20150210-1@2x.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -126,7 +126,7 @@
 <p>然而当Xcode6和iOS8袭来，一个个坑争先恐后的出现了。  </p>
 <p>首先是<strong>iCloud Drive</strong>，它与之前iCloud有冲突。如升级，请彻底，让测试机器都升级iCloud Drive。  </p>
 <p>然后是Xcode6中开启Capabilities标签的iCloud选项卡后，如下的场景简直是卧槽：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20150210-1@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">   </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20150210-1@2x.png" alt="">   </p>
 <p>该怎么选怎么选啊？！我只能说按照上图这么选就对了。顺便说一下iCloud默认容器名称格式已经变成了“iCloud.com.yourname.yourAppID”，其实这也不太准确，官方称作“iCloud.$(CFBundleIdentifier)”,后面的美元号所指的变量就是General中Identity一栏的“Bundle Identifier”值。此外“Key-value storage”和“CloudKit”选项选不选都可以，但“iCloud Documents”一定要勾选，否则是无法同步CoreData数据的。  </p>
 <p>PS：CloudKit是苹果最新推出的基于iCloud的一个云端数据存储服务,提供了低成本的云存储并能作为一个后端服务通过用户们的iCloud账号分享其应用数据。 </p>
 <p>接下来是时候检查我们是否成功添加了iCloud容器，可以在<code>applicationDidFinishLaunchingWithOptions</code>方法中尝试获取容器的URL来判断：<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> containerURL = <span class="type">NSFileManager</span>.defaultManager().<span class="type">URLForUbiquityContainerIdentifier</span>(<span class="string">"iCloud.com.yulingtianxia.HardChoice"</span>)</span><br><span class="line"><span class="keyword">if</span> containerURL != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="built_in">println</span>(<span class="string">"success:<span class="subst">\(containerURL)</span>"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">  <span class="built_in">println</span>(<span class="string">"URL=nil"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -134,17 +134,17 @@
 <p>PS：官方文档不建议在主线程使用<code>URLForUbiquityContainerIdentifier</code>方法，因为它可能需要较长时间来返回URL而阻塞主线程。这里只是为了测试使用。  </p>
 <p>然而判断iCloud是否真的与CoreData工作正常，苹果的官方文档写的很详细：<a href="https://developer.apple.com/library/ios/documentation/DataManagement/Conceptual/UsingCoreDataWithiCloudPG/UsingiCloudDebuggingTools/UsingiCloudDebuggingTools.html#//apple_ref/doc/uid/TP40013491-CH8-SW1" target="_blank" rel="external">Using the iCloud Debugging Tools</a>  </p>
 <p>当我兴致冲冲的打开Xcode中的debug navigator，点击左边的iCloud查看状态时，被眼前的一切惊呆了：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20150210-4@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20150210-4@2x.png" alt="">  </p>
 <p>“iCloud Usage”告诉我状态不可用，然而右下角的日志中Using local storage已经从1变成了0，也就是证明了我的APP(<a href="http://hardchoice.yulingtianxia.com" target="_blank" rel="external">HardChoice</a>)已经从CoreData使用本地持久仓库转移到了使用“iCloud-enabled”持久仓库。“Transfer Activity”中柱状图更是显示从iCloud下载了数据。而这其实应该是Xcode6的一个bug，有人已经在<a href="https://devforums.apple.com/message/1026708#1026708" target="_blank" rel="external">苹果开发者论坛</a>讨论了。  </p>
 <p>根据我的测试，只勾选“Key-value storage”或者在模拟器上调试时，“iCloud Usage”都不会出现。而即使“iCloud Usage”出现了，状态也始终是Disabled，“Transfer Activity”也不是很灵敏。唯独只能相信CoreData的log了。  </p>
 <p>但我们可以查看“My Mac”的“iCloud Usage”而不是iPhone的“iCloud Usage”：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20150210-6@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20150210-6@2x.png" alt="">  </p>
 <p>在“Documents”一栏中可以看出我在两个设备间同步了数据，“mobile”后面跟着的是我的设备编号。展开数据可以看到更详细的同步记录：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20150210-5@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20150210-5@2x.png" alt="">  </p>
 <p>虽然通过“My Mac”可以看到iCloud与CoreData的数据同步记录，但是在Xcode6.1.1中“Documents”的显示不是很正常，在最新的Xcode6.2beta版中虽然修复了“Documents”的显示问题，但“iCloud Usage”的种种bug依然存在。  </p>
 <p>最后，确保网络通常。我在中软实训一个月时，网络奇差，或是屏蔽了iCloud，一直没能调试成功。  </p>
 <p>贴一张<a href="http://hardchoice.yulingtianxia.com" target="_blank" rel="external">HardChoice</a>同步成功的测试图，因为我是用Swift写的这个Demo，所以喜欢用Swift的可以直接把我的那部分源码粘过去用：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/52D3D9B3C9688FB91EDAEB5F88BF102C.jpg?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/52D3D9B3C9688FB91EDAEB5F88BF102C.jpg" alt="">  </p>
 <p>参考：  </p>
 <ul>
 <li><a href="http://stackoverflow.com/questions/26195612/icloud-debug-gauge-status-disabled" target="_blank" rel="external">http://stackoverflow.com/questions/26195612/icloud-debug-gauge-status-disabled</a>  </li>

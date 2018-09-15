@@ -39,14 +39,14 @@ Runtime 基础数据结构
 健壮的实例变量 (Non Fragile ivars)
 Objective-C Associated Objects
 Method">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/Runtime/class-diagram.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/Runtime/class-diagram.jpg">
 <meta property="og:image" content="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Art/messaging1.gif">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20141113-1@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141113-1@2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Art/forwarding.gif">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/nf1.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/nf2.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/nf3.png">
-<meta property="og:updated_time" content="2017-10-19T15:32:51.246Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/nf1.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/nf2.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/nf3.png">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.773Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Objective-C Runtime">
 <meta name="twitter:description" content="本文详细整理了 Cocoa 的 Runtime 系统的知识，它使得 Objective-C 如虎添翼，具备了灵活的动态特性，使这门古老的语言焕发生机。主要内容如下：  
@@ -61,7 +61,7 @@ Runtime 基础数据结构
 健壮的实例变量 (Non Fragile ivars)
 Objective-C Associated Objects
 Method">
-<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/Runtime/class-diagram.jpg">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/Runtime/class-diagram.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -192,7 +192,7 @@ Method">
 <p>而 <code>objc_class</code> 包含很多方法，主要都为围绕它的几个成员做文章： </p>
 <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">struct</span> <span class="selector-tag">objc_class</span> : <span class="selector-tag">objc_object</span> &#123;</span><br><span class="line">    <span class="comment">// Class ISA;</span></span><br><span class="line">    Class superclass;</span><br><span class="line">    cache_t cache;             <span class="comment">// formerly cache pointer and vtable</span></span><br><span class="line">    class_data_bits_t bits;    <span class="comment">// class_rw_t * plus custom rr/alloc flags</span></span><br><span class="line">    <span class="selector-tag">class_rw_t</span> *<span class="selector-tag">data</span>() &#123; </span><br><span class="line">        return bits<span class="selector-class">.data</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    ... 省略其他方法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>objc_class</code> 继承于 <code>objc_object</code>，也就是说一个 ObjC 类本身同时也是一个对象，为了处理类和对象的关系，runtime 库创建了一种叫做元类 (Meta Class) 的东西，类对象所属类型就叫做元类，它用来表述类对象本身所具备的元数据。类方法就定义于此处，因为这些方法可以理解成类对象的实例方法。每个类仅有一个类对象，而每个类对象仅有一个与之相关的元类。当你发出一个类似 <code>[NSObject alloc]</code> 的消息时，你事实上是把这个消息发给了一个类对象 (Class Object) ，这个类对象必须是一个元类的实例，而这个元类同时也是一个根元类 (root meta class) 的实例。所有的元类最终都指向根元类为其超类。所有的元类的方法列表都有能够响应消息的类方法。所以当 <code>[NSObject alloc]</code> 这条消息发给类对象的时候，<code>objc_msgSend()</code> 会去它的元类里面去查找能够响应消息的方法，如果找到了，然后对这个类对象执行方法调用。  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/Runtime/class-diagram.jpg" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/Runtime/class-diagram.jpg" alt="">  </p>
 <p>上图实线是 <code>superclass</code> 指针，虚线是<code>isa</code>指针。 有趣的是根元类的超类是 <code>NSObject</code>，而 <code>isa</code> 指向了自己，而 <code>NSObject</code> 的超类为 <code>nil</code>，也就是它没有超类。</p>
 <p>可以看到运行时一个类还关联了它的超类指针，类名，成员变量，方法，缓存，还有附属的协议。  </p>
 <h4 id="cache-t"><a href="#cache-t" class="headerlink" title="cache_t"></a>cache_t</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="keyword">cache_t</span> &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="keyword">bucket_t</span> *_buckets;</span><br><span class="line">    <span class="keyword">mask_t</span> _mask;</span><br><span class="line">    <span class="keyword">mask_t</span> _occupied;</span><br><span class="line">    ... 省略其他方法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -410,7 +410,7 @@ Method">
 <li>当 <code>self</code> 为类对象时，<code>[self class]</code> 返回值为自身，还是 <code>self</code>。<code>object_getClass(self)</code> 与 <code>object_getClass([self class])</code> 等价。</li>
 </ol>
 <p>凡是涉及到类方法时，一定要弄清楚元类、selector、IMP 等概念，这样才能做到举一反三，随机应变。</p>
-<h2 id="消息转发"><a href="#消息转发" class="headerlink" title="消息转发"></a>消息转发</h2><p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/QQ20141113-1@2x.png?imageView2/2/w/800/q/75|watermark/2/text/eXVsaW5ndGlhbnhpYQ==/font/Y29taWMgc2FucyBtcw==/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="">  </p>
+<h2 id="消息转发"><a href="#消息转发" class="headerlink" title="消息转发"></a>消息转发</h2><p><img src="http://yulingtianxia.com/resources/QQ20141113-1@2x.png" alt="">  </p>
 <h3 id="重定向"><a href="#重定向" class="headerlink" title="重定向"></a>重定向</h3><p>在消息转发机制执行前，Runtime 系统会再给我们一次偷梁换柱的机会，即通过重载<code>- (id)forwardingTargetForSelector:(SEL)aSelector</code>方法替换消息的接受者为其他对象：  </p>
 <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">-</span> (id)<span class="selector-tag">forwardingTargetForSelector</span><span class="selector-pseudo">:(SEL)aSelector</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="selector-tag">if</span>(aSelector == <span class="variable">@selector</span>(<span class="attribute">mysteriousMethod</span>:))&#123;</span><br><span class="line">        return alternateObject;</span><br><span class="line">    &#125;</span><br><span class="line">    return <span class="selector-attr">[super forwardingTargetForSelector:aSelector]</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>毕竟消息转发要耗费更多时间，抓住这次机会将消息重定向给别人是个不错的选择，<del>不过千万别返回<code>self</code>，因为那样会死循环。</del> 如果此方法返回nil或self,则会进入消息转发机制(<code>forwardInvocation:</code>);否则将向返回的对象重新发送消息。  </p>
@@ -436,11 +436,11 @@ Method">
 <p>除了<code>respondsToSelector:</code> 和 <code>isKindOfClass:</code>之外，<code>instancesRespondToSelector:</code>中也应该写一份转发算法。如果使用了协议，<code>conformsToProtocol:</code>同样也要加入到这一行列中。类似地，如果一个对象转发它接受的任何远程消息，它得给出一个<code>methodSignatureForSelector:</code>来返回准确的方法描述，这个方法会最终响应被转发的消息。比如一个对象能给它的替代者对象转发消息，它需要像下面这样实现<code>methodSignatureForSelector:</code>： </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (NSMethodSignature*)<span class="string">methodSignatureForSelector:</span>(SEL)selector</span><br><span class="line">&#123;</span><br><span class="line">    NSMethodSignature* signature = [<span class="keyword">super</span> <span class="string">methodSignatureForSelector:</span>selector];</span><br><span class="line">    <span class="keyword">if</span> (!signature) &#123;</span><br><span class="line">       signature = [surrogate <span class="string">methodSignatureForSelector:</span>selector];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> signature;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="健壮的实例变量-Non-Fragile-ivars"><a href="#健壮的实例变量-Non-Fragile-ivars" class="headerlink" title="健壮的实例变量 (Non Fragile ivars)"></a>健壮的实例变量 (Non Fragile ivars)</h2><p>在 Runtime 的现行版本中，最大的特点就是健壮的实例变量。当一个类被编译时，实例变量的布局也就形成了，它表明访问类的实例变量的位置。从对象头部开始，实例变量依次根据自己所占空间而产生位移：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/nf1.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/nf1.png" alt="">  </p>
 <p>上图左边是<code>NSObject</code>类的实例变量布局，右边是我们写的类的布局，也就是在超类后面加上我们自己类的实例变量，看起来不错。但试想如果哪天苹果更新了<code>NSObject</code>类，发布新版本的系统的话，那就悲剧了：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/nf2.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/nf2.png" alt="">  </p>
 <p>我们自定义的类被划了两道线，那是因为那块区域跟超类重叠了。唯有苹果将超类改为以前的布局才能拯救我们，但这样也导致它们不能再拓展它们的框架了，因为成员变量布局被死死地固定了。在脆弱的实例变量(Fragile ivars) 环境下我们需要重新编译继承自 Apple 的类来恢复兼容性。那么在健壮的实例变量下会发生什么呢？  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/nf3.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/nf3.png" alt="">  </p>
 <p>在健壮的实例变量下编译器生成的实例变量布局跟以前一样，但是当 runtime 系统检测到与超类有部分重叠时它会调整你新添加的实例变量的位移，那样你在子类中新添加的成员就被保护起来了。  </p>
 <p>需要注意的是在健壮的实例变量下，不要使用<code>sizeof(SomeClass)</code>，而是用<code>class_getInstanceSize([SomeClass class])</code>代替；也不要使用<code>offsetof(SomeClass, SomeIvar)</code>，而要用<code>ivar_getOffset(class_getInstanceVariable([SomeClass class], &quot;SomeIvar&quot;))</code>来代替。</p>
 <p><a href="http://yulingtianxia.com/blog/2016/10/30/Optimizing-App-Startup-Time/">优化 App 的启动时间</a> 讲过加载 Mach-O 文件时有个步骤是通过 fix-up 修改偏移量来解决 fragile base class。</p>

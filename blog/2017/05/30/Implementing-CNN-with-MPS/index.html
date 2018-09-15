@@ -18,13 +18,13 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="最近一个月从零开始自学了下有关 iOS 上的机器学习相关知识，亲身实践了从数据采集到训练模型再到移动端预测的流程。理论知识学习路径为：机器学习-&amp;gt;深度学习-&amp;gt;迁移学习；实践框架学习路径为：TensorFlow-&amp;gt;Keras-&amp;gt;MPS(iOS 10)。最终完成一个简单的手势图像五分类问题，并预测 iOS 摄像头采集的图片。最终结果，训练集准确率 96.26%，交叉验证集准确率">
 <meta property="og:image" content="http://wx3.sinaimg.cn/mw1024/642c5793ly1ff5ornniluj21kw0u3tn2.jpg">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/training_data.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/Inception V3.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/AnimatedFileQueues.gif">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/HDFView.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MachineLearning/training_data.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MachineLearning/Inception V3.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MachineLearning/AnimatedFileQueues.gif">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MachineLearning/HDFView.jpg">
 <meta property="og:image" content="https://github.com/shu223/iOS-10-Sampler/blob/master/README_resources/imagerecog.gif?raw=true">
 <meta property="og:image" content="https://docs-assets.developer.apple.com/published/48ad0af3fd/b6d1d091-162c-418d-bc2e-0b6f3105c126.png">
-<meta property="og:updated_time" content="2017-06-17T02:55:01.000Z">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.821Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Implementing CNN with MPS">
 <meta name="twitter:description" content="最近一个月从零开始自学了下有关 iOS 上的机器学习相关知识，亲身实践了从数据采集到训练模型再到移动端预测的流程。理论知识学习路径为：机器学习-&amp;gt;深度学习-&amp;gt;迁移学习；实践框架学习路径为：TensorFlow-&amp;gt;Keras-&amp;gt;MPS(iOS 10)。最终完成一个简单的手势图像五分类问题，并预测 iOS 摄像头采集的图片。最终结果，训练集准确率 96.26%，交叉验证集准确率">
@@ -292,7 +292,7 @@
 </blockquote>
 <h2 id="数据采集"><a href="#数据采集" class="headerlink" title="数据采集"></a>数据采集</h2><p>因为网上提供的一些用于训练的海量图片数据都是格式整齐像素较低的图片，比如28x28这种，且特征明显，都为某种物体，这种专用于比赛挑战的图片分类数量一般都是10，100，1000等，更专注于算法的准确率，忽视了真实的场景。</p>
 <p>为了模拟真实场景，我使用 Web 程序调用 iMac 前置摄像头采集 320x240 尺寸的照片。为了更高效采集图片数据，我采用连拍的方式拍摄并保存图片到本地：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/training_data.png" alt="帅是我的无奈"></p>
+<p><img src="http://yulingtianxia.com/resources/MachineLearning/training_data.png" alt="帅是我的无奈"></p>
 <p>需要去除少量过于模糊和手指不小心跑出屏幕外的图片，尽可能提高数据的质量。</p>
 <p>因为不同平台和浏览器对 Html5 规范支持程度不同，建议在 Mac 上使用 Firefox，Windows 上应该 Chrome 也好使，但没试过。</p>
 <p>图像采集的代码放在 <a href="https://github.com/yulingtianxia/HandGestureCNN/tree/master/captureImages" target="_blank" rel="external">captureImages</a> 目录里。</p>
@@ -301,14 +301,14 @@
 <p>其实苹果爸爸已经帮我们用 Swift 和 Metal Performance Shaders 实现了个使用 Inception V3 网络预测图像类别的 Demo:<a href="https://developer.apple.com/library/content/samplecode/MetalImageRecognition/Introduction/Intro.html" target="_blank" rel="external">MetalImageRecognition: Performing Image Recognition with Inception_v3 Network using Metal Performance Shaders Convolutional Neural Network routines</a></p>
 <p>所以我决定使用 <a href="https://arxiv.org/pdf/1512.00567v3.pdf" target="_blank" rel="external">Inception V3 Network</a> 来 fine-tuning，这样在后续的 MPS 代码编写上就会省很多时间。TensorFlow 官方也有相应 <a href="https://www.tensorflow.org/tutorials/image_recognition#image-recognition" target="_blank" rel="external">教程</a>。</p>
 <h3 id="bottleneck-features"><a href="#bottleneck-features" class="headerlink" title="bottleneck features"></a>bottleneck features</h3><p>下图展示了 Inception V3 网络的结构，其中的 top 部分就是 Final part 所指的部分，我们可以将其替换成我们自己的全连接层，利用前面 Input 预测的结果来作为输入数据，训练我们自己的分类器。</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/Inception V3.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/MachineLearning/Inception V3.png" alt=""></p>
 <blockquote>
 <p>上图中的 Inception mudules 使用的是<a href="https://arxiv.org/pdf/1512.00567v3.pdf" target="_blank" rel="external">论文</a>中提到的图 6 的结构，实际代码中则使用的图 5。</p>
 </blockquote>
 <p>Keras 有很多使用 ImageNet 预训练的模型，我们这里只需要 Inception V3 去掉 Final part 的剩余部分，一行代码搞定：</p>
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">model</span> = applications.InceptionV3(include_top=<span class="literal">False</span>, weights=<span class="string">'imagenet'</span>)</span><br></pre></td></tr></table></figure>
 <p>在 TensorFlow 中读取文件数据需要通过 <code>QueueRunner</code> 和 <code>Coordinator</code> 构造队列来实现 data flow，比较麻烦：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/AnimatedFileQueues.gif" alt="图片来源 TensorFlow"></p>
+<p><img src="http://yulingtianxia.com/resources/MachineLearning/AnimatedFileQueues.gif" alt="图片来源 TensorFlow"></p>
 <p>Keras 真是太方便了，用生成器把图片数据标准化，使用加载好的 <code>model</code> 预测出结果，并保存到 npy 文件中。</p>
 <figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">datagen</span> = ImageDataGenerator(<span class="attr">rescale=1.</span> / <span class="number">255</span>)</span><br><span class="line"><span class="attr">generator</span> = datagen.flow_from_directory(</span><br><span class="line">   train_data_dir,</span><br><span class="line">   <span class="attr">target_size=(img_width,</span> img_height),</span><br><span class="line">   <span class="attr">batch_size=batch_size,</span></span><br><span class="line">   <span class="attr">class_mode=None,</span></span><br><span class="line">   <span class="attr">shuffle=False)</span></span><br><span class="line"><span class="attr">bottleneck_features_train</span> = model.predict_generator(</span><br><span class="line">   generator, nb_train_samples // batch_size)</span><br><span class="line">np.save(open('bottleneck_features_train.npy', 'w'),</span><br><span class="line">       bottleneck_features_train)</span><br></pre></td></tr></table></figure>
 <p>这里保存的结果并不是 one-hot 格式的分类结果，只是作为 Final part 的输入，所以叫做 bottleneck features。</p>
@@ -332,7 +332,7 @@
 <p>HDF（英语：Hierarchical Data Format）指一种为存储和处理大容量科学数据设计的文件格式及相应库文件。HDF最早由NCSA开发，目前在非盈利组织 HDF 小组维护下继续发展。当前流行的版本是HDF5。<br>    – 维基百科</p>
 </blockquote>
 <p><a href="https://www.hdfgroup.org" target="_blank" rel="external">HDF Group</a> 提供了可视化查看 HDF 文件的工具：<a href="https://support.hdfgroup.org/products/java/release/download.html" target="_blank" rel="external">HDFView</a>，因为是用 java 写的，所以是跨平台的。Mac 版本有个已知的 bug：双击一个 <code>.h5</code> 文件后 HDFView 界面是空的，需要把 <code>.h5</code> 文件拖动到 HDFView 左边栏才能打开。</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/MachineLearning/HDFView.jpg" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/MachineLearning/HDFView.jpg" alt=""></p>
 <p>Keras 可以将训练处的权重结果高存成 HDF5 格式，但苹果提供的 Demo 使用的权重文件是 memory-mapped 二进制文件，每层网络都对应一个 <code>.dat</code> 文件。</p>
 <p><a href="https://support.hdfgroup.org/products/hdf5_tools/index.html" target="_blank" rel="external">SOFTWARE USING HDF5</a> 列举了很多用于操作 HDF 文件和格式转换的工具。可以用一些工具将存有权重的 HDF 文件先转化成若干 <code>.dat</code> 文件，然后再打包到 iOS App 中。还有一种做法是将 HDF 文件打包到 iOS App 中，然后在客户端完成格式导出。<a href="https://github.com/aleph7/HDF5Kit" target="_blank" rel="external">HDF5Kit</a> 是对 <a href="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/" target="_blank" rel="external">HDF 源码</a>的 Swift 封装，不过还有些 crash。我采用了第二种做法，因为我懒，替换权重文件的时候只需要一个 HDF 文件，不用替换一堆 <code>.dat</code> 文件🙄。实际应用中千万别这么干。</p>
 <p>可以根据上图中 HDFView 展示的树状层级递归遍历 Group，并拼接好正确的名称。比如 “bias:0” 和 “kernel:0”。将 HDF5 转换成二进制文件的代码如下：</p>

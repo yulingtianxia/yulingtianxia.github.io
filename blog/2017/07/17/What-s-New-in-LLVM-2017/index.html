@@ -27,11 +27,11 @@
 支持 Objective-C API 可用性检查
 新增一些对隐患代码的静态分析检查和 warning
 更快的 LTO，使其可以真正使用">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/C++%20Refactoring.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/constexpr%20if%200.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/constexpr%20if%201.png">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/constexpr%20if%202.png">
-<meta property="og:updated_time" content="2017-09-09T15:40:06.000Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/LLVM/C++%20Refactoring.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/LLVM/constexpr%20if%200.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/LLVM/constexpr%20if%201.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/LLVM/constexpr%20if%202.png">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.597Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="What's New in LLVM">
 <meta name="twitter:description" content="这绝不仅仅是一篇 WWDC 2017 Session 411 学习笔记。除了有关 LLVM  9.0 的新特性之外，还有关于静态分析器和 Clang 5 Objective-C ARC 的一点看法和经验。
@@ -40,7 +40,7 @@
 支持 Objective-C API 可用性检查
 新增一些对隐患代码的静态分析检查和 warning
 更快的 LTO，使其可以真正使用">
-<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/C++%20Refactoring.png">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/LLVM/C++%20Refactoring.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -207,7 +207,7 @@
 <h3 id="无参数函数的声明"><a href="#无参数函数的声明" class="headerlink" title="无参数函数的声明"></a>无参数函数的声明</h3><p>如果函数没有参数，需要用 <code>void</code> 显式声明。否则可能调用方会传入其他类型和数量的参数，在运行时引发 crash。如果用 <code>void</code> 显式声明，在编译阶段就会产生 error。</p>
 <figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> foo() <span class="comment">// warning:This function declaration is not a prototype</span></span><br><span class="line"><span class="keyword">int</span> foo(<span class="keyword">void</span>) <span class="comment">// OK</span></span><br></pre></td></tr></table></figure>
 <h2 id="C-Refactoring"><a href="#C-Refactoring" class="headerlink" title="C++ Refactoring"></a>C++ Refactoring</h2><p>对于一个带有 C++ 或 Objective-C++ 代码的工程来说，想重命名某个类名真的是艰难，Xcode 会提示不支持 C++！现在，各种操作也支持 C++ 咯：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/C++%20Refactoring.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/LLVM/C++%20Refactoring.png" alt=""></p>
 <p>LLVM 的重构代码功能极大节省了开发者的时间。</p>
 <h2 id="Features-from-C-17"><a href="#Features-from-C-17" class="headerlink" title="Features from C++17"></a>Features from C++17</h2><p>其实这些都是 C++17 的新特性罢了，LLVM 9.0 积极响应支持。可以在编译选项 C++ Language Dialect 中选择使用的 C++ 标准库。GNU++17 比 C++17 多了语言扩展。</p>
 <h3 id="Structured-Binding"><a href="#Structured-Binding" class="headerlink" title="Structured Binding"></a>Structured Binding</h3><p>解析 Tuple 可以一句搞定了：</p>
@@ -219,11 +219,11 @@
 <figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="comment">(auto a = getNumber()</span>; a &gt; <span class="number">0</span>) </span><br><span class="line">	foo<span class="comment">()</span>;</span><br><span class="line">	</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">a = <span class="number">5</span>; <span class="comment">// error! a 只在上面的 if 作用域中有效。</span></span><br></pre></td></tr></table></figure>
 <h3 id="constexpr-if"><a href="#constexpr-if" class="headerlink" title="constexpr if"></a>constexpr if</h3><p>以 <code>if constexpr</code> 开始的语句被称为 <code>constexpr if</code> 语句。– <a href="http://zh.cppreference.com/w/cpp/language/if" target="_blank" rel="external">cppreference.com</a></p>
 <p>举个栗子：<code>advance</code> 函数可以向前或向后迭代指定步数，但对于字符串和数组来说有更快的方式：无需一步步迭代，可以直接访问。但 <code>advance</code> 的参数是通用的，编译不通过：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/constexpr%20if%200.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/LLVM/constexpr%20if%200.png" alt=""></p>
 <p>传统解决方法是 Compile Time Dispatch：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/constexpr%20if%201.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/LLVM/constexpr%20if%201.png" alt=""></p>
 <p>C++17 的 <code>constexpr if</code> 可以一行搞定：</p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/LLVM/constexpr%20if%202.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/LLVM/constexpr%20if%202.png" alt=""></p>
 <p>详见 <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0292r2.html" target="_blank" rel="external">constexpr if</a>。</p>
 <h3 id="string-view"><a href="#string-view" class="headerlink" title="string_view"></a>string_view</h3><p>简单来说它是指向字符串的指针，但不会拷贝一份字符串。一旦指向的字符串被修改或者被释放了，<code>string_view</code> 的内容也会跟跟着变，毕竟是同一份内存。所以，虽然会优化性能，慎用。就像 OC 中的字符串和数组传递赋值时一般都 <code>copy</code>，string_view 相当于是 <code>assign</code>，搞不好野指针呢。</p>
 <p>详见 <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4480.html#string.view" target="_blank" rel="external">string_view</a>。</p>

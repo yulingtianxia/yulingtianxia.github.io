@@ -17,12 +17,12 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2015/04/06/Communication-between-your-App-and-Extensions/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="最近玩了玩Watch开发，而目前Watch的主要逻辑处理都是放在WatchKit Extension。真正的Host App，也就是WatchKit App只是用来在界面上显示数据的。于是实践了下containing app与app extension之间的通信和数据共享。">
-<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/hardchoice.gif">
-<meta property="og:updated_time" content="2016-05-11T14:31:46.000Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/hardchoice.gif">
+<meta property="og:updated_time" content="2018-09-15T08:28:13.845Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="App与Extensions间通信共享数据">
 <meta name="twitter:description" content="最近玩了玩Watch开发，而目前Watch的主要逻辑处理都是放在WatchKit Extension。真正的Host App，也就是WatchKit App只是用来在界面上显示数据的。于是实践了下containing app与app extension之间的通信和数据共享。">
-<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/hardchoice.gif">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/hardchoice.gif">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -217,7 +217,7 @@
 <p>在stackoverflow上找到了<a href="http://stackoverflow.com/questions/24875745/xcode-6-beta-4-using-bridging-headers-with-framework-targets-is-unsupported" target="_blank" rel="external">解决方案</a>，于是删除之前的”DataKit-Bridging-Header.h”文件并清除”Build Settings”关于Bridging Header的引用；在DataKit.h添加<code>#import &quot;HelpMethod.h&quot;</code>，并在HelpMethod.h文件的 “File inspector”-&gt;”Target Membership”中DataKit右侧将”project”修改为”public”(否则会出现<strong>include of non-modular header inside framework module ‘DataKit’</strong>的编译错误)。  </p>
 <p>至此，我们可以在<code>HelpMethod</code>类中实现一个函数指针，并在Wormhole.swift文件中直接使用这个函数指针来为<code>CFunctionPointer</code>类型的参数传值。  </p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>来个效果图：  </p>
-<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/hardchoice.gif" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/hardchoice.gif" alt="">  </p>
 <p>这是我第一次写Watch的App(废话谁不是第一次)，经验并不是很多，也因为Swift1.2还未正式发布，遇到了一些坑。好歹最后克服了，但也丢了贞操(毕竟不是纯Swift的App了)。有不对的地方还请多多指教。随着Swift的不断完善，希望以后能够支持创建<code>CFunctionPointer</code>对象，这样它好我也好😄</p>
   
 	</div>
