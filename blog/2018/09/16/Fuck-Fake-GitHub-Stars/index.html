@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="前一阵子看到一篇文章 《石锤 github 买 star 行为》，第一反应是很震惊。是真的很震惊，因为文章中提到的 CocoaDebug 我也 star 了，没想到竟然涉嫌购买 star 炒作，蒙蔽了好多人的双眼。没错，我就是跟风 star，看别的大神 star 啥就顺手 star。 也有的人看 Trending 上啥火顺手 star，甚至用脚本自动 star。
 这条黑产背后到底隐藏着什么？Git">
-<meta property="og:updated_time" content="2018-09-16T11:26:45.348Z">
+<meta property="og:updated_time" content="2018-09-16T13:30:04.829Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GitHub 虚假 Star 净网行动">
 <meta name="twitter:description" content="前一阵子看到一篇文章 《石锤 github 买 star 行为》，第一反应是很震惊。是真的很震惊，因为文章中提到的 CocoaDebug 我也 star 了，没想到竟然涉嫌购买 star 炒作，蒙蔽了好多人的双眼。没错，我就是跟风 star，看别的大神 star 啥就顺手 star。 也有的人看 Trending 上啥火顺手 star，甚至用脚本自动 star。
@@ -110,6 +110,7 @@
 <p>这条黑产背后到底隐藏着什么？GitHub 上还有哪些大笨蛋也曾靠买 Star 蒙蔽了大神们的双眼呢？我写了个简单的程序用于挖掘基于 Star 的关系链，并进行聚类分析。然后从 CocoaDebug 这个 repo 入手，沿着关系链一层层深挖下去。</p>
 <p>用数据说话，结果一定也会让你大开眼界。正义可能会迟到，但绝不会缺席！</p>
 <p>项目源码：<a href="https://github.com/yulingtianxia/FuckFakeGitHubStars" target="_blank" rel="external">FuckFakeGitHubStars</a></p>
+<a id="more"></a>
 <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><ol>
 <li>用 GitHub 的 API 获取 repo 有哪些用户 star 了，然后再看看这些用户都 star 了哪些 repo。</li>
 <li>将 star 行为相似的用户和 repo 聚类</li>

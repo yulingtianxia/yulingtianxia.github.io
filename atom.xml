@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2018-09-16T11:26:45.348Z</updated>
+  <updated>2018-09-16T13:30:04.829Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,12 +20,13 @@
     <link href="http://yulingtianxia.com/blog/2018/09/16/Fuck-Fake-GitHub-Stars/"/>
     <id>http://yulingtianxia.com/blog/2018/09/16/Fuck-Fake-GitHub-Stars/</id>
     <published>2018-09-16T08:20:55.000Z</published>
-    <updated>2018-09-16T11:26:45.348Z</updated>
+    <updated>2018-09-16T13:30:04.829Z</updated>
     
     <content type="html">&lt;p&gt;前一阵子看到一篇文章 &lt;a href=&quot;https://juejin.im/post/5b8c9310f265da4361530560&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;《石锤 github 买 star 行为》&lt;/a&gt;，第一反应是很震惊。是真的很震惊，因为文章中提到的 CocoaDebug 我也 star 了，没想到竟然涉嫌购买 star 炒作，蒙蔽了好多人的双眼。没错，我就是跟风 star，看别的大神 star 啥就顺手 star。 也有的人看 Trending 上啥火顺手 star，甚至用脚本自动 star。&lt;/p&gt;
 &lt;p&gt;这条黑产背后到底隐藏着什么？GitHub 上还有哪些大笨蛋也曾靠买 Star 蒙蔽了大神们的双眼呢？我写了个简单的程序用于挖掘基于 Star 的关系链，并进行聚类分析。然后从 CocoaDebug 这个 repo 入手，沿着关系链一层层深挖下去。&lt;/p&gt;
 &lt;p&gt;用数据说话，结果一定也会让你大开眼界。正义可能会迟到，但绝不会缺席！&lt;/p&gt;
 &lt;p&gt;项目源码：&lt;a href=&quot;https://github.com/yulingtianxia/FuckFakeGitHubStars&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;FuckFakeGitHubStars&lt;/a&gt;&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
 &lt;h2 id=&quot;思路&quot;&gt;&lt;a href=&quot;#思路&quot; class=&quot;headerlink&quot; title=&quot;思路&quot;&gt;&lt;/a&gt;思路&lt;/h2&gt;&lt;ol&gt;
 &lt;li&gt;用 GitHub 的 API 获取 repo 有哪些用户 star 了，然后再看看这些用户都 star 了哪些 repo。&lt;/li&gt;
 &lt;li&gt;将 star 行为相似的用户和 repo 聚类&lt;/li&gt;
@@ -84,7 +85,10 @@
     
     <summary type="html">
     
-      &lt;p&gt;前一阵子看到一篇文章 &lt;a href=&quot;https://juejin.im/post/5b8c9310f265da4361530560&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;《石锤 github 买 star 行为》&lt;/a&gt;，第一反应是很震惊。是真
+      &lt;p&gt;前一阵子看到一篇文章 &lt;a href=&quot;https://juejin.im/post/5b8c9310f265da4361530560&quot;&gt;《石锤 github 买 star 行为》&lt;/a&gt;，第一反应是很震惊。是真的很震惊，因为文章中提到的 CocoaDebug 我也 star 了，没想到竟然涉嫌购买 star 炒作，蒙蔽了好多人的双眼。没错，我就是跟风 star，看别的大神 star 啥就顺手 star。 也有的人看 Trending 上啥火顺手 star，甚至用脚本自动 star。&lt;/p&gt;
+&lt;p&gt;这条黑产背后到底隐藏着什么？GitHub 上还有哪些大笨蛋也曾靠买 Star 蒙蔽了大神们的双眼呢？我写了个简单的程序用于挖掘基于 Star 的关系链，并进行聚类分析。然后从 CocoaDebug 这个 repo 入手，沿着关系链一层层深挖下去。&lt;/p&gt;
+&lt;p&gt;用数据说话，结果一定也会让你大开眼界。正义可能会迟到，但绝不会缺席！&lt;/p&gt;
+&lt;p&gt;项目源码：&lt;a href=&quot;https://github.com/yulingtianxia/FuckFakeGitHubStars&quot;&gt;FuckFakeGitHubStars&lt;/a&gt;&lt;/p&gt;
     
     </summary>
     
