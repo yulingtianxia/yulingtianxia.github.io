@@ -84,6 +84,121 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2018/09/16/Fuck-Fake-GitHub-Stars/" title="GitHub 虚假 Star 净网行动" itemprop="url">GitHub 虚假 Star 净网行动</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2018-09-16T08:20:55.000Z" itemprop="datePublished"> 发表于 2018-09-16</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>前一阵子看到一篇文章 <a href="https://juejin.im/post/5b8c9310f265da4361530560" target="_blank" rel="external">《石锤 github 买 star 行为》</a>，第一反应是很震惊。是真的很震惊，因为文章中提到的 CocoaDebug 我也 star 了，没想到竟然涉嫌购买 star 炒作，蒙蔽了好多人的双眼。没错，我就是跟风 star，看别的大神 star 啥就顺手 star。 也有的人看 Trending 上啥火顺手 star，甚至用脚本自动 star。</p>
+<p>这条黑产背后到底隐藏着什么？GitHub 上还有哪些大笨蛋也曾靠买 Star 蒙蔽了大神们的双眼呢？我写了个简单的程序用于挖掘基于 Star 的关系链，并进行聚类分析。然后从 CocoaDebug 这个 repo 入手，沿着关系链一层层深挖下去。</p>
+<p>用数据说话，结果一定也会让你大开眼界。正义可能会迟到，但绝不会缺席！</p>
+<p>项目源码：<a href="https://github.com/yulingtianxia/FuckFakeGitHubStars" target="_blank" rel="external">FuckFakeGitHubStars</a></p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><ol>
+<li>用 GitHub 的 API 获取 repo 有哪些用户 star 了，然后再看看这些用户都 star 了哪些 repo。</li>
+<li>将 star 行为相似的用户和 repo 聚类</li>
+<li>疑似黑产的用户集合一般数量较多，且每个用户 star 的 repo 并不多。将这种集合纳入黑名单。（肯定会有误判，但影响不大）</li>
+<li>计算 repo 的 star 中黑名单用户占比。</li>
+<li>继续遍历黑名单中的用户，挖掘下一层关系链，揪出更多花钱买 star 的 repo。</li>
+</ol>
+<h2 id="爆料"><a href="#爆料" class="headerlink" title="爆料"></a>爆料</h2><p><strong>郑重声明</strong>：</p>
+<ol>
+<li>结果不一定准确，仅做参考，毕竟黑名单有误判。</li>
+<li>买 Star 都只是推测，没有交易记录就没有实锤。本文仅是分析 GitHub 社区这一有趣而又奇妙的的现象。</li>
+<li>不排除有人恶意给别人的 Repo 买 Star 的情况，也说不定有人注册了一堆账号喜欢没事给别人 Star 呢！</li>
+<li>由于脚本是广度优先搜索，每个 batch 跑完结果都会更准确。跑完整个 GitHub 需要巨长的时间。跑的 batch 越多，有些 Repo 就越能露出马脚。</li>
+</ol>
+<p>由于数据量实在是太大了，而且也受限于 GitHub API 请求频率的限制和 CPU 计算的耗时，在上面思路中的第五步中只运行了一部分。当然，全部深挖都只是时间问题，无奈数据量级的恐怖，先把阶段性成果输出下。</p>
+<ol>
+<li>从 CocoaDebug 入手挖掘出的疑似黑产账号达到了900左右。</li>
+<li>CocoaDebug 有 30% 左右的 Star 可能是买的。</li>
+<li><p>在 <a href="https://juejin.im/post/5b8c9310f265da4361530560" target="_blank" rel="external">《石锤 github 买 star 行为》</a> 文章中跟 CocoaPods 一起被揭露的『难兄难弟』所购买的 Star 更为夸张，超过了半数：</p>
+ <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">repo owner<span class="regexp">/name: baoleiji/</span>QilinBaoleiji stargazer <span class="string">num:</span> <span class="number">1447</span> black <span class="string">percent:</span><span class="number">0.5770559778852798</span></span><br><span class="line">repo owner<span class="regexp">/name: 3348375016/</span>ITSecrets stargazer <span class="string">num:</span> <span class="number">1589</span> black <span class="string">percent:</span><span class="number">0.5173064820641913</span></span><br></pre></td></tr></table></figure>
+<p> 当然，再深挖跑一轮数据可能会发现这个比例更大。</p>
+</li>
+<li><p>Jinxiansen 的 SwiftServerSide-Vapor 曾在 8 月 5 日登上了 Trending，当日收获 104个 Star。如果我没记错的话，mattt 大神也 star 并 follow 过（现在发现又取关了，果然即便蒙蔽了大神的双眼那也只是暂时的事儿）。神奇的是，这个 repo 中有 105 个 Star 疑似来自黑产。附上<a href="https://www.v2ex.com/t/471479" target="_blank" rel="external">这篇 V 站的贴子更有趣</a>。这哥们写的另外一个 JHUD 也是同理。</p>
+ <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repo owner<span class="regexp">/name: Jinxiansen/</span>SwiftServerSide-Vapor stargazer <span class="string">num:</span> <span class="number">583</span> black <span class="string">percent:</span><span class="number">0.18010291595197256</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>UCodeUStory 的 S-MVP，你慢慢涨 Star 就能逃得了么？</p>
+ <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repo owner<span class="regexp">/name: UCodeUStory/</span>S-MVP stargazer <span class="string">num:</span> <span class="number">1103</span> black <span class="string">percent:</span><span class="number">0.28014505893019037</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>买一个 Star 到底要多少钱啊，有的 repo 还不到一百个 Star，占比还不低呢，也不多买点，真抠啊（我甚至怀疑是黑产为了伪装自己的账号，随意 star 了一些没花钱买 star 的库）：</p>
+ <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">repo owner<span class="regexp">/name: jianhaod/</span>Kaggle stargazer <span class="string">num:</span> <span class="number">37</span> black <span class="string">percent:</span><span class="number">0.5945945945945946</span></span><br><span class="line">repo owner<span class="regexp">/name: whsgzcy/</span>DEMOS_TO_MySelf_Android stargazer <span class="string">num:</span> <span class="number">63</span> black <span class="string">percent:</span><span class="number">0.4603174603174603</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>搞区块链的？7月7日那天涨了 246 个 star，一算比例还真差不多：</p>
+ <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repo owner<span class="regexp">/name: DeuroIO/</span>erc20-ico-onchain-technical-analysis stargazer <span class="string">num:</span> <span class="number">512</span> black <span class="string">percent:</span><span class="number">0.427734375</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>仿豆瓣的、仿知乎的。MelonRice 还有个放虎扑的，我脚本还没扫到它，手动点进去一看 star 的人，还是那尿性，也都 star 了前面那位 Jinxiansen。</p>
+ <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">repo owner<span class="regexp">/name: jianxiaoBai/</span>douban stargazer <span class="string">num:</span> <span class="number">288</span> black <span class="string">percent:</span><span class="number">0.3715277777777778</span></span><br><span class="line">repo owner<span class="regexp">/name: MelonRice/</span>zhihudaily_flutter stargazer <span class="string">num:</span> <span class="number">163</span> black <span class="string">percent:</span><span class="number">0.2085889570552147</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>因为找出来的数据太多了，这里就不逐个去看了，这里只是随便拎几个出来。</p>
+<p>要是 GitHub API 没有请求限频，再搞个云服务器成天跑，再做个前端页面支持查找，就完美了。要是家里有矿，说不定还能上 GPU 搞神经网络在线学习？！</p>
+<p>我好担心被这些人报复啊。</p>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>直接看 <a href="https://github.com/yulingtianxia/FuckFakeGitHubStars/blob/master/README.md" target="_blank" rel="external">README.md</a> 吧。</p>
+<p>因为 GitHub API 用到的 token 没有上传，所以需要填你自己的 token 才可以抓数据。而且我只上传了部分数据，生成的 json 文件太大了，又懒得用数据库。</p>
+<p>最终的可读性比较强的信息输出在 log 里，没有上传。有兴趣的可以自己跑下。</p>
+<h2 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h2><p>技术栈就是 python3 + GraphQL。</p>
+<p><code>REPOSITORY_STARGAZERS.json</code> 存储了 repo 有哪些用户 star 了。<code>USER_STAR_REPOSITORIES.json</code> 存储了用户 star 了哪些 repo。repo 或用户都是一个 node，都有唯一的 node ID。这样就构成了一张有向图。再根据节点的出度或入度集合将节点使用 Jaccard 相似度进行聚类。节点的详细信息以及与其他节点的相似度信息都保存在 <code>NODE_ID_CONTENT.json</code> 中。整理出的疑似黑产黑名单用户保存在 <code>BLACK_LIST.json</code>。</p>
+<p>最初的设想是在这张巨大的有向图中广度优先遍历，层层扒皮。后来迫于面对现实，就只跑了两层，先有个阶段性结论。可以分析单个 repo star 的黑产占比，想把全网数据一网打尽需要耗费更多的时间成本。</p>
+<p>本项目用到的技术都是现学现卖，纯粹是玩票性质，代码烂的一逼，求轻喷。某大神都深入 Python 底层实现原理开课赚钱了，我还在这边查语法边写垃圾代码，差距太大了哎！</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>愿以后 GitHub 能够清静些，虽然我大清自有国情在，但也别让一些别有用心之人一条臭鱼坏了一坨粥。</p>
+<p>写这篇文章的时候，强台风『山竹』还在蹂躏着深圳。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/GitHub/">GitHub</a><a href="/tags/瞎折腾/">瞎折腾</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2018/09/16/Fuck-Fake-GitHub-Stars/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2018/08/13/TBUIAutoTest-Usage/" title="iOS 自动化测试标签生成工具接入指南" itemprop="url">iOS 自动化测试标签生成工具接入指南</a>
   </h1>
   <p class="article-author">By
@@ -618,65 +733,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/" title="Objective-C Message Throttle and Debounce" itemprop="url">Objective-C Message Throttle and Debounce</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2017-11-04T16:39:44.000Z" itemprop="datePublished"> 发表于 2017-11-05</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>在实际项目中经常会遇到因方法调用频繁而导致的 UI 闪动问题和性能问题，这时用某种策略需要控制调用频率，以达到节流和防抖的效果。<a href="https://github.com/yulingtianxia/MessageThrottle">MessageThrottle</a> 是我实现的一个 Objective-C 消息节流和防抖的轻量级工具库，使用便捷且业务无关。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Runtime/">Runtime</a><a href="/tags/Message-Forwarding/">Message Forwarding</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -747,7 +803,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.22px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.44px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 12.22px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 10px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 11.11px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 10px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 18.89px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.11px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 11.11px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 15.56px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.67px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 17.78px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.33px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.67px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 10px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.56px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.33px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.22px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.44px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 13.33px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 10px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 11.11px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 10px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 18.89px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.11px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 11.11px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 15.56px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.67px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 17.78px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.33px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.67px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.11px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.56px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.33px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
