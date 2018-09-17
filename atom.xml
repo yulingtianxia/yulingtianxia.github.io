@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2018-09-16T13:30:04.829Z</updated>
+  <updated>2018-09-17T14:48:40.874Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yulingtianxia.com/blog/2018/09/16/Fuck-Fake-GitHub-Stars/"/>
     <id>http://yulingtianxia.com/blog/2018/09/16/Fuck-Fake-GitHub-Stars/</id>
     <published>2018-09-16T08:20:55.000Z</published>
-    <updated>2018-09-16T13:30:04.829Z</updated>
+    <updated>2018-09-17T14:48:40.874Z</updated>
     
     <content type="html">&lt;p&gt;前一阵子看到一篇文章 &lt;a href=&quot;https://juejin.im/post/5b8c9310f265da4361530560&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;《石锤 github 买 star 行为》&lt;/a&gt;，第一反应是很震惊。是真的很震惊，因为文章中提到的 CocoaDebug 我也 star 了，没想到竟然涉嫌购买 star 炒作，蒙蔽了好多人的双眼。没错，我就是跟风 star，看别的大神 star 啥就顺手 star。 也有的人看 Trending 上啥火顺手 star，甚至用脚本自动 star。&lt;/p&gt;
 &lt;p&gt;这条黑产背后到底隐藏着什么？GitHub 上还有哪些大笨蛋也曾靠买 Star 蒙蔽了大神们的双眼呢？我写了个简单的程序用于挖掘基于 Star 的关系链，并进行聚类分析。然后从 CocoaDebug 这个 repo 入手，沿着关系链一层层深挖下去。&lt;/p&gt;
@@ -45,7 +45,7 @@
 &lt;ol&gt;
 &lt;li&gt;从 CocoaDebug 入手挖掘出的疑似黑产账号达到了900左右。&lt;/li&gt;
 &lt;li&gt;CocoaDebug 有 30% 左右的 Star 可能是买的。&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;在 &lt;a href=&quot;https://juejin.im/post/5b8c9310f265da4361530560&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;《石锤 github 买 star 行为》&lt;/a&gt; 文章中跟 CocoaPods 一起被揭露的『难兄难弟』所购买的 Star 更为夸张，超过了半数：&lt;/p&gt;
+&lt;li&gt;&lt;p&gt;在 &lt;a href=&quot;https://juejin.im/post/5b8c9310f265da4361530560&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;《石锤 github 买 star 行为》&lt;/a&gt; 文章中跟 CocoaDebug 一起被揭露的『难兄难弟』所购买的 Star 更为夸张，超过了半数：&lt;/p&gt;
  &lt;figure class=&quot;highlight groovy&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;repo owner&lt;span class=&quot;regexp&quot;&gt;/name: baoleiji/&lt;/span&gt;QilinBaoleiji stargazer &lt;span class=&quot;string&quot;&gt;num:&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;1447&lt;/span&gt; black &lt;span class=&quot;string&quot;&gt;percent:&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;0.5770559778852798&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;repo owner&lt;span class=&quot;regexp&quot;&gt;/name: 3348375016/&lt;/span&gt;ITSecrets stargazer &lt;span class=&quot;string&quot;&gt;num:&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;1589&lt;/span&gt; black &lt;span class=&quot;string&quot;&gt;percent:&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;0.5173064820641913&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt; 当然，再深挖跑一轮数据可能会发现这个比例更大。&lt;/p&gt;
 &lt;/li&gt;
@@ -58,13 +58,9 @@
 &lt;li&gt;&lt;p&gt;买一个 Star 到底要多少钱啊，有的 repo 还不到一百个 Star，占比还不低呢，也不多买点，真抠啊（我甚至怀疑是黑产为了伪装自己的账号，随意 star 了一些没花钱买 star 的库）：&lt;/p&gt;
  &lt;figure class=&quot;highlight groovy&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;repo owner&lt;span class=&quot;regexp&quot;&gt;/name: jianhaod/&lt;/span&gt;Kaggle stargazer &lt;span class=&quot;string&quot;&gt;num:&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;37&lt;/span&gt; black &lt;span class=&quot;string&quot;&gt;percent:&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;0.5945945945945946&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;repo owner&lt;span class=&quot;regexp&quot;&gt;/name: whsgzcy/&lt;/span&gt;DEMOS_TO_MySelf_Android stargazer &lt;span class=&quot;string&quot;&gt;num:&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;63&lt;/span&gt; black &lt;span class=&quot;string&quot;&gt;percent:&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;0.4603174603174603&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;/li&gt;
-&lt;/ol&gt;
-&lt;ol&gt;
 &lt;li&gt;&lt;p&gt;搞区块链的？7月7日那天涨了 246 个 star，一算比例还真差不多：&lt;/p&gt;
  &lt;figure class=&quot;highlight groovy&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;repo owner&lt;span class=&quot;regexp&quot;&gt;/name: DeuroIO/&lt;/span&gt;erc20-ico-onchain-technical-analysis stargazer &lt;span class=&quot;string&quot;&gt;num:&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;512&lt;/span&gt; black &lt;span class=&quot;string&quot;&gt;percent:&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;0.427734375&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;/li&gt;
-&lt;/ol&gt;
-&lt;ol&gt;
 &lt;li&gt;&lt;p&gt;仿豆瓣的、仿知乎的。MelonRice 还有个放虎扑的，我脚本还没扫到它，手动点进去一看 star 的人，还是那尿性，也都 star 了前面那位 Jinxiansen。&lt;/p&gt;
  &lt;figure class=&quot;highlight groovy&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;repo owner&lt;span class=&quot;regexp&quot;&gt;/name: jianxiaoBai/&lt;/span&gt;douban stargazer &lt;span class=&quot;string&quot;&gt;num:&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;288&lt;/span&gt; black &lt;span class=&quot;string&quot;&gt;percent:&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;0.3715277777777778&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;repo owner&lt;span class=&quot;regexp&quot;&gt;/name: MelonRice/&lt;/span&gt;zhihudaily_flutter stargazer &lt;span class=&quot;string&quot;&gt;num:&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;163&lt;/span&gt; black &lt;span class=&quot;string&quot;&gt;percent:&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;0.2085889570552147&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;/li&gt;
