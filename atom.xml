@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2018-11-30T15:32:20.126Z</updated>
+  <updated>2018-11-30T15:37:52.188Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -16,11 +16,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Photo Assessment</title>
+    <title>使用 Metal 和 Core ML 评价照片质量</title>
     <link href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/"/>
     <id>http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/</id>
     <published>2018-11-30T14:53:14.000Z</published>
-    <updated>2018-11-30T15:32:20.126Z</updated>
+    <updated>2018-11-30T15:37:52.188Z</updated>
     
     <content type="html">&lt;p&gt;如何评价一张照片的质量呢？&lt;/p&gt;
 &lt;p&gt;用算法可以客观地评价照片质量，也可以人为主观地给照片打分，并运用机器学习来训练模型。&lt;/p&gt;
