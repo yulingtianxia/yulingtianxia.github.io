@@ -26,7 +26,7 @@ Demo 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult1.png?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult2.png?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/SobelImageFilter.png?raw=true">
-<meta property="og:updated_time" content="2018-11-30T16:33:38.570Z">
+<meta property="og:updated_time" content="2018-12-02T05:04:15.101Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 Metal 和 Core ML 评价照片质量">
 <meta name="twitter:description" content="如何评价一张照片的质量呢？
@@ -153,6 +153,7 @@ Demo 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、
 <p>转换模型和权重使用的 python 代码放在这里：<a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/ConvertMLModel/NIMA/nima.py" target="_blank" rel="external">nima.py</a></p>
 <p>最后转化的 mlmodel 包含在 PhotoAssessment-iOSSample 工程中：<a href="https://github.com/yulingtianxia/PhotoAssessment/tree/master/PhotoAssessment-iOSSample/PhotoAssessment/Model" target="_blank" rel="external">NIMANasnet.mlmodel</a></p>
 <p>在得到 mlmodel 后，可以使用苹果的 Vision 框架加载模型，用 <code>VNImageRequestHandler</code> 请求处理静态图片。串联上 Vision 框架的 <code>VNDetectFaceRectanglesRequest</code> 可以顺便检测出人脸，为照片评分提供更多的参考。比如有人脸的照片可能是个加分项。</p>
+<p>PS: 这里原本还加入了神经网络识别面部表情，但是由于准确率不高且不同表情的评分难以主观衡量，所以最后去掉了。</p>
 <p>这部分的代码实现在这里： <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-iOSSample/PhotoAssessment/PhotoMLProcessor.swift" target="_blank" rel="external">PhotoMLProcessor.swift</a></p>
 <h2 id="照片相似度"><a href="#照片相似度" class="headerlink" title="照片相似度"></a>照片相似度</h2><p>我 2016 年曾经写过一篇文章：<a href="http://yulingtianxia.com/blog/2016/01/17/search-for-similar-images/">如何自制一款寻找相似图片的 Mac 工具</a>，原理是通过 RGBA 色彩空间和像素相对位置构造出一个特征向量，然后计算特征向量之间的余弦相似度作为照片的相似度。这种做法在处理移动客户端照片时可以进一步优化：</p>
 <ol>
@@ -617,20 +618,5 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+  </body>
 </html>
