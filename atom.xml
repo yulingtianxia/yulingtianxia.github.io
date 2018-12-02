@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2018-12-02T05:04:15.101Z</updated>
+  <updated>2018-12-02T10:10:20.254Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,12 +20,12 @@
     <link href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/"/>
     <id>http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/</id>
     <published>2018-11-30T14:53:14.000Z</published>
-    <updated>2018-12-02T05:04:15.101Z</updated>
+    <updated>2018-12-02T10:10:20.254Z</updated>
     
     <content type="html">&lt;p&gt;如何评价一张照片的质量呢？&lt;/p&gt;
 &lt;p&gt;用算法可以客观地评价照片质量，也可以人为主观地给照片打分，并运用机器学习来训练模型。&lt;/p&gt;
 &lt;p&gt;我用 Swift 写了个 &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Demo&lt;/a&gt;。用苹果的 Metal 跑一些算法得出客观评分，再用 Core ML 预测主观评分。得到照片评分后，就可以检测相似照片，并从中挑选最优的照片推荐给用户。&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Demo&lt;/a&gt; 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、图片的 HSB 色彩空间、以及边缘检测结果的平均值和方差。代码兼容 iOS、macOS 和 tvOS。下面示例图片拍摄自胡里山炮王和西塘。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Demo&lt;/a&gt; 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、图片的 HSB 色彩空间、以及边缘检测结果的平均值和方差。代码兼容 iOS 和 macOS。下面示例图片拍摄自胡里山炮王和西塘。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult1.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;img src=&quot;https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult2.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
 &lt;h2 id=&quot;常规算法&quot;&gt;&lt;a href=&quot;#常规算法&quot; class=&quot;headerlink&quot; title=&quot;常规算法&quot;&gt;&lt;/a&gt;常规算法&lt;/h2&gt;&lt;p&gt;目前业界有很多衡量照片质量的维度，可以通过调整各个维度占的权重来计算照片的最终得分。常用的衡量维度都是一些图形学上的客观因素：&lt;/p&gt;
@@ -90,7 +90,7 @@
       &lt;p&gt;如何评价一张照片的质量呢？&lt;/p&gt;
 &lt;p&gt;用算法可以客观地评价照片质量，也可以人为主观地给照片打分，并运用机器学习来训练模型。&lt;/p&gt;
 &lt;p&gt;我用 Swift 写了个 &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment&quot;&gt;Demo&lt;/a&gt;。用苹果的 Metal 跑一些算法得出客观评分，再用 Core ML 预测主观评分。得到照片评分后，就可以检测相似照片，并从中挑选最优的照片推荐给用户。&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment&quot;&gt;Demo&lt;/a&gt; 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、图片的 HSB 色彩空间、以及边缘检测结果的平均值和方差。代码兼容 iOS、macOS 和 tvOS。下面示例图片拍摄自胡里山炮王和西塘。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment&quot;&gt;Demo&lt;/a&gt; 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、图片的 HSB 色彩空间、以及边缘检测结果的平均值和方差。代码兼容 iOS 和 macOS。下面示例图片拍摄自胡里山炮王和西塘。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult1.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;img src=&quot;https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult2.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
     
     </summary>

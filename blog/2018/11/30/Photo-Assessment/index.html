@@ -26,7 +26,7 @@ Demo 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult1.png?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult2.png?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/SobelImageFilter.png?raw=true">
-<meta property="og:updated_time" content="2018-12-02T05:04:15.101Z">
+<meta property="og:updated_time" content="2018-12-02T10:10:20.254Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 Metal 和 Core ML 评价照片质量">
 <meta name="twitter:description" content="如何评价一张照片的质量呢？
@@ -119,7 +119,7 @@ Demo 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、
 		<p>如何评价一张照片的质量呢？</p>
 <p>用算法可以客观地评价照片质量，也可以人为主观地给照片打分，并运用机器学习来训练模型。</p>
 <p>我用 Swift 写了个 <a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="external">Demo</a>。用苹果的 Metal 跑一些算法得出客观评分，再用 Core ML 预测主观评分。得到照片评分后，就可以检测相似照片，并从中挑选最优的照片推荐给用户。</p>
-<p><a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="external">Demo</a> 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、图片的 HSB 色彩空间、以及边缘检测结果的平均值和方差。代码兼容 iOS、macOS 和 tvOS。下面示例图片拍摄自胡里山炮王和西塘。</p>
+<p><a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="external">Demo</a> 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、图片的 HSB 色彩空间、以及边缘检测结果的平均值和方差。代码兼容 iOS 和 macOS。下面示例图片拍摄自胡里山炮王和西塘。</p>
 <p><img src="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult1.png?raw=true" alt=""><img src="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult2.png?raw=true" alt=""></p>
 <a id="more"></a>
 <h2 id="常规算法"><a href="#常规算法" class="headerlink" title="常规算法"></a>常规算法</h2><p>目前业界有很多衡量照片质量的维度，可以通过调整各个维度占的权重来计算照片的最终得分。常用的衡量维度都是一些图形学上的客观因素：</p>
@@ -618,5 +618,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>
