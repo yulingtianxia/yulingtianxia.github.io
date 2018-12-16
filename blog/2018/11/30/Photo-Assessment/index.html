@@ -26,7 +26,7 @@ Demo 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult1.png?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult2.png?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/SobelImageFilter.png?raw=true">
-<meta property="og:updated_time" content="2018-12-02T10:10:20.254Z">
+<meta property="og:updated_time" content="2018-12-16T06:22:05.224Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 Metal 和 Core ML 评价照片质量">
 <meta name="twitter:description" content="如何评价一张照片的质量呢？
@@ -139,19 +139,20 @@ Demo 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、
 <p>常规做法都是利用客观评价指标来打分，可以通过设定阈值来过滤掉不符合要求的照片，但没能像大脑一样通过读懂图片的内容来评判质量。</p>
 <h2 id="机器学习"><a href="#机器学习" class="headerlink" title="机器学习"></a>机器学习</h2><p>Google AI Blog 在 2017 年底发表过一篇博客：<a href="https://ai.googleblog.com/2017/12/introducing-nima-neural-image-assessment.html" target="_blank" rel="external">Introducing NIMA: Neural Image Assessment</a>。讲述了通过神经网络迁移学习来预测图片评分方法。损失函数为 EMD (earth mover’s distance)，分数分布范围是 1-10 分。先用一些已有的模型在 ImageNet 上预训练，再加个 10 节点的全连接层使用 AVA 等数据集 fune-tune。预测结果是 10 个分数的分布，而不是直接给出评分，所以可以进一步计算出期望分和方差等。</p>
 <p>虽然论文没有给出源码或者训练好的模型，但是网上可以搜到一些第三方的实现。最后使用苹果提供的 coremltools 将其他机器学习框架的模型转成苹果的 Core ML 模型。</p>
-<p>在网上搜索到了两个还算不错的开源实现：</p>
+<p>在网上搜索到了几个还算不错的开源实现：</p>
 <ul>
-<li><a href="https://github.com/titu1994/neural-image-assessment" target="_blank" rel="external">titu1994/neural-image-assessment</a>：使用 Keras 实现，完成度较高，并提供了训练好的几种模型。效果最好的为 NASNet Mobile，loss = 0.067。Keras 模型可以直接转成 mlmodel。</li>
+<li><a href="https://github.com/idealo/image-quality-assessment" target="_blank" rel="external">idealo/image-quality-assessment</a>：使用 Keras + Docker + AWS 实现，MobileNet 的完成度较高，提供了 aesthetic 和 technical 两种训练好的评分模型。Keras 模型可以直接转成 mlmodel。</li>
+<li><a href="https://github.com/titu1994/neural-image-assessment" target="_blank" rel="external">titu1994/neural-image-assessment</a>：使用 Keras 实现，提供了训练好的几种模型。效果最好的为 NASNet Mobile，loss = 0.067。Keras 模型可以直接转成 mlmodel。</li>
 <li><a href="https://github.com/truskovskiyk/nima.pytorch" target="_blank" rel="external">truskovskiyk/nima.pytorch</a>：使用 pytorch 实现，完成度一般，只提供了 MobileNetV2 模型（loss = 0.08）。pytorch  模型需要先转为 ONNX，然后再转成 mlmodel 格式。</li>
 </ul>
-<p>经过反复试验与对比结果，最终使用了第一个开源实现的 NASNet Mobile，loss = 0.067。在这个过程中踩了不少坑：</p>
+<p>经过反复试验与对比结果，最终使用了第一个开源实现的 MobileNet。在这个过程中踩了不少坑：</p>
 <ol>
 <li>机器学习涉及到的 python 库更新幅度较大，甚至连官方文档更新都严重滞后，更别提网上找的 demo 了。想跑通网上找的代码？不存在的。</li>
-<li>既然官方文档不可信，只能看代码中的注释，在摸索中写。依然会有各种各样的报错，大部分都是版本兼容问题。虽然 coremltools 官网有说兼容的最低版本，但也千万不要直接用最高版本的 Keras 和 TensorFlow。我用的 Keras 2.1.6 和 TensorFlow 1.5.1，亲测 OK。</li>
+<li>既然官方文档不可信，只能看代码中的注释，在摸索中写。依然会有各种各样的报错，大部分都是版本兼容问题。虽然 coremltools 官网有说兼容的最低版本，但也千万不要直接用最高版本的 Keras 和 TensorFlow。我用的 Keras 2.1.3 和 TensorFlow 1.10，亲测 OK。</li>
 <li>pytorch 转 ONNX 再转 mlmodel 更是麻烦，不得不吐槽机器学习相关的 python 库版本兼容性是真的差，API 说改就改，以为自己是 Swift 么？对于新手来说很不友好，过程几乎就是：改-&gt;报错-&gt;Google-&gt;改-&gt;继续报错。。。官网 demo 从来没跑通过，跟没有一样，不存在的。</li>
 </ol>
 <p>转换模型和权重使用的 python 代码放在这里：<a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/ConvertMLModel/NIMA/nima.py" target="_blank" rel="external">nima.py</a></p>
-<p>最后转化的 mlmodel 包含在 PhotoAssessment-iOSSample 工程中：<a href="https://github.com/yulingtianxia/PhotoAssessment/tree/master/PhotoAssessment-iOSSample/PhotoAssessment/Model" target="_blank" rel="external">NIMANasnet.mlmodel</a></p>
+<p>最后转化的 mlmodel 包含在 PhotoAssessment-iOSSample 工程中：<a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MobileNet.mlmodel" target="_blank" rel="external">MobileNet.mlmodel</a></p>
 <p>在得到 mlmodel 后，可以使用苹果的 Vision 框架加载模型，用 <code>VNImageRequestHandler</code> 请求处理静态图片。串联上 Vision 框架的 <code>VNDetectFaceRectanglesRequest</code> 可以顺便检测出人脸，为照片评分提供更多的参考。比如有人脸的照片可能是个加分项。</p>
 <p>PS: 这里原本还加入了神经网络识别面部表情，但是由于准确率不高且不同表情的评分难以主观衡量，所以最后去掉了。</p>
 <p>这部分的代码实现在这里： <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-iOSSample/PhotoAssessment/PhotoMLProcessor.swift" target="_blank" rel="external">PhotoMLProcessor.swift</a></p>
