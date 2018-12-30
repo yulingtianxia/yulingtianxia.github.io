@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2018-12-16T06:22:05.224Z</updated>
+  <updated>2018-12-30T03:26:55.226Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -16,11 +16,50 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>DirtyWords for Xcode - 做个文明的程序员</title>
+    <link href="http://yulingtianxia.com/blog/2018/12/30/Dirty-Words-for-Xcode/"/>
+    <id>http://yulingtianxia.com/blog/2018/12/30/Dirty-Words-for-Xcode/</id>
+    <published>2018-12-30T03:26:27.000Z</published>
+    <updated>2018-12-30T03:26:55.226Z</updated>
+    
+    <content type="html">&lt;p&gt;开发者经常会在代码中看到各类脏话，有吐槽产品的瞎改早晚还会改回来的，有吐槽这块代码写的太烂无法直视的，或是干脆心情不好就一顿骂。公司内部的项目想必是无数天坑 f*ck 无数，连对外开源的项目也难逃一劫，比如前一段时间 &lt;a href=&quot;https://bugs.openjdk.java.net/browse/JDK-8215217&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;OpenJDK&lt;/a&gt; 就因为脏话太多火了一把。&lt;/p&gt;
+&lt;p&gt;于是我做了一个 Xcode 插件来寻找代码中的脏话，将其高亮可以被选中，作为一个强提示让开发者修改。目前逻辑还只是简单替换而已，代码在这里：&lt;a href=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;DirtyWords-for-Xcode&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;为了体现汉字的博大精深，瞎画了个 icon，见笑了：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode/blob/master/images/艹.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;h2 id=&quot;安装&quot;&gt;&lt;a href=&quot;#安装&quot; class=&quot;headerlink&quot; title=&quot;安装&quot;&gt;&lt;/a&gt;安装&lt;/h2&gt;&lt;h3 id=&quot;AppStore&quot;&gt;&lt;a href=&quot;#AppStore&quot; class=&quot;headerlink&quot; title=&quot;AppStore&quot;&gt;&lt;/a&gt;AppStore&lt;/h3&gt;&lt;p&gt;圣诞节苹果暂停审核。。。日&lt;br&gt;还没审核通过&lt;/p&gt;
+&lt;h3 id=&quot;GitHub-Release&quot;&gt;&lt;a href=&quot;#GitHub-Release&quot; class=&quot;headerlink&quot; title=&quot;GitHub Release&quot;&gt;&lt;/a&gt;GitHub Release&lt;/h3&gt;&lt;p&gt;直接从 GitHub Release 页面下载最新的安装包：&lt;br&gt;&lt;a href=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode/releases&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/yulingtianxia/DirtyWords-for-Xcode/releases&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;使用方式&quot;&gt;&lt;a href=&quot;#使用方式&quot; class=&quot;headerlink&quot; title=&quot;使用方式&quot;&gt;&lt;/a&gt;使用方式&lt;/h2&gt;&lt;p&gt;用法很简单，反正目前也就这么一个功能。Editer -&amp;gt; Dirty Words -&amp;gt; Highlight&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode/blob/master/images/usage.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;例如下图中的 “fuck” 就会被高亮，可以文明用语代之。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode/blob/master/images/highlight.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;如果在 Editor 菜单中找不到的话，打开系统偏好设置 -&amp;gt; 拓展，并勾选 “DirtyWords for Xcode” 拓展项.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode/blob/master/images/appui.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;可以给 DirtyWords 自定义快捷键。 Xcode &amp;gt; Preferences &amp;gt; Key Bindings &amp;gt; 搜索 “Dirty Words”.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode/blob/master/images/keybindings.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;脏词黑名单&quot;&gt;&lt;a href=&quot;#脏词黑名单&quot; class=&quot;headerlink&quot; title=&quot;脏词黑名单&quot;&gt;&lt;/a&gt;脏词黑名单&lt;/h2&gt;&lt;p&gt;脏词列表文件跟随 app 打包进去了。在拓展加载完成后，也会通过网络下载 &lt;a href=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode/blob/master/SourceEditorExtension/dirtywords&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;dirtywords&lt;/a&gt; 文件进行更新。这样方便以后调整脏词列表，也欢迎大家提 PR 补充。&lt;/p&gt;
+&lt;p&gt;在收集脏词的过程中真是长了见识了，不搜不知道一搜吓一跳，哈哈。有&lt;a href=&quot;https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;各国语言版的&lt;/a&gt;，还有据说是 &lt;a href=&quot;https://github.com/RobertJGabriel/Google-profanity-words&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Google 版的&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;因为分词会比较耗性能，代码中有些 API 其实是触碰脏词的，比如 “UIButton” 中包含了 “butt”，所以有些脏词需要从黑名单剔除，避免误判。不过我觉得 “fuck” 这种词无论怎么组合都难洗白的。&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;开发者经常会在代码中看到各类脏话，有吐槽产品的瞎改早晚还会改回来的，有吐槽这块代码写的太烂无法直视的，或是干脆心情不好就一顿骂。公司内部的项目想必是无数天坑 f*ck 无数，连对外开源的项目也难逃一劫，比如前一段时间 &lt;a href=&quot;https://bugs.openjdk.java.net/browse/JDK-8215217&quot;&gt;OpenJDK&lt;/a&gt; 就因为脏话太多火了一把。&lt;/p&gt;
+&lt;p&gt;于是我做了一个 Xcode 插件来寻找代码中的脏话，将其高亮可以被选中，作为一个强提示让开发者修改。目前逻辑还只是简单替换而已，代码在这里：&lt;a href=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode&quot;&gt;DirtyWords-for-Xcode&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;为了体现汉字的博大精深，瞎画了个 icon，见笑了：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode/blob/master/images/艹.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>使用 Metal 和 Core ML 评价照片质量</title>
     <link href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/"/>
     <id>http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/</id>
     <published>2018-11-30T14:53:14.000Z</published>
-    <updated>2018-12-16T06:22:05.224Z</updated>
+    <updated>2018-12-23T07:33:20.335Z</updated>
     
     <content type="html">&lt;p&gt;如何评价一张照片的质量呢？&lt;/p&gt;
 &lt;p&gt;用算法可以客观地评价照片质量，也可以人为主观地给照片打分，并运用机器学习来训练模型。&lt;/p&gt;
@@ -36,7 +75,7 @@
 &lt;li&gt;颜色分布（线性直方图分布）&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;得出的结果可能还需要设定阈值来过滤掉一些质量比较差的照片，然后做归一化和调整加权系数，最终得到照片的评分。具体权重值没有统一的参考标准，需根据业务的需求不断调试和摸索。以上列的这些标准都可以找到一些通用的算法实现，甚至用 OpenCV 分分钟的事儿。但是对于移动客户端来说，OpenCV 可能并不是个好的选择。苹果的 &lt;code&gt;Metal&lt;/code&gt; 技术更适合发挥其软硬件结合的优势，在性能和安装包上均有优势。&lt;/p&gt;
-&lt;p&gt;iOS 无法直接创建 HSB 色彩空间，需要借助 &lt;code&gt;UIColor&lt;/code&gt; 等 API 将其他色彩空间颜色转换成 HSB 对应的值。于是我尝试使用 &lt;code&gt;Metal&lt;/code&gt; 实现边缘检测算法，相关代码可以在 &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-iOSSample/PhotoAssessment/PhotoMPSProcessor.swift&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;PhotoMPSProcessor.swift&lt;/a&gt; 上找到。&lt;/p&gt;
+&lt;p&gt;iOS 无法直接创建 HSB 色彩空间，需要借助 &lt;code&gt;UIColor&lt;/code&gt; 等 API 将其他色彩空间颜色转换成 HSB 对应的值。于是我尝试使用 &lt;code&gt;Metal&lt;/code&gt; 实现边缘检测算法，相关代码可以在 &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/PhotoMPSProcessor.swift&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;PhotoMPSProcessor.swift&lt;/a&gt; 上找到。&lt;/p&gt;
 &lt;p&gt;边缘检测有很多种实现，这里我使用的是 Sobel 算子。MPS 提供了很多 对图片做卷积运算的 Filter，其中就包含 &lt;code&gt;MPSImageSobel&lt;/code&gt;。MPS 也提供了 &lt;code&gt;MPSImageLaplacian&lt;/code&gt;，不过 Laplacian 算子对噪声处理较差，实际效果不好。各种算子的原理和介绍可以参考这篇简介：&lt;a href=&quot;https://www.jianshu.com/p/2334bee37de5&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;数字图像 - 边缘检测原理 - Sobel, Laplace, Canny算子&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;苹果的 &lt;code&gt;MetalKit&lt;/code&gt; 拥有更简洁的 API，可以更方便地应用 &lt;code&gt;Metal&lt;/code&gt; 技术。比如加载图片可以通过 &lt;code&gt;MTKTextureLoader&lt;/code&gt; 几行代码轻松搞定。然而在实际应用中却发现是个大坑，比如 rgba16 格式的图片就会报错：”Image decoding failed”。&lt;code&gt;MTKTextureLoader&lt;/code&gt; 应该是只能加载单通道 8 bit 的图片数据，毕竟外部没有传每个像素字节数，解析时估计写死了这个值。所以还是老老实实的用 &lt;code&gt;MTLTextureDescriptor&lt;/code&gt; 描述好 Filter 的数据输入输出格式，并创建好对应的 &lt;code&gt;MTLTexture&lt;/code&gt; 吧。&lt;/p&gt;
 &lt;p&gt;Sobel 算子卷积运算后的方差值可以用来检测模糊程度。下面的代码用了两个 Filter 串联起来，三种格式的数据：rgba8[w&lt;em&gt;h]-&amp;gt;r8[w&lt;/em&gt;h]-&amp;gt;r8[2*1]。也就是 RGBA 色彩空间图片转成含有边缘信息的灰度图（如下所示），最后出计算均值和方差。&lt;/p&gt;
@@ -58,10 +97,10 @@
 &lt;li&gt;pytorch 转 ONNX 再转 mlmodel 更是麻烦，不得不吐槽机器学习相关的 python 库版本兼容性是真的差，API 说改就改，以为自己是 Swift 么？对于新手来说很不友好，过程几乎就是：改-&amp;gt;报错-&amp;gt;Google-&amp;gt;改-&amp;gt;继续报错。。。官网 demo 从来没跑通过，跟没有一样，不存在的。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;转换模型和权重使用的 python 代码放在这里：&lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/ConvertMLModel/NIMA/nima.py&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;nima.py&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;最后转化的 mlmodel 包含在 PhotoAssessment-iOSSample 工程中：&lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MobileNet.mlmodel&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MobileNet.mlmodel&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;最后转化的 mlmodel 包含在 PhotoAssessment-Sample 工程中：&lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MobileNet.mlmodel&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;MobileNet.mlmodel&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;在得到 mlmodel 后，可以使用苹果的 Vision 框架加载模型，用 &lt;code&gt;VNImageRequestHandler&lt;/code&gt; 请求处理静态图片。串联上 Vision 框架的 &lt;code&gt;VNDetectFaceRectanglesRequest&lt;/code&gt; 可以顺便检测出人脸，为照片评分提供更多的参考。比如有人脸的照片可能是个加分项。&lt;/p&gt;
 &lt;p&gt;PS: 这里原本还加入了神经网络识别面部表情，但是由于准确率不高且不同表情的评分难以主观衡量，所以最后去掉了。&lt;/p&gt;
-&lt;p&gt;这部分的代码实现在这里： &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-iOSSample/PhotoAssessment/PhotoMLProcessor.swift&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;PhotoMLProcessor.swift&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;这部分的代码实现在这里： &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/PhotoMLProcessor.swift&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;PhotoMLProcessor.swift&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;照片相似度&quot;&gt;&lt;a href=&quot;#照片相似度&quot; class=&quot;headerlink&quot; title=&quot;照片相似度&quot;&gt;&lt;/a&gt;照片相似度&lt;/h2&gt;&lt;p&gt;我 2016 年曾经写过一篇文章：&lt;a href=&quot;http://yulingtianxia.com/blog/2016/01/17/search-for-similar-images/&quot;&gt;如何自制一款寻找相似图片的 Mac 工具&lt;/a&gt;，原理是通过 RGBA 色彩空间和像素相对位置构造出一个特征向量，然后计算特征向量之间的余弦相似度作为照片的相似度。这种做法在处理移动客户端照片时可以进一步优化：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;手机拍照可以去掉 alpha 通道&lt;/li&gt;
@@ -71,11 +110,12 @@
 &lt;/ol&gt;
 &lt;p&gt;计算特征向量的实现如下：&lt;/p&gt;
 &lt;figure class=&quot;highlight maxima&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;@objc public class func fingerprintFor(imagePixels: [Int32], &lt;span class=&quot;built_in&quot;&gt;width&lt;/span&gt;: Int, &lt;span class=&quot;built_in&quot;&gt;height&lt;/span&gt;: Int) -&amp;gt; [UInt32: Double] &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    func downsample(component: UInt8) -&amp;gt; UInt32 &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;return&lt;/span&gt; UInt32(component / &lt;span class=&quot;number&quot;&gt;16&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    func downsample(x: Int, y: Int) -&amp;gt; UInt32 &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; rowCount: Int = &lt;span class=&quot;built_in&quot;&gt;min&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;, &lt;span class=&quot;built_in&quot;&gt;height&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; countPerRow: Int = &lt;span class=&quot;built_in&quot;&gt;min&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;, &lt;span class=&quot;built_in&quot;&gt;width&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; hStep = &lt;span class=&quot;built_in&quot;&gt;width&lt;/span&gt; / countPerRow&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; vStep = &lt;span class=&quot;built_in&quot;&gt;height&lt;/span&gt; / rowCount&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;row&lt;/span&gt; = y / vStep&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;col&lt;/span&gt; = x / hStep&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;return&lt;/span&gt; UInt32(&lt;span class=&quot;built_in&quot;&gt;row&lt;/span&gt; * countPerRow + &lt;span class=&quot;built_in&quot;&gt;col&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;var&lt;/span&gt; bucket = [UInt32: UInt]()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; j &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; ..&amp;lt; &lt;span class=&quot;built_in&quot;&gt;height&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; ..&amp;lt; &lt;span class=&quot;built_in&quot;&gt;width&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;color&lt;/span&gt; = imagePixels[&lt;span class=&quot;built_in&quot;&gt;width&lt;/span&gt; * j + i]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; r = downsample(component: &lt;span class=&quot;built_in&quot;&gt;color&lt;/span&gt;.r()) &amp;lt;&amp;lt; &lt;span class=&quot;number&quot;&gt;24&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; g = downsample(component: &lt;span class=&quot;built_in&quot;&gt;color&lt;/span&gt;.g()) &amp;lt;&amp;lt; &lt;span class=&quot;number&quot;&gt;16&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; b = downsample(component: &lt;span class=&quot;built_in&quot;&gt;color&lt;/span&gt;.b()) &amp;lt;&amp;lt; &lt;span class=&quot;number&quot;&gt;8&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; location = downsample(x: i, y: j) &amp;lt;&amp;lt; &lt;span class=&quot;number&quot;&gt;12&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; fingerprint = r | g | b | location&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            bucket[fingerprint] = (bucket[fingerprint] ?? &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;) + &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; result: [UInt32: Double] = bucket.mapValues &amp;#123; (oldValue) -&amp;gt; Double &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;let&lt;/span&gt; newValue = Double(oldValue) / Double(imagePixels.count)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;return&lt;/span&gt; newValue&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;return&lt;/span&gt; result&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;因为输入都是像素数组，降采样使用 &lt;code&gt;MPSImageBilinearScale&lt;/code&gt;，实现细节类似于上面讲的边缘检测。代码在 &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-iOSSample/PhotoAssessment/PhotoMPSProcessor.swift&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;PhotoMPSProcessor.swift&lt;/a&gt; 里。&lt;/p&gt;
+&lt;p&gt;因为输入都是像素数组，降采样使用 &lt;code&gt;MPSImageBilinearScale&lt;/code&gt;，实现细节类似于上面讲的边缘检测。代码在 &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/PhotoMPSProcessor.swift&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;PhotoMPSProcessor.swift&lt;/a&gt; 里。&lt;/p&gt;
 &lt;h2 id=&quot;总结&quot;&gt;&lt;a href=&quot;#总结&quot; class=&quot;headerlink&quot; title=&quot;总结&quot;&gt;&lt;/a&gt;总结&lt;/h2&gt;&lt;p&gt;算法可以通过调整阈值来平衡准确度与性能。比如降采样的尺寸和相似度阈值都是可以影响到最终结果和性能开销的。这里不再展开讨论。使用 Vision + Core ML 预测图片和人脸识别依然耗时较久，处理 500 张图片可能要几十秒，在生产环境下批量处理图片时需要注意。&lt;/p&gt;
 &lt;h2 id=&quot;Reference&quot;&gt;&lt;a href=&quot;#Reference&quot; class=&quot;headerlink&quot; title=&quot;Reference&quot;&gt;&lt;/a&gt;Reference&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;yulingtianxia/PhotoAssessment&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://www.jianshu.com/p/2334bee37de5&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;数字图像 - 边缘检测原理 - Sobel, Laplace, Canny算子&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/idealo/image-quality-assessment&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;idealo/image-quality-assessment&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://github.com/titu1994/neural-image-assessment&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;titu1994/neural-image-assessment&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://github.com/truskovskiyk/nima.pytorch&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;truskovskiyk/nima.pytorch&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://arxiv.org/abs/1709.05424&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;NIMA: Neural Image Assessment&lt;/a&gt;&lt;/li&gt;
@@ -2137,200 +2177,6 @@
       <category term="Machine Leaning" scheme="http://yulingtianxia.com/tags/Machine-Leaning/"/>
     
       <category term="Metal" scheme="http://yulingtianxia.com/tags/Metal/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Objective-C Method Swizzling</title>
-    <link href="http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/"/>
-    <id>http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/</id>
-    <published>2017-04-16T16:11:48.000Z</published>
-    <updated>2018-09-15T08:28:13.652Z</updated>
-    
-    <content type="html">&lt;p&gt;Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 &lt;code&gt;+ load&lt;/code&gt; 方法中，这是利用它调用时机较提前等性质。&lt;/p&gt;
-&lt;p&gt;有时候需要 Hook 子类和父类的同一个方法，但是它们的 &lt;code&gt;+ load&lt;/code&gt; 方法调用顺序不同。一个常见的顺序可能是：父类-&amp;gt;子类-&amp;gt;子类类别-&amp;gt;父类类别。所以 Hook 的顺序并不能保证，就不能保证 Hook 后方法调用的顺序是对的。而且使用不同方法 Method Swizzling 也会带来不同的结果。本文将会对这些情况下的 Hook 结果进行分析和总结。&lt;/p&gt;
-&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-&lt;h2 id=&quot;Method-Swizzling-常用实现方案&quot;&gt;&lt;a href=&quot;#Method-Swizzling-常用实现方案&quot; class=&quot;headerlink&quot; title=&quot;Method Swizzling 常用实现方案&quot;&gt;&lt;/a&gt;Method Swizzling 常用实现方案&lt;/h2&gt;&lt;p&gt;目前有两类常用的 Method Swizzling 实现方案，诸如 &lt;a href=&quot;https://github.com/rabovik/RSSwizzle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;RSSwizzle&lt;/a&gt; 和 &lt;a href=&quot;https://github.com/rentzsch/jrswizzle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;jrswizzle&lt;/a&gt; 这种较为复杂且周全的一些实现方案这里暂且不提。&lt;/p&gt;
-&lt;h3 id=&quot;方案-A&quot;&gt;&lt;a href=&quot;#方案-A&quot; class=&quot;headerlink&quot; title=&quot;方案 A&quot;&gt;&lt;/a&gt;方案 A&lt;/h3&gt;&lt;p&gt;如果类中没有实现 Original &lt;code&gt;selector&lt;/code&gt; 对应的方法，那就先添加 &lt;code&gt;Method&lt;/code&gt;，并将其 &lt;code&gt;IMP&lt;/code&gt; 映射为 Swizzle 的实现。然后替换 Swizzle &lt;code&gt;selector&lt;/code&gt; 的 &lt;code&gt;IMP&lt;/code&gt; 为 Original 的实现；否则交换二者 &lt;code&gt;IMP&lt;/code&gt;。&lt;/p&gt;
-&lt;figure class=&quot;highlight mipsasm&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;+ (void)load&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    static &lt;span class=&quot;keyword&quot;&gt;dispatch_once_t &lt;/span&gt;onceToken&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;dispatch_once(&amp;amp;onceToken, &lt;/span&gt;^&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Class aClass = [self class]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        SEL &lt;span class=&quot;keyword&quot;&gt;originalSelector &lt;/span&gt;= @selector(method_original:)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        SEL &lt;span class=&quot;keyword&quot;&gt;swizzledSelector &lt;/span&gt;= @selector(method_swizzle:)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Method &lt;span class=&quot;keyword&quot;&gt;originalMethod &lt;/span&gt;= class_getInstanceMethod(aClass, &lt;span class=&quot;keyword&quot;&gt;originalSelector);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        Method &lt;span class=&quot;keyword&quot;&gt;swizzledMethod &lt;/span&gt;= class_getInstanceMethod(aClass, &lt;span class=&quot;keyword&quot;&gt;swizzledSelector);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        &lt;span class=&quot;keyword&quot;&gt;BOOL &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;didAddMethod &lt;/span&gt;=&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        class_addMethod(aClass,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                        &lt;span class=&quot;keyword&quot;&gt;originalSelector,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;                        method_getImplementation(&lt;span class=&quot;keyword&quot;&gt;swizzledMethod),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;                        method_getTypeEncoding(&lt;span class=&quot;keyword&quot;&gt;swizzledMethod));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        if (&lt;span class=&quot;keyword&quot;&gt;didAddMethod) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            class_replaceMethod(aClass,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                               &lt;span class=&quot;keyword&quot;&gt;swizzledSelector,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;                                               method_getImplementation(&lt;span class=&quot;keyword&quot;&gt;originalMethod),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;                                               method_getTypeEncoding(&lt;span class=&quot;keyword&quot;&gt;originalMethod));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        &amp;#125; else &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            method_exchangeImplementations(&lt;span class=&quot;keyword&quot;&gt;originalMethod, &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;swizzledMethod);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;有时为了避免方法命名冲突和参数 &lt;code&gt;_cmd&lt;/code&gt; 被篡改，也会使用下面这种『静态方法版本』的 Method Swizzle。CaptainHook 中的宏定义也是采用这种方式，比较推荐：&lt;/p&gt;
-&lt;figure class=&quot;highlight objectivec&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;typedef&lt;/span&gt; IMP *I&lt;span class=&quot;built_in&quot;&gt;MPPointer&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; MethodSwizzle(&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, SEL _cmd, &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; arg1);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; (*MethodOriginal)(&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, SEL _cmd, &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; arg1);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; MethodSwizzle(&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, SEL _cmd, &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; arg1) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// do custom work&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    MethodOriginal(&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, _cmd, arg1);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;BOOL&lt;/span&gt; class_swizzleMethodAndStore(Class class, SEL original, IMP replacement, I&lt;span class=&quot;built_in&quot;&gt;MPPointer&lt;/span&gt; store) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    IMP imp = &lt;span class=&quot;literal&quot;&gt;NULL&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Method method = class_getInstanceMethod(class, original);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (method) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;char&lt;/span&gt; *type = method_getTypeEncoding(method);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        imp = class_replaceMethod(class, original, replacement, type);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (!imp) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            imp = method_getImplementation(method);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (imp &amp;amp;&amp;amp; store) &amp;#123; *store = imp; &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; (imp != &lt;span class=&quot;literal&quot;&gt;NULL&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;+ (&lt;span class=&quot;built_in&quot;&gt;BOOL&lt;/span&gt;)swizzle:(SEL)original with:(IMP)replacement store:(I&lt;span class=&quot;built_in&quot;&gt;MPPointer&lt;/span&gt;)store &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; class_swizzleMethodAndStore(&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;, original, replacement, store);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;+ (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)load &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; swizzle:&lt;span class=&quot;keyword&quot;&gt;@selector&lt;/span&gt;(originalMethod:) with:(IMP)MethodSwizzle store:(IMP *)&amp;amp;MethodOriginal];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;然而上面的代码依然不是 Method Swizzling 的最佳实现。&lt;/p&gt;
-&lt;h3 id=&quot;方案-B&quot;&gt;&lt;a href=&quot;#方案-B&quot; class=&quot;headerlink&quot; title=&quot;方案 B&quot;&gt;&lt;/a&gt;方案 B&lt;/h3&gt;&lt;p&gt;其实就是方案 A 的阉割版：&lt;/p&gt;
-&lt;figure class=&quot;highlight mipsasm&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;+ (void)load&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    static &lt;span class=&quot;keyword&quot;&gt;dispatch_once_t &lt;/span&gt;onceToken&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;dispatch_once(&amp;amp;onceToken, &lt;/span&gt;^&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Class aClass = [self class]&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        SEL &lt;span class=&quot;keyword&quot;&gt;originalSelector &lt;/span&gt;= @selector(method_original:)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        SEL &lt;span class=&quot;keyword&quot;&gt;swizzledSelector &lt;/span&gt;= @selector(method_swizzle:)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Method &lt;span class=&quot;keyword&quot;&gt;originalMethod &lt;/span&gt;= class_getInstanceMethod(aClass, &lt;span class=&quot;keyword&quot;&gt;originalSelector);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;        Method &lt;span class=&quot;keyword&quot;&gt;swizzledMethod &lt;/span&gt;= class_getInstanceMethod(aClass, &lt;span class=&quot;keyword&quot;&gt;swizzledSelector);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;       method_exchangeImplementations(&lt;span class=&quot;keyword&quot;&gt;originalMethod, &lt;/span&gt;&lt;span class=&quot;keyword&quot;&gt;swizzledMethod);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;    &amp;#125;)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;直接交换 &lt;code&gt;IMP&lt;/code&gt; 是很危险的。因为如果这个类中没有实现这个方法，&lt;code&gt;class_getInstanceMethod()&lt;/code&gt; 返回的是某个父类的 &lt;code&gt;Method&lt;/code&gt; 对象，这样 &lt;code&gt;method_exchangeImplementations()&lt;/code&gt; 就把父类的原始实现（&lt;code&gt;IMP&lt;/code&gt;）跟这个类的 Swizzle 实现交换了。这样其他父类及其其他子类的方法调用就会出问题，最严重的就是 Crash。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;但如果这个类中实现了此方法，那么方案 A 等价于方案 B&lt;/strong&gt;。&lt;/p&gt;
-&lt;h2 id=&quot;研究背景&quot;&gt;&lt;a href=&quot;#研究背景&quot; class=&quot;headerlink&quot; title=&quot;研究背景&quot;&gt;&lt;/a&gt;研究背景&lt;/h2&gt;&lt;p&gt;这里对本文的研究背景进行一些假设和约定：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;有三个类，Child 类继承 Super 类，Super 类继承 Base 类。&lt;/li&gt;
-&lt;li&gt;我们 Hook 了 Child 和 Super 的某个方法（而且是同一个方法）。&lt;/li&gt;
-&lt;li&gt;为了方便表示，Child 的原始方法被称作 &lt;code&gt;Child_Original&lt;/code&gt;，Hook 后的方法被称作 &lt;code&gt;Child_Swizzle&lt;/code&gt;。Super 以此类推。&lt;/li&gt;
-&lt;li&gt;为了让 Swizzle 的实现调用 Original 实现，&lt;code&gt;Child_Swizzle&lt;/code&gt; 的  IMP 中会调用 &lt;code&gt;Child_Swizzle&lt;/code&gt; 的 &lt;code&gt;selector&lt;/code&gt;。Super 以此类推。&lt;/li&gt;
-&lt;li&gt;我们期望执行 Child 对象的 &lt;code&gt;Child_Original&lt;/code&gt; 方法时的 IMP 执行顺序是：&lt;code&gt;Child_Swizzle&lt;/code&gt;-&amp;gt;&lt;code&gt;Child_Original&lt;/code&gt;-&amp;gt;&lt;code&gt;Super_Swizzle&lt;/code&gt;-&amp;gt;&lt;code&gt;Super_Original&lt;/code&gt;-&amp;gt;&lt;code&gt;Base&lt;/code&gt;。我们只需关注其中 Swizzle 的部分，所以约定简写为：Child-&amp;gt;Super-&amp;gt;Base。&lt;/li&gt;
-&lt;li&gt;本文会按 Hook 顺序、类是否实现方法、Hook 方案(A/B) 来细分不同情况下的结果。一共细分为 18 种情况。&lt;/li&gt;
-&lt;li&gt;本文会使用图例表示每种情况下的方法调用和映射关系，分为三个维度（Super/Child;Original/Swizzle;&lt;code&gt;Selector&lt;/code&gt;/&lt;code&gt;Method&lt;/code&gt;/&lt;code&gt;IMP&lt;/code&gt;）&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/模板.png&quot; alt=&quot;模板&quot;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;下文中的图例均为 Hook 后的结果(Hook 前的太简单了懒得画)。如果不理解 &lt;code&gt;Selector&lt;/code&gt;,&lt;code&gt;Method&lt;/code&gt; 与 &lt;code&gt;IMP&lt;/code&gt; 三者的关系，甚至不理解 Method Swizzling 原理，请先阅读 &lt;a href=&quot;http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/&quot;&gt;Objective-C Runtime&lt;/a&gt;！如果还是看不懂，那就再看一遍吧！&lt;/strong&gt;&lt;/p&gt;
-&lt;h2 id=&quot;Hook-顺序：先-Child-后-Super&quot;&gt;&lt;a href=&quot;#Hook-顺序：先-Child-后-Super&quot; class=&quot;headerlink&quot; title=&quot;Hook 顺序：先 Child 后 Super&quot;&gt;&lt;/a&gt;Hook 顺序：先 Child 后 Super&lt;/h2&gt;&lt;p&gt;这个顺序本身就不被大众认可却又不得不广泛被使用，因为很多想 Hook 系统 API 只能从 Category 下手。当子类同样的方法也被 Hook 后，奇怪的事情便发生了。&lt;/p&gt;
-&lt;h3 id=&quot;Super-未实现方法-Child-未实现方法&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-未实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 未实现方法&lt;/h3&gt;&lt;h4 id=&quot;Super-Plan-A-Child-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildA.png&quot; alt=&quot;CS_SuperAChildA&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
-&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B-Child-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan B,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildA.png&quot; alt=&quot;CS_SuperBChildA&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
-&lt;li&gt;Super 对象正常&lt;/li&gt;
-&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-A-Child-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan A,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildB.png&quot; alt=&quot;CS_SuperAChildB&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
-&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则会一直调用 Child_Swizzle 进入死循环&lt;/li&gt;
-&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦间接等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B-Child-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan B,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildB.png&quot; alt=&quot;CS_SuperBChildB&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象：Super-&amp;gt;Child-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则会一直调用 Child_Swizzle 进入死循环&lt;/li&gt;
-&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&quot;Super-实现方法-Child-未实现方法&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-未实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 未实现方法&lt;/h3&gt;&lt;p&gt;由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。&lt;/p&gt;
-&lt;h4 id=&quot;Child-Plan-A&quot;&gt;&lt;a href=&quot;#Child-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan A&quot;&gt;&lt;/a&gt;Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildA.png&quot; alt=&quot;CS_ChildA&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象：Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
-&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&quot;Child-Plan-B&quot;&gt;&lt;a href=&quot;#Child-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan B&quot;&gt;&lt;/a&gt;Child:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildB.png&quot; alt=&quot;CS_ChildB&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象：Super-&amp;gt;Child-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则会一直调用 Child_Swizzle 进入死循环&lt;/li&gt;
-&lt;li&gt;Base 对象正常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&quot;Super-未实现方法-Child-实现方法&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。&lt;/p&gt;
-&lt;h4 id=&quot;Super-Plan-A&quot;&gt;&lt;a href=&quot;#Super-Plan-A&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperA.png&quot; alt=&quot;CS_SuperA&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B&quot;&gt;&lt;a href=&quot;#Super-Plan-B&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B&quot;&gt;&lt;/a&gt;Super:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperB.png&quot; alt=&quot;CS_SuperB&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 对象正常：Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&quot;Super-实现方法-Child-实现方法&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-实现方法&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/CS_Perfect.png&quot; alt=&quot;CS_Perfect&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&quot;Hook-顺序：先-Super-后-Child&quot;&gt;&lt;a href=&quot;#Hook-顺序：先-Super-后-Child&quot; class=&quot;headerlink&quot; title=&quot;Hook 顺序：先 Super 后 Child&quot;&gt;&lt;/a&gt;Hook 顺序：先 Super 后 Child&lt;/h2&gt;&lt;p&gt;并不是 Hook 顺序对了就能保平安，姿势也同样重要。&lt;/p&gt;
-&lt;h3 id=&quot;Super-未实现方法-Child-未实现方法-1&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-未实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 未实现方法&lt;/h3&gt;&lt;h4 id=&quot;Super-Plan-A-Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildA.png&quot; alt=&quot;SC_SuperAChildA&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B-Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child:Plan A&quot;&gt;&lt;/a&gt;Super:Plan B,Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildA.png&quot; alt=&quot;SC_SuperBChildA&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 对象正常：Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-A-Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan A,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildB.png&quot; alt=&quot;SC_SuperAChildB&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则 Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
-&lt;li&gt;Base 对象正常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B-Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B,Child Plan B&quot;&gt;&lt;/a&gt;Super:Plan B,Child Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildB.png&quot; alt=&quot;SC_SuperBChildB&quot;&gt;&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则 Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
-&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&quot;Super-实现方法-Child-未实现方法-1&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-未实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 未实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 未实现方法&lt;/h3&gt;&lt;p&gt;由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。&lt;/p&gt;
-&lt;h4 id=&quot;Child-Plan-A-1&quot;&gt;&lt;a href=&quot;#Child-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan A&quot;&gt;&lt;/a&gt;Child:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildA.png&quot; alt=&quot;SC_ChildA&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&quot;Child-Plan-B-1&quot;&gt;&lt;a href=&quot;#Child-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Child:Plan B&quot;&gt;&lt;/a&gt;Child:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildB.png&quot; alt=&quot;SC_ChildB&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 &lt;code&gt;selector&lt;/code&gt; 不同，则会产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常；如果两个 &lt;code&gt;selector&lt;/code&gt; 相同则 Child-&amp;gt;Base (Super 被忽略)&lt;/li&gt;
-&lt;li&gt;Base 对象正常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&quot;Super-未实现方法-Child-实现方法-1&quot;&gt;&lt;a href=&quot;#Super-未实现方法-Child-实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 未实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 未实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。&lt;/p&gt;
-&lt;h4 id=&quot;Super-Plan-A-1&quot;&gt;&lt;a href=&quot;#Super-Plan-A-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan A&quot;&gt;&lt;/a&gt;Super:Plan A&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperA.png&quot; alt=&quot;SC_SuperA&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&quot;Super-Plan-B-1&quot;&gt;&lt;a href=&quot;#Super-Plan-B-1&quot; class=&quot;headerlink&quot; title=&quot;Super:Plan B&quot;&gt;&lt;/a&gt;Super:Plan B&lt;/h4&gt;&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperB.png&quot; alt=&quot;SC_SuperB&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 对象正常：Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Base 对象产生 &lt;code&gt;unrecognized selector&lt;/code&gt; 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&quot;Super-实现方法-Child-实现方法-1&quot;&gt;&lt;a href=&quot;#Super-实现方法-Child-实现方法-1&quot; class=&quot;headerlink&quot; title=&quot;Super 实现方法,Child 实现方法&quot;&gt;&lt;/a&gt;Super 实现方法,Child 实现方法&lt;/h3&gt;&lt;p&gt;相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/MethodSwizzling/SC_Perfect.png&quot; alt=&quot;SC_Perfect&quot;&gt;&lt;/p&gt;
-&lt;p&gt;方法执行结果（一切正常）：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 对象正常：Child-&amp;gt;Super-&amp;gt;Base&lt;/li&gt;
-&lt;li&gt;Super 和 Base 对象均正常&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&quot;结论&quot;&gt;&lt;a href=&quot;#结论&quot; class=&quot;headerlink&quot; title=&quot;结论&quot;&gt;&lt;/a&gt;结论&lt;/h2&gt;&lt;h3 id=&quot;Hook-顺序：先-Child-类后-Super-类&quot;&gt;&lt;a href=&quot;#Hook-顺序：先-Child-类后-Super-类&quot; class=&quot;headerlink&quot; title=&quot;Hook 顺序：先 Child 类后 Super 类&quot;&gt;&lt;/a&gt;Hook 顺序：先 Child 类后 Super 类&lt;/h3&gt;&lt;p&gt;为了保证 Hook 后方法调用顺序是对的，需要同时满足以下两个条件：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Child 类实现被 Hook 的方法&lt;/li&gt;
-&lt;li&gt;Super 类实现被 Hook 的方法或使用 A 方案 Hook&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&quot;Hook-顺序：先-Super-类后-Child-类&quot;&gt;&lt;a href=&quot;#Hook-顺序：先-Super-类后-Child-类&quot; class=&quot;headerlink&quot; title=&quot;Hook 顺序：先 Super 类后 Child 类&quot;&gt;&lt;/a&gt;Hook 顺序：先 Super 类后 Child 类&lt;/h3&gt;&lt;p&gt;因为 Hook 的顺序是正确的，所以只需满足以下任意一个条件即可：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;实现被 Hook 的方法&lt;/li&gt;
-&lt;li&gt;使用方案 A 进行 Hook&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&quot;Objective-C-Method-Swizzling-最佳实践&quot;&gt;&lt;a href=&quot;#Objective-C-Method-Swizzling-最佳实践&quot; class=&quot;headerlink&quot; title=&quot;Objective-C Method Swizzling 最佳实践&quot;&gt;&lt;/a&gt;Objective-C Method Swizzling 最佳实践&lt;/h3&gt;&lt;ol&gt;
-&lt;li&gt;Hook 顺序并不能保证结果一定正确，但先 Super 后 Child 效果更佳&lt;/li&gt;
-&lt;li&gt;方案 A 明显优于方案 B&lt;/li&gt;
-&lt;li&gt;方案 A 中的『静态方法版本』固然更缜密，但操作复杂。为了提升开发效率，建议参考 CaptainHook 的宏定义实现。&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://github.com/rabovik/RSSwizzle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;RSSwizzle&lt;/a&gt; 被很多人推荐，它用很复杂的方式解决了 &lt;a href=&quot;http://stackoverflow.com/questions/5339276/what-are-the-dangers-of-method-swizzling-in-objective-c&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;What are the Dangers of Method Swizzling in Objective C?&lt;/a&gt; 中提到的一系列问题。不过引入它还是有一些成本的，建议在本文列举的那些极端特殊情况下才使用它，毕竟方案 A 已经能 Cover 到大部分情况了。&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://github.com/rentzsch/jrswizzle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;jrswizzle&lt;/a&gt; 尝试解决在不同平台和系统版本上的 Method Swizzling 与类继承关系的冲突。对各平台低版本系统兼容性较强。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;我觉得最适合项目的方案才是最佳实践。&lt;/p&gt;
-&lt;h2 id=&quot;Reference&quot;&gt;&lt;a href=&quot;#Reference&quot; class=&quot;headerlink&quot; title=&quot;Reference&quot;&gt;&lt;/a&gt;Reference&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;http://stackoverflow.com/questions/5339276/what-are-the-dangers-of-method-swizzling-in-objective-c&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;What are the Dangers of Method Swizzling in Objective C?&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 &lt;code&gt;+ load&lt;/code&gt; 方法中，这是利用它调用时机较提前等性质。&lt;/p&gt;
-&lt;p&gt;有时候需要 Hook 子类和父类的同一个方法，但是它们的 &lt;code&gt;+ load&lt;/code&gt; 方法调用顺序不同。一个常见的顺序可能是：父类-&amp;gt;子类-&amp;gt;子类类别-&amp;gt;父类类别。所以 Hook 的顺序并不能保证，就不能保证 Hook 后方法调用的顺序是对的。而且使用不同方法 Method Swizzling 也会带来不同的结果。本文将会对这些情况下的 Hook 结果进行分析和总结。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Objective-C" scheme="http://yulingtianxia.com/tags/Objective-C/"/>
-    
-      <category term="Runtime" scheme="http://yulingtianxia.com/tags/Runtime/"/>
     
   </entry>
   

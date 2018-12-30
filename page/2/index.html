@@ -84,6 +84,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/" title="Hook Objective-C Block with Libffi" itemprop="url">Hook Objective-C Block with Libffi</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2018-02-28T11:05:24.000Z" itemprop="datePublished"> 发表于 2018-02-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>本文通过参照 <code>MABlockClosure</code> 的实现和 <code>Aspects</code> 的 API 设计，基于 libffi 实现了对 Objective-C Block 的 hook。GitHub 地址：<a href="https://github.com/yulingtianxia/BlockHook">https://github.com/yulingtianxia/BlockHook</a></p>
+<p>什么场景下需要 hook block 呢？在有源码的情况下，大部分程序员会选择直接在 block 中插代码。假如方法 A 的入参是个 block 对象，方法 A 将 block 传给方法 B,C…等。如果只有方法 A 的源码，上层传入的 block 和下层方法实现都是黑盒的话，想追踪 block 调用的时机，打印些 log，就得 hook 这个 block 对象了。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2018/01/15/How-to-make-a-Pebble-watchface/" title="How to make a Pebble watchface" itemprop="url">How to make a Pebble watchface</a>
   </h1>
   <p class="article-author">By
@@ -616,66 +676,6 @@
 	
 	  	<span></span>
 		<a href="/blog/2017/05/30/Implementing-CNN-with-MPS/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2017/04/17/Objective-C-Method-Swizzling/" title="Objective-C Method Swizzling" itemprop="url">Objective-C Method Swizzling</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2017-04-16T16:11:48.000Z" itemprop="datePublished"> 发表于 2017-04-17</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 <code>+ load</code> 方法中，这是利用它调用时机较提前等性质。</p>
-<p>有时候需要 Hook 子类和父类的同一个方法，但是它们的 <code>+ load</code> 方法调用顺序不同。一个常见的顺序可能是：父类-&gt;子类-&gt;子类类别-&gt;父类类别。所以 Hook 的顺序并不能保证，就不能保证 Hook 后方法调用的顺序是对的。而且使用不同方法 Method Swizzling 也会带来不同的结果。本文将会对这些情况下的 Hook 结果进行分析和总结。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2017/04/17/Objective-C-Method-Swizzling/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Runtime/">Runtime</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2017/04/17/Objective-C-Method-Swizzling/#disqus_thread" class="comments-count-link">Comments</a>
 	
 </div>
 

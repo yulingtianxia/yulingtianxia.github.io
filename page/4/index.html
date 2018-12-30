@@ -84,6 +84,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/" title="Objective-C 消息发送与转发机制原理" itemprop="url">Objective-C 消息发送与转发机制原理</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2016-06-15T12:12:48.000Z" itemprop="datePublished"> 发表于 2016-06-15</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>消息发送和转发流程可以概括为：消息发送（Messaging）是 Runtime 通过 selector 快速查找 IMP 的过程，有了函数指针就可以执行对应的方法实现；消息转发（Message Forwarding）是在查找 IMP 失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。</p>
+<p><strong>本文不讲述开发者在消息发送和转发流程中需要做的事，而是讲述原理。能够很好地阅读本文的前提是你对 <a href="http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/">Objective-C Runtime</a> 已经有一定的了解，关于什么是消息，Class 的结构，selector、IMP、元类等概念将不再赘述</strong>。本文用到的源码为 objc4-680 和 CF-1153.18，逆向 CoreFoundation.framework 的系统版本为 macOS 10.11.5，汇编语言架构为 x86_64。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Runtime/">Runtime</a><a href="/tags/Message-Forwarding/">Message Forwarding</a><a href="/tags/Messaging/">Messaging</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/" title="让你的微信不再被人撤回消息" itemprop="url">让你的微信不再被人撤回消息</a>
   </h1>
   <p class="article-author">By
@@ -112,7 +172,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/iOS/">iOS</a><a href="/tags/Reverse-Engineering/">Reverse Engineering</a>
+  <span></span> <a href="/tags/iOS/">iOS</a><a href="/tags/macOS/">macOS</a><a href="/tags/Reverse-Engineering/">Reverse Engineering</a>
   </div>
 
 </div>
@@ -172,7 +232,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/Swift/">Swift</a><a href="/tags/Algorithm/">Algorithm</a>
+  <span></span> <a href="/tags/Swift/">Swift</a><a href="/tags/macOS/">macOS</a><a href="/tags/Algorithm/">Algorithm</a>
   </div>
 
 </div>
@@ -291,7 +351,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/Swift/">Swift</a><a href="/tags/Algorithm/">Algorithm</a><a href="/tags/AppleScript/">AppleScript</a>
+  <span></span> <a href="/tags/Swift/">Swift</a><a href="/tags/macOS/">macOS</a><a href="/tags/Algorithm/">Algorithm</a><a href="/tags/AppleScript/">AppleScript</a>
   </div>
 
 </div>
@@ -605,65 +665,6 @@
 	
 	  	<span></span>
 		<a href="/blog/2015/10/20/Try-to-implement-picture-browser-mode-on-webview/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/" title="When to Use Swift Structs and Classes" itemprop="url">When to Use Swift Structs and Classes</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2015-08-12T02:05:20.000Z" itemprop="datePublished"> 发表于 2015-08-12</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>本文翻译自 Mike Ash 的 <a href="https://www.mikeash.com/pyblog/friday-qa-2015-07-17-when-to-use-swift-structs-and-classes.html">Friday Q&amp;A 2015-07-17: When to Use Swift Structs and Classes</a>  </p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Swift/">Swift</a><a href="/tags/翻译/">翻译</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/#disqus_thread" class="comments-count-link">Comments</a>
 	
 </div>
 
