@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2018-12-30T03:26:55.226Z</updated>
+  <updated>2019-01-01T13:18:43.604Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,14 +20,14 @@
     <link href="http://yulingtianxia.com/blog/2018/12/30/Dirty-Words-for-Xcode/"/>
     <id>http://yulingtianxia.com/blog/2018/12/30/Dirty-Words-for-Xcode/</id>
     <published>2018-12-30T03:26:27.000Z</published>
-    <updated>2018-12-30T03:26:55.226Z</updated>
+    <updated>2019-01-01T13:18:43.604Z</updated>
     
     <content type="html">&lt;p&gt;开发者经常会在代码中看到各类脏话，有吐槽产品的瞎改早晚还会改回来的，有吐槽这块代码写的太烂无法直视的，或是干脆心情不好就一顿骂。公司内部的项目想必是无数天坑 f*ck 无数，连对外开源的项目也难逃一劫，比如前一段时间 &lt;a href=&quot;https://bugs.openjdk.java.net/browse/JDK-8215217&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;OpenJDK&lt;/a&gt; 就因为脏话太多火了一把。&lt;/p&gt;
 &lt;p&gt;于是我做了一个 Xcode 插件来寻找代码中的脏话，将其高亮可以被选中，作为一个强提示让开发者修改。目前逻辑还只是简单替换而已，代码在这里：&lt;a href=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;DirtyWords-for-Xcode&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;为了体现汉字的博大精深，瞎画了个 icon，见笑了：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode/blob/master/images/艹.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-&lt;h2 id=&quot;安装&quot;&gt;&lt;a href=&quot;#安装&quot; class=&quot;headerlink&quot; title=&quot;安装&quot;&gt;&lt;/a&gt;安装&lt;/h2&gt;&lt;h3 id=&quot;AppStore&quot;&gt;&lt;a href=&quot;#AppStore&quot; class=&quot;headerlink&quot; title=&quot;AppStore&quot;&gt;&lt;/a&gt;AppStore&lt;/h3&gt;&lt;p&gt;圣诞节苹果暂停审核。。。日&lt;br&gt;还没审核通过&lt;/p&gt;
+&lt;h2 id=&quot;安装&quot;&gt;&lt;a href=&quot;#安装&quot; class=&quot;headerlink&quot; title=&quot;安装&quot;&gt;&lt;/a&gt;安装&lt;/h2&gt;&lt;h3 id=&quot;AppStore&quot;&gt;&lt;a href=&quot;#AppStore&quot; class=&quot;headerlink&quot; title=&quot;AppStore&quot;&gt;&lt;/a&gt;AppStore&lt;/h3&gt;&lt;p&gt;&lt;a href=&quot;https://itunes.apple.com/cn/app/dirtywords-for-xcode/id1447526628?mt=12&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;DirtyWords for Xcode&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id=&quot;GitHub-Release&quot;&gt;&lt;a href=&quot;#GitHub-Release&quot; class=&quot;headerlink&quot; title=&quot;GitHub Release&quot;&gt;&lt;/a&gt;GitHub Release&lt;/h3&gt;&lt;p&gt;直接从 GitHub Release 页面下载最新的安装包：&lt;br&gt;&lt;a href=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode/releases&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/yulingtianxia/DirtyWords-for-Xcode/releases&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;使用方式&quot;&gt;&lt;a href=&quot;#使用方式&quot; class=&quot;headerlink&quot; title=&quot;使用方式&quot;&gt;&lt;/a&gt;使用方式&lt;/h2&gt;&lt;p&gt;用法很简单，反正目前也就这么一个功能。Editer -&amp;gt; Dirty Words -&amp;gt; Highlight&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://github.com/yulingtianxia/DirtyWords-for-Xcode/blob/master/images/usage.png?raw=true&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
