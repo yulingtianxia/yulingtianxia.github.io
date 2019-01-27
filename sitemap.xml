@@ -2,6 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2019/01/27/MVVM-Rules-for-OCLint/</loc>
+    
+    <lastmod>2019-01-27T10:54:03.553Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2015/05/21/ReactiveCocoa-and-MVVM-an-Introduction/</loc>
+    
+    <lastmod>2019-01-26T09:11:42.601Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/07/29/reactivecocoa/</loc>
+    
+    <lastmod>2019-01-26T09:11:42.600Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2018/12/30/Dirty-Words-for-Xcode/</loc>
     
     <lastmod>2019-01-01T13:18:43.604Z</lastmod>
@@ -583,13 +604,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/05/21/ReactiveCocoa-and-MVVM-an-Introduction/</loc>
-    
-    <lastmod>2018-09-15T08:28:13.586Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/04/09/iosde-dot-gitignore/</loc>
     
     <lastmod>2018-09-15T08:28:13.580Z</lastmod>
@@ -642,13 +656,6 @@
     <loc>http://yulingtianxia.com/blog/2014/05/12/objective-czhong-de-kvche-kvo/</loc>
     
     <lastmod>2018-09-15T08:28:13.536Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/07/29/reactivecocoa/</loc>
-    
-    <lastmod>2018-09-15T08:28:13.530Z</lastmod>
     
   </url>
   

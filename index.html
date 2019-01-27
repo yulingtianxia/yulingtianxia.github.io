@@ -84,6 +84,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2019/01/27/MVVM-Rules-for-OCLint/" title="使用 OCLint 自定义 MVVM 规则" itemprop="url">使用 OCLint 自定义 MVVM 规则</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-01-27T11:00:51.000Z" itemprop="datePublished"> 发表于 2019-01-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。</p>
+<p>然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：<a href="https://github.com/yulingtianxia/oclint/tree/llvm-7.0">https://github.com/yulingtianxia/oclint/tree/llvm-7.0</a></p>
+<p>伸手党也可以使用我写的<a href="https://github.com/yulingtianxia/oclint/releases/download/0.18.10/install-0.18.10">脚本</a>直接安装，已包含 MVVM 规则。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2019/01/27/MVVM-Rules-for-OCLint/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2019/01/27/MVVM-Rules-for-OCLint/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2018/12/30/Dirty-Words-for-Xcode/" title="DirtyWords for Xcode - 做个文明的程序员" itemprop="url">DirtyWords for Xcode - 做个文明的程序员</a>
   </h1>
   <p class="article-author">By
@@ -621,69 +682,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/" title="追踪 Objective-C 方法中的 Block 参数对象" itemprop="url">追踪 Objective-C 方法中的 Block 参数对象</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2018-03-31T15:44:39.000Z" itemprop="datePublished"> 发表于 2018-03-31</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>很多方法最后一个参数是类似于 <code>completionBlock</code> 这种回调，然而有些 API 实现一些异常逻辑时会忘记调用传入的 Block 参数（当然这肯定是 bug 啦），或者存在多次调用。在调试的时候可能会碰到这种大坑，需要追踪下 Block 参数何时调用了，甚至是否调用过。如果不方便直接在 Block 实现中加代码，或者没有源码的情况下，就需要无侵入式地追踪 Block 参数对象。</p>
-<p><a href="https://github.com/yulingtianxia/BlockTracker">BlockTracker</a> 可以追踪方法调用时传入的 Block 类型的参数的执行和销毁。基于 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 实现。本文讲述了它的使用方法和实现原理。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
   </nav>
 
 </div>
