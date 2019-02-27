@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/grid coordinates.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/underutilization of threads.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/nonuniform threadgroups.png">
-<meta property="og:updated_time" content="2019-02-27T18:10:37.961Z">
+<meta property="og:updated_time" content="2019-02-27T18:18:47.462Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Parallel Computation using MPS">
 <meta name="twitter:description" content="在照片质量评分组件 PhotoAssessment 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。
@@ -117,13 +117,14 @@
 		
 		<p>在照片质量评分组件 <a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="external">PhotoAssessment</a> 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。</p>
 <p>至此，几乎所有图像处理与计算任务都交由 GPU 完成。之前利用 Sobel 算子边缘检测是使用了苹果封装好的 MPS 类，剩余的色彩分布指纹向量和饱和度均值当然都是需要自己写 Shader 的，现在终于补齐了。Metal Shading Language 与 GLSL 使用习惯和理念很相似，只不过 Metal Shader 的语法是基于 C++ 14 的。</p>
-<p>关于整个组件的实现思路，可以查阅<a href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/">『使用 Metal 和 Core ML 评价照片质量』</a>。</p>
+<p>关于整个组件的实现思路，可以查阅<a href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/">『使用 Metal 和 Core ML 评价照片质量』</a>。本篇文章所涉及到的 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/PhotoAssessmentShaders.metal" target="_blank" rel="external">Shader 代码</a> 也在其中。</p>
 <a id="more"></a>
 <p>工程升级到 Swift 5 结果 CI 不支持，编不过哎。</p>
 <h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>对一张 4032x3024 彩色图片在 iPhone 8 Plus 上进行测试的 Benchmark 如下（单位：秒）：</p>
 <p>计算平均饱和度：（耗时降低 99.90%）<br>CPU meanSaturation cost: 27.276064038276672<br>GPU meanSaturation cost: 0.02604210376739502</p>
 <p>计算指纹向量算法：（耗时降低 99.28%）<br>CPU fingerprint cost: 8.9078871011734<br>GPU fingerprint cost: 0.06412196159362793</p>
 <p>优化后的耗时降低幅度也跟图片本身有关，色彩分布更广的图片优化效果会更好。图片尺寸越大，优化效果越好。</p>
+<p>实现这两个功能的 Shader kernel 函数分别封装成了 <code>MPSKernel</code> 的子类： <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MPSSaturationKernel.swift" target="_blank" rel="external"><code>MPSSaturationKernel</code></a> 和 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MSPFingerprintImageKernel.swift" target="_blank" rel="external"><code>MSPFingerprintImageKernel</code></a>。</p>
 <h2 id="Shader-的实现"><a href="#Shader-的实现" class="headerlink" title="Shader 的实现"></a>Shader 的实现</h2><p>Command Encoder 会使用 Texture、Buffer、Sampler、Pipeline 等内容构建出 Command，并装载到 Command Buffer 上。</p>
 <p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command structure0.png" alt="from Apple Doc"></p>
 <p>从 CPU 各个线程创建的 Command Buffer 都将会传入 Command Queue。运行在 GPU 上的 Shader 代码会处理这些 Command。</p>
@@ -623,5 +624,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>
