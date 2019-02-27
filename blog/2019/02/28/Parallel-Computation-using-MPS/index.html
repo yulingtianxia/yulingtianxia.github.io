@@ -1,0 +1,627 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Parallel Computation using MPS | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="在照片质量评分组件 PhotoAssessment 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。
+至此，几乎所有图像处理与计算任务都交由 GP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Parallel Computation using MPS">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2019/02/28/Parallel-Computation-using-MPS/index.html">
+<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:description" content="在照片质量评分组件 PhotoAssessment 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。
+至此，几乎所有图像处理与计算任务都交由 GP">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command structure0.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command structure1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/Cmd-Model-threads.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/threadgroups.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/SIMD group.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/grid coordinates.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/underutilization of threads.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/nonuniform threadgroups.png">
+<meta property="og:updated_time" content="2019-02-27T18:10:37.961Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Parallel Computation using MPS">
+<meta name="twitter:description" content="在照片质量评分组件 PhotoAssessment 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。
+至此，几乎所有图像处理与计算任务都交由 GP">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command structure0.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/02/28/Parallel-Computation-using-MPS/" title="Parallel Computation using MPS" itemprop="url">Parallel Computation using MPS</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-02-27T17:50:50.000Z" itemprop="datePublished"> 发表于 2019-02-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#性能对比"><span class="toc-number">1.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader-的实现"><span class="toc-number">2.</span> <span class="toc-text">Shader 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Threadgroup"><span class="toc-number">2.1.</span> <span class="toc-text">Threadgroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Non-uniform-Threadgroup-Size"><span class="toc-number">2.2.</span> <span class="toc-text">Non-uniform Threadgroup Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原子操作生成-Histogram"><span class="toc-number">2.3.</span> <span class="toc-text">原子操作生成 Histogram</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#踩坑"><span class="toc-number">2.4.</span> <span class="toc-text">踩坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li></ol>
+		
+		</div>
+		
+		<p>在照片质量评分组件 <a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="external">PhotoAssessment</a> 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。</p>
+<p>至此，几乎所有图像处理与计算任务都交由 GPU 完成。之前利用 Sobel 算子边缘检测是使用了苹果封装好的 MPS 类，剩余的色彩分布指纹向量和饱和度均值当然都是需要自己写 Shader 的，现在终于补齐了。Metal Shading Language 与 GLSL 使用习惯和理念很相似，只不过 Metal Shader 的语法是基于 C++ 14 的。</p>
+<p>关于整个组件的实现思路，可以查阅<a href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/">『使用 Metal 和 Core ML 评价照片质量』</a>。</p>
+<a id="more"></a>
+<p>工程升级到 Swift 5 结果 CI 不支持，编不过哎。</p>
+<h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>对一张 4032x3024 彩色图片在 iPhone 8 Plus 上进行测试的 Benchmark 如下（单位：秒）：</p>
+<p>计算平均饱和度：（耗时降低 99.90%）<br>CPU meanSaturation cost: 27.276064038276672<br>GPU meanSaturation cost: 0.02604210376739502</p>
+<p>计算指纹向量算法：（耗时降低 99.28%）<br>CPU fingerprint cost: 8.9078871011734<br>GPU fingerprint cost: 0.06412196159362793</p>
+<p>优化后的耗时降低幅度也跟图片本身有关，色彩分布更广的图片优化效果会更好。图片尺寸越大，优化效果越好。</p>
+<h2 id="Shader-的实现"><a href="#Shader-的实现" class="headerlink" title="Shader 的实现"></a>Shader 的实现</h2><p>Command Encoder 会使用 Texture、Buffer、Sampler、Pipeline 等内容构建出 Command，并装载到 Command Buffer 上。</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command structure0.png" alt="from Apple Doc"></p>
+<p>从 CPU 各个线程创建的 Command Buffer 都将会传入 Command Queue。运行在 GPU 上的 Shader 代码会处理这些 Command。</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command structure1.png" alt="from Apple Doc"></p>
+<p>Command Encoder 有三种：Render、Compute 和 Blit。区别在于用途和用法，但创建的 Command 都可以放入同一个 Command Buffer 中。</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/Cmd-Model-threads.png" alt="from Apple Doc"></p>
+<p>为了在 GPU 上并行计算图片的饱和度和指纹向量，需要用到 Compute Command Encoder，并传入以下几个参数构建 Command：</p>
+<ol>
+<li>Texture：输入或输出用到的图像纹理</li>
+<li>Buffer：可作为额外的入参或结果，可设定 CPU 和 GPU 间共享</li>
+<li>Compute Pipeline State：用于配置 Shader 函数名，也可用于计算 threadgroup 相关信息。</li>
+</ol>
+<h3 id="Threadgroup"><a href="#Threadgroup" class="headerlink" title="Threadgroup"></a>Threadgroup</h3><p>GPU 并行计算时，每条线程处理一个像素。整个 Texture 看做一个 Grid，可以进一步划分成多个 threadgroup。</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/threadgroups.png" alt="from Apple Doc"></p>
+<p>threadgroup 还会按照 GPU 能同时执行的线程数 <code>threadExecutionWidth</code> 被划分为 SIMD group。</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/SIMD group.png" alt="from Apple Doc"></p>
+<p>为了达到更好的性能，需要将 threadgroup 包含的线程数量设定为 <code>threadExecutionWidth</code> 的整数倍。</p>
+<figure class="highlight cos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">let <span class="keyword">w</span> = computePipelineState.threadExecutionWidth<span class="comment">;</span></span><br><span class="line">let <span class="keyword">h</span> = computePipelineState.maxTotalThreadsPerThreadgroup / <span class="keyword">w</span><span class="comment">;</span></span><br><span class="line">threadGroupSize = MTLSize(width: <span class="keyword">w</span>, height: <span class="keyword">h</span>, depth: <span class="number">1</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>在编写 Shader 时，可以通过参数获取到当前处理的像素所处的相对位置。在 C++ 14 中是使用属性的方式来标记参数用途。比如 <code>thread_position_in_grid</code> 指的是当前线程处理的像素在 Grid 中的位置。类似的属性很多，比如 <code>threadgroup_position_in_grid</code>, <code>thread_position_in_threadgroup</code>,<br><code>threads_per_threadgroup</code>, <code>simdgroup_index_in_threadgroup</code>, <code>thread_index_in_simdgroup</code> …</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kernel void</span><br><span class="line">rgb2hsvKernelNonuniform(texture2d&lt;float, access::read&gt; inTexture <span class="string">[[texture(0)]]</span>,</span><br><span class="line">              texture2d&lt;float, access::write&gt; outTexture <span class="string">[[texture(1)]]</span>,</span><br><span class="line">              uint2 gid <span class="string">[[thread_position_in_grid]]</span>)</span><br><span class="line">&#123;</span><br><span class="line">    float4 pixel = inTexture.read(gid);</span><br><span class="line">    // 省略部分代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>比如传入的 <code>gid</code> 为 (9, 10)，那么就可以从 <code>inTexture</code> 中读取到此位置像素的数据。因为 Grid 坐标系是基于这个 Texture 的。</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/grid coordinates.png" alt="from Apple Doc"></p>
+<h3 id="Non-uniform-Threadgroup-Size"><a href="#Non-uniform-Threadgroup-Size" class="headerlink" title="Non-uniform Threadgroup Size"></a>Non-uniform Threadgroup Size</h3><p>Command Encoder 需要知道要处理的 Grid 的分组情况，比如Grid 包含多少 threadgroup，每个 threadgroup 包含多少 thread。</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> w = threadGroupSize.<span class="built_in">width</span>;</span><br><span class="line"><span class="built_in">let</span> h = threadGroupSize.<span class="built_in">height</span>;</span><br><span class="line"><span class="built_in">let</span> threadgroupsPerGrid = MTLSize(<span class="built_in">width</span>: (sourceTexture.<span class="built_in">width</span> + w - <span class="number">1</span>) / w, <span class="built_in">height</span>: (sourceTexture.<span class="built_in">height</span> + h - <span class="number">1</span>) / h, depth: <span class="number">1</span>);</span><br><span class="line">encoder?.dispatchThreadgroups(threadgroupsPerGrid, threadsPerThreadgroup: threadGroupSize)</span><br></pre></td></tr></table></figure>
+<p>确定好这些信息后，GPU 就会开始按分组矩阵批量处理像素。但是因为 Grid 的尺寸是 Texture 的尺寸，长和宽不一定都能整除 threadgroup，所以处理到图片边缘的 threadgroup 时，会有一部分调用传入的 <code>gid</code> 超出了范围。此时要在 Shader 中做边界保护逻辑：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kernel void</span><br><span class="line">rgb2hsvKernel(texture2d&lt;float, access::read&gt; inTexture <span class="string">[[texture(0)]]</span>,</span><br><span class="line">              texture2d&lt;float, access::write&gt; outTexture <span class="string">[[texture(1)]]</span>,</span><br><span class="line">              uint2 gid <span class="string">[[thread_position_in_grid]]</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>((gid.x &gt;= outTexture.get_width()) || (gid.y &gt;= outTexture.get_height()))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    rgb2hsv(inTexture, outTexture, gid);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是超范围的调用都被 <code>return</code> 掉了，GPU 的一些线程没利用上，造成了浪费:</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/underutilization of threads.png" alt="from Apple Doc"></p>
+<p>为了提升性能，Metal 在部分 GPU 特性集上支持了 “Non-uniform Threadgroup Size”。可以允许存在不同 size 的 threadgroup：</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/nonuniform threadgroups.png" alt="from Apple Doc"></p>
+<p>这样只需要传入 Grid 的 size，以及 threadgroup 的 size，Metal 就会自动划分边缘部分的 threadgroup size，充分利用好 GPU 的运算效率。</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> threadsPerGrid = MTLSize(<span class="built_in">width</span>: sourceTexture.<span class="built_in">width</span>, <span class="built_in">height</span>: sourceTexture.<span class="built_in">height</span>, depth: <span class="number">1</span>);</span><br><span class="line">encoder?.dispatchThreads(threadsPerGrid, threadsPerThreadgroup: threadGroupSize)</span><br></pre></td></tr></table></figure>
+<p>这样一来 Shader 部分的代码就不需要加边界判断了：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">kernel void</span><br><span class="line">rgb2hsvKernelNonuniform(texture2d&lt;float, access::read&gt; inTexture <span class="string">[[texture(0)]]</span>,</span><br><span class="line">              texture2d&lt;float, access::write&gt; outTexture <span class="string">[[texture(1)]]</span>,</span><br><span class="line">              uint2 gid <span class="string">[[thread_position_in_grid]]</span>)</span><br><span class="line">&#123;</span><br><span class="line">    rgb2hsv(inTexture, outTexture, gid);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不过并不是所有系统和设备都支持这项特性。目前支持 Non-uniform Threadgroup Size 的 GPU Feature Set 如下：</p>
+<ul>
+<li>iOS11 GPUFamily4_v1</li>
+<li>iOS12 GPUFamily4_v2</li>
+<li>iOS12 GPUFamily5_v1</li>
+<li>macOS13 GPUFamily1_v3</li>
+<li>macOS14 GPUFamily1_v4</li>
+<li>macOS14 GPUFamily2_v1</li>
+</ul>
+<p>所以目前我的策略是先判断是否支持 Non-uniform Threadgroup Size，然后决定使用的 Shader 函数版本、以及 Encoder 分发线程的方式。</p>
+<h3 id="原子操作生成-Histogram"><a href="#原子操作生成-Histogram" class="headerlink" title="原子操作生成 Histogram"></a>原子操作生成 Histogram</h3><p>在计算指纹向量的时，并行将每个像素的内容处理完后，还需要统计成柱状图。比如处理完的像素种类一共有 <code>HistogramBufferSize</code> 种，需要统计每种类型的像素数量，可以声明一个 Buffer，包含长度为 <code>HistogramBufferSize</code> 的数组 <code>bucket</code>，将其传入 Shader 函数用于统计。</p>
+<p>下面是用 Shader 实现的指纹向量生成代码，MPS 实现了部分 C++ 原子操作的接口，<code>atomic_fetch_add_explicit</code> 用于原子累加操作。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">typedef struct</span><br><span class="line">&#123;</span><br><span class="line">    atomic_int bucket[HistogramBufferSize];</span><br><span class="line">&#125; PAHistogramBuffer;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> fingerprint(texture2d&lt;<span class="type">uint</span>, access::read&gt; inTexture [[<span class="built_in">texture</span>(<span class="number">0</span>)]],</span><br><span class="line">                 device PAHistogramBuffer &amp;<span class="keyword">buffer</span> [[<span class="keyword">buffer</span>(<span class="number">0</span>)]],</span><br><span class="line">                 uint2 gid [[thread_position_in_grid]])</span><br><span class="line">&#123;</span><br><span class="line">    uint4 c = inTexture.read(gid);</span><br><span class="line">    <span class="type">uint</span> width = inTexture.get_width();</span><br><span class="line">    <span class="type">uint</span> height = inTexture.get_height();</span><br><span class="line">    <span class="type">uint</span> blockCount = <span class="number">2</span>;</span><br><span class="line">    <span class="type">uint</span> rowCount = <span class="built_in">min</span>(blockCount, height);</span><br><span class="line">    <span class="type">uint</span> countPerRow = <span class="built_in">min</span>(blockCount, width);</span><br><span class="line">    <span class="type">uint</span> hStep = width / countPerRow;</span><br><span class="line">    <span class="type">uint</span> vStep = height / rowCount;</span><br><span class="line">    <span class="type">uint</span> row = gid.y / vStep;</span><br><span class="line">    <span class="type">uint</span> col = gid.x / hStep;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// |-3bit-|-3bit-|-3bit-|-2bit-|</span></span><br><span class="line">    <span class="type">uint</span> result = (row * countPerRow + col) + ((c.y &gt;&gt; <span class="number">5</span>) &lt;&lt; <span class="number">2</span>) + ((c.z &gt;&gt; <span class="number">5</span>) &lt;&lt; <span class="number">5</span>) + ((c.w &gt;&gt; <span class="number">5</span>) &lt;&lt; <span class="number">8</span>);</span><br><span class="line">    atomic_fetch_add_explicit(&amp;<span class="keyword">buffer</span>.bucket[result], <span class="number">1</span>, memory_order_relaxed);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>MPS 支持的原子操作值类型很有限，无法选择占用内存更低的类型，只好忍受 <code>atomic_int</code> 带来的 4 Byte 吧。只要控制好 <code>HistogramBufferSize</code>，问题应该不大。</p>
+<h3 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h3><p>MPS 中获取向量内容的方式可谓是方便，但是也是有坑在里面的。比如要注意无论是 <code>xyzw</code> 还是 <code>rgba</code> 分量获取的内容都是从低地址到高地址排列的。比如传入的像素格式是 RGBA，那么 <code>rgba</code> 获取的值正好是反过来的。</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RGBA</span><br><span class="line">wzyx  <span class="comment">// x低 w 高</span></span><br><span class="line">abgr  <span class="comment">// r低 a 高</span></span><br></pre></td></tr></table></figure>
+<p>同样向 Texture 写数据的时候也要注意构造向量的时候，从左往右也是从低到高。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 0x04030201</span></span><br><span class="line">outTexture<span class="selector-class">.write</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>), <span class="selector-tag">gid</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf" target="_blank" rel="external">https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf</a></li>
+<li><a href="https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf" target="_blank" rel="external">https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf</a></li>
+<li><a href="https://stackoverflow.com/questions/47738441/passing-textures-with-uint8-component-type-to-metal-compute-shader" target="_blank" rel="external">https://stackoverflow.com/questions/47738441/passing-textures-with-uint8-component-type-to-metal-compute-shader</a></li>
+<li><a href="https://stackoverflow.com/questions/15095909/from-rgb-to-hsv-in-opengl-glsl" target="_blank" rel="external">https://stackoverflow.com/questions/15095909/from-rgb-to-hsv-in-opengl-glsl</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Metal/">Metal</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2019/02/28/Parallel-Computation-using-MPS/" data-title="Parallel Computation using MPS | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/blog/2019/01/27/MVVM-Rules-for-OCLint/"  title="使用 OCLint 自定义 MVVM 规则">
+ <strong>下一篇：</strong><br/> 
+ <span>使用 OCLint 自定义 MVVM 规则
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#性能对比"><span class="toc-number">1.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader-的实现"><span class="toc-number">2.</span> <span class="toc-text">Shader 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Threadgroup"><span class="toc-number">2.1.</span> <span class="toc-text">Threadgroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Non-uniform-Threadgroup-Size"><span class="toc-number">2.2.</span> <span class="toc-text">Non-uniform Threadgroup Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原子操作生成-Histogram"><span class="toc-number">2.3.</span> <span class="toc-text">原子操作生成 Histogram</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#踩坑"><span class="toc-number">2.4.</span> <span class="toc-text">踩坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://pbxproj.yulingtianxia.com" target="_blank" title="pbxprojHelper">pbxprojHelper</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 14px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 11px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 12px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 19px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 11px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 17px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 14px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 17px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 16px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 14px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
