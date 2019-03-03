@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2019-02-27T18:18:47.462Z</updated>
+  <updated>2019-03-03T06:14:18.877Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yulingtianxia.com/blog/2019/02/28/Parallel-Computation-using-MPS/"/>
     <id>http://yulingtianxia.com/blog/2019/02/28/Parallel-Computation-using-MPS/</id>
     <published>2019-02-27T17:50:50.000Z</published>
-    <updated>2019-02-27T18:18:47.462Z</updated>
+    <updated>2019-03-03T06:14:18.877Z</updated>
     
     <content type="html">&lt;p&gt;在照片质量评分组件 &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;PhotoAssessment&lt;/a&gt; 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。&lt;/p&gt;
 &lt;p&gt;至此，几乎所有图像处理与计算任务都交由 GPU 完成。之前利用 Sobel 算子边缘检测是使用了苹果封装好的 MPS 类，剩余的色彩分布指纹向量和饱和度均值当然都是需要自己写 Shader 的，现在终于补齐了。Metal Shading Language 与 GLSL 使用习惯和理念很相似，只不过 Metal Shader 的语法是基于 C++ 14 的。&lt;/p&gt;
@@ -31,7 +31,11 @@
 &lt;p&gt;计算平均饱和度：（耗时降低 99.90%）&lt;br&gt;CPU meanSaturation cost: 27.276064038276672&lt;br&gt;GPU meanSaturation cost: 0.02604210376739502&lt;/p&gt;
 &lt;p&gt;计算指纹向量算法：（耗时降低 99.28%）&lt;br&gt;CPU fingerprint cost: 8.9078871011734&lt;br&gt;GPU fingerprint cost: 0.06412196159362793&lt;/p&gt;
 &lt;p&gt;优化后的耗时降低幅度也跟图片本身有关，色彩分布更广的图片优化效果会更好。图片尺寸越大，优化效果越好。&lt;/p&gt;
-&lt;p&gt;实现这两个功能的 Shader kernel 函数分别封装成了 &lt;code&gt;MPSKernel&lt;/code&gt; 的子类： &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MPSSaturationKernel.swift&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;code&gt;MPSSaturationKernel&lt;/code&gt;&lt;/a&gt; 和 &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MSPFingerprintImageKernel.swift&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;code&gt;MSPFingerprintImageKernel&lt;/code&gt;&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;再来看看 500x500 尺寸下的数据：&lt;/p&gt;
+&lt;p&gt;500x500 降采样到 50x50（包含降采样耗时）&lt;br&gt;cpu total cost: 0.3883340358734131&lt;br&gt;gpu total cost: 0.0030889511108398438&lt;/p&gt;
+&lt;p&gt;直接处理 500x500 尺寸图片&lt;br&gt;gpu total cost: 0.008553862571716&lt;/p&gt;
+&lt;p&gt;可以看出，降采样有一定耗时。即便是降采样到 50x50 这种很小的尺寸，在 CPU 上运行算法也会有较多的耗时。&lt;strong&gt;相比之下，直接 GPU 处理 500x500 尺寸图片具有更大的优势：耗时远小于降采样后跑 CPU，略高于降采样后跑 GPU，但能够处理更大尺寸更多信息，相当于有更高的准确率。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;实现这两个功能的 Shader kernel 函数分别封装成 Swift 类： &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MPSSaturationKernel.swift&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;code&gt;MPSSaturationKernel&lt;/code&gt;&lt;/a&gt; 和 &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MSPFingerprintImageKernel.swift&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;code&gt;MSPFingerprintImageKernel&lt;/code&gt;&lt;/a&gt;。&lt;/p&gt;
 &lt;h2 id=&quot;Shader-的实现&quot;&gt;&lt;a href=&quot;#Shader-的实现&quot; class=&quot;headerlink&quot; title=&quot;Shader 的实现&quot;&gt;&lt;/a&gt;Shader 的实现&lt;/h2&gt;&lt;p&gt;Command Encoder 会使用 Texture、Buffer、Sampler、Pipeline 等内容构建出 Command，并装载到 Command Buffer 上。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command structure0.png&quot; alt=&quot;from Apple Doc&quot;&gt;&lt;/p&gt;
 &lt;p&gt;从 CPU 各个线程创建的 Command Buffer 都将会传入 Command Queue。运行在 GPU 上的 Shader 代码会处理这些 Command。&lt;/p&gt;

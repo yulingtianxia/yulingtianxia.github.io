@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/grid coordinates.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/underutilization of threads.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/nonuniform threadgroups.png">
-<meta property="og:updated_time" content="2019-02-27T18:18:47.462Z">
+<meta property="og:updated_time" content="2019-03-03T06:14:18.877Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Parallel Computation using MPS">
 <meta name="twitter:description" content="在照片质量评分组件 PhotoAssessment 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。
@@ -124,7 +124,11 @@
 <p>计算平均饱和度：（耗时降低 99.90%）<br>CPU meanSaturation cost: 27.276064038276672<br>GPU meanSaturation cost: 0.02604210376739502</p>
 <p>计算指纹向量算法：（耗时降低 99.28%）<br>CPU fingerprint cost: 8.9078871011734<br>GPU fingerprint cost: 0.06412196159362793</p>
 <p>优化后的耗时降低幅度也跟图片本身有关，色彩分布更广的图片优化效果会更好。图片尺寸越大，优化效果越好。</p>
-<p>实现这两个功能的 Shader kernel 函数分别封装成了 <code>MPSKernel</code> 的子类： <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MPSSaturationKernel.swift" target="_blank" rel="external"><code>MPSSaturationKernel</code></a> 和 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MSPFingerprintImageKernel.swift" target="_blank" rel="external"><code>MSPFingerprintImageKernel</code></a>。</p>
+<p>再来看看 500x500 尺寸下的数据：</p>
+<p>500x500 降采样到 50x50（包含降采样耗时）<br>cpu total cost: 0.3883340358734131<br>gpu total cost: 0.0030889511108398438</p>
+<p>直接处理 500x500 尺寸图片<br>gpu total cost: 0.008553862571716</p>
+<p>可以看出，降采样有一定耗时。即便是降采样到 50x50 这种很小的尺寸，在 CPU 上运行算法也会有较多的耗时。<strong>相比之下，直接 GPU 处理 500x500 尺寸图片具有更大的优势：耗时远小于降采样后跑 CPU，略高于降采样后跑 GPU，但能够处理更大尺寸更多信息，相当于有更高的准确率。</strong></p>
+<p>实现这两个功能的 Shader kernel 函数分别封装成 Swift 类： <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MPSSaturationKernel.swift" target="_blank" rel="external"><code>MPSSaturationKernel</code></a> 和 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MSPFingerprintImageKernel.swift" target="_blank" rel="external"><code>MSPFingerprintImageKernel</code></a>。</p>
 <h2 id="Shader-的实现"><a href="#Shader-的实现" class="headerlink" title="Shader 的实现"></a>Shader 的实现</h2><p>Command Encoder 会使用 Texture、Buffer、Sampler、Pipeline 等内容构建出 Command，并装载到 Command Buffer 上。</p>
 <p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command structure0.png" alt="from Apple Doc"></p>
 <p>从 CPU 各个线程创建的 Command Buffer 都将会传入 Command Queue。运行在 GPU 上的 Shader 代码会处理这些 Command。</p>
