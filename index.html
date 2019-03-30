@@ -84,6 +84,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2019/03/29/Audio-Emotion-Recognition/" title="音频情绪识别" itemprop="url">音频情绪识别</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-03-29T15:30:46.000Z" itemprop="datePublished"> 发表于 2019-03-29</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>如何识别声音所蕴含的情绪呢？在大部分场景下，人声的情绪更有意义。可以先将人声转文字，再通过 NLP 分析语义情绪。不过人类语言博大精深，一句『卧槽』的不同语调和语境下会有很多种意义，真的是卧槽啊！</p>
+<p>于是我从音频特征提取入手，将人声分类识别为八种情绪，实现了两个方案并都得到了测试集 70% 以上的准确率：</p>
+<ol>
+<li>使用 VGGish 网络做特征提取，输入自定义网络进行训练。</li>
+<li>使用音频库导出一系列特征作为输入向量，自定义网络进行训练。</li>
+</ol>
+<p>Python 工程和 iOS Sample 开源在 GitHub 上了：<a href="https://github.com/yulingtianxia/AudioEmotion">https://github.com/yulingtianxia/AudioEmotion</a></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2019/03/29/Audio-Emotion-Recognition/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2019/03/29/Audio-Emotion-Recognition/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2019/02/28/Parallel-Computation-using-MPS/" title="Parallel Computation using MPS" itemprop="url">Parallel Computation using MPS</a>
   </h1>
   <p class="article-author">By
@@ -608,66 +668,6 @@
 	
 	  	<span></span>
 		<a href="/blog/2018/06/24/Objective-C-Block-Mangle-Name/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/" title="MessageThrottle Performance Benchmark and Optimization" itemprop="url">MessageThrottle Performance Benchmark and Optimization</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2018-05-30T18:01:50.000Z" itemprop="datePublished"> 发表于 2018-05-31</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><a href="https://github.com/yulingtianxia/MessageThrottle">MessageThrottle</a> 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，所以相比直接调用方法，会有一些性能上的损耗。本篇文章记录了对其性能进行测试的结果，并通过使用 <code>NSMapTable</code> 改进存储结构和缓存来对性能进行大幅度的优化。</p>
-<p>这是你从未体验过的船新版本。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/#disqus_thread" class="comments-count-link">Comments</a>
 	
 </div>
 
