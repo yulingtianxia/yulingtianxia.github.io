@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yulingtianxia.com/about/index.html</loc>
+    
+    <lastmod>2019-05-26T09:44:52.916Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2019/05/26/BlockHook-with-Revocation/</loc>
+    
+    <lastmod>2019-05-26T09:24:17.929Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2019/04/27/BlockHook-with-Struct/</loc>
     
     <lastmod>2019-04-27T13:29:55.617Z</lastmod>
@@ -117,13 +131,6 @@
     <loc>http://yulingtianxia.com/tags/index.html</loc>
     
     <lastmod>2018-09-15T08:28:14.041Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/about/index.html</loc>
-    
-    <lastmod>2018-09-15T08:28:14.035Z</lastmod>
     
   </url>
   

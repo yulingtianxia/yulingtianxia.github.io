@@ -84,6 +84,76 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2019/05/26/BlockHook-with-Revocation/" title="BlockHook with Revocation" itemprop="url">BlockHook with Revocation</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-05-26T09:20:10.000Z" itemprop="datePublished"> 发表于 2019-05-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：</p>
+<ol>
+<li>如何知道某个 Block 对象被谁 Hook 过？</li>
+<li>多次 Hook 的先后顺序？</li>
+<li>如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？</li>
+</ol>
+<p>这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。</p>
+<p>关于 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 的原理，可以先阅读之前的文章：</p>
+<ul>
+<li><a href="http://yulingtianxia.com/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/">Hook Objective-C Block with Libffi</a></li>
+<li><a href="http://yulingtianxia.com/blog/2019/04/27/BlockHook-with-Struct/">BlockHook with Struct</a></li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2019/05/26/BlockHook-with-Revocation/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2019/05/26/BlockHook-with-Revocation/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2019/04/27/BlockHook-with-Struct/" title="BlockHook with Struct" itemprop="url">BlockHook with Struct</a>
   </h1>
   <p class="article-author">By
@@ -620,72 +690,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2018/07/31/MessageThrottle-Safety/" title="MessageThrottle Safety" itemprop="url">MessageThrottle Safety</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2018-07-30T16:50:24.000Z" itemprop="datePublished"> 发表于 2018-07-31</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><a href="https://github.com/yulingtianxia/MessageThrottle">MessageThrottle</a> 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。</p>
-<p>新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。<a href="https://github.com/yulingtianxia/MessageThrottle">MessageThrottle</a> 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有发现和解决的。</p>
-<p>本文是关于 <a href="https://github.com/yulingtianxia/MessageThrottle">MessageThrottle</a> 的第四篇文章。前三篇如下：</p>
-<ul>
-<li><a href="http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/">Objective-C Message Throttle and Debounce</a></li>
-<li><a href="http://yulingtianxia.com/blog/2017/12/15/Associated-Object-and-Dealloc/">Associated Object 与 Dealloc</a></li>
-<li><a href="http://yulingtianxia.com/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/">MessageThrottle Performance Benchmark and Optimization</a></li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2018/07/31/MessageThrottle-Safety/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2018/07/31/MessageThrottle-Safety/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -756,7 +760,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 14px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 12px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 11px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 12px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 19px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 11px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 17px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 14px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 17px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 16px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 14px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13.33px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15.56px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 14.44px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 12.22px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 11.11px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 12.22px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.11px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 11.11px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.78px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 17.78px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.89px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 14.44px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 17.78px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.11px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 16.67px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 14.44px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
