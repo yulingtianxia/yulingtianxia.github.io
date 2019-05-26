@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>App与Extensions间通信共享数据 | yulingtianxia&#39;s blog</title>
@@ -12,11 +12,13 @@
 
     
     <meta name="description" content="最近玩了玩Watch开发，而目前Watch的主要逻辑处理都是放在WatchKit Extension。真正的Host App，也就是WatchKit App只是用来在界面上显示数据的。于是实践了下containing app与app extension之间的通信和数据共享。">
+<meta name="keywords" content="Swift,iOS,AppGroups,App Extensions">
 <meta property="og:type" content="article">
 <meta property="og:title" content="App与Extensions间通信共享数据">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2015/04/06/Communication-between-your-App-and-Extensions/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="最近玩了玩Watch开发，而目前Watch的主要逻辑处理都是放在WatchKit Extension。真正的Host App，也就是WatchKit App只是用来在界面上显示数据的。于是实践了下containing app与app extension之间的通信和数据共享。">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/hardchoice.gif">
 <meta property="og:updated_time" content="2019-05-26T10:08:45.505Z">
 <meta name="twitter:card" content="summary">
@@ -38,14 +40,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -70,12 +72,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -91,7 +93,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2015-04-06T12:30:54.000Z" itemprop="datePublished"> 发表于 2015-04-06</time>
     
   </p>
@@ -101,7 +103,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#App-Groups-amp-Framework"><span class="toc-number">1.</span> <span class="toc-text">App Groups & Framework</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-app-与-Extension的通信"><span class="toc-number">2.</span> <span class="toc-text">Container app 与 Extension的通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CFNotificationCenterGetDarwinNotifyCenter"><span class="toc-number">2.1.</span> <span class="toc-text">CFNotificationCenterGetDarwinNotifyCenter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MMWormhole"><span class="toc-number">2.2.</span> <span class="toc-text">MMWormhole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Swift与CoreFoundation"><span class="toc-number">2.3.</span> <span class="toc-text">Swift与CoreFoundation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在Framework中混编OC"><span class="toc-number">2.4.</span> <span class="toc-text">在Framework中混编OC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#App-Groups-amp-Framework"><span class="toc-number">1.</span> <span class="toc-text">App Groups &amp; Framework</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-app-与-Extension的通信"><span class="toc-number">2.</span> <span class="toc-text">Container app 与 Extension的通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CFNotificationCenterGetDarwinNotifyCenter"><span class="toc-number">2.1.</span> <span class="toc-text">CFNotificationCenterGetDarwinNotifyCenter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MMWormhole"><span class="toc-number">2.2.</span> <span class="toc-text">MMWormhole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Swift与CoreFoundation"><span class="toc-number">2.3.</span> <span class="toc-text">Swift与CoreFoundation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在Framework中混编OC"><span class="toc-number">2.4.</span> <span class="toc-text">在Framework中混编OC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
 		
 		</div>
 		
@@ -217,7 +219,7 @@
 <p>在stackoverflow上找到了<a href="http://stackoverflow.com/questions/24875745/xcode-6-beta-4-using-bridging-headers-with-framework-targets-is-unsupported" target="_blank" rel="external">解决方案</a>，于是删除之前的”DataKit-Bridging-Header.h”文件并清除”Build Settings”关于Bridging Header的引用；在DataKit.h添加<code>#import &quot;HelpMethod.h&quot;</code>，并在HelpMethod.h文件的 “File inspector”-&gt;”Target Membership”中DataKit右侧将”project”修改为”public”(否则会出现<strong>include of non-modular header inside framework module ‘DataKit’</strong>的编译错误)。  </p>
 <p>至此，我们可以在<code>HelpMethod</code>类中实现一个函数指针，并在Wormhole.swift文件中直接使用这个函数指针来为<code>CFunctionPointer</code>类型的参数传值。  </p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>来个效果图：  </p>
-<p><img src="http://yulingtianxia.com/resources/hardchoice.gif" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/hardchoice.gif" alt>  </p>
 <p>这是我第一次写Watch的App(废话谁不是第一次)，经验并不是很多，也因为Swift1.2还未正式发布，遇到了一些坑。好歹最后克服了，但也丢了贞操(毕竟不是纯Swift的App了)。有不对的地方还请多多指教。随着Swift的不断完善，希望以后能够支持创建<code>CFunctionPointer</code>对象，这样它好我也好😄</p>
   
 	</div>
@@ -249,9 +251,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2015/05/21/ReactiveCocoa-and-MVVM-an-Introduction/" title="ReactiveCocoa 和 MVVM 入门">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   ReactiveCocoa 和 MVVM 入门</span>
 </a>
@@ -259,8 +261,8 @@
 
 
 <div class="next">
-<a href="/blog/2015/03/08/Insight-of-Null/"  title="悟空!">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2015/03/08/Insight-of-Null/" title="悟空!">
+ <strong>下一篇：</strong><br> 
  <span>悟空!
 </span>
 </a>
@@ -284,7 +286,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#App-Groups-amp-Framework"><span class="toc-number">1.</span> <span class="toc-text">App Groups & Framework</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-app-与-Extension的通信"><span class="toc-number">2.</span> <span class="toc-text">Container app 与 Extension的通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CFNotificationCenterGetDarwinNotifyCenter"><span class="toc-number">2.1.</span> <span class="toc-text">CFNotificationCenterGetDarwinNotifyCenter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MMWormhole"><span class="toc-number">2.2.</span> <span class="toc-text">MMWormhole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Swift与CoreFoundation"><span class="toc-number">2.3.</span> <span class="toc-text">Swift与CoreFoundation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在Framework中混编OC"><span class="toc-number">2.4.</span> <span class="toc-text">在Framework中混编OC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#App-Groups-amp-Framework"><span class="toc-number">1.</span> <span class="toc-text">App Groups &amp; Framework</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-app-与-Extension的通信"><span class="toc-number">2.</span> <span class="toc-text">Container app 与 Extension的通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CFNotificationCenterGetDarwinNotifyCenter"><span class="toc-number">2.1.</span> <span class="toc-text">CFNotificationCenterGetDarwinNotifyCenter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MMWormhole"><span class="toc-number">2.2.</span> <span class="toc-text">MMWormhole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Swift与CoreFoundation"><span class="toc-number">2.3.</span> <span class="toc-text">Swift与CoreFoundation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在Framework中混编OC"><span class="toc-number">2.4.</span> <span class="toc-text">在Framework中混编OC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
  
   </div>
 
@@ -296,7 +298,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -361,7 +363,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -370,7 +372,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -378,7 +380,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -387,11 +389,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -427,7 +429,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -652,7 +654,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

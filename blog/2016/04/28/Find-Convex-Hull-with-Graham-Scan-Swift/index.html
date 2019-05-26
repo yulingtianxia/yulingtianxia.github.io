@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>Find Convex Hull with Graham Scan &amp; Swift | yulingtianxia&#39;s blog</title>
@@ -12,11 +12,13 @@
 
     
     <meta name="description" content="凸包(Convex hull) 是一个数学上的概念，在二维平面上可以想象成用一个橡皮筋套住一堆钉在平面上的钉子。本文讲述如何使用 Swift 实现 Graham scan 算法来寻找二维平面点集上的凸包。工程源码 Github：https://github.com/yulingtianxia/Algorithm-Experiment">
+<meta name="keywords" content="Swift,Algorithm,macOS">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Find Convex Hull with Graham Scan & Swift">
+<meta property="og:title" content="Find Convex Hull with Graham Scan &amp; Swift">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2016/04/28/Find-Convex-Hull-with-Graham-Scan-Swift/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="凸包(Convex hull) 是一个数学上的概念，在二维平面上可以想象成用一个橡皮筋套住一堆钉在平面上的钉子。本文讲述如何使用 Swift 实现 Graham scan 算法来寻找二维平面点集上的凸包。工程源码 Github：https://github.com/yulingtianxia/Algorithm-Experiment">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/d/de/ConvexHull.svg">
 <meta property="og:image" content="http://yulingtianxia.com/resources/convexhull/convexhull.gif">
 <meta property="og:image" content="http://yulingtianxia.com/resources/convexhullQQ20160428-0@2x.png">
@@ -24,7 +26,7 @@
 <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/1/1b/Graham_scan.png">
 <meta property="og:updated_time" content="2019-05-26T10:08:45.516Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Find Convex Hull with Graham Scan & Swift">
+<meta name="twitter:title" content="Find Convex Hull with Graham Scan &amp; Swift">
 <meta name="twitter:description" content="凸包(Convex hull) 是一个数学上的概念，在二维平面上可以想象成用一个橡皮筋套住一堆钉在平面上的钉子。本文讲述如何使用 Swift 实现 Graham scan 算法来寻找二维平面点集上的凸包。工程源码 Github：https://github.com/yulingtianxia/Algorithm-Experiment">
 <meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/commons/d/de/ConvexHull.svg">
 <meta name="twitter:creator" content="@yulingtianxia">
@@ -42,14 +44,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -74,12 +76,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -95,7 +97,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2016-04-28T14:37:16.000Z" itemprop="datePublished"> 发表于 2016-04-28</time>
     
   </p>
@@ -110,7 +112,7 @@
 		</div>
 		
 		<p><a href="https://en.wikipedia.org/wiki/Convex_hull" target="_blank" rel="external">凸包(Convex hull)</a> 是一个数学上的概念，在二维平面上可以想象成用一个橡皮筋套住一堆钉在平面上的钉子。本文讲述如何使用 Swift 实现 <a href="https://en.wikipedia.org/wiki/Graham_scan" target="_blank" rel="external">Graham scan</a> 算法来寻找二维平面点集上的凸包。工程源码 Github：<a href="https://github.com/yulingtianxia/Algorithm-Experiment" target="_blank" rel="external">https://github.com/yulingtianxia/Algorithm-Experiment</a></p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/d/de/ConvexHull.svg" alt="By Maksim (original); en:User:Pbroks3 (redraw), via Wikimedia Commons"><br><img src="http://yulingtianxia.com/resources/convexhull/convexhull.gif" alt=""></p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/d/de/ConvexHull.svg" alt="By Maksim (original); en:User:Pbroks3 (redraw), via Wikimedia Commons"><br><img src="http://yulingtianxia.com/resources/convexhull/convexhull.gif" alt></p>
 <a id="more"></a>
 <h1 id="简单粗暴的想法"><a href="#简单粗暴的想法" class="headerlink" title="简单粗暴的想法"></a>简单粗暴的想法</h1><p>直观上去看可以理解为『找出最外围的点』，进而把问题转化为『剔除凸多边形内部的点』，进而简化为『剔除任意三角形内的点』。PS：<strong>三角形</strong>指的是由点集内任意三个不相同的点构成的三角形，以下不再赘述定义，直接以<strong>三角形</strong>代指。</p>
 <p>下面需要做的是遍历所有三角形的排列组合，找出三角形上或内部的点，并剔除，因为它肯定不是凸包的顶点。</p>
@@ -159,7 +161,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/Swift/">Swift</a><a href="/tags/Algorithm/">Algorithm</a>
+  <span></span> <a href="/tags/Swift/">Swift</a><a href="/tags/Algorithm/">Algorithm</a><a href="/tags/macOS/">macOS</a>
   </div>
 
 </div>
@@ -181,9 +183,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/" title="让你的微信不再被人撤回消息">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   让你的微信不再被人撤回消息</span>
 </a>
@@ -191,8 +193,8 @@
 
 
 <div class="next">
-<a href="/blog/2016/03/28/Add-UITest-Label-for-UIAutomation/"  title="为 UIAutomation 添加自动化测试标签的探索">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2016/03/28/Add-UITest-Label-for-UIAutomation/" title="为 UIAutomation 添加自动化测试标签的探索">
+ <strong>下一篇：</strong><br> 
  <span>为 UIAutomation 添加自动化测试标签的探索
 </span>
 </a>
@@ -228,7 +230,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -293,7 +295,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -302,7 +304,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -310,7 +312,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -319,11 +321,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -359,7 +361,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -584,7 +586,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

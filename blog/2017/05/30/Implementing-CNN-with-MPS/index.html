@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>Implementing CNN with MPS | yulingtianxia&#39;s blog</title>
@@ -12,11 +12,13 @@
 
     
     <meta name="description" content="最近一个月从零开始自学了下有关 iOS 上的机器学习相关知识，亲身实践了从数据采集到训练模型再到移动端预测的流程。理论知识学习路径为：机器学习-&amp;gt;深度学习-&amp;gt;迁移学习；实践框架学习路径为：TensorFlow-&amp;gt;Keras-&amp;gt;MPS(iOS 10)。最终完成一个简单的手势图像五分类问题，并预测 iOS 摄像头采集的图片。最终结果，训练集准确率 96.26%，交叉验证集准确率">
+<meta name="keywords" content="iOS,Machine Leaning,Metal">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Implementing CNN with MPS">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2017/05/30/Implementing-CNN-with-MPS/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="最近一个月从零开始自学了下有关 iOS 上的机器学习相关知识，亲身实践了从数据采集到训练模型再到移动端预测的流程。理论知识学习路径为：机器学习-&amp;gt;深度学习-&amp;gt;迁移学习；实践框架学习路径为：TensorFlow-&amp;gt;Keras-&amp;gt;MPS(iOS 10)。最终完成一个简单的手势图像五分类问题，并预测 iOS 摄像头采集的图片。最终结果，训练集准确率 96.26%，交叉验证集准确率">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://wx3.sinaimg.cn/mw1024/642c5793ly1ff5ornniluj21kw0u3tn2.jpg">
 <meta property="og:image" content="http://yulingtianxia.com/resources/MachineLearning/training_data.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/MachineLearning/Inception V3.png">
@@ -44,14 +46,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -76,12 +78,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -97,7 +99,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2017-05-30T09:20:32.000Z" itemprop="datePublished"> 发表于 2017-05-30</time>
     
   </p>
@@ -115,7 +117,7 @@
 <a id="more"></a>
 <h2 id="理论基础"><a href="#理论基础" class="headerlink" title="理论基础"></a>理论基础</h2><p>虽然结果导向很重要，但是我还是想从基础学起，而不是去急于去网上找现成的解决方案来调参。毕竟我的目的是拓宽知识面，开新的技能树。</p>
 <p>第一周从零开始学习了 Coursera 上 Stanford Ng 教授的 <a href="https://www.coursera.org/learn/machine-learning/home" target="_blank" rel="external">Machine Learning</a> 经典课程，用 Matlab 编写了一些 Demo，用一周时间完成了原本需要 11 周时间的所有课程和考试，对机器学习的基础知识有了掌握。</p>
-<p><img src="http://wx3.sinaimg.cn/mw1024/642c5793ly1ff5ornniluj21kw0u3tn2.jpg" alt=""></p>
+<p><img src="http://wx3.sinaimg.cn/mw1024/642c5793ly1ff5ornniluj21kw0u3tn2.jpg" alt></p>
 <p>机器学习大体可以分为有监督学习和无监督学习。带标签数据的有监督学习包含从最简单的线性回归到逻辑回归，再到神经网络和 SVM（支持向量机）。无监督学习包含大学竖直的 K-means 聚类，PCA(Principal Components Analysis) 降维。以及带标签数据的异常检测算法。为了确保机器学习的效果，需要通过看懂学习曲线决定下一步的工作，是解决 overfit 还是 underfit。使用交叉验证集和测试集评估模型时，如何平衡准确率和召回率，比如 F1 Score 指标。在数据预处理上要了解一些数据归一化标准化的方法。</p>
 <p>光掌握机器学习的基础知识显然不够，大而全不如专而精。深度学习在图像识别领域大放异彩，其实深度学习是机器学习的一个分支，而深度学习领域最近在图像识别上应用最火的可能就是 CNN 了。所以在狂学深度学习的时候重点研究了下 CNN。</p>
 <h3 id="卷积神经网络简介"><a href="#卷积神经网络简介" class="headerlink" title="卷积神经网络简介"></a>卷积神经网络简介</h3><p>全连接网络权重过多，而卷积神经网络可以实现权值共享，引入了深度，数据为 3D 的。推荐查看 Stanford 的 <a href="http://cs231n.github.io/convolutional-networks/" target="_blank" rel="external">Convolutional Neural Networks (CNNs / ConvNets)</a>，中文翻译：<a href="https://zhuanlan.zhihu.com/p/22038289" target="_blank" rel="external">CS231n课程笔记翻译：卷积神经网络笔记</a>。</p>
@@ -301,7 +303,7 @@
 <p>其实苹果爸爸已经帮我们用 Swift 和 Metal Performance Shaders 实现了个使用 Inception V3 网络预测图像类别的 Demo:<a href="https://developer.apple.com/library/content/samplecode/MetalImageRecognition/Introduction/Intro.html" target="_blank" rel="external">MetalImageRecognition: Performing Image Recognition with Inception_v3 Network using Metal Performance Shaders Convolutional Neural Network routines</a></p>
 <p>所以我决定使用 <a href="https://arxiv.org/pdf/1512.00567v3.pdf" target="_blank" rel="external">Inception V3 Network</a> 来 fine-tuning，这样在后续的 MPS 代码编写上就会省很多时间。TensorFlow 官方也有相应 <a href="https://www.tensorflow.org/tutorials/image_recognition#image-recognition" target="_blank" rel="external">教程</a>。</p>
 <h3 id="bottleneck-features"><a href="#bottleneck-features" class="headerlink" title="bottleneck features"></a>bottleneck features</h3><p>下图展示了 Inception V3 网络的结构，其中的 top 部分就是 Final part 所指的部分，我们可以将其替换成我们自己的全连接层，利用前面 Input 预测的结果来作为输入数据，训练我们自己的分类器。</p>
-<p><img src="http://yulingtianxia.com/resources/MachineLearning/Inception V3.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/MachineLearning/Inception V3.png" alt></p>
 <blockquote>
 <p>上图中的 Inception mudules 使用的是<a href="https://arxiv.org/pdf/1512.00567v3.pdf" target="_blank" rel="external">论文</a>中提到的图 6 的结构，实际代码中则使用的图 5。</p>
 </blockquote>
@@ -332,7 +334,7 @@
 <p>HDF（英语：Hierarchical Data Format）指一种为存储和处理大容量科学数据设计的文件格式及相应库文件。HDF最早由NCSA开发，目前在非盈利组织 HDF 小组维护下继续发展。当前流行的版本是HDF5。<br>    – 维基百科</p>
 </blockquote>
 <p><a href="https://www.hdfgroup.org" target="_blank" rel="external">HDF Group</a> 提供了可视化查看 HDF 文件的工具：<a href="https://support.hdfgroup.org/products/java/release/download.html" target="_blank" rel="external">HDFView</a>，因为是用 java 写的，所以是跨平台的。Mac 版本有个已知的 bug：双击一个 <code>.h5</code> 文件后 HDFView 界面是空的，需要把 <code>.h5</code> 文件拖动到 HDFView 左边栏才能打开。</p>
-<p><img src="http://yulingtianxia.com/resources/MachineLearning/HDFView.jpg" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/MachineLearning/HDFView.jpg" alt></p>
 <p>Keras 可以将训练处的权重结果高存成 HDF5 格式，但苹果提供的 Demo 使用的权重文件是 memory-mapped 二进制文件，每层网络都对应一个 <code>.dat</code> 文件。</p>
 <p><a href="https://support.hdfgroup.org/products/hdf5_tools/index.html" target="_blank" rel="external">SOFTWARE USING HDF5</a> 列举了很多用于操作 HDF 文件和格式转换的工具。可以用一些工具将存有权重的 HDF 文件先转化成若干 <code>.dat</code> 文件，然后再打包到 iOS App 中。还有一种做法是将 HDF 文件打包到 iOS App 中，然后在客户端完成格式导出。<a href="https://github.com/aleph7/HDF5Kit" target="_blank" rel="external">HDF5Kit</a> 是对 <a href="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/" target="_blank" rel="external">HDF 源码</a>的 Swift 封装，不过还有些 crash。我采用了第二种做法，因为我懒，替换权重文件的时候只需要一个 HDF 文件，不用替换一堆 <code>.dat</code> 文件🙄。实际应用中千万别这么干。</p>
 <p>可以根据上图中 HDFView 展示的树状层级递归遍历 Group，并拼接好正确的名称。比如 “bias:0” 和 “kernel:0”。将 HDF5 转换成二进制文件的代码如下：</p>
@@ -341,14 +343,14 @@
 <p>苹果的 BNNS 同样提供了创建 CNN 的 API，而且也只能使用训练好的权重进行预测。但仅仅是对 CPU 进行了优化。因为 OpenGL 的限制，其性能与 Metal 相比并不占优势。OpenCL 在 iOS 上是私有框架。所以说目前看来，不考虑系统兼容性(iOS 10)和资源限制(arm64)，Metal 技术是发挥 GPU 运算优势的最好选择。</p>
 <p>MPS 系统原生支持不用担心安装包增量问题，并且使用 Metal 技术使用 GPU 加速运算，功耗发热少。MPS 目前的缺点是不支持网络的训练和必须 HardCode 网络结构，但面对复杂度较低的神经网络时还是很实用的。毕竟 TensorFlow 在 iOS 上只能用 CPU 计算，且编译费时费力，安装包增量巨大。</p>
 <p>MPS 在我的 iPhone 6s Plus 上性能很好，发热也少，可以通过神经网络实时预测出结果。这是 <a href="https://github.com/shu223/iOS-10-Sampler" target="_blank" rel="external">iOS-10-Sampler</a> 项目的效果，它是在苹果官方 Demo <a href="https://developer.apple.com/library/content/samplecode/MetalImageRecognition/Introduction/Intro.html" target="_blank" rel="external">MetalImageRecognition</a> 基础上稍微改进拍摄功能的用户体验，MPS 的部分未做任何改动。我基于它和 <a href="https://github.com/kazoo-kmt/MPSCNNfeeder" target="_blank" rel="external">MPSCNNfeeder</a> 实现了 <a href="https://github.com/yulingtianxia/HandGestureCNN/tree/master/HandGestureCNN" target="_blank" rel="external">HandGestureCNN</a>。</p>
-<p><img src="https://github.com/shu223/iOS-10-Sampler/blob/master/README_resources/imagerecog.gif?raw=true" alt=""></p>
+<p><img src="https://github.com/shu223/iOS-10-Sampler/blob/master/README_resources/imagerecog.gif?raw=true" alt></p>
 <p>苹果给了一个 MPS 的 HelloWorld： <a href="https://developer.apple.com/library/content/samplecode/MPSCNNHelloWorld/Introduction/Intro.html" target="_blank" rel="external">MPSCNNHelloWorld: Simple Digit Detection Convolution Neural Networks (CNN)</a>，恰好对应着机器学习领域的 HelloWorld MNIST。可以通过查看这个 Demo 的源码来快速上手 MPS 的用法。</p>
 <p>其实总体来说并不是很复杂，但有几个重要的地方需要我们自己去解决：</p>
 <ol>
 <li>数据处理，也就是模型文件的数据格式需要自己去解析。不同深度学习框架导出的模型权重文件格式都不一样，会涉及到比较底层的位读写。这里有一定工作量。</li>
 <li>使用卷积神经网络预测模型的时候，会涉及到 padding，这部分需要自己计算。输出数据体在空间上的尺寸可以通过输入数据体尺寸（W），卷积层中神经元的感受野尺寸（F），步长（S）和零填充的数量（P）的函数来计算。输出数据体的空间尺寸为 (W-F +2P)/S+1。这里说的是某个维度，单指宽或长。</li>
 <li><p><code>MPSImage</code> 是为了突破 <code>MTLTexture</code> 最大维度为 4 （RGBA）的限制，搞了个 workaround，就是用多个切片模拟多维度。如果有 N 个维度，那么切片数量为 (N+3)/4。比如下图为 N = 9 的情况。所以涉及到数据对齐的事情，预测后的数据需要处理下。</p>
-<p> <img src="https://docs-assets.developer.apple.com/published/48ad0af3fd/b6d1d091-162c-418d-bc2e-0b6f3105c126.png" alt=""></p>
+<p> <img src="https://docs-assets.developer.apple.com/published/48ad0af3fd/b6d1d091-162c-418d-bc2e-0b6f3105c126.png" alt></p>
 </li>
 </ol>
 <p>好在苹果提供的 Demo 里已经对于后两个问题有了可以参考的代码，第一个问题其实是个矩阵转换的操作。 TensorFlow 卷积核权重的顺序为 [kH kW iC oC]，而 MPS 接受的权重为 [oC kH kW iC] 形式。而我使用 Keras 的时候将 TensorFlow 作为后端，所以需要转换下权重格式。矩阵转换在 python 里很容易，还好我找到了 Swift 版本的实现：<a href="https://github.com/kazoo-kmt/MPSCNNfeeder/blob/master/swapaxes.swift" target="_blank" rel="external">SwapAxes</a>，直接拿过来用了。</p>
@@ -404,9 +406,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2017/06/19/Core-ML-and-Vision-Framework-on-iOS-11/" title="Core ML and Vision Framework on iOS 11">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   Core ML and Vision Framework on iOS 11</span>
 </a>
@@ -414,8 +416,8 @@
 
 
 <div class="next">
-<a href="/blog/2017/04/17/Objective-C-Method-Swizzling/"  title="Objective-C Method Swizzling">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2017/04/17/Objective-C-Method-Swizzling/" title="Objective-C Method Swizzling">
+ <strong>下一篇：</strong><br> 
  <span>Objective-C Method Swizzling
 </span>
 </a>
@@ -451,7 +453,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -516,7 +518,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -525,7 +527,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -533,7 +535,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -542,11 +544,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -582,7 +584,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -807,7 +809,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

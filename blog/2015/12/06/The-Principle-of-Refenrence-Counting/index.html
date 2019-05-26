@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>Objective-C 引用计数原理 | yulingtianxia&#39;s blog</title>
@@ -11,22 +11,18 @@
     
 
     
-    <meta name="description" content="本文所使用的源码为 objc4-647 和 CF-1153.18
-实际上这是我本周实习周报的一部分，写的比较仓促，如有差错还请多多指正。
-不讲用法，只说原理。">
+    <meta name="description" content="本文所使用的源码为 objc4-647 和 CF-1153.18 实际上这是我本周实习周报的一部分，写的比较仓促，如有差错还请多多指正。 不讲用法，只说原理。">
+<meta name="keywords" content="Objective-C,Runtime,Reference Counting">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Objective-C 引用计数原理">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="本文所使用的源码为 objc4-647 和 CF-1153.18
-实际上这是我本周实习周报的一部分，写的比较仓促，如有差错还请多多指正。
-不讲用法，只说原理。">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="本文所使用的源码为 objc4-647 和 CF-1153.18 实际上这是我本周实习周报的一部分，写的比较仓促，如有差错还请多多指正。 不讲用法，只说原理。">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2019-05-26T10:08:45.512Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Objective-C 引用计数原理">
-<meta name="twitter:description" content="本文所使用的源码为 objc4-647 和 CF-1153.18
-实际上这是我本周实习周报的一部分，写的比较仓促，如有差错还请多多指正。
-不讲用法，只说原理。">
+<meta name="twitter:description" content="本文所使用的源码为 objc4-647 和 CF-1153.18 实际上这是我本周实习周报的一部分，写的比较仓促，如有差错还请多多指正。 不讲用法，只说原理。">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -42,14 +38,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -74,12 +70,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -95,7 +91,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2015-12-06T08:32:07.000Z" itemprop="datePublished"> 发表于 2015-12-06</time>
     
   </p>
@@ -245,9 +241,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2016/01/17/search-for-similar-images/" title="如何自制一款寻找相似图片的 Mac 工具">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   如何自制一款寻找相似图片的 Mac 工具</span>
 </a>
@@ -255,8 +251,8 @@
 
 
 <div class="next">
-<a href="/blog/2015/11/13/Summary-of-the-first-month-in-the-internship-of-Tencent/"  title="腾讯实习第一个月工作总结">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2015/11/13/Summary-of-the-first-month-in-the-internship-of-Tencent/" title="腾讯实习第一个月工作总结">
+ <strong>下一篇：</strong><br> 
  <span>腾讯实习第一个月工作总结
 </span>
 </a>
@@ -292,7 +288,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -357,7 +353,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -366,7 +362,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -374,7 +370,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -383,11 +379,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -423,7 +419,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -648,7 +644,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

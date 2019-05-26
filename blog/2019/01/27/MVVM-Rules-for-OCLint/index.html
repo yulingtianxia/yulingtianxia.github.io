@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>使用 OCLint 自定义 MVVM 规则 | yulingtianxia&#39;s blog</title>
@@ -11,20 +11,19 @@
     
 
     
-    <meta name="description" content="最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。
-然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：https://github.com/yulingtianxia/oclint/t">
+    <meta name="description" content="最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。 然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：https://github.com/yulingtianxia/oclint/t">
+<meta name="keywords" content="Objective-C">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用 OCLint 自定义 MVVM 规则">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2019/01/27/MVVM-Rules-for-OCLint/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。
-然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：https://github.com/yulingtianxia/oclint/t">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。 然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：https://github.com/yulingtianxia/oclint/t">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQ20190127-175054@2x.png">
 <meta property="og:updated_time" content="2019-05-26T10:08:45.552Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 OCLint 自定义 MVVM 规则">
-<meta name="twitter:description" content="最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。
-然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：https://github.com/yulingtianxia/oclint/t">
+<meta name="twitter:description" content="最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。 然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：https://github.com/yulingtianxia/oclint/t">
 <meta name="twitter:image" content="http://yulingtianxia.com/resources/QQ20190127-175054@2x.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -41,14 +40,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -73,12 +72,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -94,7 +93,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2019-01-27T11:00:51.000Z" itemprop="datePublished"> 发表于 2019-01-27</time>
     
   </p>
@@ -134,7 +133,7 @@
 <p>思路是遍历每个后缀名为 <code>ViewModel</code> 类的 Interface 中的所有 Property，判断每个 Property 的 Attribute，如果包含 <code>readwrite</code> 就触发 warning。提高优先级可以产生 error。</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Visit ObjCImplementationDecl */</span></span><br><span class="line">bool VisitObjCImplementationDecl(ObjCImplementationDecl *node)</span><br><span class="line">&#123;</span><br><span class="line">    ObjCInterfaceDecl *<span class="class"><span class="keyword">interface</span> = <span class="title">node</span>-&gt;<span class="title">getClassInterface</span></span>();</span><br><span class="line">    </span><br><span class="line">    bool isViewModel = <span class="class"><span class="keyword">interface</span>-&gt;<span class="title">getName</span></span>().endswith(<span class="string">"ViewModel"</span>);</span><br><span class="line">    <span class="keyword">if</span> (!isViewModel) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (auto property = <span class="class"><span class="keyword">interface</span>-&gt;<span class="title">instprop_begin</span></span>(),</span><br><span class="line">         propertyEnd = <span class="class"><span class="keyword">interface</span>-&gt;<span class="title">instprop_end</span></span>(); property != propertyEnd; property++)</span><br><span class="line">    &#123;</span><br><span class="line">        clang::ObjCPropertyDecl *propertyDecl = (clang::ObjCPropertyDecl *)*property;</span><br><span class="line">        <span class="keyword">if</span> (propertyDecl-&gt;getName().startswith(<span class="string">"UI"</span>)) &#123;</span><br><span class="line">            addViolation(propertyDecl, <span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        auto attrs = propertyDecl-&gt;getPropertyAttributes();</span><br><span class="line">        bool isReadwrite = (attrs &amp; ObjCPropertyDecl::PropertyAttributeKind::OBJC_PR_readwrite) &gt; <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (isReadwrite &amp;&amp; isViewModel) &#123;</span><br><span class="line">            addViolation(propertyDecl, <span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="集成到-Xcode"><a href="#集成到-Xcode" class="headerlink" title="集成到 Xcode"></a>集成到 Xcode</h2><p>先放一张集成后的效果：</p>
-<p><img src="http://yulingtianxia.com/resources/QQ20190127-175054@2x.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/QQ20190127-175054@2x.png" alt></p>
 <p>在 CI 运行静态检查可以减少一部分人工 Code Review 的成本，缺点是发现问题滞后，解决问题有一定成本。而如果在本地 Xcode 运行静态检查，则可把问题扼杀在摇篮之中，缺点是占用开发机资源。</p>
 <p>如何在 Xcode 中集成 OCLint 静态检查，官方有很详细的文档，图文并茂: <a href="https://oclint-docs.readthedocs.io/en/stable/guide/xcode.html" target="_blank" rel="external">https://oclint-docs.readthedocs.io/en/stable/guide/xcode.html</a></p>
 <p>美中不足的是 Xcode Run Script 欠一点火候，可以参考下下面我提供的脚本：</p>
@@ -176,9 +175,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2019/02/28/Parallel-Computation-using-MPS/" title="Parallel Computation using MPS">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   Parallel Computation using MPS</span>
 </a>
@@ -186,8 +185,8 @@
 
 
 <div class="next">
-<a href="/blog/2018/12/30/Dirty-Words-for-Xcode/"  title="DirtyWords for Xcode - 做个文明的程序员">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2018/12/30/Dirty-Words-for-Xcode/" title="DirtyWords for Xcode - 做个文明的程序员">
+ <strong>下一篇：</strong><br> 
  <span>DirtyWords for Xcode - 做个文明的程序员
 </span>
 </a>
@@ -223,7 +222,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -288,7 +287,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -297,7 +296,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -305,7 +304,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -314,11 +313,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -354,7 +353,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -579,7 +578,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>SpriteKit在iOS9和OSX10.11中的新特性 | yulingtianxia&#39;s blog</title>
@@ -12,11 +12,13 @@
 
     
     <meta name="description" content="这是一篇 WWDC2015 Session 604 的学习笔记,在看 WWDC2014 的 Session 时也总结过一篇SpriteKit在iOS8和OSX10.10中的新特性,从 iOS7 发布 SpriteKit 以来我一直利用课余时间做些小游戏,感受着 SpriteKit 的一路成长.这次也在第一时间总结了下 今年 WWDC SpriteKit 的新特性.">
+<meta name="keywords" content="SpriteKit">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SpriteKit在iOS9和OSX10.11中的新特性">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2015/06/12/SpriteKit在iOS9和OSX10-11中的新特性/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="这是一篇 WWDC2015 Session 604 的学习笔记,在看 WWDC2014 的 Session 时也总结过一篇SpriteKit在iOS8和OSX10.10中的新特性,从 iOS7 发布 SpriteKit 以来我一直利用课余时间做些小游戏,感受着 SpriteKit 的一路成长.这次也在第一时间总结了下 今年 WWDC SpriteKit 的新特性.">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQ20150612-1@2x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQ20150612-2@2x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQ20150612-3@2x.png">
@@ -51,14 +53,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -83,12 +85,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -104,7 +106,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2015-06-12T08:21:30.000Z" itemprop="datePublished"> 发表于 2015-06-12</time>
     
   </p>
@@ -134,7 +136,7 @@
 <p>不得不吐槽下之前的场景编辑器,竟然不能重复使用一些组件,甚至不能引用我做的粒子效果 sks 文件到场景中.但这本来应该是一个游戏场景编辑器本该有的功能啊!  </p>
 <h3 id="Named-SKActions"><a href="#Named-SKActions" class="headerlink" title="Named SKActions"></a>Named SKActions</h3><p><img src="http://yulingtianxia.com/resources/QQ20150612-5@2x.png" alt="Named SKActions">  </p>
 <p>嗯动作(Action)也能以文件的方式共享了.我们可以创建一个sks 文件用于保存自定义动作. Xcode7 为我们提供了一些基本动作对象,可以拖拽到编辑器中:  </p>
-<p><img src="http://yulingtianxia.com/resources/QQ20150612-7@2x.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20150612-7@2x.png" alt>  </p>
 <p>我们可以用下面这些 <code>SKAction</code> 新加入的 API 来从 sks 文件中加载自定义动作:  </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">actionNamed:</span></span><br><span class="line"><span class="string">actionNamed:</span><span class="string">duration:</span></span><br><span class="line"><span class="string">actionNamed:</span><span class="string">fromURL:</span></span><br><span class="line"><span class="string">actionNamed:</span><span class="string">fromURL:</span><span class="string">duration:</span></span><br></pre></td></tr></table></figure>
 <p>此外,这回 <code>SKAction</code> 还增添了一些新动作:  </p>
@@ -167,7 +169,7 @@
 <p><img src="http://yulingtianxia.com/resources/QQ20150612-12@2x.png" alt="Quicklook">  </p>
 <h3 id="2D-编辑器"><a href="#2D-编辑器" class="headerlink" title="2D 编辑器"></a>2D 编辑器</h3><p>新的编辑器可以模拟和预览场景了,会动了.之前 Xcode6 已经支持编辑粒子效果和整个游戏场景,今年 Xcode7 还加入了动画和动作效果.想想一行代码都不用写就能做出会动的场景,越来越靠近 Unity 等专业的游戏平台框架了.(凭我的经验肯定这肯定会让 Mac 煎鸡蛋,因为在之前仅是静态场景下模拟光照就已经发热有些严重了,更别提模拟物理计算让场景内容动起来了)  </p>
 <h3 id="新的附加部件"><a href="#新的附加部件" class="headerlink" title="新的附加部件"></a>新的附加部件</h3><p>之前提到的 SKCameraNode, SKAudioNode 和 SKReferenceNode,Xcode7 都是给予激情支持的:</p>
-<p><img src="http://yulingtianxia.com/resources/QQ20150612-14@2x.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20150612-14@2x.png" alt>  </p>
 <p>这样我们就可以在 Xcode7 中预览时感受摄像头的移动缩放,感受声音由远及近身临其境,当然这在 Unity 中早就有了, SpriteKit 一直在努力追赶.  </p>
 <p>让强迫症激动的是场景编辑器终于支持将 Node 设为自定义类了.这真是太赞了!  </p>
 <h3 id="动作编辑器"><a href="#动作编辑器" class="headerlink" title="动作编辑器"></a>动作编辑器</h3><p>最让人激动的是我们可以在动作编辑器中像做视频一样基于时间线构建出复杂的交互动画!支持 2D 和 3D, 并能实时预览:  </p>
@@ -205,9 +207,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2015/07/25/初识Core-Data-4/" title="初识Core Data(4)">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   初识Core Data(4)</span>
 </a>
@@ -215,8 +217,8 @@
 
 
 <div class="next">
-<a href="/blog/2015/05/21/ReactiveCocoa-and-MVVM-an-Introduction/"  title="ReactiveCocoa 和 MVVM 入门">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2015/05/21/ReactiveCocoa-and-MVVM-an-Introduction/" title="ReactiveCocoa 和 MVVM 入门">
+ <strong>下一篇：</strong><br> 
  <span>ReactiveCocoa 和 MVVM 入门
 </span>
 </a>
@@ -252,7 +254,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -317,7 +319,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -326,7 +328,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -334,7 +336,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -343,11 +345,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -383,7 +385,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -608,7 +610,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

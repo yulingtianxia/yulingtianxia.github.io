@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>SpriteKit在iOS8和OSX10.10中的新特性 | yulingtianxia&#39;s blog</title>
@@ -12,11 +12,13 @@
 
     
     <meta name="description" content="在iOS8和OSX10.10中SpriteKit迎来了重大升级。在物理表现方面增加了着色器，光照和阴影；在物理模拟方面增加了像素物理体、力场和宇宙动力学和约束等；在Xcode中集成了场景编辑器，你不需要写代码就能完成一些复杂的工作；此外它还集成了SceneKit以及其他的改进。">
+<meta name="keywords" content="SpriteKit">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SpriteKit在iOS8和OSX10.10中的新特性">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="在iOS8和OSX10.10中SpriteKit迎来了重大升级。在物理表现方面增加了着色器，光照和阴影；在物理模拟方面增加了像素物理体、力场和宇宙动力学和约束等；在Xcode中集成了场景编辑器，你不需要写代码就能完成一些复杂的工作；此外它还集成了SceneKit以及其他的改进。">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140738700571.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140738949518.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140739494085.png">
@@ -28,7 +30,7 @@
 <meta property="og:image" content="http://yulingtianxia.com/resources/update_loop_2x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/14074923846.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140749497219.png">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.495Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.496Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SpriteKit在iOS8和OSX10.10中的新特性">
 <meta name="twitter:description" content="在iOS8和OSX10.10中SpriteKit迎来了重大升级。在物理表现方面增加了着色器，光照和阴影；在物理模拟方面增加了像素物理体、力场和宇宙动力学和约束等；在Xcode中集成了场景编辑器，你不需要写代码就能完成一些复杂的工作；此外它还集成了SceneKit以及其他的改进。">
@@ -48,14 +50,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -80,12 +82,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -101,7 +103,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2014-08-08T11:11:14.000Z" itemprop="datePublished"> 发表于 2014-08-08</time>
     
   </p>
@@ -125,14 +127,14 @@
 <li><code>SKScene</code></li>
 </ul>
 <p>放一张官方演示的效果图：  </p>
-<p><img src="http://yulingtianxia.com/resources/140738700571.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140738700571.png" alt>  </p>
 <p><code>SKShader</code>内建了一些<code>uniforms</code>，用<code>SKUniform</code>来描述，当你创建一个<code>SKShader</code>时，需要通过一个<code>fsh</code>文件或者一个字符串代码来创建，也可选择性的传入<code>uniforms</code>来定义游戏中一些额外的参数。下面是创建Shader方法的集合：  </p>
 <p>（下面的只是伪代码，不是OC也不是Swift语法，只是为了更简洁的标记方法名，后面类似情形都会标记为“伪代码”）  </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+ <span class="string">shaderWithFileNamed:</span></span><br><span class="line">+ <span class="string">shaderWithSource:</span><span class="string">uniforms:</span></span><br><span class="line">+ <span class="string">shaderWithSource:</span></span><br><span class="line">+ shader</span><br><span class="line">- <span class="string">initWithSource:</span><span class="string">uniforms:</span></span><br><span class="line">- <span class="string">initWithSource:</span></span><br></pre></td></tr></table></figure>
 <p>这些方法很相似，都是传入<code>source</code>或<code>source</code>与<code>uniforms</code>来创建shader。官方建议我们用<code>fsh</code>文件作为<code>source</code>而不是字符串代码；并且避免更改<code>source</code>或添加删除<code>uniforms</code>（修改<code>uniforms</code>是可以的），因为这样会导致后台花时间重新编译shader；尽量在加载时初始化shader。这些注意事项都可以总结为尽量使用内建的<code>uniforms</code>和共享shader对象。</p>
 <p>我们可以将创建好的<code>SKShader</code>对象赋值给支持Shader渲染对象的<code>shader</code>属性。  </p>
 <p>下面列举一下Shader中的预定义符号：  </p>
-<p><img src="http://yulingtianxia.com/resources/140738949518.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/140738949518.png" alt></p>
 <h2 id="Lighting-and-Shadows"><a href="#Lighting-and-Shadows" class="headerlink" title="Lighting and Shadows"></a>Lighting and Shadows</h2><p>灯光和阴影效果可以给游戏增加真实感，SpriteKit这次增加了<code>SKLightNode</code>来作为光源节点。我们可以定义光源的颜色，阴影和衰弱程度。  </p>
 <p><code>SKLightNode</code>继承于<code>SKNode</code>，也就是说你可以把它加在其他<code>SKNode</code>上，并能够动起来，它是一个会发光的<code>SKNode</code>，cool！NOTE：它的光照以及阴影效果只对<code>SKSpriteNode</code>起作用。  </p>
 <p>下面我们看看<code>SKLightNode</code>的一些属性：  </p>
@@ -145,24 +147,24 @@
 <li><strong><code>categoryBitMask</code></strong> 光的种类，32位整型数。<code>SKSpriteNode</code>的<code>lightingBitMask</code>、<code>shadowedBitMask</code>和<code>shadowCastBitMask</code>存储着光的种类，分别意味着：被何种光照亮、被何种光产生的阴影覆盖和遮挡何种光线并产生阴影。  </li>
 </ul>
 <p>为了在<code>SKSpriteNode</code>上实现更加逼真的光照效果（如阴影和反射光），<code>SKSpriteNode</code>新增了<code>normalTexture</code>属性来储存原帖图的法线贴图（Normal Map）：   </p>
-<p><img src="http://yulingtianxia.com/resources/140739494085.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140739494085.png" alt>  </p>
 <p>上图中左侧的是原贴图，加上中间的法线贴图就合成出最右侧带有质感的光照纹理。当然提供这样一张发现纹理图片会增加开发者的工作量，苹果还提供了另一种更加简单的方案-“automatic normal map”：  </p>
-<p><img src="http://yulingtianxia.com/resources/140739540301.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140739540301.png" alt>  </p>
 <p>SpriteKit能够根据给出的纹理图片，用一系列算法分析原贴图，然后生成一个最佳的法线贴图，又是苹果的黑魔法！</p>
 <p>毕竟众口难调，所以SpriteKit让你也可以在生成法线贴图的时候给出平滑度(smoothness)和对比度(contrast)来调节你想要的效果：（伪代码）  </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- <span class="string">textureByGeneratingNormalMapWithSmoothness:</span><span class="string">contrast:</span></span><br></pre></td></tr></table></figure>
 <p>PS：法线贴图将具有高细节的模型通过映射烘焙出法线贴图，贴在低端模型的法线贴图通道上，使之拥有法线贴图的渲染效果。可以大大降低渲染时需要的面数和计算内容，从而达到优化动画渲染和游戏渲染的效果。</p>
 <p>在一个场景中可以添加多个光源，程序会运行的很快；但是如果用两个或以上的光源照亮同一个精灵，在某些iOS设备上可能保证不了60帧的刷新频率。  </p>
 <h2 id="New-Physics"><a href="#New-Physics" class="headerlink" title="New Physics"></a>New Physics</h2><h3 id="Per-Pixel-Physics"><a href="#Per-Pixel-Physics" class="headerlink" title="Per-Pixel Physics"></a>Per-Pixel Physics</h3><p>在定义一些复杂轮廓的物理体时，我们经常用简单图形代替，否则就用<code>CGPath</code>一点点描绘多边形或者把多个物理体组合在一起（这也是新加入的API，后面会提到），比如下面这把斧头，大多数程序员直接用矩形当做它的物理体：  </p>
-<p><img src="http://yulingtianxia.com/resources/140740041011.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140740041011.png" alt>  </p>
 <p>而Per-Pixel Physics根据纹理图片的alpha通道遮罩来生成一个粗略的形状，然后再用粗略的形状生成精确的形状，它让以前复杂的<code>CGPath</code>创建工作转变成一行代码：  </p>
-<p><img src="http://yulingtianxia.com/resources/140740040721.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140740040721.png" alt>  </p>
 <p>毕竟众口难调，所以SpriteKit给出了一个可以自由调节alpha阈值的物理体生成方法，所有alpha值大于<code>alphaThreshold</code>的像素点都将被认为是不透明的，并纳入物理体范围内：（伪代码）  </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ <span class="string">bodyWithTexture:</span><span class="string">alphaThreshold:</span><span class="string">size:</span></span><br></pre></td></tr></table></figure>
 <p>因为SpriteKit是逐个像素计算才得出精确的物理体轮廓，所以我们应该尽量给出合适大小的图片，不要将分辨率过高的图片用在很小的<code>SKSpriteNode</code>上。  </p>
 <h3 id="Constrains"><a href="#Constrains" class="headerlink" title="Constrains"></a>Constrains</h3><p>试想如果你要做一款塔防游戏，你需要让你的大炮一直瞄准某个怪物，大炮会随着怪物的行走来转动炮台。我们需要不停地根据怪物和大炮的位置来计算需要旋转的角度，甚至当怪物跑的快的时候还要考虑怪物的速度来调整大炮旋转的速度，这是一个很麻烦的事情。现在SpriteKit帮你把这些都做好了，你只需要建立一个<code>SKConstrains</code>对象，并约束大炮的角度跟怪物一致就行。  </p>
 <p>约束的计算工作发生在模拟物理之后，SpriteKit提供了一个回调函数<code>didApplyConstraints</code>，我们可以在约束完成后在里面做一些善后工作：  </p>
-<p><img src="http://yulingtianxia.com/resources/140740456021.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140740456021.png" alt>  </p>
 <p>在SpriteKit中我们可以向SKNode添加三种约束：（工厂方法的伪代码）   </p>
 <ul>
 <li>位置约束：  </li>
@@ -178,7 +180,7 @@
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//约束节点与另一节点保持一定距离</span></span><br><span class="line">+ <span class="string">distance:</span><span class="string">toNode:</span></span><br><span class="line"><span class="comment">//约束节点与一个固定点保持一定距离</span></span><br><span class="line">+ <span class="string">distance:</span><span class="string">toPoint:</span></span><br><span class="line"><span class="comment">//约束节点与另一个SKNode坐标系中的一个固定点保持一定距离</span></span><br><span class="line">+ <span class="string">distance:</span><span class="string">toPoint:</span><span class="string">inNode:</span></span><br></pre></td></tr></table></figure>
 <p>向<code>SKNode</code>添加约束很简单，只需要将一个<code>SKConstrains</code>数组赋值给<code>SKNode.constraints</code>属性即可。约束执行的顺序取决于它们在数组中的顺序。  </p>
 <h3 id="Inverse-Kinematics"><a href="#Inverse-Kinematics" class="headerlink" title="Inverse Kinematics"></a>Inverse Kinematics</h3><p>反向运动学，没有机械工程学位或没写过动画引擎的人干脆不知道这是个啥。它其实是解决连接体运动的，比如现在有一个机器人的手臂，我们想让它动起来去用手抓某个东西。我们会想到每个关节转多少度才能准确让机器手抓到物体，计算的时候还应该考虑连接体的层级关系：肩膀连接上臂，上臂连接小臂，小臂连接手。哦天啊这真蛋疼，不过SpriteKit的反向动力学解决了这一点，我们只需要指定每个<code>SKNode</code>的活动约束还有需要抓取物体的位置，那么这一切只需要几行代码就能搞定。  </p>
-<p><img src="http://yulingtianxia.com/resources/140741648388.gif" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140741648388.gif" alt>  </p>
 <p>机器人手臂转动约束是靠<code>SKReachConstraints</code>类来定义的，它只有一个初始化方法：（伪代码）  </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- <span class="string">initWithLowerAngleLimit:</span><span class="string">upperAngleLimit:</span></span><br></pre></td></tr></table></figure>
 <p>这个方法给<code>lowerAngleLimit</code>和<code>upperAngleLimit</code>属性赋值，约束了reach事件使其发生旋转角度的下限和上限。  </p>
@@ -205,11 +207,11 @@
 <p>其实说白了SpriteKit编辑器就像IB一样可以可视化编辑属性，并课即时预览效果，整个过程不需一行代码。  </p>
 <p>Xcode能编辑fsh文件，与SpriteKit场景编辑器对照编辑，并做语法检查和编译。</p>
 <h2 id="Improvements"><a href="#Improvements" class="headerlink" title="Improvements"></a>Improvements</h2><h3 id="SKScene"><a href="#SKScene" class="headerlink" title="SKScene"></a>SKScene</h3><p>SpriteKit每一帧场景的执行过程：  </p>
-<p><img src="http://yulingtianxia.com/resources/update_loop_2x.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/update_loop_2x.png" alt>  </p>
 <p>除了之前提到新加的Constrains，SpriteKit这次还加入了一个回调函数<code>didFinishUpdate</code>。这绝对是SpriteKit将每帧所有东西打包好交给GPU渲染之前调用的最后一个函数。  </p>
 <h3 id="SKTexture"><a href="#SKTexture" class="headerlink" title="SKTexture"></a>SKTexture</h3><ul>
 <li><code>SKMutableTexture</code>是<code>SKTexture</code>新加的子类，它的内容可以通过<code>modifyPixelDataWithBlock:</code>方法动态地修改。  </li>
-<li><code>SKTexture</code>现在可以生成“noise textures”，参见<code>textureVectorNoiseWithSmoothness:size:</code>和<code>textureNoiseWithSmoothness:size:grayscale:</code><br><img src="http://yulingtianxia.com/resources/14074923846.png" alt="">  </li>
+<li><code>SKTexture</code>现在可以生成“noise textures”，参见<code>textureVectorNoiseWithSmoothness:size:</code>和<code>textureNoiseWithSmoothness:size:grayscale:</code><br><img src="http://yulingtianxia.com/resources/14074923846.png" alt>  </li>
 </ul>
 <h3 id="SKShapeNode"><a href="#SKShapeNode" class="headerlink" title="SKShapeNode"></a>SKShapeNode</h3><ul>
 <li>增加了一些常见图形便捷的构造方法，比如矩形，圆形，椭圆和曲线。  </li>
@@ -217,7 +219,7 @@
 </ul>
 <h3 id="Physics-Updates"><a href="#Physics-Updates" class="headerlink" title="Physics Updates"></a>Physics Updates</h3><ul>
 <li><code>SKPhysicsBody</code>新加了<code>pinned</code>属性来标志此物理体对应的节点是否被钉在它的父节点上。如果父节点也有物理体，那么这两个物理体被认为被一个pin连接。如果将<code>allowsRotation</code>设为NO并且<code>pinned</code>设为YES，那么它相当于被焊在父节点上了，因为它不能转动了。  </li>
-<li><code>SKPhysicsBody</code>允许用<code>bodyWithBodies:</code>把多个物理体组合在一起来创建一个新的物理体，还记得前面提到过的斧头么：<br>  <img src="http://yulingtianxia.com/resources/140749497219.png" alt="">   </li>
+<li><code>SKPhysicsBody</code>允许用<code>bodyWithBodies:</code>把多个物理体组合在一起来创建一个新的物理体，还记得前面提到过的斧头么：<br>  <img src="http://yulingtianxia.com/resources/140749497219.png" alt>   </li>
 </ul>
 <h3 id="SKTexture-Atlas"><a href="#SKTexture-Atlas" class="headerlink" title="SKTexture Atlas"></a>SKTexture Atlas</h3><ul>
 <li>同时支持SpriteKit和SceneKit</li>
@@ -256,9 +258,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2014/08/17/New-in-Table-and-Collection-Views/" title="iOS8自动调整UITableView和UICollectionView布局">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   iOS8自动调整UITableView和UICollectionView布局</span>
 </a>
@@ -266,8 +268,8 @@
 
 
 <div class="next">
-<a href="/blog/2014/08/05/coredatachu-li-hai-liang-shu-ju/"  title="CoreData处理海量数据">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2014/08/05/coredatachu-li-hai-liang-shu-ju/" title="CoreData处理海量数据">
+ <strong>下一篇：</strong><br> 
  <span>CoreData处理海量数据
 </span>
 </a>
@@ -303,7 +305,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -368,7 +370,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -377,7 +379,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -385,7 +387,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -394,11 +396,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -434,7 +436,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -659,7 +661,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

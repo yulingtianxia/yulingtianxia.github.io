@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>SpriteKit坐标系 | yulingtianxia&#39;s blog</title>
@@ -11,16 +11,14 @@
     
 
     
-    <meta name="description" content="前一阵子在用SpriteKit写一个小游戏的时候，因为对坐标系系统不是很熟悉，结果耽误了不少时间，现在将这些SKNode(及其子类)中常用的部分记下来，以利于以后快速查找  
-本文测试用到的工程代码可以在这里下载    
-一般来说，SpriteKit中所有坐标系都是x轴正方向向右，y轴正方向向上的，后面不再重复">
+    <meta name="description" content="前一阵子在用SpriteKit写一个小游戏的时候，因为对坐标系系统不是很熟悉，结果耽误了不少时间，现在将这些SKNode(及其子类)中常用的部分记下来，以利于以后快速查找   本文测试用到的工程代码可以在这里下载     一般来说，SpriteKit中所有坐标系都是x轴正方向向右，y轴正方向向上的，后面不再重复">
+<meta name="keywords" content="iOS,SpriteKit">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SpriteKit坐标系">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/05/04/spritekitzuo-biao-xi/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="前一阵子在用SpriteKit写一个小游戏的时候，因为对坐标系系统不是很熟悉，结果耽误了不少时间，现在将这些SKNode(及其子类)中常用的部分记下来，以利于以后快速查找  
-本文测试用到的工程代码可以在这里下载    
-一般来说，SpriteKit中所有坐标系都是x轴正方向向右，y轴正方向向上的，后面不再重复">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="前一阵子在用SpriteKit写一个小游戏的时候，因为对坐标系系统不是很熟悉，结果耽误了不少时间，现在将这些SKNode(及其子类)中常用的部分记下来，以利于以后快速查找   本文测试用到的工程代码可以在这里下载     一般来说，SpriteKit中所有坐标系都是x轴正方向向右，y轴正方向向上的，后面不再重复">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353411185.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353410978.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353410886.png">
@@ -29,9 +27,7 @@
 <meta property="og:updated_time" content="2019-05-26T10:08:45.479Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SpriteKit坐标系">
-<meta name="twitter:description" content="前一阵子在用SpriteKit写一个小游戏的时候，因为对坐标系系统不是很熟悉，结果耽误了不少时间，现在将这些SKNode(及其子类)中常用的部分记下来，以利于以后快速查找  
-本文测试用到的工程代码可以在这里下载    
-一般来说，SpriteKit中所有坐标系都是x轴正方向向右，y轴正方向向上的，后面不再重复">
+<meta name="twitter:description" content="前一阵子在用SpriteKit写一个小游戏的时候，因为对坐标系系统不是很熟悉，结果耽误了不少时间，现在将这些SKNode(及其子类)中常用的部分记下来，以利于以后快速查找   本文测试用到的工程代码可以在这里下载     一般来说，SpriteKit中所有坐标系都是x轴正方向向右，y轴正方向向上的，后面不再重复">
 <meta name="twitter:image" content="http://yulingtianxia.com/resources/140353411185.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -48,14 +44,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -80,12 +76,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -101,7 +97,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2014-05-04T11:36:26.000Z" itemprop="datePublished"> 发表于 2014-05-04</time>
     
   </p>
@@ -122,21 +118,21 @@
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)handlePanFrom:(<span class="built_in">UIPanGestureRecognizer</span> *)recognizer &#123;</span><br><span class="line">	<span class="keyword">if</span> (recognizer.state == <span class="built_in">UIGestureRecognizerStateBegan</span>) &#123;</span><br><span class="line">        <span class="built_in">CGPoint</span> touchLocation = [recognizer locationInView:recognizer.view];</span><br><span class="line">        touchLocation = [<span class="keyword">self</span> convertPointFromView:touchLocation];</span><br><span class="line">        AtomNode *touchedNode = (AtomNode *)[<span class="keyword">self</span> nodeAtPoint:touchLocation];</span><br><span class="line">        <span class="keyword">if</span> (isAllAtomStatic&amp;&amp;[touchedNode.name isEqualToString:AtomName]) &#123;</span><br><span class="line">            touchedAtom = touchedNode;</span><br><span class="line">            isPanningAtom = <span class="literal">YES</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (recognizer.state == <span class="built_in">UIGestureRecognizerStateChanged</span>) &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">CGPoint</span> translation = [recognizer translationInView:recognizer.view];</span><br><span class="line">        translation = <span class="built_in">CGPointMake</span>(translation.x, -translation.y);</span><br><span class="line">        <span class="keyword">if</span> (isPanningAtom==<span class="literal">YES</span>) &#123;</span><br><span class="line">            touchedAtom.position = <span class="built_in">CGPointMake</span>(touchedAtom.position.x+translation.x, touchedAtom.position.y+translation.y);</span><br><span class="line">        &#125;</span><br><span class="line">        [recognizer setTranslation:<span class="built_in">CGPointZero</span> inView:recognizer.view];</span><br><span class="line">        </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (recognizer.state == <span class="built_in">UIGestureRecognizerStateEnded</span>) &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (isPanningAtom==<span class="literal">YES</span>) &#123;</span><br><span class="line">            <span class="built_in">CGPoint</span> velocity = [recognizer velocityInView:recognizer.view];</span><br><span class="line">            touchedAtom.physicsBody.velocity =<span class="built_in">CGVectorMake</span>(velocity.x, -velocity.y);</span><br><span class="line">            isPanningAtom = <span class="literal">NO</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在第一个判断分支中，因为用了<code>convertPointFromView</code>方法，已经将<code>CGPoint</code>从<code>UIView</code>坐标系转为<code>SKScene</code>坐标系，所以不用反转，其余两个分支中的代码均需要反转y轴。  </p>
 <h2 id="SKNode"><a href="#SKNode" class="headerlink" title="SKNode"></a>SKNode</h2><p>SKNode的原点在正中央，也就是(0.5,0.5)<br>我构建了一个App，分别将被测试的Node放置在场景中央，并用一个黑色的小圆圈代表Node的坐标系的原点<br>因为SKNode比较抽象，没填充内容，所以只显示了一个原点：  </p>
-<p><img src="http://yulingtianxia.com/resources/140353411185.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353411185.png" alt>  </p>
 <p>如果想填充些东西来证明SKNode的坐标系原点的确在其中央，将下面代码注释部分取消注释即可：  </p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"NodeButton.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">NodeButton</span></span></span><br><span class="line">-(<span class="keyword">id</span>)init&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> initWithName:<span class="string">@"SKNode"</span>]) &#123;</span><br><span class="line">        SKNode *sknode = (SKNode *)<span class="keyword">self</span>.node;</span><br><span class="line">        SKSpriteNode *fill = [[SKSpriteNode alloc] init];</span><br><span class="line">        fill.size = <span class="built_in">CGSizeMake</span>(<span class="number">100</span>, <span class="number">100</span>);</span><br><span class="line">        fill.color = [<span class="built_in">UIColor</span> redColor];</span><br><span class="line">        fill.colorBlendFactor = <span class="number">1</span>;</span><br><span class="line"><span class="comment">//        [sknode addChild:fill];</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
 <h2 id="SKEmitterNode"><a href="#SKEmitterNode" class="headerlink" title="SKEmitterNode"></a>SKEmitterNode</h2><p>粒子系统比较有趣，它从原点发射大量粒子，不同的粒子系统也会构筑不同的效果，因为它没有边界，还可调节发射粒子的数量方向速度等，这也使得原点在整个粒子系统中的位置有了错觉，但其本质还是(0.5,0.5)，也就是在中心  </p>
-<p><img src="http://yulingtianxia.com/resources/140353410978.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353410978.png" alt>  </p>
 <p>这个火苗看起来中心在哪呢？当然在圆圈处！因为粒子是从圆圈处的区域产生的，然后向上发射  </p>
 <h2 id="SKLabelNode"><a href="#SKLabelNode" class="headerlink" title="SKLabelNode"></a>SKLabelNode</h2><p>label比较特殊，可能是因为需要现实文字的关系吧，其坐标原点在中下方，但不是(0.5,0)，因为如果文字包含y，p之类的“带尾巴”的字符，那么将会突出十字线下方，可以理解为写英文用的四线本的第三条线？因为字号大小不同或者提子不同，也会影响到原点位置。</p>
 <p>知道其原点精确位置对于编程来说意义不大，以后有时间会深究下    </p>
-<p><img src="http://yulingtianxia.com/resources/140353410886.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353410886.png" alt>  </p>
 <h2 id="SKShapeNode"><a href="#SKShapeNode" class="headerlink" title="SKShapeNode"></a>SKShapeNode</h2><p>这个类也很特殊，因为其frame是根据path填充内容来确定的，而原点又是其在父坐标的position处，那么<code>SKShapeNode</code>的原点具体位置在哪也就没意义了，只要按照其position的位置当作原点建立坐标系就好  </p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ShapeButton</span></span></span><br><span class="line">-(<span class="keyword">id</span>)init&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> initWithName:<span class="string">@"SKShapeNode"</span>]) &#123;</span><br><span class="line">        SKShapeNode *shape = (SKShapeNode *)<span class="keyword">self</span>.node;</span><br><span class="line">        shape.path = <span class="built_in">CGPathCreateWithRect</span>(<span class="built_in">CGRectMake</span>(<span class="number">-50</span>,<span class="number">-50</span>, <span class="number">100</span>, <span class="number">100</span>), <span class="literal">NULL</span>);</span><br><span class="line">        shape.strokeColor = [<span class="built_in">UIColor</span> redColor];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
 <p>下图是我故意画了个正方形使其居中：    </p>
-<p><img src="http://yulingtianxia.com/resources/140353411872.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353411872.png" alt>  </p>
 <h2 id="SKSpriteNode"><a href="#SKSpriteNode" class="headerlink" title="SKSpriteNode"></a>SKSpriteNode</h2><p>坐标原点在其frame中心，也就是(0.5,0.5)  </p>
-<p><img src="http://yulingtianxia.com/resources/140353412174.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353412174.png" alt>  </p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实之所以会出现坐标系原点位置一说，是因为不同类型的Node其frame大小也不一样，而其原点在其frame中的位置也不一样，这就给人一种错觉：有的Node原点在左下角，只暴漏给我们第一象限；有的Node原点在中间，其四个象限都被填充了。。。无论原点在哪，其x轴，y轴方向都是不变的，所以本质都是一样的，只是写代码的时候需要注意，比如如果觉得将一个<code>SKLabelNode</code>的position设置为屏幕中心，则其文字内容就会正好居中，其实那就错了，因为y轴并没有居中。  </p>
   
 	</div>
@@ -168,9 +164,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2014/05/10/zhuang-shi-zhe-mo-shi/" title="装饰者模式">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   装饰者模式</span>
 </a>
@@ -178,8 +174,8 @@
 
 
 <div class="next">
-<a href="/blog/2014/05/02/chu-shi-core-data-2/"  title="初识Core Data(2)">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2014/05/02/chu-shi-core-data-2/" title="初识Core Data(2)">
+ <strong>下一篇：</strong><br> 
  <span>初识Core Data(2)
 </span>
 </a>
@@ -215,7 +211,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -280,7 +276,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -289,7 +285,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -297,7 +293,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -306,11 +302,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -346,7 +342,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -571,7 +567,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

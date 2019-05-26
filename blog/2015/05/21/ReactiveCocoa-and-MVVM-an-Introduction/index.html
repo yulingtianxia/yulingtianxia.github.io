@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>ReactiveCocoa 和 MVVM 入门 | yulingtianxia&#39;s blog</title>
@@ -12,11 +12,13 @@
 
     
     <meta name="description" content="翻译自ReactiveCocoa and MVVM,  an Introduction. 文中引用的 Gist 可能无法显示. 为了和谐社会, 请科学上网😂">
+<meta name="keywords" content="翻译,RAC">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ReactiveCocoa 和 MVVM 入门">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2015/05/21/ReactiveCocoa-and-MVVM-an-Introduction/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="翻译自ReactiveCocoa and MVVM,  an Introduction. 文中引用的 Gist 可能无法显示. 为了和谐社会, 请科学上网😂">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://www.sprynthesis.com/assets/images/MCVMVMV.svg">
 <meta property="og:image" content="http://www.sprynthesis.com/assets/images/MCVMVMV.gif">
 <meta property="og:image" content="http://www.sprynthesis.com/assets/images/MVMCV.svg">
@@ -52,14 +54,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -84,12 +86,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -105,7 +107,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2015-05-21T13:43:37.000Z" itemprop="datePublished"> 发表于 2015-05-21</time>
     
   </p>
@@ -115,7 +117,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC"><span class="toc-number">1.</span> <span class="toc-text">MVC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVVM"><span class="toc-number">2.</span> <span class="toc-text">MVVM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义-MVVM"><span class="toc-number">2.1.</span> <span class="toc-text">定义 MVVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于-view-model-的更多内容"><span class="toc-number">2.2.</span> <span class="toc-text">关于 view-model 的更多内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC-世界中的-MVVM"><span class="toc-number">3.</span> <span class="toc-text">MVC 世界中的 MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#View-Model-和-View-Controller-在一起，但独立"><span class="toc-number">4.</span> <span class="toc-text">View-Model 和 View Controller,  在一起，但独立</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-实例"><span class="toc-number">4.1.</span> <span class="toc-text">View-Model 实例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#view-model-不做的事儿"><span class="toc-number">4.1.1.</span> <span class="toc-text">view-model 不做的事儿</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Controller-视图控制器"><span class="toc-number">4.2.</span> <span class="toc-text">View Controller(视图控制器)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器从-view-model-获取的数据将用来"><span class="toc-number">4.2.1.</span> <span class="toc-text">视图控制器从 view-model 获取的数据将用来:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器将对-view-model-起如下作用"><span class="toc-number">4.2.2.</span> <span class="toc-text">视图控制器将对 view-model 起如下作用:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器不做的事儿"><span class="toc-number">4.2.3.</span> <span class="toc-text">视图控制器不做的事儿:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#子-View-Model"><span class="toc-number">5.</span> <span class="toc-text">子 View-Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-从哪来"><span class="toc-number">5.1.</span> <span class="toc-text">View-Model 从哪来?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-产生-View-Model"><span class="toc-number">5.1.1.</span> <span class="toc-text">View-Model 产生 View-Model</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-列表"><span class="toc-number">5.1.2.</span> <span class="toc-text">View-Model 列表</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Functional-Core-Imperative-Shell"><span class="toc-number">6.</span> <span class="toc-text">Functional Core,  Imperative Shell</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Functional-Core"><span class="toc-number">6.1.</span> <span class="toc-text">Functional Core</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Imperative-Declarative-Shell"><span class="toc-number">6.2.</span> <span class="toc-text">Imperative (Declarative?) Shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可测试的核心"><span class="toc-number">6.3.</span> <span class="toc-text">可测试的核心</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接一切"><span class="toc-number">7.</span> <span class="toc-text">连接一切</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进入-ReactiveCocoa"><span class="toc-number">8.</span> <span class="toc-text">进入 ReactiveCocoa</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RACSignal"><span class="toc-number">8.1.</span> <span class="toc-text">RACSignal</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#那么什么是信号呢-这是一个信号"><span class="toc-number">8.1.1.</span> <span class="toc-text">那么什么是信号呢?这是一个信号:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#信号发送的值是从哪获得的"><span class="toc-number">8.1.2.</span> <span class="toc-text">信号发送的值是从哪获得的?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是订阅者"><span class="toc-number">8.1.3.</span> <span class="toc-text">什么是订阅者?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#转换数据流"><span class="toc-number">8.1.4.</span> <span class="toc-text">转换数据流</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多个订阅者-副作用-昂贵的操作"><span class="toc-number">8.2.</span> <span class="toc-text">多个订阅者, 副作用, 昂贵的操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tweetboat-Plus"><span class="toc-number">9.</span> <span class="toc-text">Tweetboat Plus</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#福利-消除更多的状态"><span class="toc-number">9.0.1.</span> <span class="toc-text">福利-消除更多的状态</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">10.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#拓展阅读"><span class="toc-number">10.1.</span> <span class="toc-text">拓展阅读</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC"><span class="toc-number">1.</span> <span class="toc-text">MVC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVVM"><span class="toc-number">2.</span> <span class="toc-text">MVVM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义-MVVM"><span class="toc-number">2.1.</span> <span class="toc-text">定义 MVVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于-view-model-的更多内容"><span class="toc-number">2.2.</span> <span class="toc-text">关于 view-model 的更多内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC-世界中的-MVVM"><span class="toc-number">3.</span> <span class="toc-text">MVC 世界中的 MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#View-Model-和-View-Controller-在一起，但独立"><span class="toc-number">4.</span> <span class="toc-text">View-Model 和 View Controller,  在一起，但独立</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-实例"><span class="toc-number">4.1.</span> <span class="toc-text">View-Model 实例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#view-model-不做的事儿"><span class="toc-number">4.1.1.</span> <span class="toc-text">view-model 不做的事儿</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Controller-视图控制器"><span class="toc-number">4.2.</span> <span class="toc-text">View Controller(视图控制器)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器从-view-model-获取的数据将用来"><span class="toc-number">4.2.1.</span> <span class="toc-text">视图控制器从 view-model 获取的数据将用来:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器将对-view-model-起如下作用"><span class="toc-number">4.2.2.</span> <span class="toc-text">视图控制器将对 view-model 起如下作用:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器不做的事儿"><span class="toc-number">4.2.3.</span> <span class="toc-text">视图控制器不做的事儿:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#子-View-Model"><span class="toc-number">5.</span> <span class="toc-text">子 View-Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-从哪来"><span class="toc-number">5.1.</span> <span class="toc-text">View-Model 从哪来?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-产生-View-Model"><span class="toc-number">5.1.1.</span> <span class="toc-text">View-Model 产生 View-Model</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-列表"><span class="toc-number">5.1.2.</span> <span class="toc-text">View-Model 列表</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Functional-Core-Imperative-Shell"><span class="toc-number">6.</span> <span class="toc-text">Functional Core,  Imperative Shell</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Functional-Core"><span class="toc-number">6.1.</span> <span class="toc-text">Functional Core</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Imperative-Declarative-Shell"><span class="toc-number">6.2.</span> <span class="toc-text">Imperative (Declarative?) Shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可测试的核心"><span class="toc-number">6.3.</span> <span class="toc-text">可测试的核心</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接一切"><span class="toc-number">7.</span> <span class="toc-text">连接一切</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进入-ReactiveCocoa"><span class="toc-number">8.</span> <span class="toc-text">进入 ReactiveCocoa</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RACSignal"><span class="toc-number">8.1.</span> <span class="toc-text">RACSignal</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#那么什么是信号呢-这是一个信号"><span class="toc-number">8.1.1.</span> <span class="toc-text">那么什么是信号呢?这是一个信号:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#信号发送的值是从哪获得的"><span class="toc-number">8.1.2.</span> <span class="toc-text">信号发送的值是从哪获得的?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是订阅者"><span class="toc-number">8.1.3.</span> <span class="toc-text">什么是订阅者?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#转换数据流"><span class="toc-number">8.1.4.</span> <span class="toc-text">转换数据流</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多个订阅者-副作用-昂贵的操作"><span class="toc-number">8.2.</span> <span class="toc-text">多个订阅者, 副作用, 昂贵的操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tweetboat-Plus"><span class="toc-number">9.</span> <span class="toc-text">Tweetboat Plus</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#福利-消除更多的状态"><span class="toc-number">9.0.1.</span> <span class="toc-text">福利-消除更多的状态</span></a></li></ol></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">10.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#拓展阅读"><span class="toc-number">10.1.</span> <span class="toc-text">拓展阅读</span></a></li></ol></li>
 		
 		</div>
 		
@@ -140,7 +142,7 @@
 <h2 id="MVC-世界中的-MVVM"><a href="#MVC-世界中的-MVVM" class="headerlink" title="MVC 世界中的 MVVM"></a>MVC 世界中的 MVVM</h2><p>我认为 MVVM 这个首字母缩写如同 view-model 术语一样, 对如何使用它们进行 iOS 开发体现得有点不太准确. 让我们再检查下这个首字母缩写, 了解下它是怎么与 MVC 融为一体的.   </p>
 <p>为了图解表示, 我们颠倒了 <strong>MVC</strong> 中的 <strong>V</strong> 和 <strong>C</strong>, 于是首字母缩写更能准确地反映出组件间的关系方位, 给我们带来 <strong>MCV</strong>. 我也会对 <strong>MVVM</strong> 这么干, 将 <strong>V(iew)</strong> 移到 <strong>VM</strong> 的右边最终成为了 <strong>MVMV</strong>. (我相信这些首字母缩写起初不排成这样更合理的顺序是有原因的. )  </p>
 <p>这是这两种模式如何在 iOS 中组装在一起的简单映射:   </p>
-<p><img src="http://www.sprynthesis.com/assets/images/MCVMVMV.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/MCVMVMV.svg" alt>  </p>
 <ul>
 <li>我试图遵循区块尺寸(非常)大致对应它们负责的工作量. </li>
 <li><a href="http://i0.kym-cdn.com/photos/images/newsfeed/000/228/269/demotivational-posters-theres-your-problem.jpg" target="_blank" rel="external">注意到视图控制器有多大?</a></li>
@@ -149,13 +151,13 @@
 </ul>
 <p>你大可安心获知我们并没有真的去除视图控制器的概念或抛弃 “controller” 术语来匹配 MVVM. (唷. )我们正要将重合的那块工作剥离到 view-model 中, 并让视图控制器的生活更加简单.   </p>
 <p>我们实际上最终以 <strong>MVMCV</strong> 告终. <strong>M</strong>odel <strong>V</strong>iew-<strong>M</strong>odel <strong>C</strong>ontroller <strong>V</strong>iew. 我确信我无拘无束的应用设计模式骇客行为会让人大吃一惊.   </p>
-<p><img src="http://www.sprynthesis.com/assets/images/MCVMVMV.gif" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/MCVMVMV.gif" alt>  </p>
 <p><strong>我们的结果: </strong>  </p>
-<p><img src="http://www.sprynthesis.com/assets/images/MVMCV.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/MVMCV.svg" alt>  </p>
 <p>现在视图控制器仅关注于用 view-model 的数据配置和管理各种各样的视图, 并在先关用户输入时让 view-model 获知并需要向上游修改数据. 视图控制器不需要了解关于网络服务调用, Core Data, 模型对象等. (事实上有时通过 view-model 头文件而不是复制一大堆属性来暴漏 model 是很务实的, 后面还会有)  </p>
 <p>view-model 会在视图控制器上以一个属性的方式存在. 视图控制器知道 view-model 和它的公有属性, 但是 view-model 对视图控制器一无所知. 你早就该对这个设计感觉好多了因为我们的关注点在这儿进行更好地分离.   </p>
 <p>帮助你理解我们如何把组件组装在一起还有组件对应职责的另一种方式, 就是着眼于我们新的应用构建模块层级图.   </p>
-<p><img src="http://www.sprynthesis.com/assets/images/mvvm-layers.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/mvvm-layers.svg" alt>  </p>
 <p>(感谢<a href="https://twitter.com/kastiglione" target="_blank" rel="external">Dave Lee @kastiglione</a>)</p>
 <h2 id="View-Model-和-View-Controller-在一起，但独立"><a href="#View-Model-和-View-Controller-在一起，但独立" class="headerlink" title="View-Model 和 View Controller,  在一起，但独立"></a>View-Model 和 View Controller,  在一起，但独立</h2><p>我们来看个简单的 view-model 头文件来对我们新构件的长相有个更好地概念. 为了情节简单, 我们构建按了一个伪造的推特客户端来查看任何推特用户的最新回复, 通过输入他们的姓名并点击 “Go”.  我们的样例界面将会是这样:   </p>
 <ul>
@@ -164,7 +166,7 @@
 <li>下面放着一个显示最新回复推文的 <code>UITableView</code></li>
 <li>允许无限滚动</li>
 </ul>
-<p><img src="http://www.sprynthesis.com/assets/images/tweeboatplus.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/tweeboatplus.svg" alt>  </p>
 <h3 id="View-Model-实例"><a href="#View-Model-实例" class="headerlink" title="View-Model 实例"></a>View-Model 实例</h3><p>我们的 view-model 头文件应该长这样:   </p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//MYTwitterLookupViewModel.h</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">MYTwitterLookupViewModel</span>: <span class="title">NSObject</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>, <span class="keyword">readonly</span>, getter=isUsernameValid) <span class="built_in">BOOL</span> usernameValid;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readonly</span>) <span class="built_in">NSString</span> *userFullName;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readonly</span>) <span class="built_in">UIImage</span> *userAvatarImage;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readonly</span>) <span class="built_in">NSArray</span> *tweets;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>, <span class="keyword">readonly</span>) <span class="built_in">BOOL</span> allTweetsLoaded;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readwrite</span>) <span class="built_in">NSString</span> *username;</span><br><span class="line"> </span><br><span class="line">- (<span class="keyword">void</span>) getTweetsForCurrentUsername;</span><br><span class="line">- (<span class="keyword">void</span>) loadMoreTweets;</span><br></pre></td></tr></table></figure>
 <p>相当直截了当的填充. 注意到这些<strong>壮丽的 <code>readonly</code> 属性</strong>了么?这个 view-model 暴漏了视图控制器所必需的最小量信息, 视图控制器实际上并不在乎 view-model 是如何获得这些信息的. 现在我们两者都不在乎. 仅仅假定你习惯于标准的网络服务请求, 校验, 数据操作和存储.   </p>
@@ -201,7 +203,7 @@
 <p>你可能认为这也太像普通”推特”里的数据-模型对象了吧. 为啥要干将其转化成 view-model 的工作?即使类似,  view-model 让我们限制信息只暴露给我们需要的地方, 提供额外数据转换的属性, 或为特定的视图计算数据. (此外, 当可以不暴露可变数据-模型对象时也是极好的, 因为我们希望 view-model 自己承担起更新它们的任务, 而不是靠视图或视图控制器. )  </p>
 <h3 id="View-Model-从哪来"><a href="#View-Model-从哪来" class="headerlink" title="View-Model 从哪来?"></a>View-Model 从哪来?</h3><p>那么 view-model 是何时何处被创建的呢?视图控制器创建它们自己的 view-model 么?  </p>
 <h4 id="View-Model-产生-View-Model"><a href="#View-Model-产生-View-Model" class="headerlink" title="View-Model 产生 View-Model"></a>View-Model 产生 View-Model</h4><p>严格来说, 你应该为 app delegate 中的顶级视图控制器创建一个 view-model. 当展示一个新的视图控制器时, 或很小的视图被 view-model 表现时, 你应要求当前的 view-model 为你创建一个子 view-model.   </p>
-<p><img src="http://www.sprynthesis.com/assets/images/child-view-models.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/child-view-models.svg" alt>  </p>
 <p>加入我们想要在用户轻拍应用顶部的头像时添加一个资料视图控制器. 我们可以为一级 view-model 添加类似如下方法:   </p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (MYTwitterUserProfileViewModel *) viewModelForCurrentUser;</span><br></pre></td></tr></table></figure>
 <p>然后在我们的一级视图控制器中这么用它:   </p>
@@ -230,26 +232,26 @@
 <p>我们或许最终使用多种多样我们熟悉的机制将 view-model 和视图控制器所有的接触点都连起来, 但你已经知道了<a href="http://www.sprynthesis.com/2014/06/15/why-reactivecocoa/" target="_blank" rel="external">标题上不是这么写的</a>. 这样在代码中创建了大量的入口点, 仅仅为了简单的更新 UI 就要在代码中完全重新创建应用状态上下文. </p>
 <h2 id="进入-ReactiveCocoa"><a href="#进入-ReactiveCocoa" class="headerlink" title="进入 ReactiveCocoa"></a>进入 ReactiveCocoa</h2><p>ReactiveCocoa(RAC) 是来拯救我们的, 并恰好返回给我们一点理智. 让我们看看如何做到.   </p>
 <p>思考在一个新的用户页面上控制信息的流动, 当表单合法时更新提交按钮的状态. 你现在可能会照下面这么做:   </p>
-<p><img src="http://www.sprynthesis.com/assets/images/new-user-form-imperative.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/new-user-form-imperative.svg" alt>  </p>
 <p>你最后通过使用状态, 小心翼翼地代码中许多不同且零碎无关的内容穿到简单的逻辑上. 看看你信息流中所有不同的入口点?(这还只是<em>一个</em> UI 元素中的<em>一条</em>逻辑线. )<a href="http://www.sprynthesis.com/2014/06/15/why-reactivecocoa/" target="_blank" rel="external">我们程序中现在用的抽象概念还不够厉害</a>, 不能为我们追踪所有事物的关系, 所以我们停止自己去干这蛋疼事儿.   </p>
 <p>让我们看看陈述版本: </p>
-<p><img src="http://www.sprynthesis.com/assets/images/new-user-form-declarative.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/new-user-form-declarative.svg" alt>  </p>
 <p>这看起来可能像是为我们应用流程文档中的一张老旧的计算机科学图解. 通过陈述式的编程, 我们使用了更高层次的抽象, 来让我们实际编程更靠近我们在脑海中设计流程的方式. 我们让电脑为我们做更多工作. 实际的代码更加像这幅图了.   </p>
 <h3 id="RACSignal"><a href="#RACSignal" class="headerlink" title="RACSignal"></a>RACSignal</h3><p><code>RACSignal</code> (信号)就 RAC 来说是构造单元. 它代表我们最终将要收到的信息. 当你能将未来某时刻收到的消息具体表示出来时, <strong>你可以开始预先(陈述性)运用逻辑并构建你的信息流,</strong>而不是必须等到事件发生(命令式).   </p>
 <p><strong>信号会为了控制通过应用的信息流而获得所有这些异步方法(委托, 回调 block,  通知,  KVO, target/action 事件观察, 等)并将它们统一到一个接口下.</strong>这只是直观理解. 不仅是这些, 因为信息会流过你的应用, 它还提供给你轻松转换/分解/合并/过滤信息的能力.   </p>
-<p><img src="http://www.sprynthesis.com/assets/images/replace-async-tools.svg" alt="">  </p>
-<h4 id="那么什么是信号呢-这是一个信号"><a href="#那么什么是信号呢-这是一个信号" class="headerlink" title="那么什么是信号呢?这是一个信号:"></a>那么什么是信号呢?这是一个信号:</h4><p><img src="http://www.sprynthesis.com/assets/images/signal-no-subscribers.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/replace-async-tools.svg" alt>  </p>
+<h4 id="那么什么是信号呢-这是一个信号"><a href="#那么什么是信号呢-这是一个信号" class="headerlink" title="那么什么是信号呢?这是一个信号:"></a>那么什么是信号呢?这是一个信号:</h4><p><img src="http://www.sprynthesis.com/assets/images/signal-no-subscribers.svg" alt>  </p>
 <p>信号是一个发送一连串值的物体. 但是我们这儿的信号啥也不干, 因为它还没有订阅者. 如果有订阅者监听时(已订阅)信号才会发信息. 它将会向那个订阅者发送0或多个载有数值的”next”事件, 后面跟着一个”complete”事件或一个”error”事件. (信号类似于其他语言/工具包中的 “promise”, 但更强大, 因为它不仅限于向它的订阅者一次只传递一个返回值. )  </p>
-<p><img src="http://www.sprynthesis.com/assets/images/signal-with-subscriber.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/signal-with-subscriber.svg" alt>  </p>
 <p>正如我之前提到的, 如果觉得需要的话你可以过滤, 转换, 分解和合并那些值. 不同的订阅者可能需要使用信号通过不同方式发送的值.   </p>
-<p><img src="http://www.sprynthesis.com/assets/images/signal-map.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/signal-map.svg" alt>  </p>
 <h4 id="信号发送的值是从哪获得的"><a href="#信号发送的值是从哪获得的" class="headerlink" title="信号发送的值是从哪获得的?"></a>信号发送的值是从哪获得的?</h4><p>信号是一些等待某事发生的异步代码, 然后把结果值发送给它们的订阅者. 你可以用 <code>RACSignal</code> 的类方法 <code>createSignal:</code> 手动创建信号:   </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//networkSignal.m</span></span><br><span class="line">RACSignal *networkSignal = [RACSignal <span class="string">createSignal:</span>^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) &#123;</span><br><span class="line">        NetworkOperation *operation = [NetworkOperation <span class="string">getJSONOperationForURL:</span>@<span class="string">"http://someurl"</span>];</span><br><span class="line">        [operation <span class="string">setCompletionBlockWithSuccess:</span>^(NetworkOperation *theOperation, id *result) &#123;</span><br><span class="line">            [subscriber <span class="string">sendNext:</span>result];</span><br><span class="line">            [subscriber sendCompleted];</span><br><span class="line">        &#125; <span class="string">failure:</span>^(NetworkOperation *theOperation, NSError *error) &#123;</span><br><span class="line">            [subscriber <span class="string">sendError:</span>error];</span><br><span class="line">        &#125;];</span><br></pre></td></tr></table></figure>
 <p>我在这用一个具有成功和失败 block (伪造)的网络操作创建了一个信号. (如果我想让信号在被订阅时才让网络请求发生, 还可以用 <code>RACSignal</code> 的类方法 <code>defer</code>. )我在成功的 block 里使用提供的 <code>subscriber</code> 对象调用 <code>sendNext:</code> 和 <code>sendCompleted:</code> 方法, 或在失败的 block 中调用 <code>sendError:</code>. 现在我可以订阅这个信号并将在响应返回时接收到 json 值或是 error.   </p>
 <p>幸运的是,  RAC 的创造者实际上使用它们自己的库来创建真的事物(捉摸一下), 所以对于我们在日常需要什么, 他们有很强烈的想法. 他们为我们提供了很多机制, 来从我们通常使用的现存的异步模式中拉取信号. 别忘了如果你有一个没有被某个内建信号覆盖到的异步任务, 你可以<em>很容易地</em>用 <code>createSignal:</code> 或类似方法来创建信号.   </p>
 <p>一个被提供的机制就是 <code>RACObserve()</code> 宏. (如果你不喜欢宏, 你可以简单地看看罩子下面并用稍微多些冗杂的描述. 这也非常好. 在我们得到 <a href="https://github.com/ReactiveCocoa/ReactiveCocoa/pull/1382" target="_blank" rel="external">Swift 版本的替代</a>之前, 这也有<a href="http://blog.scottlogic.com/2014/07/24/mvvm-reactivecocoa-swift.html" target="_blank" rel="external">在 Swift 中使用 RAC</a> 的解决方案. )这个宏是 RAC 中对 KVO 中那些悲惨的 API 的替代. 你只需要传入对象和你想观察的那个对象某属性的 keypath. 给出这些参数后,  <code>RACObserve</code> 会创建一个信号, 一旦它有了订阅者, 它就立刻发送那个属性的当前值, 并在发送那个属性在这之后的任何变化.   </p>
 <figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RACSignal *usernameValidSignal = RACObserve(<span class="name">self</span>.viewModel,  usernameIsValid)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-<p><img src="http://www.sprynthesis.com/assets/images/signal-racobserve.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/signal-racobserve.svg" alt>  </p>
 <p>这仅是提供用于创建信号的一个工具. 这里有几个立即可用的方式, 来从内置控制流机制中拉取信号:   </p>
 <figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">//signals.m</span><br><span class="line">RACSignal *controlUpdate = [myButton rac_signalForControlEvents:UIControlEventTouchUpInside];</span><br><span class="line">    // signals <span class="keyword">for</span> UIControl events send the control event <span class="keyword">value</span> (UITextField, UIButton, UISlider, etc)</span><br><span class="line">    // subscribeNext:^(UIButton *button) &#123; NSLog(@<span class="string">"%@"</span>, button); // UIButton instance &#125;</span><br><span class="line"> </span><br><span class="line">RACSignal *textChange = [myTextField rac_textSignal];</span><br><span class="line">    // <span class="keyword">some</span> special methods are provided <span class="keyword">for</span> commonly needed control event values off certain controls</span><br><span class="line">    // subscribeNext:^(UITextField *textfield) &#123; NSLog(@<span class="string">"%@"</span>, textfield.text); // <span class="string">"Hello!"</span> &#125;</span><br><span class="line"> </span><br><span class="line">RACSignal *alertButtonClicked = [myAlertView rac_buttonClickedSignal];</span><br><span class="line">    // signals <span class="keyword">for</span> <span class="keyword">some</span> delegate methods send the delegate params <span class="keyword">as</span> the <span class="keyword">value</span></span><br><span class="line">    // e.g. UIAlertView, UIActionSheet, UIImagePickerControl, etc</span><br><span class="line">    // (limited <span class="keyword">to</span> methods that <span class="keyword">return</span> void)</span><br><span class="line">    // subscribeNext:^(NSNumber *buttonIndex) &#123; NSLog(@<span class="string">"%@"</span>, buttonIndex); // <span class="string">"1"</span> &#125;</span><br><span class="line"> </span><br><span class="line">RACSignal *viewAppeared = [self rac_signalForSelector:@selector(viewDidAppear:)];</span><br><span class="line">    // signals <span class="keyword">for</span> arbitrary selectors that <span class="keyword">return</span> void, send the method params <span class="keyword">as</span> the <span class="keyword">value</span></span><br><span class="line">    // works <span class="keyword">for</span> built <span class="keyword">in</span> or your own methods</span><br><span class="line">    // subscribeNext:^(NSNumber *animated) &#123; NSLog(@<span class="string">"viewDidAppear %@"</span>, animated); // <span class="string">"viewDidAppear 1"</span> &#125;</span><br></pre></td></tr></table></figure>
 <p>记住你也能轻松创建自己的信号, 包括<a href="http://spin.atomicobject.com/2014/02/03/objective-c-delegate-pattern/" target="_blank" rel="external">替代那些没有内建支持的其他委托</a>. 我们现在能够从所有这些不连贯的异步/控制流工具中拉取出信号并将他们合并, 试想想这该多酷!这些会成为我们之前看到的陈述性图表中的节点. 真是兴奋. </p>
@@ -273,7 +275,7 @@
 <li>网络请求反应慢啊. </li>
 </ol>
 <p>例如, 你可能有个信号在每次按钮按下时发送一个值, 而你想将这个值转换成网络请求的结果. 如果有多个订阅者要这个处理信号链上返回的这个值, 你将发起多个网络请求.   </p>
-<p><img src="http://www.sprynthesis.com/assets/images/signal-side-effect.svg" alt="">  </p>
+<p><img src="http://www.sprynthesis.com/assets/images/signal-side-effect.svg" alt>  </p>
 <p>网络请求明显是经常需要的. 正如你所期望,  RAC 提供这些情况的解决方案, 也就是 <code>RACCommand</code> 和多点广播. 我将会在下一篇文章中更深入地分析.   </p>
 <h2 id="Tweetboat-Plus"><a href="#Tweetboat-Plus" class="headerlink" title="Tweetboat Plus"></a>Tweetboat Plus</h2><p>既然简短的介绍(嗯哼)扯远了, 让我们着眼于如何用 ReactiveCocoa 将 view-model 与视图控制器连接起来. </p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// View Controller</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"> </span><br><span class="line">- (<span class="keyword">void</span>) viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line"> </span><br><span class="line">    RAC(<span class="keyword">self</span>.viewModel,  username) = [myTextfield rac_textSignal];</span><br><span class="line"> </span><br><span class="line">    RACSignal *usernameIsValidSignal = RACObserve(<span class="keyword">self</span>.viewModel,  usernameValid);</span><br><span class="line"> </span><br><span class="line">    RAC(<span class="keyword">self</span>.goButton,  alpha) = [usernameIsValidSignal</span><br><span class="line">        map:  ^(<span class="built_in">NSNumber</span> *valid) &#123;</span><br><span class="line">            <span class="keyword">return</span> valid.boolValue ? @<span class="number">1</span> :  @<span class="number">0.5</span>;</span><br><span class="line">        &#125;];</span><br><span class="line"> </span><br><span class="line">    RAC(<span class="keyword">self</span>.goButton,  enabled) = usernameIsValidSignal;</span><br><span class="line"> </span><br><span class="line">    RAC(<span class="keyword">self</span>.avatarImageView,  image) = RACObserve(<span class="keyword">self</span>.viewModel,  userAvatarImage);</span><br><span class="line">    </span><br><span class="line">    RAC(<span class="keyword">self</span>.userNameLabel,  text) = RACObserve(<span class="keyword">self</span>.viewModel,  userFullName);</span><br><span class="line"> </span><br><span class="line">    @weakify(<span class="keyword">self</span>);</span><br><span class="line">    [[[RACSignal merge: @[RACObserve(<span class="keyword">self</span>.viewModel,  tweets), </span><br><span class="line">                        RACObserve(<span class="keyword">self</span>.viewModel,  allTweetsLoaded)]]</span><br><span class="line">        bufferWithTime: <span class="number">0</span> onScheduler: [RACScheduler mainThreadScheduler]]</span><br><span class="line">        subscribeNext: ^(<span class="keyword">id</span> value) &#123;</span><br><span class="line">            @strongify(<span class="keyword">self</span>);</span><br><span class="line">            [<span class="keyword">self</span>.tableView reloadData];</span><br><span class="line">        &#125;];</span><br><span class="line">    </span><br><span class="line">    [[<span class="keyword">self</span>.goButton rac_signalForControlEvents: <span class="built_in">UIControlEventTouchUpInside</span>]</span><br><span class="line">        subscribeNext:  ^(<span class="keyword">id</span> value) &#123;</span><br><span class="line">            @strongify(<span class="keyword">self</span>);</span><br><span class="line">            [<span class="keyword">self</span>.viewModel getTweetsForCurrentUsername];</span><br><span class="line">        &#125;];</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">-(<span class="built_in">UITableViewCell</span>*)tableView: (<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath: (<span class="built_in">NSIndexPath</span> *)indexPath &#123;</span><br><span class="line">    <span class="comment">// if table section is the tweets section</span></span><br><span class="line">    <span class="keyword">if</span> (indexPath.section == <span class="number">0</span>) &#123;</span><br><span class="line">        MYTwitterUserCell *cell = [<span class="keyword">self</span>.tableView dequeueReusableCellWithIdentifier: <span class="string">@"MYTwitterUserCell"</span> forIndexPath: indexPath];</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// grab the cell view model from the vc view model and assign it</span></span><br><span class="line">        cell.viewModel = <span class="keyword">self</span>.viewModel.tweets[indexPath.row];</span><br><span class="line">        <span class="keyword">return</span> cell;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// else if the section is our loading cell</span></span><br><span class="line">        MYLoadingCell *cell = [<span class="keyword">self</span>.tableView dequeueReusableCellWithIdentifier: <span class="string">@"MYLoadingCell"</span> forIndexPath: indexPath];</span><br><span class="line">        [<span class="keyword">self</span>.viewModel loadMoreTweets];</span><br><span class="line">        <span class="keyword">return</span> cell;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// MYTwitterUserCell</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// this could also be in cell init</span></span><br><span class="line">- (<span class="keyword">void</span>) awakeFromNib &#123;</span><br><span class="line">    [<span class="keyword">super</span> awakeFromNib];</span><br><span class="line">    </span><br><span class="line">    RAC(<span class="keyword">self</span>.avatarImageView, image) = RACObserve(<span class="keyword">self</span>,  viewModel.tweetAuthorAvatarImage);</span><br><span class="line">    RAC(<span class="keyword">self</span>.userNameLabel, text) = RACObserve(<span class="keyword">self</span>,  viewModel.tweetAuthorFullName);</span><br><span class="line">    RAC(<span class="keyword">self</span>.tweetTextLabel, text) = RACObserve(<span class="keyword">self</span>,  viewModel.tweetContent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -298,7 +300,7 @@
 <h4 id="福利-消除更多的状态"><a href="#福利-消除更多的状态" class="headerlink" title="福利-消除更多的状态"></a>福利-消除更多的状态</h4><p>有时候你可以在 view-model 中暴露 <code>RACSignal</code> 对象来替代像字符串和图像这样的属性, 这能在 view-model 上消除更多的状态. 然后视图控制器就不需要自己用 <code>RACObserve</code> 创建信号了, 并只是直接影响这些信号. 要意识到如果你的信号在被 UI 订阅/绑定到 UI 之前发出过一个值, 那么你将不会收到那个”初始”的值. </p>
 <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本文篇幅略长, 但别被吓着. 这还有好多没讲的, 而且是干货儿, 是舒展你大脑的好方法. 这毫无疑问是<em>不同的</em>编程风格. 花一会儿功夫停止机械地试图用命令式方案去解决问题. 即使你一开始不是经常用这种编程风格, 我认为这有助于理解和提醒我们有截然不同的途径来解决我们程序员的困惑.   </p>
 <p>下一次我将稍微深入 view-model 内部中本文没提到的内容, 并介绍下 <code>RACCommand</code>(希望篇幅能短很多). 然后我们将投入到一个真实案例中, 那是我的一个叫做<a href="http://www.threecentsapp.com" target="_blank" rel="external">Three Cents</a>的 app 中的一个相当复杂的页面, 它混合了网络调用, CoreData, 多重 UI 状态, 等等!</p>
-<p><img src="http://www.sprynthesis.com/assets/images/ThreeCentsExplore.gif" alt=""></p>
+<p><img src="http://www.sprynthesis.com/assets/images/ThreeCentsExplore.gif" alt></p>
 <h3 id="拓展阅读"><a href="#拓展阅读" class="headerlink" title="拓展阅读"></a>拓展阅读</h3><ul>
 <li><a href="http://www.objc.io/issue-13/mvvm.html" target="_blank" rel="external">Introduction to MVVM</a> by Ash Furrow</li>
 <li><a href="https://leanpub.com/iosfrp/" target="_blank" rel="external">Functional Reactive Programming on iOS</a> by Ash Furrow</li>
@@ -316,7 +318,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/RAC/">RAC</a><a href="/tags/翻译/">翻译</a>
+  <span></span> <a href="/tags/翻译/">翻译</a><a href="/tags/RAC/">RAC</a>
   </div>
 
 </div>
@@ -338,9 +340,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2015/06/12/SpriteKit在iOS9和OSX10-11中的新特性/" title="SpriteKit在iOS9和OSX10.11中的新特性">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   SpriteKit在iOS9和OSX10.11中的新特性</span>
 </a>
@@ -348,8 +350,8 @@
 
 
 <div class="next">
-<a href="/blog/2015/04/06/Communication-between-your-App-and-Extensions/"  title="App与Extensions间通信共享数据">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2015/04/06/Communication-between-your-App-and-Extensions/" title="App与Extensions间通信共享数据">
+ <strong>下一篇：</strong><br> 
  <span>App与Extensions间通信共享数据
 </span>
 </a>
@@ -373,7 +375,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC"><span class="toc-number">1.</span> <span class="toc-text">MVC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVVM"><span class="toc-number">2.</span> <span class="toc-text">MVVM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义-MVVM"><span class="toc-number">2.1.</span> <span class="toc-text">定义 MVVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于-view-model-的更多内容"><span class="toc-number">2.2.</span> <span class="toc-text">关于 view-model 的更多内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC-世界中的-MVVM"><span class="toc-number">3.</span> <span class="toc-text">MVC 世界中的 MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#View-Model-和-View-Controller-在一起，但独立"><span class="toc-number">4.</span> <span class="toc-text">View-Model 和 View Controller,  在一起，但独立</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-实例"><span class="toc-number">4.1.</span> <span class="toc-text">View-Model 实例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#view-model-不做的事儿"><span class="toc-number">4.1.1.</span> <span class="toc-text">view-model 不做的事儿</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Controller-视图控制器"><span class="toc-number">4.2.</span> <span class="toc-text">View Controller(视图控制器)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器从-view-model-获取的数据将用来"><span class="toc-number">4.2.1.</span> <span class="toc-text">视图控制器从 view-model 获取的数据将用来:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器将对-view-model-起如下作用"><span class="toc-number">4.2.2.</span> <span class="toc-text">视图控制器将对 view-model 起如下作用:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器不做的事儿"><span class="toc-number">4.2.3.</span> <span class="toc-text">视图控制器不做的事儿:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#子-View-Model"><span class="toc-number">5.</span> <span class="toc-text">子 View-Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-从哪来"><span class="toc-number">5.1.</span> <span class="toc-text">View-Model 从哪来?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-产生-View-Model"><span class="toc-number">5.1.1.</span> <span class="toc-text">View-Model 产生 View-Model</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-列表"><span class="toc-number">5.1.2.</span> <span class="toc-text">View-Model 列表</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Functional-Core-Imperative-Shell"><span class="toc-number">6.</span> <span class="toc-text">Functional Core,  Imperative Shell</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Functional-Core"><span class="toc-number">6.1.</span> <span class="toc-text">Functional Core</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Imperative-Declarative-Shell"><span class="toc-number">6.2.</span> <span class="toc-text">Imperative (Declarative?) Shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可测试的核心"><span class="toc-number">6.3.</span> <span class="toc-text">可测试的核心</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接一切"><span class="toc-number">7.</span> <span class="toc-text">连接一切</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进入-ReactiveCocoa"><span class="toc-number">8.</span> <span class="toc-text">进入 ReactiveCocoa</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RACSignal"><span class="toc-number">8.1.</span> <span class="toc-text">RACSignal</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#那么什么是信号呢-这是一个信号"><span class="toc-number">8.1.1.</span> <span class="toc-text">那么什么是信号呢?这是一个信号:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#信号发送的值是从哪获得的"><span class="toc-number">8.1.2.</span> <span class="toc-text">信号发送的值是从哪获得的?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是订阅者"><span class="toc-number">8.1.3.</span> <span class="toc-text">什么是订阅者?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#转换数据流"><span class="toc-number">8.1.4.</span> <span class="toc-text">转换数据流</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多个订阅者-副作用-昂贵的操作"><span class="toc-number">8.2.</span> <span class="toc-text">多个订阅者, 副作用, 昂贵的操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tweetboat-Plus"><span class="toc-number">9.</span> <span class="toc-text">Tweetboat Plus</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#福利-消除更多的状态"><span class="toc-number">9.0.1.</span> <span class="toc-text">福利-消除更多的状态</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">10.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#拓展阅读"><span class="toc-number">10.1.</span> <span class="toc-text">拓展阅读</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC"><span class="toc-number">1.</span> <span class="toc-text">MVC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVVM"><span class="toc-number">2.</span> <span class="toc-text">MVVM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义-MVVM"><span class="toc-number">2.1.</span> <span class="toc-text">定义 MVVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于-view-model-的更多内容"><span class="toc-number">2.2.</span> <span class="toc-text">关于 view-model 的更多内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC-世界中的-MVVM"><span class="toc-number">3.</span> <span class="toc-text">MVC 世界中的 MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#View-Model-和-View-Controller-在一起，但独立"><span class="toc-number">4.</span> <span class="toc-text">View-Model 和 View Controller,  在一起，但独立</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-实例"><span class="toc-number">4.1.</span> <span class="toc-text">View-Model 实例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#view-model-不做的事儿"><span class="toc-number">4.1.1.</span> <span class="toc-text">view-model 不做的事儿</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Controller-视图控制器"><span class="toc-number">4.2.</span> <span class="toc-text">View Controller(视图控制器)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器从-view-model-获取的数据将用来"><span class="toc-number">4.2.1.</span> <span class="toc-text">视图控制器从 view-model 获取的数据将用来:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器将对-view-model-起如下作用"><span class="toc-number">4.2.2.</span> <span class="toc-text">视图控制器将对 view-model 起如下作用:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器不做的事儿"><span class="toc-number">4.2.3.</span> <span class="toc-text">视图控制器不做的事儿:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#子-View-Model"><span class="toc-number">5.</span> <span class="toc-text">子 View-Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-从哪来"><span class="toc-number">5.1.</span> <span class="toc-text">View-Model 从哪来?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-产生-View-Model"><span class="toc-number">5.1.1.</span> <span class="toc-text">View-Model 产生 View-Model</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-列表"><span class="toc-number">5.1.2.</span> <span class="toc-text">View-Model 列表</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Functional-Core-Imperative-Shell"><span class="toc-number">6.</span> <span class="toc-text">Functional Core,  Imperative Shell</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Functional-Core"><span class="toc-number">6.1.</span> <span class="toc-text">Functional Core</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Imperative-Declarative-Shell"><span class="toc-number">6.2.</span> <span class="toc-text">Imperative (Declarative?) Shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可测试的核心"><span class="toc-number">6.3.</span> <span class="toc-text">可测试的核心</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接一切"><span class="toc-number">7.</span> <span class="toc-text">连接一切</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进入-ReactiveCocoa"><span class="toc-number">8.</span> <span class="toc-text">进入 ReactiveCocoa</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RACSignal"><span class="toc-number">8.1.</span> <span class="toc-text">RACSignal</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#那么什么是信号呢-这是一个信号"><span class="toc-number">8.1.1.</span> <span class="toc-text">那么什么是信号呢?这是一个信号:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#信号发送的值是从哪获得的"><span class="toc-number">8.1.2.</span> <span class="toc-text">信号发送的值是从哪获得的?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是订阅者"><span class="toc-number">8.1.3.</span> <span class="toc-text">什么是订阅者?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#转换数据流"><span class="toc-number">8.1.4.</span> <span class="toc-text">转换数据流</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多个订阅者-副作用-昂贵的操作"><span class="toc-number">8.2.</span> <span class="toc-text">多个订阅者, 副作用, 昂贵的操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tweetboat-Plus"><span class="toc-number">9.</span> <span class="toc-text">Tweetboat Plus</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#福利-消除更多的状态"><span class="toc-number">9.0.1.</span> <span class="toc-text">福利-消除更多的状态</span></a></li></ol></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">10.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#拓展阅读"><span class="toc-number">10.1.</span> <span class="toc-text">拓展阅读</span></a></li></ol></li>
  
   </div>
 
@@ -385,7 +387,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -450,7 +452,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -459,7 +461,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -467,7 +469,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -476,11 +478,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -516,7 +518,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -741,7 +743,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

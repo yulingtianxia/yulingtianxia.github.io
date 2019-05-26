@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>自制一款 Mac 平台 URL 辅助工具 | yulingtianxia&#39;s blog</title>
@@ -12,13 +12,15 @@
 
     
     <meta name="description" content="工作时经常会收到同事发来的一些链接，有的带空格的链接会断开，不能直接点击查看，需要手动复制完整链接并粘贴查看。所以我做了个 Mac 系统上的 URL 辅助工具，在复制 URL 时自动将其打开。还实现缓存常用链接、自动/手动连接切换、登录时启动等功能。开发语言为 Swift 3 和 AppleScript。">
+<meta name="keywords" content="Swift,Algorithm,macOS,AppleScript">
 <meta property="og:type" content="article">
 <meta property="og:title" content="自制一款 Mac 平台 URL 辅助工具">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2016/02/27/TFSHelper/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="工作时经常会收到同事发来的一些链接，有的带空格的链接会断开，不能直接点击查看，需要手动复制完整链接并粘贴查看。所以我做了个 Mac 系统上的 URL 辅助工具，在复制 URL 时自动将其打开。还实现缓存常用链接、自动/手动连接切换、登录时启动等功能。开发语言为 Swift 3 和 AppleScript。">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/TFSHelper/master/image/screenshot.png">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.514Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.515Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自制一款 Mac 平台 URL 辅助工具">
 <meta name="twitter:description" content="工作时经常会收到同事发来的一些链接，有的带空格的链接会断开，不能直接点击查看，需要手动复制完整链接并粘贴查看。所以我做了个 Mac 系统上的 URL 辅助工具，在复制 URL 时自动将其打开。还实现缓存常用链接、自动/手动连接切换、登录时启动等功能。开发语言为 Swift 3 和 AppleScript。">
@@ -38,14 +40,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -70,12 +72,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -91,7 +93,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2016-02-26T16:35:53.000Z" itemprop="datePublished"> 发表于 2016-02-27</time>
     
   </p>
@@ -139,7 +141,7 @@
 <h2 id="登陆时启动"><a href="#登陆时启动" class="headerlink" title="登陆时启动"></a>登陆时启动</h2><p>Mac 开发开机启动有好几种方式，可以参考<a href="http://www.tanhao.me/talk/1287.html/" target="_blank" rel="external">Mac OSX的开机启动配置</a></p>
 <p>不过对于 Swift 开发 Mac App，我更推荐<a href="https://theswiftdev.com/2015/09/17/first-os-x-tutorial-how-to-launch-an-os-x-app-at-login/" target="_blank" rel="external">这篇文章</a>，其策略是将 App 添加为启动项。原理是通过 <code>SMLoginItemSetEnabled</code> 方法在主应用的 <code>Contents/Library/LoginItems</code> 文件夹建立一个后台辅助应用来启动主应用，如果主应用已启动后就会终止后台应用。</p>
 <h2 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h2><p>为了让这个 App 皮实耐操，我决定还是不画主页面，让其附着在菜单栏吧：</p>
-<p><img src="https://raw.githubusercontent.com/yulingtianxia/TFSHelper/master/image/screenshot.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/TFSHelper/master/image/screenshot.png" alt></p>
 <p>将 plist 文件中 <code>Application is background only</code> 设为 <code>YES</code> 就不会让应用出现在 Dock 上了。</p>
 <p>这里添加菜单很容易没啥好说的，需要注意的逻辑是在菜单显示前先验证剪贴板链接是否符合要求，然后决定是否显示“打开链接”按钮。</p>
 <p>所有开关设置都会通过 <code>NSUserDefaults</code> 持久化写入本地，第一次加载应用需要从本地读取，然后更新界面。</p>
@@ -159,7 +161,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/Swift/">Swift</a><a href="/tags/Algorithm/">Algorithm</a><a href="/tags/AppleScript/">AppleScript</a>
+  <span></span> <a href="/tags/Swift/">Swift</a><a href="/tags/Algorithm/">Algorithm</a><a href="/tags/macOS/">macOS</a><a href="/tags/AppleScript/">AppleScript</a>
   </div>
 
 </div>
@@ -181,9 +183,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2016/03/28/Add-UITest-Label-for-UIAutomation/" title="为 UIAutomation 添加自动化测试标签的探索">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   为 UIAutomation 添加自动化测试标签的探索</span>
 </a>
@@ -191,8 +193,8 @@
 
 
 <div class="next">
-<a href="/blog/2016/01/17/search-for-similar-images/"  title="如何自制一款寻找相似图片的 Mac 工具">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2016/01/17/search-for-similar-images/" title="如何自制一款寻找相似图片的 Mac 工具">
+ <strong>下一篇：</strong><br> 
  <span>如何自制一款寻找相似图片的 Mac 工具
 </span>
 </a>
@@ -228,7 +230,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -293,7 +295,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -302,7 +304,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -310,7 +312,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -319,11 +321,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -359,7 +361,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -584,7 +586,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

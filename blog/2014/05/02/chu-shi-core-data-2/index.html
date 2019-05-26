@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>初识Core Data(2) | yulingtianxia&#39;s blog</title>
@@ -11,28 +11,14 @@
     
 
     
-    <meta name="description" content="本文内容：  
-
-自定义NSManagedObject
-使用数据模型设计器
-探究Core Data在SQLite中的实现  
-
-推荐先阅读上一篇文章：初识Core Data(1)  
-文章所使用的项目代码可以到这里下载  
-在下一篇文章里，我将会通过教程的方式，讲述如何用Swift结合CoreData的NSFetchedResultsController写一个小Demo-HardChoice">
+    <meta name="description" content="本文内容：    自定义NSManagedObject 使用数据模型设计器 探究Core Data在SQLite中的实现    推荐先阅读上一篇文章：初识Core Data(1)   文章所使用的项目代码可以到这里下载   在下一篇文章里，我将会通过教程的方式，讲述如何用Swift结合CoreData的NSFetchedResultsController写一个小Demo-HardChoice">
+<meta name="keywords" content="Objective-C,Core Data">
 <meta property="og:type" content="article">
 <meta property="og:title" content="初识Core Data(2)">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/05/02/chu-shi-core-data-2/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="本文内容：  
-
-自定义NSManagedObject
-使用数据模型设计器
-探究Core Data在SQLite中的实现  
-
-推荐先阅读上一篇文章：初识Core Data(1)  
-文章所使用的项目代码可以到这里下载  
-在下一篇文章里，我将会通过教程的方式，讲述如何用Swift结合CoreData的NSFetchedResultsController写一个小Demo-HardChoice">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="本文内容：    自定义NSManagedObject 使用数据模型设计器 探究Core Data在SQLite中的实现    推荐先阅读上一篇文章：初识Core Data(1)   文章所使用的项目代码可以到这里下载   在下一篇文章里，我将会通过教程的方式，讲述如何用Swift结合CoreData的NSFetchedResultsController写一个小Demo-HardChoice">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353399425.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353399917.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353400261.png">
@@ -54,15 +40,7 @@
 <meta property="og:updated_time" content="2019-05-26T10:08:45.475Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="初识Core Data(2)">
-<meta name="twitter:description" content="本文内容：  
-
-自定义NSManagedObject
-使用数据模型设计器
-探究Core Data在SQLite中的实现  
-
-推荐先阅读上一篇文章：初识Core Data(1)  
-文章所使用的项目代码可以到这里下载  
-在下一篇文章里，我将会通过教程的方式，讲述如何用Swift结合CoreData的NSFetchedResultsController写一个小Demo-HardChoice">
+<meta name="twitter:description" content="本文内容：    自定义NSManagedObject 使用数据模型设计器 探究Core Data在SQLite中的实现    推荐先阅读上一篇文章：初识Core Data(1)   文章所使用的项目代码可以到这里下载   在下一篇文章里，我将会通过教程的方式，讲述如何用Swift结合CoreData的NSFetchedResultsController写一个小Demo-HardChoice">
 <meta name="twitter:image" content="http://yulingtianxia.com/resources/140353399425.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -79,14 +57,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -111,12 +89,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -132,7 +110,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2014-05-02T12:17:04.000Z" itemprop="datePublished"> 发表于 2014-05-02</time>
     
   </p>
@@ -159,10 +137,10 @@
 <h2 id="自定义NSManagedObject"><a href="#自定义NSManagedObject" class="headerlink" title="自定义NSManagedObject"></a>自定义NSManagedObject</h2><p>在上一篇教程中我们每条数据都是通过<code>NSManagedObject</code>对象装载，通过KVC方式使用<code>valueForKey：</code>方法访问对象属性，但是使用KVC要比使用访问器效率低一点。 只在必要时使用KVC，比如你需要动态选择key或keyPath。  </p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[newEmployee setValue:@”Stig” forKey:firstName];</span><br><span class="line">[aDepartment setValue:@<span class="number">1000</span> forKeyPath:manager.salary];</span><br></pre></td></tr></table></figure>
 <p>下面我们将自定义<code>NSManagedObject</code>类，通过对它的继承拓展，使得我们有自己的Event类，并通过访问器方法代替KVC方式来访问对象的属性。<br>按CMD+N或者在可视化建模工具下选择菜单中Editor-&gt;Create NSManagedObject Subclass：  </p>
-<p><img src="http://yulingtianxia.com/resources/140353399425.png" alt="">  </p>
-<p><img src="http://yulingtianxia.com/resources/140353399917.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353399425.png" alt>  </p>
+<p><img src="http://yulingtianxia.com/resources/140353399917.png" alt>  </p>
 <p>选中需要子类化的Entity（当然我们只有一个Event，自动勾选了）：  </p>
-<p><img src="http://yulingtianxia.com/resources/140353400261.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353400261.png" alt>  </p>
 <p>最后点击Create，于是Event类就创建好了，可以看到属性timeStamp已经自动生成了，并且实现为<code>@dynamic</code>  </p>
 <p>熟悉Objective-C语法的都知道<code>@synthesize</code>实际的意义就是自动生成属性的setter和getter方法。  </p>
 <p><code>@dynamic</code>就是要告诉编译器，代码中用<code>@dynamic</code>修饰的属性，其getter和setter方法会在程序运行的时候或者用其他方式动态绑定，以便让编译器通过编译。其主要的作用就是用在<code>NSManagerObject</code>对象的属性声明上，由于此类对象的属性一般是从Core Data的属性中生成的，Core Data框架会在程序运行的时候为此类属性生成getter和setter方法。  </p>
@@ -217,7 +195,7 @@
 <li><p>Transformable属性类型用于存储一个Objective-C对象。该属性类型允许你存储任何类的实例，比如你使用Transformable属性表示UIColor。<strong>当生成NSManagedObject子类时，Transformable类型会被表示为id。</strong>对于id对象的保存和解档需要使用一个NSValueTransformer的实例或子类的实例。由该类负责属性值与NSData之间的转换。但这也相当的简单，尤其是当属性值的类型已经实现了NSCoding协议，此时系统会自动提供一个默认的NSValueTransformer实例来完成归档和解档。  </p>
 </li>
 </ul>
-<p><img src="http://yulingtianxia.com/resources/140353400282.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353400282.png" alt>  </p>
 <p>选择一个属性，在右侧的Data Model Inspector中可以对属性进行更为详细的设置，而且这些设置项会根据你所设置的属性类型不同而不同，大致分为以下几类：  </p>
 <ul>
 <li>Transient（瞬时）选项表示属性不会存储到持久化存储文件中。Transient通常用在属性的值是由其他属性计算或合成而来（比如fullName属性是根据Persion类实例的firstName和lastName拼接而来）。</li>
@@ -230,19 +208,19 @@
 </ul>
 <p>如果你细心的话，会发现无论是属性还是实体等选项，右侧的Data Model Inspector经常会出现User Info一栏。<br>在managed object model中很多元素，比如entities, attributes,和 relationships，有一个相关联的用户信息字典。你可以在用户信息字典中以键值对的形式放入你想要的任何信息。这里常用的信息有实体的版本详情，还有fetched property中谓词（predicate）用到的值。  </p>
 <p>说了一大堆，再添加两个实体吧：Teacher和Student，都继承自Person：  </p>
-<p><img src="http://yulingtianxia.com/resources/140353400755.png" alt="">  </p>
-<p><img src="http://yulingtianxia.com/resources/140353401739.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353400755.png" alt>  </p>
+<p><img src="http://yulingtianxia.com/resources/140353401739.png" alt>  </p>
 <p>点击右下方的Editor Style切换到Graph模式：  </p>
-<p><img src="http://yulingtianxia.com/resources/140353401953.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353401953.png" alt>  </p>
 <p>选中Teacher，长按Add Attribute会弹出所有的选项（同样你也可以试试长按Add Enity），选择Add Relationship，添加一个关系，命名为students，Type为To Many，目标为Student（一个老师教很多学生）：  </p>
-<p><img src="http://yulingtianxia.com/resources/140353402308.png" alt="">  </p>
-<p><img src="http://yulingtianxia.com/resources/14035340227.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353402308.png" alt>  </p>
+<p><img src="http://yulingtianxia.com/resources/14035340227.png" alt>  </p>
 <p>我们再尝试一种添加关系的新方法：把以前在Teacher中建立的students删除，选中Student，按住Ctrl，鼠标拖至Teacher，这样一个双向的关系就建立起来了：  </p>
-<p><img src="http://yulingtianxia.com/resources/140353402879.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353402879.png" alt>  </p>
 <p>分别编辑双方的关系，Tpye都是To Many：  </p>
-<p><img src="http://yulingtianxia.com/resources/140353402596.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353402596.png" alt>  </p>
 <p>用上一节中提到的方法，建立这三个新建的Entity的<code>NSManagedObject</code>子类：  </p>
-<p><img src="http://yulingtianxia.com/resources/14035340286.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/14035340286.png" alt>  </p>
 <p>因为创建顺序的问题，当Student创建的时候还不知道有<code>Teacher</code>类，于是其生成的一些方法将Teacher默认为<code>NSManagedObject</code>类：  </p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;CoreData/CoreData.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> : <span class="title">NSManagedObject</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, retain) <span class="built_in">NSNumber</span> * grade;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, retain) <span class="built_in">NSSet</span> *teachers;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> (<span class="title">CoreDataGeneratedAccessors</span>)</span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)addTeachersObject:(<span class="built_in">NSManagedObject</span> *)value;</span><br><span class="line">- (<span class="keyword">void</span>)removeTeachersObject:(<span class="built_in">NSManagedObject</span> *)value;</span><br><span class="line">- (<span class="keyword">void</span>)addTeachers:(<span class="built_in">NSSet</span> *)values;</span><br><span class="line">- (<span class="keyword">void</span>)removeTeachers:(<span class="built_in">NSSet</span> *)values;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
 <p>而Teacher类创建的时候已经有了<code>Student</code>类，就不会出现上面的问题：  </p>
@@ -250,7 +228,7 @@
 <p>虽然<code>Teacher</code>类认识<code>Student</code>类，因为它已经创建了，但是此时Persion类还没有创建，于是此时<code>Student</code>类和<code>Teacher</code>类继承的依然是<code>NSManagedObject</code>，这不是我们想要的结果。<br>解决方法是重新生成下这三个Entity对应的<code>NSManagedObject</code>子类，并覆盖原有的文件：  </p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;CoreData/CoreData.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">"Person.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@class</span> <span class="title">Teacher</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> : <span class="title">Person</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, retain) <span class="built_in">NSNumber</span> * grade;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, retain) <span class="built_in">NSSet</span> *teachers;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> (<span class="title">CoreDataGeneratedAccessors</span>)</span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)addTeachersObject:(Teacher *)value;</span><br><span class="line">- (<span class="keyword">void</span>)removeTeachersObject:(Teacher *)value;</span><br><span class="line">- (<span class="keyword">void</span>)addTeachers:(<span class="built_in">NSSet</span> *)values;</span><br><span class="line">- (<span class="keyword">void</span>)removeTeachers:(<span class="built_in">NSSet</span> *)values;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
 <p>你会发现多了一个<code>CoreDataGeneratedAccessors</code>类别，这个类别中的方法是Core Data框架根据你在数据模式编辑器中设置的实体关系自动生成的，你不需要实现它们，Core Data会在运行时实现这些方法<br>如果你偏要想看看其实现机理，在右下方的代码片段库中选择“Core Data To-Many Relationship Accessors”并拖拽到代码中  </p>
-<p><img src="http://yulingtianxia.com/resources/140353403195.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353403195.png" alt>  </p>
 <p>生成的代码如下：  </p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)add&lt;<span class="meta">#CapitalizedRelationshipName#&gt;Object:(<span class="meta-string">&lt;#relationship destination class#&gt;</span> *)value</span></span><br><span class="line">&#123;    </span><br><span class="line">    <span class="built_in">NSSet</span> *changedObjects = [<span class="built_in">NSSet</span> setWithObject:value];</span><br><span class="line">    [<span class="keyword">self</span> willChangeValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span> withSetMutation:<span class="built_in">NSKeyValueUnionSetMutation</span> usingObjects:changedObjects];</span><br><span class="line">    [[<span class="keyword">self</span> primitiveValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span>] addObject:value];</span><br><span class="line">    [<span class="keyword">self</span> didChangeValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span> withSetMutation:<span class="built_in">NSKeyValueUnionSetMutation</span> usingObjects:changedObjects];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)remove&lt;<span class="meta">#CapitalizedRelationshipName#&gt;Object:(<span class="meta-string">&lt;#relationship destination class#&gt;</span> *)value</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSSet</span> *changedObjects = [<span class="built_in">NSSet</span> setWithObject:value];</span><br><span class="line">    [<span class="keyword">self</span> willChangeValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span> withSetMutation:<span class="built_in">NSKeyValueMinusSetMutation</span> usingObjects:changedObjects];</span><br><span class="line">    [[<span class="keyword">self</span> primitiveValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span>] removeObject:value];</span><br><span class="line">    [<span class="keyword">self</span> didChangeValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span> withSetMutation:<span class="built_in">NSKeyValueMinusSetMutation</span> usingObjects:changedObjects];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)add&lt;<span class="meta">#CapitalizedRelationshipName#&gt;:(NSSet *)value</span></span><br><span class="line">&#123;    </span><br><span class="line">    [<span class="keyword">self</span> willChangeValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span> withSetMutation:<span class="built_in">NSKeyValueUnionSetMutation</span> usingObjects:value];</span><br><span class="line">    [[<span class="keyword">self</span> primitiveValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span>] unionSet:value];</span><br><span class="line">    [<span class="keyword">self</span> didChangeValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span> withSetMutation:<span class="built_in">NSKeyValueUnionSetMutation</span> usingObjects:value];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)remove&lt;<span class="meta">#CapitalizedRelationshipName#&gt;:(NSSet *)value</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span> willChangeValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span> withSetMutation:<span class="built_in">NSKeyValueMinusSetMutation</span> usingObjects:value];</span><br><span class="line">    [[<span class="keyword">self</span> primitiveValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span>] minusSet:value];</span><br><span class="line">    [<span class="keyword">self</span> didChangeValueForKey:<span class="string">@"&lt;#relationshipName#&gt;"</span> withSetMutation:<span class="built_in">NSKeyValueMinusSetMutation</span> usingObjects:value];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们需要将&lt;#Capitalized relationship name#&gt;, &lt;#Relationship destination class#&gt; 和 &lt;#Relationship name#&gt;替换为我们定义的连接名，对照下前面<code>CoreDataGeneratedAccessors</code>类别中的方法名，你就会明白了  </p>
@@ -262,14 +240,14 @@
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)insertNewObject:(<span class="keyword">id</span>)sender</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSManagedObjectContext</span> *context = [<span class="keyword">self</span>.fetchedResultsController managedObjectContext];</span><br><span class="line">    <span class="built_in">NSEntityDescription</span> *entity = [[<span class="keyword">self</span>.fetchedResultsController fetchRequest] entity];</span><br><span class="line">    Event *newManagedObject = [<span class="built_in">NSEntityDescription</span> insertNewObjectForEntityForName:[entity name] inManagedObjectContext:context];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// If appropriate, configure the new managed object.</span></span><br><span class="line">    <span class="comment">// Normally you should use accessor methods, but using KVC here avoids the need to add a custom class to the template.</span></span><br><span class="line"><span class="comment">//    [newManagedObject setValue:[NSDate date] forKey:@"timeStamp"];</span></span><br><span class="line">    newManagedObject.timeStamp = [<span class="built_in">NSDate</span> date];</span><br><span class="line">    <span class="comment">//新加的测试代码</span></span><br><span class="line">    Student *aStudent = [<span class="built_in">NSEntityDescription</span> insertNewObjectForEntityForName:<span class="string">@"Student"</span> inManagedObjectContext:context];</span><br><span class="line">    aStudent.name = <span class="string">@"LiLei"</span>;</span><br><span class="line">    aStudent.sex = <span class="string">@"male"</span>;</span><br><span class="line">    aStudent.grade = @<span class="number">1</span>;</span><br><span class="line">    Teacher *aTeacher = [<span class="built_in">NSEntityDescription</span> insertNewObjectForEntityForName:<span class="string">@"Teacher"</span> inManagedObjectContext:context];</span><br><span class="line">    aTeacher.name = <span class="string">@"MissGao"</span>;</span><br><span class="line">    aTeacher.sex = <span class="string">@"female"</span>;</span><br><span class="line">    aTeacher.course = <span class="string">@"English"</span>;</span><br><span class="line">    [aTeacher addStudentsObject:aStudent];</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Save the context.</span></span><br><span class="line">    <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;</span><br><span class="line">    <span class="keyword">if</span> (![context save:&amp;error]) &#123;</span><br><span class="line">         <span class="comment">// Replace this implementation with code to handle the error appropriately.</span></span><br><span class="line">         <span class="comment">// abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. </span></span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Unresolved error %@, %@"</span>, error, [error userInfo]);</span><br><span class="line">        abort();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们建立了一名叫LiLei的一年级男生和一名叫MissGao的教英语的女教师，并将LiLei同学添加到高老师的学生名单中。  </p>
 <p>运行程序，打开MyCDDemo.sqlite文件，查看表结构：  </p>
-<p><img src="http://yulingtianxia.com/resources/140353403982.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353403982.png" alt>  </p>
 <p>你会发现虽然Student和Teacher继承Person，但是Person表里面竟然也有grade和course字段</p>
 <p>点击程序中的加号来添加一条数据：  </p>
-<p><img src="http://yulingtianxia.com/resources/140353403912.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353403912.png" alt>  </p>
 <p>查看ZPERSON，Z_3TEACHERS，Z_PRIMARYKEY表内容：  </p>
-<p><img src="http://yulingtianxia.com/resources/140353404264.png" alt="">  </p>
-<p><img src="http://yulingtianxia.com/resources/140353404745.png" alt="">  </p>
-<p><img src="http://yulingtianxia.com/resources/140353405697.png" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353404264.png" alt>  </p>
+<p><img src="http://yulingtianxia.com/resources/140353404745.png" alt>  </p>
+<p><img src="http://yulingtianxia.com/resources/140353405697.png" alt>  </p>
 <p>这次一目了然了：   </p>
 <p>ZPERSON表存储了子类所有字段数据，其Z_ENT字段标志着这条数据的类型，Z_ENT与类型名Z_NAME的映射关系储存在Z_PRIMARYKEY表中，而Z_3TEACHERS存储的则是ZPERSON表中数据项之间的关系，也就是之前我们建立的学生和老师的对应关系，其原理是将ZPERSON表中的Z_PK字段内容两个一组对应起来，这样就相当于把ZPERSON表中两条数据项关联起来了。之前我们在代码中只将LiLei同学添加到了MissGao老师的学生列表中，但是Core Data已经自动维护起了关系，让MissGao也存在于LiLei的老师列表中。Core Data把底层的数据库封装起来，通过简单的操作让程序员更高校的管理数据，所以SQLite这部分我们只是了解下就可以了。  </p>
   
@@ -302,9 +280,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2014/05/04/spritekitzuo-biao-xi/" title="SpriteKit坐标系">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   SpriteKit坐标系</span>
 </a>
@@ -312,8 +290,8 @@
 
 
 <div class="next">
-<a href="/blog/2014/05/02/github-page-build-warning/"  title="GitHub Page build warning">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2014/05/02/github-page-build-warning/" title="GitHub Page build warning">
+ <strong>下一篇：</strong><br> 
  <span>GitHub Page build warning
 </span>
 </a>
@@ -349,7 +327,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -414,7 +392,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -423,7 +401,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -431,7 +409,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -440,11 +418,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -480,7 +458,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -705,7 +683,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

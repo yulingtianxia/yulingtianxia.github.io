@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>MessageThrottle Safety | yulingtianxia&#39;s blog</title>
@@ -11,22 +11,21 @@
     
 
     
-    <meta name="description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。
-新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业">
+    <meta name="description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。 新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业">
+<meta name="keywords" content="Objective-C">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MessageThrottle Safety">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2018/07/31/MessageThrottle-Safety/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。
-新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。 新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/MessageThrottle1.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/MessageThrottle2.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/MessageThrottle3.png">
 <meta property="og:updated_time" content="2019-05-26T10:08:45.542Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MessageThrottle Safety">
-<meta name="twitter:description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。
-新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业">
+<meta name="twitter:description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。 新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。MessageThrottle 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业">
 <meta name="twitter:image" content="http://yulingtianxia.com/resources/MessageThrottle1.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -43,14 +42,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -75,12 +74,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -96,7 +95,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2018-07-30T16:50:24.000Z" itemprop="datePublished"> 发表于 2018-07-31</time>
     
   </p>
@@ -120,15 +119,15 @@
 </ul>
 <a id="more"></a>
 <p>主要类的关系如下图，虚线为 <code>weak</code> 属性。</p>
-<p><img src="http://yulingtianxia.com/resources/MessageThrottle1.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/MessageThrottle1.png" alt></p>
 <h2 id="继承链消息转发缺陷"><a href="#继承链消息转发缺陷" class="headerlink" title="继承链消息转发缺陷"></a>继承链消息转发缺陷</h2><p>由于是在消息转发流程搞事情，把所有消息都经由一个统一的路由函数 <code>mt_forwardInvocation</code> 进行处理。子类和父类不能同时 Hook 同一个方法，原因是如果子类的方法调用了父类方法，那么父类的方法调用走到统一路由函数 <code>mt_forwardInvocation</code> 的时候，『调用父类方法』这一信息早已经丢失了，接着会转发给子类的方法实现，从而造成死循环。最后 crash。</p>
 <p>解决方法就是在 Hook 之前判断关系链，如果已经有子类或者父类被 Hook 了就报错，无法继续 Hook。</p>
 <p>在消息转发流程将所有消息通过统一的路由函数处理并转发这件事的缺陷就是丢失了类的信息，因为全都『统一』到同一个函数处理了，而不是在各自类的内部处理。诸如 Aspects 等业界知名开源库也有此问题。</p>
-<p><img src="http://yulingtianxia.com/resources/MessageThrottle2.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/MessageThrottle2.png" alt></p>
 <h2 id="兼容-KVO、其他-Hook-框架"><a href="#兼容-KVO、其他-Hook-框架" class="headerlink" title="兼容 KVO、其他 Hook 框架"></a>兼容 KVO、其他 Hook 框架</h2><p>首先先了解下 KVO 的原理：当监听类型为 <code>A</code> 的对象 <code>a</code> 时，会动态创建 <code>A</code> 的子类 <code>NSKVONotifying_A</code>，并把 <code>a</code> 的类型改成 <code>NSKVONotifying_A</code>。<code>NSKVONotifying_A</code> 会覆写监听的属性村粗方法，以及 <code>class</code> 方法，让外部以为 <code>a</code> 的类型依然是 <code>A</code>。</p>
 <p>其余开源框架在 hook 一个对象的时候，也是通过加前缀或后缀动态创建子类，然后覆写相关方法。继承链总有先来后到，这时候问题就来了。</p>
 <p>使用 <code>class</code> 方法获取到的类型可能是被『篡改过』的类，使用 <code>objc_getClass()</code> 函数获取到的才是真正的类。KVO 的做法是在用 <code>objc_getClass()</code> 获取到真正的类之后，直接创建带 <code>NSKVONotifying_</code> 前缀的子类。</p>
-<p><img src="http://yulingtianxia.com/resources/MessageThrottle3.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/MessageThrottle3.png" alt></p>
 <p>如图所示，MessageThrottle 在 hook 一个对象的时候也会动态创建带前缀 <code>MTSubclassPrefix</code> 的子类，但是不会像 KVO 那样无脑创建，而是先判断通过 <code>class</code> 与 <code>objc_getClass()</code> 获取到的类是否相同。如果不同，则说明已经有现成的子类了，直接在 <code>objc_getClass()</code> 获取的类中 hook 就行了。这里是借鉴了 Aspects 的做法。</p>
 <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">Class cls<span class="comment">;</span></span><br><span class="line">Class statedClass = [target class]<span class="comment">;</span></span><br><span class="line">Class <span class="keyword">baseClass </span>= object_getClass(target)<span class="comment">;</span></span><br><span class="line">NSString *className = NSStringFromClass(<span class="keyword">baseClass);</span><br><span class="line"></span>    </span><br><span class="line">if ([className hasPrefix:MTSubclassPrefix]) &#123;</span><br><span class="line">   cls = <span class="keyword">baseClass;</span><br><span class="line"></span>&#125;</span><br><span class="line">else if (mt_object_isClass(target)) &#123;</span><br><span class="line">   cls = target<span class="comment">;</span></span><br><span class="line">&#125;</span><br><span class="line">else if (statedClass != <span class="keyword">baseClass) </span>&#123;</span><br><span class="line">   cls = <span class="keyword">baseClass;</span><br><span class="line"></span>&#125;</span><br><span class="line">else &#123;</span><br><span class="line">   const char *<span class="keyword">subclassName </span>= [MTSubclassPrefix stringByAppendingString:className].UTF8String<span class="comment">;</span></span><br><span class="line">   Class <span class="keyword">subclass </span>= objc_getClass(<span class="keyword">subclassName);</span><br><span class="line"></span>   </span><br><span class="line">   if (<span class="keyword">subclass </span>== nil) &#123;</span><br><span class="line">       <span class="keyword">subclass </span>= objc_allocateClassPair(<span class="keyword">baseClass, </span><span class="keyword">subclassName, </span><span class="number">0</span>)<span class="comment">;</span></span><br><span class="line">       if (<span class="keyword">subclass </span>== nil) &#123;</span><br><span class="line">           NSLog(@<span class="string">"objc_allocateClassPair failed to allocate class %s."</span>, <span class="keyword">subclassName);</span><br><span class="line"></span>           return NO<span class="comment">;</span></span><br><span class="line">       &#125;</span><br><span class="line">       mt_hookedGetClass(<span class="keyword">subclass, </span>statedClass)<span class="comment">;</span></span><br><span class="line">       mt_hookedGetClass(object_getClass(<span class="keyword">subclass), </span>statedClass)<span class="comment">;</span></span><br><span class="line">       objc_registerClassPair(<span class="keyword">subclass);</span><br><span class="line"></span>   &#125;</span><br><span class="line">   object_setClass(target, <span class="keyword">subclass);</span><br><span class="line"></span>   cls = <span class="keyword">subclass;</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure>
 <p>有来就有回，如果要 remove KVO 或 hook 呢？肯定无法确保各个框架或 KVO add 和 remove『先入后出』的顺序，所以必然要做兼容处理。</p>
@@ -216,9 +215,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2018/08/13/TBUIAutoTest-Usage/" title="iOS 自动化测试标签生成工具接入指南">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   iOS 自动化测试标签生成工具接入指南</span>
 </a>
@@ -226,8 +225,8 @@
 
 
 <div class="next">
-<a href="/blog/2018/06/24/Objective-C-Block-Mangle-Name/"  title="追踪 Objective-C Block 代码定义的位置">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2018/06/24/Objective-C-Block-Mangle-Name/" title="追踪 Objective-C Block 代码定义的位置">
+ <strong>下一篇：</strong><br> 
  <span>追踪 Objective-C Block 代码定义的位置
 </span>
 </a>
@@ -263,7 +262,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -328,7 +327,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -337,7 +336,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -345,7 +344,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -354,11 +353,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -394,7 +393,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -619,7 +618,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

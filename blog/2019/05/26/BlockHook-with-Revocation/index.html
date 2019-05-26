@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>BlockHook with Revocation | yulingtianxia&#39;s blog</title>
@@ -11,39 +11,20 @@
     
 
     
-    <meta name="description" content="BlockHook 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：
-
-如何知道某个 Block 对象被谁 Hook 过？
-多次 Hook 的先后顺序？
-如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？
-
-这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。
-关于 BlockHook 的原理，">
+    <meta name="description" content="BlockHook 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：  如何知道某个 Block 对象被谁 Hook 过？ 多次 Hook 的先后顺序？ 如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？  这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。 关于 BlockHook 的原理，">
+<meta name="keywords" content="Objective-C">
 <meta property="og:type" content="article">
 <meta property="og:title" content="BlockHook with Revocation">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2019/05/26/BlockHook-with-Revocation/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="BlockHook 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：
-
-如何知道某个 Block 对象被谁 Hook 过？
-多次 Hook 的先后顺序？
-如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？
-
-这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。
-关于 BlockHook 的原理，">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="BlockHook 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：  如何知道某个 Block 对象被谁 Hook 过？ 多次 Hook 的先后顺序？ 如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？  这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。 关于 BlockHook 的原理，">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook Token List.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook invoke call.png">
 <meta property="og:updated_time" content="2019-05-26T10:08:45.560Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BlockHook with Revocation">
-<meta name="twitter:description" content="BlockHook 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：
-
-如何知道某个 Block 对象被谁 Hook 过？
-多次 Hook 的先后顺序？
-如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？
-
-这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。
-关于 BlockHook 的原理，">
+<meta name="twitter:description" content="BlockHook 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：  如何知道某个 Block 对象被谁 Hook 过？ 多次 Hook 的先后顺序？ 如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？  这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。 关于 BlockHook 的原理，">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook Token List.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -60,14 +41,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -92,12 +73,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -113,7 +94,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2019-05-26T09:20:10.000Z" itemprop="datePublished"> 发表于 2019-05-26</time>
     
   </p>
@@ -142,7 +123,7 @@
 <a id="more"></a>
 <h2 id="按顺序构造『虚拟的』-Hook-链表"><a href="#按顺序构造『虚拟的』-Hook-链表" class="headerlink" title="按顺序构造『虚拟的』 Hook 链表"></a>按顺序构造『虚拟的』 Hook 链表</h2><p>首先要有一个链表来按先后顺序记录一个 Block 对象上所有的 Hook。这个链表的格式以及持有关系也需要考虑在内。</p>
 <p>为此我构造了一个虚拟的链表来记录 Hook 的先后关系，而不是单独创建一个链表显式的记录。首先介绍下 Block 与 token 之间的引用关系：</p>
-<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook Token List.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook Token List.png" alt></p>
 <p>可以看出每个 <code>BHToken</code> 记录了原始和替换后的 <code>invoke</code> 函数指针，那么先后两次 Hook 就靠 <code>invoke</code> 函数指针来关联了：<strong>每个 tokne 的 <code>originalInvoke</code> 就是上一次 Hook 的 token 的 <code>replacementInvoke</code></strong>。而拿到 token 又是靠 Block 对象上的 <code>AssociatedObject</code>，且 key 为 <code>replacementInvoke</code>。这样就构造了一条虚拟的链表：想要获得上次 Hook 的 token，只需在 Hook 的 Block 对象上使用 <code>originalInvoke</code> 作为 key 即可。</p>
 <p>下面的代码展示了获取下个 token 的 <code>next</code> 实现。因为链表可能会有新的插入和删除节点操作，所以需确保线程安全。</p>
 <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">BHToken </span>*)next</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">BHLock </span>*lock = [self.<span class="keyword">block </span><span class="keyword">bh_lockForKey:@selector(next)];</span><br><span class="line"></span>    [lock lock]<span class="comment">;</span></span><br><span class="line">    if (!_next) &#123;</span><br><span class="line">        _next = objc_getAssociatedObject(self.<span class="keyword">block, </span>self.<span class="keyword">originInvoke);</span><br><span class="line"></span>    &#125;</span><br><span class="line">    <span class="keyword">BHToken </span>*result = _next<span class="comment">;</span></span><br><span class="line">    [lock unlock]<span class="comment">;</span></span><br><span class="line">    return result<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -156,7 +137,7 @@
 <figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">BHToken </span>*)<span class="keyword">block_currentHookToken</span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="meta">if</span> (![<span class="keyword">self </span><span class="keyword">block_checkValid]) </span>&#123;</span><br><span class="line">        return nil<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">    void *invoke = [<span class="keyword">self </span><span class="keyword">block_currentInvokeFunction];</span><br><span class="line"></span>    return objc_getAssociatedObject(<span class="keyword">self, </span>invoke)<span class="comment">;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void *)<span class="keyword">block_currentInvokeFunction</span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">struct </span>_BHBlock *<span class="keyword">bh_block </span>= (__bridge void *)<span class="keyword">self;</span><br><span class="line"></span>    <span class="keyword">BHLock </span>*lock = [<span class="keyword">self </span><span class="keyword">bh_lockForKey:_cmd];</span><br><span class="line"></span>    [lock lock]<span class="comment">;</span></span><br><span class="line">    void *invoke = <span class="keyword">bh_block-&gt;invoke;</span><br><span class="line"></span>    [lock unlock]<span class="comment">;</span></span><br><span class="line">    return invoke<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="撤销-Hook"><a href="#撤销-Hook" class="headerlink" title="撤销 Hook"></a>撤销 Hook</h2><p>俗话说『请神容易送神难』。好多 Hook 框架只解决的如何 Hook，但是却无法撤销恢复原样，留下一堆烂摊子。</p>
 <p>在搭建了 Hook 链表的基础上，多次 Hook 的链表可以简化成 <code>invoke</code> 函数指针之间的关系：</p>
-<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook invoke call.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook invoke call.png" alt></p>
 <p>那么撤销 Hook 就可以从链表头部开始遍历，找到当前要 <code>remove</code> 的 token。接着链表上删除这个 token，而这又可以分为两个子问题：</p>
 <ol>
 <li>移除最后一次 Hook：需要将 Block 的 <code>invoke</code> 指针指向 token 的 <code>originalInvoke</code>。</li>
@@ -198,8 +179,8 @@
  
 
 <div class="next">
-<a href="/blog/2019/04/27/BlockHook-with-Struct/"  title="BlockHook with Struct">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2019/04/27/BlockHook-with-Struct/" title="BlockHook with Struct">
+ <strong>下一篇：</strong><br> 
  <span>BlockHook with Struct
 </span>
 </a>
@@ -235,7 +216,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -300,7 +281,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -309,7 +290,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -317,7 +298,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -326,11 +307,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -366,7 +347,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -591,7 +572,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>Swift中的位运算符和溢出运算符 | yulingtianxia&#39;s blog</title>
@@ -12,11 +12,13 @@
 
     
     <meta name="description" content="位运算符（Bitwise Operators），在各种语言中都存在，虽然用的有些少，但是在诸如类别判断，类型检测等方案中经常用位运算来实现。很多枚举类型的成员都是将0x1左移位来赋值，而不是从0递增，这其中就蕴含着位运算。而数值运算中的溢出也是一个不常遇到但又值得注意的地方，虽然很少有人用Int8来存储大数，但了解下Swift处理溢出的这一特性也是很有用的。">
+<meta name="keywords" content="Swift">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Swift中的位运算符和溢出运算符">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/07/11/bitwise-and-overflow-operators-in-swift/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="位运算符（Bitwise Operators），在各种语言中都存在，虽然用的有些少，但是在诸如类别判断，类型检测等方案中经常用位运算来实现。很多枚举类型的成员都是将0x1左移位来赋值，而不是从0递增，这其中就蕴含着位运算。而数值运算中的溢出也是一个不常遇到但又值得注意的地方，虽然很少有人用Int8来存储大数，但了解下Swift处理溢出的这一特性也是很有用的。">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftUnsigned_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftSignedFour_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftSignedMinusFour_2x.png">
@@ -25,7 +27,7 @@
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowAddition_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowUnsignedSubtraction_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowSignedSubtraction_2x.png">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.490Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.491Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Swift中的位运算符和溢出运算符">
 <meta name="twitter:description" content="位运算符（Bitwise Operators），在各种语言中都存在，虽然用的有些少，但是在诸如类别判断，类型检测等方案中经常用位运算来实现。很多枚举类型的成员都是将0x1左移位来赋值，而不是从0递增，这其中就蕴含着位运算。而数值运算中的溢出也是一个不常遇到但又值得注意的地方，虽然很少有人用Int8来存储大数，但了解下Swift处理溢出的这一特性也是很有用的。">
@@ -45,14 +47,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -77,12 +79,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -98,7 +100,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2014-07-11T07:15:59.000Z" itemprop="datePublished"> 发表于 2014-07-11</time>
     
   </p>
@@ -116,14 +118,14 @@
 <h2 id="基本位运算符"><a href="#基本位运算符" class="headerlink" title="基本位运算符"></a>基本位运算符</h2><p><code>~</code>,<code>&amp;</code>,<code>|</code>,<code>^</code>分别为取反，与，或，异或运算：</p>
 <figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> firstBit: UInt8 = <span class="number">0b10000000</span></span><br><span class="line"><span class="built_in">let</span> lastBit: UInt8  = <span class="number">0b00000001</span></span><br><span class="line"><span class="built_in">let</span> invertedBits = ~lastBit  // 等于 <span class="number">0b11111110</span></span><br><span class="line"><span class="built_in">let</span> noneBit = firstBit &amp; lastBit  // 等于 <span class="number">0b00000000</span></span><br><span class="line"><span class="built_in">let</span> twoSideBits = firstBit | lastBit //等于 <span class="number">0b10000001</span></span><br><span class="line"><span class="built_in">let</span> middleSixBits = firstBit ^ lastBit //等于 <span class="number">0b10000001</span></span><br></pre></td></tr></table></figure>
 <p>左移运算符<code>&lt;&lt;</code>和右移运算符<code>&gt;&gt;</code>分别扮演着乘2和除2的角色，对于<code>UInt</code>来讲很简单，只需要填充0就行：  </p>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftUnsigned_2x.png" alt="">  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftUnsigned_2x.png" alt>  </p>
 <p>但对于有符号整型数，移位时需要考虑到符号位，第一个比特位表达这个整数是正数还是负数。0代表正数，1代表负数。也就是说<code>Int8</code>最大是127，因为只有7位存储实际值，而且负数采用补码来表示。</p>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftSignedFour_2x.png" alt="">  </p>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftSignedMinusFour_2x.png" alt="">  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftSignedFour_2x.png" alt>  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftSignedMinusFour_2x.png" alt>  </p>
 <p>正数的补码是原码；负数的补码是符号位不变，数值位各位取反，最后整个数加1，补码之所以被机器采用是因为它符合机器的架构设计，只用加法就能算减法：  </p>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftSignedAddition_2x.png" alt="">  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftSignedAddition_2x.png" alt>  </p>
 <p>有符号整型右移运算时用符号位填充：  </p>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftSigned_2x.png" alt=""></p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/bitshiftSigned_2x.png" alt></p>
 <p>这就确保了在右移的过程中，有符整型的符号不会发生变化。这称为算术移位。  </p>
 <h2 id="溢出运算符"><a href="#溢出运算符" class="headerlink" title="溢出运算符"></a>溢出运算符</h2><p>Swift中如果计算结果超出了它的类型能承载的范围，那么就会发生溢出错误，除非你已经使用溢出运算符来进行操作：  </p>
 <ul>
@@ -134,12 +136,12 @@
 <li>溢出求余 <code>&amp;%</code>  </li>
 </ul>
 <h3 id="值的上溢出"><a href="#值的上溢出" class="headerlink" title="值的上溢出"></a>值的上溢出</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">var</span> willOverflow = UInt8<span class="selector-class">.max</span></span><br><span class="line"><span class="comment">// willOverflow 等于UInt8的最大整数 255</span></span><br><span class="line">willOverflow = willOverflow &amp;+ <span class="number">1</span></span><br><span class="line"><span class="comment">// 此时 willOverflow 等于 0</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowAddition_2x.png" alt="">  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowAddition_2x.png" alt>  </p>
 <h3 id="值的下溢出"><a href="#值的下溢出" class="headerlink" title="值的下溢出"></a>值的下溢出</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">var</span> willUnderflow = UInt8<span class="selector-class">.min</span></span><br><span class="line"><span class="comment">// willUnderflow 等于UInt8的最小值0</span></span><br><span class="line">willUnderflow = willUnderflow &amp;- <span class="number">1</span></span><br><span class="line"><span class="comment">// 此时 willUnderflow 等于 255</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowUnsignedSubtraction_2x.png" alt="">  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowUnsignedSubtraction_2x.png" alt>  </p>
 <p>有符整型也有类似的下溢出</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">var</span> signedUnderflow = Int8<span class="selector-class">.min</span></span><br><span class="line"><span class="comment">// signedUnderflow 等于最小的有符整数 -128</span></span><br><span class="line">signedUnderflow = signedUnderflow &amp;- <span class="number">1</span></span><br><span class="line"><span class="comment">// 此时 signedUnderflow 等于 127</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowSignedSubtraction_2x.png" alt="">  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowSignedSubtraction_2x.png" alt>  </p>
 <h3 id="除零溢出"><a href="#除零溢出" class="headerlink" title="除零溢出"></a>除零溢出</h3><p>一个数除以0，或者对0求余数，就会产生一个错误；使用它们对应的可溢出的版本的运算符<code>&amp;/</code>和<code>&amp;%</code>进行除0操作时就会得到0值。</p>
 <figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="attr">x</span> = <span class="number">1</span></span><br><span class="line"><span class="keyword">let</span> <span class="attr">y</span> = x &amp;/ <span class="number">0</span></span><br><span class="line">// y 等于 <span class="number">0</span></span><br></pre></td></tr></table></figure>
   
@@ -172,9 +174,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2014/07/17/a-ios-game-developed-by-swift-and-spritekit/" title="用Swift和SpriteKit开发iOS游戏">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   用Swift和SpriteKit开发iOS游戏</span>
 </a>
@@ -182,8 +184,8 @@
 
 
 <div class="next">
-<a href="/blog/2014/07/11/setup-your-own-vpn-with-pptp/"  title="Setup Your Own VPN With PPTP">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2014/07/11/setup-your-own-vpn-with-pptp/" title="Setup Your Own VPN With PPTP">
+ <strong>下一篇：</strong><br> 
  <span>Setup Your Own VPN With PPTP
 </span>
 </a>
@@ -219,7 +221,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -284,7 +286,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -293,7 +295,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -301,7 +303,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -310,11 +312,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -350,7 +352,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -575,7 +577,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>初识Core Data(4) | yulingtianxia&#39;s blog</title>
@@ -12,14 +12,16 @@
 
     
     <meta name="description" content="这其实是一篇 WWDC 2015 Session 220 的学习笔记,顺便整理了下 Core Data 批量操作和聚合操作的小技巧.">
+<meta name="keywords" content="Core Data">
 <meta property="og:type" content="article">
 <meta property="og:title" content="初识Core Data(4)">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2015/07/25/初识Core-Data-4/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="这其实是一篇 WWDC 2015 Session 220 的学习笔记,顺便整理了下 Core Data 批量操作和聚合操作的小技巧.">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://www.cimgf.com/wp-content/uploads/2015/06/AcmeHatCoDataTable.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQ20150726-1@2x.png">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.507Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.508Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="初识Core Data(4)">
 <meta name="twitter:description" content="这其实是一篇 WWDC 2015 Session 220 的学习笔记,顺便整理了下 Core Data 批量操作和聚合操作的小技巧.">
@@ -39,14 +41,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -71,12 +73,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -92,7 +94,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2015-07-25T05:23:17.000Z" itemprop="datePublished"> 发表于 2015-07-25</time>
     
   </p>
@@ -112,7 +114,7 @@
 <p>于是苹果在 iOS8 发布时顺便弄了个”Batch Updates”,在 iOS9 发布时又弄了个”Batch Deletions”.这两个”新技术”说白了就是直接操作持久层数据库,然后还需要手动更新/删除内存中的 context 好使得我们的 UI 从 context 读取的内容不会出错.这样做的好处就是省去了向内存的一次写操作和查找操作,而越过 context 直接操作持久层,最后我们需要自己手动将持久层的变更结果(<code>BatchResult</code>)重新写入 context.只有当需要更新/删除大批量数据的时候才需要用到这两个技术.</p>
 <p>然而苹果至今未提供二者的文档,关于”Batch Updates”我在<a href="http://yulingtianxia.com/blog/2014/08/05/coredatachu-li-hai-liang-shu-ju/">CoreData处理海量数据</a>中给出了用法和例子.看了 WWDC2015 Session 220 后觉得 “Batch Deletions” 应该与 “Batch Updates” 用法类似,并且坑爹. PS: 我在 iOS9 上测试 “Batch Updates” 发现了一个 bug, 每次更新 context 都会漏掉一条记录,这让我十分郁闷.  </p>
 <h2 id="聚合操作"><a href="#聚合操作" class="headerlink" title="聚合操作"></a>聚合操作</h2><p>说完了批量操作,再谈谈聚合操作.在 SQL 语法中有一类聚合函数,比如 <code>count()</code>,<code>sum()</code>,<code>max()</code>,<code>min()</code>,<code>avg()</code> 等,它们一般搭配着 <code>group by</code> 甚至 <code>having</code> 来使用.然而在号称”object graph”的 Core Data 中,这种聚合操作在 <code>NSFetchRequest</code> 中也是有替代品的.下面的例子取自<a href="http://www.cimgf.com/2015/06/25/core-data-and-aggregate-fetches-in-swift/" target="_blank" rel="external">CORE DATA AND AGGREGATE FETCHES IN SWIFT</a>: </p>
-<p><img src="http://www.cimgf.com/wp-content/uploads/2015/06/AcmeHatCoDataTable.png" alt="">  </p>
+<p><img src="http://www.cimgf.com/wp-content/uploads/2015/06/AcmeHatCoDataTable.png" alt>  </p>
 <p>我们想计算出每条产品线的销售量和退货量,可以用下面的 SQL 语句搞定:</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> ProductLine, <span class="keyword">SUM</span>(Sold) <span class="keyword">as</span> SoldCount, <span class="keyword">SUM</span>(Returned) <span class="keyword">as</span> ReturnedCount <span class="keyword">FROM</span> Products <span class="keyword">GROUP</span> <span class="keyword">BY</span> ProductLine</span><br></pre></td></tr></table></figure>
 <p><code>NSFetchRequest</code> 有个 <code>propertiesToGroupBy</code> 属性,正好对应着 <code>group by</code> 语句:</p>
@@ -151,7 +153,7 @@
 <figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">managedObjectContext.performBlock &#123;</span><br><span class="line">	<span class="keyword">let</span> <span class="attr">createRequest</span> = NSFetchRequest(entityName: <span class="string">"Recipe"</span>)</span><br><span class="line">	createRequest.<span class="attr">resultType</span> = ManagedObjectIDResultType</span><br><span class="line">	<span class="keyword">let</span> <span class="attr">predicate</span> = NSPredicate(format: <span class="string">"source = %@"</span>, source)</span><br><span class="line">	<span class="keyword">let</span> <span class="attr">results</span> = managedObjectContext.executeFetchRequest(createRequest)</span><br><span class="line">	<span class="keyword">if</span> (results.count) &#123;</span><br><span class="line">		//update it!</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		//create it!</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>现在 Core Data 可以搞定这个事情了.我们设定属性的值唯一,类似于 SQL 中的 <code>unique</code> 约束.诸如电子邮件,电话号, ISBN 等场景都适用此.同时别忘了 Core Data 的对象图中实体的继承关系,这里规定子类会从父类继承到具有 Unique 约束的属性,并可以将更多的属性设为 Unique.</p>
 <p>为实体设置 Unique 属性十分简单,只需要在 Xcode 中选中对应的实体,打开 “Data Model inspector” 就可以看到 “Constraints”, 点击加号添加就好:</p>
-<p><img src="http://yulingtianxia.com/resources/QQ20150726-1@2x.png" alt=""></p>
+<p><img src="http://yulingtianxia.com/resources/QQ20150726-1@2x.png" alt></p>
 <h3 id="Model-Caching"><a href="#Model-Caching" class="headerlink" title="Model Caching"></a>Model Caching</h3><p>这是个轻量级的数据版本自动迁移解决方案.它会缓存旧版本数据中已创建的 <code>NSManagedObject</code> 对象会被缓存到 store 中,并被迁移到合适的 store 中.</p>
 <h3 id="Generated-Subclasses"><a href="#Generated-Subclasses" class="headerlink" title="Generated Subclasses"></a>Generated Subclasses</h3><p>在 Xcode7 中,自动创建 <code>NSManagedObject</code> 子类时将不再在对应实体子类文件中自动填充模板代码,而是同时创建Category(Objective-C文件) 或 extension(Swift文件),并将模板代码自动填写进去.这样带来的好处是将我们自己写的代码跟 Xcode 生成的模板代码分开,更易于更新维护.</p>
   
@@ -184,9 +186,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/" title="When to Use Swift Structs and Classes">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   When to Use Swift Structs and Classes</span>
 </a>
@@ -194,8 +196,8 @@
 
 
 <div class="next">
-<a href="/blog/2015/06/12/SpriteKit在iOS9和OSX10-11中的新特性/"  title="SpriteKit在iOS9和OSX10.11中的新特性">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2015/06/12/SpriteKit在iOS9和OSX10-11中的新特性/" title="SpriteKit在iOS9和OSX10.11中的新特性">
+ <strong>下一篇：</strong><br> 
  <span>SpriteKit在iOS9和OSX10.11中的新特性
 </span>
 </a>
@@ -231,7 +233,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -296,7 +298,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -305,7 +307,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -313,7 +315,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -322,11 +324,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -362,7 +364,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -587,7 +589,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

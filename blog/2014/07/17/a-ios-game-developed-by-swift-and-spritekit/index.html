@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>用Swift和SpriteKit开发iOS游戏 | yulingtianxia&#39;s blog</title>
@@ -12,11 +12,13 @@
 
     
     <meta name="description" content="之前用SpriteKit做过一个叫做ColorAtom的小游戏，用了访问者模式处理碰撞检测，还用了SpriteKit中的粒子系统、连接体、力场和动画等，可以说是一个学习SpriteKit比较不错的Demo，随着Swift的火热，我也用Swift和SpriteKit写了一个更为简单的小游戏Spiral">
+<meta name="keywords" content="Swift,iOS,SpriteKit">
 <meta property="og:type" content="article">
 <meta property="og:title" content="用Swift和SpriteKit开发iOS游戏">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/07/17/a-ios-game-developed-by-swift-and-spritekit/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="之前用SpriteKit做过一个叫做ColorAtom的小游戏，用了访问者模式处理碰撞检测，还用了SpriteKit中的粒子系统、连接体、力场和动画等，可以说是一个学习SpriteKit比较不错的Demo，随着Swift的火热，我也用Swift和SpriteKit写了一个更为简单的小游戏Spiral">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140557437844.gif">
 <meta property="og:updated_time" content="2019-05-26T10:08:45.492Z">
 <meta name="twitter:card" content="summary">
@@ -38,14 +40,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -70,12 +72,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -91,7 +93,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2014-07-17T04:54:13.000Z" itemprop="datePublished"> 发表于 2014-07-17</time>
     
   </p>
@@ -108,7 +110,7 @@
 		<p>之前用SpriteKit做过一个叫做<a href="http://coloratom.yulingtianxia.com" target="_blank" rel="external">ColorAtom</a>的小游戏，用了访问者模式处理碰撞检测，还用了SpriteKit中的粒子系统、连接体、力场和动画等，可以说是一个学习SpriteKit比较不错的Demo，随着Swift的火热，我也用Swift和SpriteKit写了一个更为简单的小游戏<a href="http://spiral.yulingtianxia.com" target="_blank" rel="external">Spiral</a>  </p>
 <a id="more"></a>
 <p>附上Spiral的动图：  </p>
-<p><img src="http://yulingtianxia.com/resources/140557437844.gif" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140557437844.gif" alt>  </p>
 <p>游戏规则是：玩家是五角星小球，小球自动沿着陀螺线向外运动，当玩家点击屏幕时五角星小球会跳跃到内层螺旋，当五角星小球碰到红色旋风或滚动到螺旋线终点时游戏结束。玩家吃掉绿色旋风来得2分，吃到紫色三角得一分并获得保护罩，保护罩用来抵挡一次红色旋风。随着分数的增加游戏会升级，速度加快。游戏结束后可以截屏分享到社交网络，也可以选择重玩。    </p>
 <p>以下是本文内容：  </p>
 <ol>
@@ -199,9 +201,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2014/07/29/reactivecocoa/" title="ReactiveCocoa学习笔记">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   ReactiveCocoa学习笔记</span>
 </a>
@@ -209,8 +211,8 @@
 
 
 <div class="next">
-<a href="/blog/2014/07/11/bitwise-and-overflow-operators-in-swift/"  title="Swift中的位运算符和溢出运算符">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2014/07/11/bitwise-and-overflow-operators-in-swift/" title="Swift中的位运算符和溢出运算符">
+ <strong>下一篇：</strong><br> 
  <span>Swift中的位运算符和溢出运算符
 </span>
 </a>
@@ -246,7 +248,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -311,7 +313,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -320,7 +322,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -328,7 +330,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -337,11 +339,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -377,7 +379,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -602,7 +604,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

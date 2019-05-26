@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>追踪 Objective-C Block 代码定义的位置 | yulingtianxia&#39;s blog</title>
@@ -11,19 +11,18 @@
     
 
     
-    <meta name="description" content="之前写了一篇文章《追踪 Objective-C 方法中的 Block 参数对象》，利用 BlockHook 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。
-主要代码已经整合到 BlockHook 1.0.2 版本">
+    <meta name="description" content="之前写了一篇文章《追踪 Objective-C 方法中的 Block 参数对象》，利用 BlockHook 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。 主要代码已经整合到 BlockHook 1.0.2 版本">
+<meta name="keywords" content="Objective-C">
 <meta property="og:type" content="article">
 <meta property="og:title" content="追踪 Objective-C Block 代码定义的位置">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2018/06/24/Objective-C-Block-Mangle-Name/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="之前写了一篇文章《追踪 Objective-C 方法中的 Block 参数对象》，利用 BlockHook 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。
-主要代码已经整合到 BlockHook 1.0.2 版本">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="之前写了一篇文章《追踪 Objective-C 方法中的 Block 参数对象》，利用 BlockHook 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。 主要代码已经整合到 BlockHook 1.0.2 版本">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2019-05-26T10:08:45.541Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="追踪 Objective-C Block 代码定义的位置">
-<meta name="twitter:description" content="之前写了一篇文章《追踪 Objective-C 方法中的 Block 参数对象》，利用 BlockHook 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。
-主要代码已经整合到 BlockHook 1.0.2 版本">
+<meta name="twitter:description" content="之前写了一篇文章《追踪 Objective-C 方法中的 Block 参数对象》，利用 BlockHook 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。 主要代码已经整合到 BlockHook 1.0.2 版本">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -39,14 +38,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -71,12 +70,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -92,7 +91,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2018-06-24T09:19:03.000Z" itemprop="datePublished"> 发表于 2018-06-24</time>
     
   </p>
@@ -170,9 +169,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2018/07/31/MessageThrottle-Safety/" title="MessageThrottle Safety">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   MessageThrottle Safety</span>
 </a>
@@ -180,8 +179,8 @@
 
 
 <div class="next">
-<a href="/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/"  title="MessageThrottle Performance Benchmark and Optimization">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/" title="MessageThrottle Performance Benchmark and Optimization">
+ <strong>下一篇：</strong><br> 
  <span>MessageThrottle Performance Benchmark and Optimization
 </span>
 </a>
@@ -217,7 +216,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -282,7 +281,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -291,7 +290,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -299,7 +298,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -308,11 +307,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -348,7 +347,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -573,7 +572,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

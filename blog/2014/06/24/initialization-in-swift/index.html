@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>Initialization in Swift | yulingtianxia&#39;s blog</title>
@@ -11,55 +11,24 @@
     
 
     
-    <meta name="description" content="本文参考自Swift文档，主要包括以下内容：  
-
-简介
-自定义构造过程
-默认构造器
-值类型的构造器代理
-类的继承和构造过程
-可失败构造器
-必需构造器
-通过闭包和函数来设置属性的默认值  
-
-(2014-8-8更新至beta5语法)(2014-10-24更新至Swift1.1)">
+    <meta name="description" content="本文参考自Swift文档，主要包括以下内容：    简介 自定义构造过程 默认构造器 值类型的构造器代理 类的继承和构造过程 可失败构造器 必需构造器 通过闭包和函数来设置属性的默认值    (2014-8-8更新至beta5语法)(2014-10-24更新至Swift1.1)">
+<meta name="keywords" content="Swift">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Initialization in Swift">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/06/24/initialization-in-swift/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="本文参考自Swift文档，主要包括以下内容：  
-
-简介
-自定义构造过程
-默认构造器
-值类型的构造器代理
-类的继承和构造过程
-可失败构造器
-必需构造器
-通过闭包和函数来设置属性的默认值  
-
-(2014-8-8更新至beta5语法)(2014-10-24更新至Swift1.1)">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="本文参考自Swift文档，主要包括以下内容：    简介 自定义构造过程 默认构造器 值类型的构造器代理 类的继承和构造过程 可失败构造器 必需构造器 通过闭包和函数来设置属性的默认值    (2014-8-8更新至beta5语法)(2014-10-24更新至Swift1.1)">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializerDelegation01_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializersExample01_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/twoPhaseInitialization01_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/twoPhaseInitialization02_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializersExample02_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializersExample03_2x.png">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.488Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.489Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Initialization in Swift">
-<meta name="twitter:description" content="本文参考自Swift文档，主要包括以下内容：  
-
-简介
-自定义构造过程
-默认构造器
-值类型的构造器代理
-类的继承和构造过程
-可失败构造器
-必需构造器
-通过闭包和函数来设置属性的默认值  
-
-(2014-8-8更新至beta5语法)(2014-10-24更新至Swift1.1)">
+<meta name="twitter:description" content="本文参考自Swift文档，主要包括以下内容：    简介 自定义构造过程 默认构造器 值类型的构造器代理 类的继承和构造过程 可失败构造器 必需构造器 通过闭包和函数来设置属性的默认值    (2014-8-8更新至beta5语法)(2014-10-24更新至Swift1.1)">
 <meta name="twitter:image" content="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializerDelegation01_2x.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -76,14 +45,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -108,12 +77,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -129,7 +98,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2014-06-24T01:50:23.000Z" itemprop="datePublished"> 发表于 2014-06-24</time>
     
   </p>
@@ -198,14 +167,14 @@
 <li>指定构造器必须总是向上代理  </li>
 <li>便利构造器必须总是横向代理  </li>
 </ul>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializerDelegation01_2x.png" alt=""><br>举个栗子：  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializerDelegation01_2x.png" alt><br>举个栗子：  </p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Food</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.name = name</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">convenience</span> <span class="keyword">init</span>() &#123;</span><br><span class="line">        <span class="keyword">self</span>.<span class="keyword">init</span>(name: <span class="string">"[Unnamed]"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> namedMeat = <span class="type">Food</span>(name: <span class="string">"Bacon"</span>)</span><br><span class="line"><span class="comment">// namedMeat 的名字是 "Bacon”</span></span><br><span class="line"><span class="keyword">let</span> mysteryMeat = <span class="type">Food</span>()</span><br><span class="line"><span class="comment">// mysteryMeat 的名字是 [Unnamed]</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializersExample01_2x.png" alt="">  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializersExample01_2x.png" alt>  </p>
 <h3 id="两段式构造过程"><a href="#两段式构造过程" class="headerlink" title="两段式构造过程"></a>两段式构造过程</h3><p>Swift 中类的构造过程包含两个阶段。第一个阶段，每个存储型属性通过引入它们的类的构造器来设置初始值。当每一个存储型属性值被确定后，第二阶段开始，它给每个类一次机会在新实例准备使用之前进一步定制它们的存储型属性。<br>下图展示了在假定的子类和父类之间构造的阶段1：  </p>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/twoPhaseInitialization01_2x.png" alt="">  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/twoPhaseInitialization01_2x.png" alt>  </p>
 <p>指定构造器将确保所有子类的属性都有值，然后它将调用父类的指定构造器，并沿着造器链一直往上完成父类的构建过程。一旦父类中所有属性都有了初始值，实例的内存被认为是完全初始化，而阶段1也已完成。  </p>
 <p>以下展示了相同构造过程的阶段2：  </p>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/twoPhaseInitialization02_2x.png" alt="">  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/twoPhaseInitialization02_2x.png" alt>  </p>
 <p>父类中的指定构造器现在有机会进一步来定制实例（尽管它没有这种必要）。</p>
 <p>一旦父类中的指定构造器完成调用，子类的构指定构造器可以执行更多的定制操作（同样，它也没有这种必要）。</p>
 <p>最终，一旦子类的指定构造器完成调用，最开始被调用的便利构造器可以执行更多的定制操作。  </p>
@@ -226,12 +195,12 @@
 <p>还记得之前指定的<code>Food</code>类吧，现在它多了一个子类<code>RecipeIngredient</code>:  </p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RecipeIngredient</span>: <span class="title">Food</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> quantity: <span class="type">Int</span></span><br><span class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>, quantity: <span class="type">Int</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.quantity = quantity</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(name: name)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">convenience</span> <span class="keyword">init</span>(name: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.<span class="keyword">init</span>(name: name, quantity: <span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>可以看出来<code>RecipeIngredient</code>类的指定构造器和便利构造器都符合两段式构造安全检查，并且便利构造器跟<code>Food</code>类中的指定构造器具有相同的参数，尽管<code>RecipeIngredient</code>这个构造器是便利构造器，<code>RecipeIngredient</code>依然提供了对所有父类指定构造器的实现。因此，<code>RecipeIngredient</code>也能自动继承了所有父类的便利构造器(也就是<code>init()</code>):  </p>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializersExample02_2x.png" alt="">  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializersExample02_2x.png" alt>  </p>
 <p>上图中<code>RecipeIngredient</code>类继承的init()函数版本跟Food提供的版本是一样的，除了它是将任务代理给RecipeIngredient版本的init(name: String)而不是Food提供的版本。  </p>
 <p>食材都已经建立好了，下面开始采购吧！我们需要一个购物单，购物单中每一项是这样子的：  </p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ShoppingListItem</span>: <span class="type">RecipeIngredient &#123;</span></span></span><br><span class="line">    <span class="keyword">var</span> purchased = <span class="literal">false</span></span><br><span class="line">    <span class="keyword">var</span> description: String &#123;</span><br><span class="line">    <span class="keyword">var</span> output = <span class="string">"\(quantity) x \(name.lowercaseString)"</span></span><br><span class="line">        output += purchased ? <span class="string">" ✔"</span> : <span class="string">" ✘"</span></span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>由于它为自己引入的所有属性都提供了默认值，并且自己没有定义任何构造器，ShoppingListItem将自动继承所有父类中的指定构造器和便利构造器。  </p>
-<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializersExample03_2x.png" alt="">  </p>
+<p><img src="https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/Art/initializersExample03_2x.png" alt>  </p>
 <p>你可以使用全部三个继承来的构造器来创建ShoppingListItem的新实例：  </p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">var</span> breakfastList = [</span><br><span class="line">    ShoppingListItem(),</span><br><span class="line">    ShoppingListItem(name: <span class="string">"Bacon"</span>),</span><br><span class="line">    ShoppingListItem(name: <span class="string">"Eggs"</span>, quantity: <span class="number">6</span>),</span><br><span class="line">]</span><br><span class="line">breakfastList[<span class="number">0</span>]<span class="selector-class">.name</span> = <span class="string">"Orange juice"</span></span><br><span class="line">breakfastList[<span class="number">0</span>]<span class="selector-class">.purchased</span> = true</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> breakfastList &#123;</span><br><span class="line">    println(item.description)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 1 x orange juice ✔</span></span><br><span class="line"><span class="comment">// 1 x bacon ✘</span></span><br><span class="line"><span class="comment">// 6 x eggs ✘</span></span><br></pre></td></tr></table></figure>
 <h2 id="可失败构造器-Failable-Initializers"><a href="#可失败构造器-Failable-Initializers" class="headerlink" title="可失败构造器(Failable Initializers)"></a>可失败构造器(Failable Initializers)</h2><p>有时候定义一个构造器可以失败的类，结构体或枚举是很有用的。这样的失败可能被非法的初始化参数，所需外部资源的缺失或一些其他阻止初始化成功的情况触发。  </p>
@@ -315,9 +284,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2014/07/03/chu-shi-core-data-3/" title="初识Core Data(3)">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   初识Core Data(3)</span>
 </a>
@@ -325,8 +294,8 @@
 
 
 <div class="next">
-<a href="/blog/2014/06/19/rang-ruan-jian-zhi-chi-retina/"  title="让软件支持Retina">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2014/06/19/rang-ruan-jian-zhi-chi-retina/" title="让软件支持Retina">
+ <strong>下一篇：</strong><br> 
  <span>让软件支持Retina
 </span>
 </a>
@@ -362,7 +331,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -427,7 +396,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -436,7 +405,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -444,7 +413,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -453,11 +422,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -493,7 +462,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -718,7 +687,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

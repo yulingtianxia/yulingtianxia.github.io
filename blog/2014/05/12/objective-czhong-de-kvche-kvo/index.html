@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>Objective-C中的KVC和KVO | yulingtianxia&#39;s blog</title>
@@ -12,11 +12,13 @@
 
     
     <meta name="description" content="本文讲述了使用Cocoa框架中的KVC和KVO，实现观察者模式">
+<meta name="keywords" content="Objective-C,设计模式">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Objective-C中的KVC和KVO">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/05/12/objective-czhong-de-kvche-kvo/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="本文讲述了使用Cocoa框架中的KVC和KVO，实现观察者模式">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353389577.jpg">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353389319.jpg">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353388989.jpg">
@@ -41,14 +43,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -73,12 +75,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -94,7 +96,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2014-05-12T04:02:32.000Z" itemprop="datePublished"> 发表于 2014-05-12</time>
     
   </p>
@@ -130,21 +132,21 @@
 <ol>
 <li>首先看看你当前的场景如果使用KVO是否更妥当，比如，当一个实例的某个具体属性有任何变更的时候，另一个实例需要被通知。  </li>
 </ol>
-<p><img src="http://yulingtianxia.com/resources/140353389577.jpg" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353389577.jpg" alt>  </p>
 <p>比如，BankObject中的<code>accountBalance</code>属性有任何变更时，某个PersonObject对象都要觉察到。  </p>
 <ol>
 <li>这个PersonObject对象必须注册成为BankObject的<code>accountBalance</code>属性的观察者，可以通过发送<code>addObserver:forKeyPath:options:context:</code>消息来实现。  </li>
 </ol>
-<p><img src="http://yulingtianxia.com/resources/140353389319.jpg" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353389319.jpg" alt>  </p>
 <p>注意：<code>addObserver:forKeyPath:options:context:</code>方法在你指定的两个实例间建立联系，而不是在两个类之间。  </p>
 <ol>
 <li>为了回应变更通知，观察者必须实现<code>observeValueForKeyPath:ofObject:change:context:</code>方法。这个方法的实现决定了观察者如何回应变更通知。你可以在这个方法里自定义如何回应被观察属性的变更。  </li>
 </ol>
-<p><img src="http://yulingtianxia.com/resources/140353388989.jpg" alt="">    </p>
+<p><img src="http://yulingtianxia.com/resources/140353388989.jpg" alt>    </p>
 <ol>
 <li>当一个被观察属性的值以符合KVO方式变更或者当它依赖的键变更时，<code>observeValueForKeyPath:ofObject:change:context:</code>方法会被自动执行。  </li>
 </ol>
-<p><img src="http://yulingtianxia.com/resources/140353389524.jpg" alt="">  </p>
+<p><img src="http://yulingtianxia.com/resources/140353389524.jpg" alt>  </p>
 <h3 id="Registering-for-Key-Value-Observing"><a href="#Registering-for-Key-Value-Observing" class="headerlink" title="Registering for Key-Value Observing"></a>Registering for Key-Value Observing</h3><h4 id="注册成为观察者"><a href="#注册成为观察者" class="headerlink" title="注册成为观察者"></a>注册成为观察者</h4><p>你可以通过发送<code>addObserver:forKeyPath:options:context:</code>消息来注册观察者  </p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)registerAsObserver &#123;</span><br><span class="line">    <span class="comment">/*</span><br><span class="line">     Register 'inspector' to receive change notifications for the "openingBalance" property of</span><br><span class="line">     the 'account' object and specify that both the old and new values of "openingBalance"</span><br><span class="line">     should be provided in the observe… method.</span><br><span class="line">     */</span></span><br><span class="line">    [account addObserver:inspector</span><br><span class="line">             forKeyPath:<span class="string">@"openingBalance"</span></span><br><span class="line">                 options:(<span class="built_in">NSKeyValueObservingOptionNew</span> |</span><br><span class="line">                            <span class="built_in">NSKeyValueObservingOptionOld</span>)</span><br><span class="line">                    context:<span class="literal">NULL</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>inspector</code>注册成为了<code>account</code>的观察者，被观察属性的KeyPath是<code>@&quot;openingBalance&quot;</code>，也就是<code>account</code>的<code>openingBalance</code>属性，<code>NSKeyValueObservingOptionNew</code>和<code>NSKeyValueObservingOptionOld</code>选项分别标识在观察者接收通知时<code>change</code>字典对应入口提供更改后的值和更改前的值。更简单的办法是用 <code>NSKeyValueObservingOptionPrior</code> 选项，随后我们就可以用以下方式提取出改变前后的值：(<code>change</code>是个字典，详细介绍请看下节)  </p>
@@ -229,9 +231,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2014/05/26/publish-your-pods-on-cocoapods-with-trunk/" title="Publish Your Pods on CocoaPods with Trunk">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   Publish Your Pods on CocoaPods with Trunk</span>
 </a>
@@ -239,8 +241,8 @@
 
 
 <div class="next">
-<a href="/blog/2014/05/10/zhuang-shi-zhe-mo-shi/"  title="装饰者模式">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2014/05/10/zhuang-shi-zhe-mo-shi/" title="装饰者模式">
+ <strong>下一篇：</strong><br> 
  <span>装饰者模式
 </span>
 </a>
@@ -276,7 +278,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -341,7 +343,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -350,7 +352,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -358,7 +360,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -367,11 +369,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -407,7 +409,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -632,7 +634,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

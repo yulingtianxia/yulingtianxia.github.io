@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>Objective-C 消息发送与转发机制原理 | yulingtianxia&#39;s blog</title>
@@ -11,22 +11,21 @@
     
 
     
-    <meta name="description" content="消息发送和转发流程可以概括为：消息发送（Messaging）是 Runtime 通过 selector 快速查找 IMP 的过程，有了函数指针就可以执行对应的方法实现；消息转发（Message Forwarding）是在查找 IMP 失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。
-本文不讲述开发者在消息发送和转发流程中需要做的事，而是讲述原理。能够很好地阅读本文的前提">
+    <meta name="description" content="消息发送和转发流程可以概括为：消息发送（Messaging）是 Runtime 通过 selector 快速查找 IMP 的过程，有了函数指针就可以执行对应的方法实现；消息转发（Message Forwarding）是在查找 IMP 失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。 本文不讲述开发者在消息发送和转发流程中需要做的事，而是讲述原理。能够很好地阅读本文的前提">
+<meta name="keywords" content="Objective-C,Runtime,Message Forwarding,Messaging">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Objective-C 消息发送与转发机制原理">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="消息发送和转发流程可以概括为：消息发送（Messaging）是 Runtime 通过 selector 快速查找 IMP 的过程，有了函数指针就可以执行对应的方法实现；消息转发（Message Forwarding）是在查找 IMP 失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。
-本文不讲述开发者在消息发送和转发流程中需要做的事，而是讲述原理。能够很好地阅读本文的前提">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="消息发送和转发流程可以概括为：消息发送（Messaging）是 Runtime 通过 selector 快速查找 IMP 的过程，有了函数指针就可以执行对应的方法实现；消息转发（Message Forwarding）是在查找 IMP 失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。 本文不讲述开发者在消息发送和转发流程中需要做的事，而是讲述原理。能够很好地阅读本文的前提">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/MessageForward/QQ20160614-1@2x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/MessageForward/QQ20160614-2@2x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/MessageForward/消息发送与转发路径流程图.jpg">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.517Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.518Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Objective-C 消息发送与转发机制原理">
-<meta name="twitter:description" content="消息发送和转发流程可以概括为：消息发送（Messaging）是 Runtime 通过 selector 快速查找 IMP 的过程，有了函数指针就可以执行对应的方法实现；消息转发（Message Forwarding）是在查找 IMP 失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。
-本文不讲述开发者在消息发送和转发流程中需要做的事，而是讲述原理。能够很好地阅读本文的前提">
+<meta name="twitter:description" content="消息发送和转发流程可以概括为：消息发送（Messaging）是 Runtime 通过 selector 快速查找 IMP 的过程，有了函数指针就可以执行对应的方法实现；消息转发（Message Forwarding）是在查找 IMP 失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。 本文不讲述开发者在消息发送和转发流程中需要做的事，而是讲述原理。能够很好地阅读本文的前提">
 <meta name="twitter:image" content="http://yulingtianxia.com/resources/MessageForward/QQ20160614-1@2x.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -43,14 +42,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -75,12 +74,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -96,7 +95,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2016-06-15T12:12:48.000Z" itemprop="datePublished"> 发表于 2016-06-15</time>
     
   </p>
@@ -106,7 +105,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#八面玲珑的-objc-msgSend"><span class="toc-number">1.</span> <span class="toc-text">八面玲珑的 objc_msgSend</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#源码解析"><span class="toc-number">1.1.</span> <span class="toc-text">源码解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么使用汇编语言"><span class="toc-number">1.2.</span> <span class="toc-text">为什么使用汇编语言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-lookUpImpOrForward-快速查找-IMP"><span class="toc-number">2.</span> <span class="toc-text">使用 lookUpImpOrForward 快速查找 IMP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#优化缓存查找-amp-类的初始化"><span class="toc-number">2.1.</span> <span class="toc-text">优化缓存查找&类的初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#继续在类的继承体系中查找"><span class="toc-number">2.2.</span> <span class="toc-text">继续在类的继承体系中查找</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#回顾-objc-msgSend-伪代码"><span class="toc-number">2.3.</span> <span class="toc-text">回顾 objc_msgSend 伪代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#forwarding-中路漫漫的消息转发"><span class="toc-number">3.</span> <span class="toc-text">forwarding 中路漫漫的消息转发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-msgForward-impcache-的转换"><span class="toc-number">3.1.</span> <span class="toc-text">objc_msgForward_impcache 的转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-msgForward-也只是个入口"><span class="toc-number">3.2.</span> <span class="toc-text">objc_msgForward 也只是个入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-setForwardHandler-设置了消息转发的回调"><span class="toc-number">3.3.</span> <span class="toc-text">objc_setForwardHandler 设置了消息转发的回调</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#逆向工程助力刨根问底"><span class="toc-number">3.4.</span> <span class="toc-text">逆向工程助力刨根问底</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">5.</span> <span class="toc-text">参考文献</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#八面玲珑的-objc-msgSend"><span class="toc-number">1.</span> <span class="toc-text">八面玲珑的 objc_msgSend</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#源码解析"><span class="toc-number">1.1.</span> <span class="toc-text">源码解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么使用汇编语言"><span class="toc-number">1.2.</span> <span class="toc-text">为什么使用汇编语言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-lookUpImpOrForward-快速查找-IMP"><span class="toc-number">2.</span> <span class="toc-text">使用 lookUpImpOrForward 快速查找 IMP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#优化缓存查找-amp-类的初始化"><span class="toc-number">2.1.</span> <span class="toc-text">优化缓存查找&amp;类的初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#继续在类的继承体系中查找"><span class="toc-number">2.2.</span> <span class="toc-text">继续在类的继承体系中查找</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#回顾-objc-msgSend-伪代码"><span class="toc-number">2.3.</span> <span class="toc-text">回顾 objc_msgSend 伪代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#forwarding-中路漫漫的消息转发"><span class="toc-number">3.</span> <span class="toc-text">forwarding 中路漫漫的消息转发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-msgForward-impcache-的转换"><span class="toc-number">3.1.</span> <span class="toc-text">objc_msgForward_impcache 的转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-msgForward-也只是个入口"><span class="toc-number">3.2.</span> <span class="toc-text">objc_msgForward 也只是个入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-setForwardHandler-设置了消息转发的回调"><span class="toc-number">3.3.</span> <span class="toc-text">objc_setForwardHandler 设置了消息转发的回调</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#逆向工程助力刨根问底"><span class="toc-number">3.4.</span> <span class="toc-text">逆向工程助力刨根问底</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">5.</span> <span class="toc-text">参考文献</span></a></li></ol>
 		
 		</div>
 		
@@ -246,9 +245,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2016/07/18/TBActionSheet/" title="自制一款强大的 ActionSheet">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   自制一款强大的 ActionSheet</span>
 </a>
@@ -256,8 +255,8 @@
 
 
 <div class="next">
-<a href="/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/"  title="让你的微信不再被人撤回消息">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/" title="让你的微信不再被人撤回消息">
+ <strong>下一篇：</strong><br> 
  <span>让你的微信不再被人撤回消息
 </span>
 </a>
@@ -281,7 +280,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#八面玲珑的-objc-msgSend"><span class="toc-number">1.</span> <span class="toc-text">八面玲珑的 objc_msgSend</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#源码解析"><span class="toc-number">1.1.</span> <span class="toc-text">源码解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么使用汇编语言"><span class="toc-number">1.2.</span> <span class="toc-text">为什么使用汇编语言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-lookUpImpOrForward-快速查找-IMP"><span class="toc-number">2.</span> <span class="toc-text">使用 lookUpImpOrForward 快速查找 IMP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#优化缓存查找-amp-类的初始化"><span class="toc-number">2.1.</span> <span class="toc-text">优化缓存查找&类的初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#继续在类的继承体系中查找"><span class="toc-number">2.2.</span> <span class="toc-text">继续在类的继承体系中查找</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#回顾-objc-msgSend-伪代码"><span class="toc-number">2.3.</span> <span class="toc-text">回顾 objc_msgSend 伪代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#forwarding-中路漫漫的消息转发"><span class="toc-number">3.</span> <span class="toc-text">forwarding 中路漫漫的消息转发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-msgForward-impcache-的转换"><span class="toc-number">3.1.</span> <span class="toc-text">objc_msgForward_impcache 的转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-msgForward-也只是个入口"><span class="toc-number">3.2.</span> <span class="toc-text">objc_msgForward 也只是个入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-setForwardHandler-设置了消息转发的回调"><span class="toc-number">3.3.</span> <span class="toc-text">objc_setForwardHandler 设置了消息转发的回调</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#逆向工程助力刨根问底"><span class="toc-number">3.4.</span> <span class="toc-text">逆向工程助力刨根问底</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">5.</span> <span class="toc-text">参考文献</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#八面玲珑的-objc-msgSend"><span class="toc-number">1.</span> <span class="toc-text">八面玲珑的 objc_msgSend</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#源码解析"><span class="toc-number">1.1.</span> <span class="toc-text">源码解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么使用汇编语言"><span class="toc-number">1.2.</span> <span class="toc-text">为什么使用汇编语言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-lookUpImpOrForward-快速查找-IMP"><span class="toc-number">2.</span> <span class="toc-text">使用 lookUpImpOrForward 快速查找 IMP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#优化缓存查找-amp-类的初始化"><span class="toc-number">2.1.</span> <span class="toc-text">优化缓存查找&amp;类的初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#继续在类的继承体系中查找"><span class="toc-number">2.2.</span> <span class="toc-text">继续在类的继承体系中查找</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#回顾-objc-msgSend-伪代码"><span class="toc-number">2.3.</span> <span class="toc-text">回顾 objc_msgSend 伪代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#forwarding-中路漫漫的消息转发"><span class="toc-number">3.</span> <span class="toc-text">forwarding 中路漫漫的消息转发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-msgForward-impcache-的转换"><span class="toc-number">3.1.</span> <span class="toc-text">objc_msgForward_impcache 的转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-msgForward-也只是个入口"><span class="toc-number">3.2.</span> <span class="toc-text">objc_msgForward 也只是个入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-setForwardHandler-设置了消息转发的回调"><span class="toc-number">3.3.</span> <span class="toc-text">objc_setForwardHandler 设置了消息转发的回调</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#逆向工程助力刨根问底"><span class="toc-number">3.4.</span> <span class="toc-text">逆向工程助力刨根问底</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">5.</span> <span class="toc-text">参考文献</span></a></li></ol>
  
   </div>
 
@@ -293,7 +292,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -358,7 +357,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -367,7 +366,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -375,7 +374,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -384,11 +383,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -424,7 +423,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -649,7 +648,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

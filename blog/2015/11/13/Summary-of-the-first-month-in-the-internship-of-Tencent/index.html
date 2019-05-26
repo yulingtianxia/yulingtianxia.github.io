@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>腾讯实习第一个月工作总结 | yulingtianxia&#39;s blog</title>
@@ -12,11 +12,13 @@
 
     
     <meta name="description" content="来腾讯实习正好一个月了，因为项目已经进入了成熟期，接了两个需求，改了二十几个 bug。所以把这期间的一些思考写下来，发了邮件分享给组内同事们。我把一些自己觉得不合适的内容刨除出去，选取邮件的部分内容写在这里：）">
+<meta name="keywords" content="iOS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="腾讯实习第一个月工作总结">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2015/11/13/Summary-of-the-first-month-in-the-internship-of-Tencent/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="来腾讯实习正好一个月了，因为项目已经进入了成熟期，接了两个需求，改了二十几个 bug。所以把这期间的一些思考写下来，发了邮件分享给组内同事们。我把一些自己觉得不合适的内容刨除出去，选取邮件的部分内容写在这里：）">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/TBAlertController.png">
 <meta property="og:updated_time" content="2019-05-26T10:08:45.511Z">
 <meta name="twitter:card" content="summary">
@@ -38,14 +40,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -70,12 +72,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -91,7 +93,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2015-11-13T15:55:38.000Z" itemprop="datePublished"> 发表于 2015-11-13</time>
     
   </p>
@@ -101,7 +103,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#让-UIAlertController-兼容-iOS7"><span class="toc-number">1.</span> <span class="toc-text">让 UIAlertController 兼容 iOS7</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景"><span class="toc-number">1.1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析问题"><span class="toc-number">1.2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#技术重点"><span class="toc-number">1.3.</span> <span class="toc-text">技术重点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决思路"><span class="toc-number">1.4.</span> <span class="toc-text">解决思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertAction-替代-UIAlertAction"><span class="toc-number">1.4.1.</span> <span class="toc-text">构建 TBAlertAction 替代 UIAlertAction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertController-属性"><span class="toc-number">1.4.2.</span> <span class="toc-text">构建 TBAlertController 属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertController-方法"><span class="toc-number">1.4.3.</span> <span class="toc-text">构建 TBAlertController 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hook-presentViewController-方法"><span class="toc-number">1.4.4.</span> <span class="toc-text">hook presentViewController: 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#还需要注意的地方"><span class="toc-number">1.4.5.</span> <span class="toc-text">还需要注意的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感悟-amp-总结"><span class="toc-number">1.5.</span> <span class="toc-text">感悟&总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LLDB-调试-UI-的技巧"><span class="toc-number">2.</span> <span class="toc-text">LLDB 调试 UI 的技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景-1"><span class="toc-number">2.1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#用-LLDB-改变视图"><span class="toc-number">2.2.</span> <span class="toc-text">用 LLDB 改变视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Chisel-简化-LLDB-命令"><span class="toc-number">2.3.</span> <span class="toc-text">使用 Chisel 简化 LLDB 命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的实践与感悟"><span class="toc-number">2.4.</span> <span class="toc-text">我的实践与感悟</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#项目实践管理经验"><span class="toc-number">3.</span> <span class="toc-text">项目实践管理经验</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#图片资源管理"><span class="toc-number">3.1.</span> <span class="toc-text">图片资源管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文案管理"><span class="toc-number">3.2.</span> <span class="toc-text">文案管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#文案是可复用的"><span class="toc-number">3.2.1.</span> <span class="toc-text">文案是可复用的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#重复的文案在多处-hardcode-会降低效率"><span class="toc-number">3.2.2.</span> <span class="toc-text">重复的文案在多处 hardcode 会降低效率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#我的解决方案：文案与代码分离"><span class="toc-number">3.2.3.</span> <span class="toc-text">我的解决方案：文案与代码分离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决方案的分析"><span class="toc-number">3.2.4.</span> <span class="toc-text">解决方案的分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#project-pbxproj文件"><span class="toc-number">3.3.</span> <span class="toc-text">project.pbxproj文件</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#让-UIAlertController-兼容-iOS7"><span class="toc-number">1.</span> <span class="toc-text">让 UIAlertController 兼容 iOS7</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景"><span class="toc-number">1.1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析问题"><span class="toc-number">1.2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#技术重点"><span class="toc-number">1.3.</span> <span class="toc-text">技术重点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决思路"><span class="toc-number">1.4.</span> <span class="toc-text">解决思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertAction-替代-UIAlertAction"><span class="toc-number">1.4.1.</span> <span class="toc-text">构建 TBAlertAction 替代 UIAlertAction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertController-属性"><span class="toc-number">1.4.2.</span> <span class="toc-text">构建 TBAlertController 属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertController-方法"><span class="toc-number">1.4.3.</span> <span class="toc-text">构建 TBAlertController 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hook-presentViewController-方法"><span class="toc-number">1.4.4.</span> <span class="toc-text">hook presentViewController: 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#还需要注意的地方"><span class="toc-number">1.4.5.</span> <span class="toc-text">还需要注意的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感悟-amp-总结"><span class="toc-number">1.5.</span> <span class="toc-text">感悟&amp;总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LLDB-调试-UI-的技巧"><span class="toc-number">2.</span> <span class="toc-text">LLDB 调试 UI 的技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景-1"><span class="toc-number">2.1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#用-LLDB-改变视图"><span class="toc-number">2.2.</span> <span class="toc-text">用 LLDB 改变视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Chisel-简化-LLDB-命令"><span class="toc-number">2.3.</span> <span class="toc-text">使用 Chisel 简化 LLDB 命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的实践与感悟"><span class="toc-number">2.4.</span> <span class="toc-text">我的实践与感悟</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#项目实践管理经验"><span class="toc-number">3.</span> <span class="toc-text">项目实践管理经验</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#图片资源管理"><span class="toc-number">3.1.</span> <span class="toc-text">图片资源管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文案管理"><span class="toc-number">3.2.</span> <span class="toc-text">文案管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#文案是可复用的"><span class="toc-number">3.2.1.</span> <span class="toc-text">文案是可复用的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#重复的文案在多处-hardcode-会降低效率"><span class="toc-number">3.2.2.</span> <span class="toc-text">重复的文案在多处 hardcode 会降低效率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#我的解决方案：文案与代码分离"><span class="toc-number">3.2.3.</span> <span class="toc-text">我的解决方案：文案与代码分离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决方案的分析"><span class="toc-number">3.2.4.</span> <span class="toc-text">解决方案的分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#project-pbxproj文件"><span class="toc-number">3.3.</span> <span class="toc-text">project.pbxproj文件</span></a></li></ol></li></ol>
 		
 		</div>
 		
@@ -194,9 +196,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2015/12/06/The-Principle-of-Refenrence-Counting/" title="Objective-C 引用计数原理">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   Objective-C 引用计数原理</span>
 </a>
@@ -204,8 +206,8 @@
 
 
 <div class="next">
-<a href="/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/"  title="关于 @synchronized，这儿比你想知道的还要多">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/" title="关于 @synchronized，这儿比你想知道的还要多">
+ <strong>下一篇：</strong><br> 
  <span>关于 @synchronized，这儿比你想知道的还要多
 </span>
 </a>
@@ -229,7 +231,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#让-UIAlertController-兼容-iOS7"><span class="toc-number">1.</span> <span class="toc-text">让 UIAlertController 兼容 iOS7</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景"><span class="toc-number">1.1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析问题"><span class="toc-number">1.2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#技术重点"><span class="toc-number">1.3.</span> <span class="toc-text">技术重点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决思路"><span class="toc-number">1.4.</span> <span class="toc-text">解决思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertAction-替代-UIAlertAction"><span class="toc-number">1.4.1.</span> <span class="toc-text">构建 TBAlertAction 替代 UIAlertAction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertController-属性"><span class="toc-number">1.4.2.</span> <span class="toc-text">构建 TBAlertController 属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertController-方法"><span class="toc-number">1.4.3.</span> <span class="toc-text">构建 TBAlertController 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hook-presentViewController-方法"><span class="toc-number">1.4.4.</span> <span class="toc-text">hook presentViewController: 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#还需要注意的地方"><span class="toc-number">1.4.5.</span> <span class="toc-text">还需要注意的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感悟-amp-总结"><span class="toc-number">1.5.</span> <span class="toc-text">感悟&总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LLDB-调试-UI-的技巧"><span class="toc-number">2.</span> <span class="toc-text">LLDB 调试 UI 的技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景-1"><span class="toc-number">2.1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#用-LLDB-改变视图"><span class="toc-number">2.2.</span> <span class="toc-text">用 LLDB 改变视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Chisel-简化-LLDB-命令"><span class="toc-number">2.3.</span> <span class="toc-text">使用 Chisel 简化 LLDB 命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的实践与感悟"><span class="toc-number">2.4.</span> <span class="toc-text">我的实践与感悟</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#项目实践管理经验"><span class="toc-number">3.</span> <span class="toc-text">项目实践管理经验</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#图片资源管理"><span class="toc-number">3.1.</span> <span class="toc-text">图片资源管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文案管理"><span class="toc-number">3.2.</span> <span class="toc-text">文案管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#文案是可复用的"><span class="toc-number">3.2.1.</span> <span class="toc-text">文案是可复用的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#重复的文案在多处-hardcode-会降低效率"><span class="toc-number">3.2.2.</span> <span class="toc-text">重复的文案在多处 hardcode 会降低效率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#我的解决方案：文案与代码分离"><span class="toc-number">3.2.3.</span> <span class="toc-text">我的解决方案：文案与代码分离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决方案的分析"><span class="toc-number">3.2.4.</span> <span class="toc-text">解决方案的分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#project-pbxproj文件"><span class="toc-number">3.3.</span> <span class="toc-text">project.pbxproj文件</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#让-UIAlertController-兼容-iOS7"><span class="toc-number">1.</span> <span class="toc-text">让 UIAlertController 兼容 iOS7</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景"><span class="toc-number">1.1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析问题"><span class="toc-number">1.2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#技术重点"><span class="toc-number">1.3.</span> <span class="toc-text">技术重点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决思路"><span class="toc-number">1.4.</span> <span class="toc-text">解决思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertAction-替代-UIAlertAction"><span class="toc-number">1.4.1.</span> <span class="toc-text">构建 TBAlertAction 替代 UIAlertAction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertController-属性"><span class="toc-number">1.4.2.</span> <span class="toc-text">构建 TBAlertController 属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建-TBAlertController-方法"><span class="toc-number">1.4.3.</span> <span class="toc-text">构建 TBAlertController 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hook-presentViewController-方法"><span class="toc-number">1.4.4.</span> <span class="toc-text">hook presentViewController: 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#还需要注意的地方"><span class="toc-number">1.4.5.</span> <span class="toc-text">还需要注意的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感悟-amp-总结"><span class="toc-number">1.5.</span> <span class="toc-text">感悟&amp;总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LLDB-调试-UI-的技巧"><span class="toc-number">2.</span> <span class="toc-text">LLDB 调试 UI 的技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景-1"><span class="toc-number">2.1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#用-LLDB-改变视图"><span class="toc-number">2.2.</span> <span class="toc-text">用 LLDB 改变视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Chisel-简化-LLDB-命令"><span class="toc-number">2.3.</span> <span class="toc-text">使用 Chisel 简化 LLDB 命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的实践与感悟"><span class="toc-number">2.4.</span> <span class="toc-text">我的实践与感悟</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#项目实践管理经验"><span class="toc-number">3.</span> <span class="toc-text">项目实践管理经验</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#图片资源管理"><span class="toc-number">3.1.</span> <span class="toc-text">图片资源管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文案管理"><span class="toc-number">3.2.</span> <span class="toc-text">文案管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#文案是可复用的"><span class="toc-number">3.2.1.</span> <span class="toc-text">文案是可复用的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#重复的文案在多处-hardcode-会降低效率"><span class="toc-number">3.2.2.</span> <span class="toc-text">重复的文案在多处 hardcode 会降低效率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#我的解决方案：文案与代码分离"><span class="toc-number">3.2.3.</span> <span class="toc-text">我的解决方案：文案与代码分离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决方案的分析"><span class="toc-number">3.2.4.</span> <span class="toc-text">解决方案的分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#project-pbxproj文件"><span class="toc-number">3.3.</span> <span class="toc-text">project.pbxproj文件</span></a></li></ol></li></ol>
  
   </div>
 
@@ -241,7 +243,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -306,7 +308,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -315,7 +317,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -323,7 +325,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -332,11 +334,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -372,7 +374,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -597,7 +599,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

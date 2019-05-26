@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
     <title>Publish Your Pods on CocoaPods with Trunk | yulingtianxia&#39;s blog</title>
@@ -11,20 +11,19 @@
     
 
     
-    <meta name="description" content="简介2014年5月20日，CocoaPods不再接受向CocoaPods/Specs的pull request，官方的说法是为了安全考虑，防止每个人的pod被其他人修改，于是CocoaPods团队开发了trunk服务，这样每个人都是其发布的pod的owner，没有权限的人无法修改，这样更安全。  
-更改后的提交架构是这样的：(来自官方图片)">
+    <meta name="description" content="简介2014年5月20日，CocoaPods不再接受向CocoaPods/Specs的pull request，官方的说法是为了安全考虑，防止每个人的pod被其他人修改，于是CocoaPods团队开发了trunk服务，这样每个人都是其发布的pod的owner，没有权限的人无法修改，这样更安全。   更改后的提交架构是这样的：(来自官方图片)">
+<meta name="keywords" content="GitHub,CocoaPods">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Publish Your Pods on CocoaPods with Trunk">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/05/26/publish-your-pods-on-cocoapods-with-trunk/index.html">
-<meta property="og:site_name" content="yulingtianxia's blog">
-<meta property="og:description" content="简介2014年5月20日，CocoaPods不再接受向CocoaPods/Specs的pull request，官方的说法是为了安全考虑，防止每个人的pod被其他人修改，于是CocoaPods团队开发了trunk服务，这样每个人都是其发布的pod的owner，没有权限的人无法修改，这样更安全。  
-更改后的提交架构是这样的：(来自官方图片)">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="简介2014年5月20日，CocoaPods不再接受向CocoaPods/Specs的pull request，官方的说法是为了安全考虑，防止每个人的pod被其他人修改，于是CocoaPods团队开发了trunk服务，这样每个人都是其发布的pod的owner，没有权限的人无法修改，这样更安全。   更改后的提交架构是这样的：(来自官方图片)">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://blog.cocoapods.org/assets/blog_img/trunk/architecture-diagram.png">
 <meta property="og:updated_time" content="2019-05-26T10:08:45.483Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Publish Your Pods on CocoaPods with Trunk">
-<meta name="twitter:description" content="简介2014年5月20日，CocoaPods不再接受向CocoaPods/Specs的pull request，官方的说法是为了安全考虑，防止每个人的pod被其他人修改，于是CocoaPods团队开发了trunk服务，这样每个人都是其发布的pod的owner，没有权限的人无法修改，这样更安全。  
-更改后的提交架构是这样的：(来自官方图片)">
+<meta name="twitter:description" content="简介2014年5月20日，CocoaPods不再接受向CocoaPods/Specs的pull request，官方的说法是为了安全考虑，防止每个人的pod被其他人修改，于是CocoaPods团队开发了trunk服务，这样每个人都是其发布的pod的owner，没有权限的人无法修改，这样更安全。   更改后的提交架构是这样的：(来自官方图片)">
 <meta name="twitter:image" content="http://blog.cocoapods.org/assets/blog_img/trunk/architecture-diagram.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -41,14 +40,14 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
 			</div>
 			
 			<div id="textlogo">
@@ -73,12 +72,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
 					</form>
 					
 					</li>
 				</ul>
-			</nav>			
+			</ul></nav>			
 </div>
     </header>
     <div id="container">
@@ -94,7 +93,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  <p class="article-time">
+  </p><p class="article-time">
     <time datetime="2014-05-26T04:03:08.000Z" itemprop="datePublished"> 发表于 2014-05-26</time>
     
   </p>
@@ -110,7 +109,7 @@
 		
 		<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>2014年5月20日，CocoaPods不再接受向<a href="git@github.com:CocoaPods/Specs.git">CocoaPods/Specs</a>的pull request，官方的说法是为了安全考虑，防止每个人的pod被其他人修改，于是CocoaPods团队开发了trunk服务，这样每个人都是其发布的pod的owner，没有权限的人无法修改，这样更安全。  </p>
 <p>更改后的提交架构是这样的：(来自官方图片)  </p>
-<p><img src="http://blog.cocoapods.org/assets/blog_img/trunk/architecture-diagram.png" alt="">  </p>
+<p><img src="http://blog.cocoapods.org/assets/blog_img/trunk/architecture-diagram.png" alt>  </p>
 <a id="more"></a>
 <p>以前的podspec文件都是ruby格式，而trunk为我们带来了更轻便的json格式，你后你可以用json来配置你的pod了。不用担心过去我们发布的pod，他们依然健在，并且trunk会将podspec文件转化为podspec.json文件。    </p>
 <p>这里给出一个官方的介绍链接：<a href="http://blog.cocoapods.org/CocoaPods-Trunk/#transition" target="_blank" rel="external">http://blog.cocoapods.org/CocoaPods-Trunk/#transition</a>  </p>
@@ -174,9 +173,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
+ <div class="prev">
  <a href="/blog/2014/06/16/swiftzhong-zai-yun-suan-fu/" title="Swift重载和自定义运算符">
-  <strong>上一篇：</strong><br/>
+  <strong>上一篇：</strong><br>
   <span>
   Swift重载和自定义运算符</span>
 </a>
@@ -184,8 +183,8 @@
 
 
 <div class="next">
-<a href="/blog/2014/05/12/objective-czhong-de-kvche-kvo/"  title="Objective-C中的KVC和KVO">
- <strong>下一篇：</strong><br/> 
+<a href="/blog/2014/05/12/objective-czhong-de-kvche-kvo/" title="Objective-C中的KVC和KVO">
+ <strong>下一篇：</strong><br> 
  <span>Objective-C中的KVC和KVO
 </span>
 </a>
@@ -221,7 +220,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 </div>
 
 
@@ -286,7 +285,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -295,7 +294,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
 </div>
 </div>
 
@@ -303,7 +302,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer" >
+    <footer><div id="footer">
 	
 	<div class="line">
 		<span></span>
@@ -312,11 +311,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br/>
+		<p> Stay hungry, stay foolish <br>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font" class="clearfix">
+	<div class="social-font">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -352,7 +351,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
           </a>
         </div>
     
@@ -577,7 +576,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
 	</div>
 	<script src="/js/totop.js"></script>
 
