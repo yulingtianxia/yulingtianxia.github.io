@@ -17,10 +17,13 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2018/10/28/Class-written-in-Swift/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="之前 TBUIAutoTest 有个 issue，我发现原因跟 Swift 有关，在解决问题时顺带稍微研究了下 Swift 编写的类。">
-<meta property="og:updated_time" content="2018-10-27T17:36:48.392Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.930Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Class written in Swift">
 <meta name="twitter:description" content="之前 TBUIAutoTest 有个 issue，我发现原因跟 Swift 有关，在解决问题时顺带稍微研究了下 Swift 编写的类。">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -99,7 +102,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-与-Ivar"><span class="toc-number">1.</span> <span class="toc-text">Swift Class 与 Ivar</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Runtime-Name"><span class="toc-number">2.</span> <span class="toc-text">Swift Class Runtime Name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Check"><span class="toc-number">3.</span> <span class="toc-text">Swift Class Check</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Lazy-Property"><span class="toc-number">4.</span> <span class="toc-text">Swift Class Lazy Property</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-与-Ivar"><span class="toc-number">1.</span> <span class="toc-text">Swift Class 与 Ivar</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Runtime-Name"><span class="toc-number">2.</span> <span class="toc-text">Swift Class Runtime Name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Check"><span class="toc-number">3.</span> <span class="toc-text">Swift Class Check</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Lazy-Property"><span class="toc-number">4.</span> <span class="toc-text">Swift Class Lazy Property</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -122,6 +125,7 @@
 <p>哎，自己的 Repo 真是越来越水了。</p>
 <h2 id="Swift-Class-Lazy-Property"><a href="#Swift-Class-Lazy-Property" class="headerlink" title="Swift Class Lazy Property"></a>Swift Class Lazy Property</h2><p>Swift 类的 <code>lazy</code> 属性的存储比较特殊，毕竟是懒加载。它的属性名有个后缀 “.storage”，所以在 Runtime 里获取属性名时要注意，使用时是要过滤掉后缀的。</p>
 <p>写了个简单的接口获取 Swift 类中的 <code>lazy</code> 属性名列表，代码同样放在 <a href="https://github.com/yulingtianxia/ClassWrittenInSwift/blob/master/ClassWrittenInSwiftKit/Source/ClassWrittenInSwift.mm" target="_blank" rel="external">ClassWrittenInSwift</a> 里面了。</p>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -187,7 +191,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-与-Ivar"><span class="toc-number">1.</span> <span class="toc-text">Swift Class 与 Ivar</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Runtime-Name"><span class="toc-number">2.</span> <span class="toc-text">Swift Class Runtime Name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Check"><span class="toc-number">3.</span> <span class="toc-text">Swift Class Check</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Lazy-Property"><span class="toc-number">4.</span> <span class="toc-text">Swift Class Lazy Property</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-与-Ivar"><span class="toc-number">1.</span> <span class="toc-text">Swift Class 与 Ivar</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Runtime-Name"><span class="toc-number">2.</span> <span class="toc-text">Swift Class Runtime Name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Check"><span class="toc-number">3.</span> <span class="toc-text">Swift Class Check</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift-Class-Lazy-Property"><span class="toc-number">4.</span> <span class="toc-text">Swift Class Lazy Property</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

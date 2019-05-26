@@ -25,7 +25,9 @@ NSUserDefaults的使用
 iOS的单例模式
 NSUserDefaults的使用
 总结：iOS单例模式 and NSUserDefaults">
-<meta property="og:updated_time" content="2018-09-15T08:28:13.815Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.936Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS单例模式 or NSUserDefaults">
 <meta name="twitter:description" content="本文内容：  
@@ -33,6 +35,7 @@ NSUserDefaults的使用
 iOS的单例模式
 NSUserDefaults的使用
 总结：iOS单例模式 and NSUserDefaults">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -111,7 +114,7 @@ NSUserDefaults的使用
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的单例模式"><span class="toc-number">1.</span> <span class="toc-text">iOS的单例模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NSUserDefaults"><span class="toc-number">2.</span> <span class="toc-text">NSUserDefaults</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结：iOS单例模式-and-NSUserDefaults"><span class="toc-number">3.</span> <span class="toc-text">总结：iOS单例模式 and NSUserDefaults</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的单例模式"><span class="toc-number">1.</span> <span class="toc-text">iOS的单例模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NSUserDefaults"><span class="toc-number">2.</span> <span class="toc-text">NSUserDefaults</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结：iOS单例模式-and-NSUserDefaults"><span class="toc-number">3.</span> <span class="toc-text">总结：iOS单例模式 and NSUserDefaults</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.1.</span> <span class="toc-text">赞赏码</span></a></li></ol></li></ol>
 		
 		</div>
 		
@@ -145,6 +148,7 @@ NSUserDefaults的使用
 <p>读取  </p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSData</span> *newshopData = [standardDefaults objectForKey:<span class="string">"myshop"</span>];</span><br><span class="line">S<span class="built_in">NShops</span> *newshop = [<span class="built_in">NSKeyedUnarchiver</span> unarchiveObjectWithData:newshopData];</span><br></pre></td></tr></table></figure>
 <h1 id="总结：iOS单例模式-and-NSUserDefaults"><a href="#总结：iOS单例模式-and-NSUserDefaults" class="headerlink" title="总结：iOS单例模式 and NSUserDefaults"></a>总结：iOS单例模式 and NSUserDefaults</h1><p>单例模式虽然能存入任何类型的对象，但是它会随着程序的挂起而消亡。而NSUserDefaults在读取自定义类型时有些繁琐，降低编码效率和可读性，好处是程序下次启动依然能读取到上次的状态。<br>笔者在实际应用中采取了二者结合的模式：让单例模式的类实现<nscoding>协议，程序第一次启动的时候通过NSData做载体读取单例类的实例，并存入单例，程序运行中一直对单例做存储操作，当程序快要进入到后台挂起的时候，通过NSData做载体存入NSUserDefaults，一举两得。</nscoding></p>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -210,7 +214,7 @@ NSUserDefaults的使用
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的单例模式"><span class="toc-number">1.</span> <span class="toc-text">iOS的单例模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NSUserDefaults"><span class="toc-number">2.</span> <span class="toc-text">NSUserDefaults</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结：iOS单例模式-and-NSUserDefaults"><span class="toc-number">3.</span> <span class="toc-text">总结：iOS单例模式 and NSUserDefaults</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的单例模式"><span class="toc-number">1.</span> <span class="toc-text">iOS的单例模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NSUserDefaults"><span class="toc-number">2.</span> <span class="toc-text">NSUserDefaults</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结：iOS单例模式-and-NSUserDefaults"><span class="toc-number">3.</span> <span class="toc-text">总结：iOS单例模式 and NSUserDefaults</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.1.</span> <span class="toc-text">赞赏码</span></a></li></ol></li></ol>
  
   </div>
 

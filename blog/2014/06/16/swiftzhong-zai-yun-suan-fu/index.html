@@ -17,10 +17,13 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/06/16/swiftzhong-zai-yun-suan-fu/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="最近一直边忙毕设边学Swift，终于看完了官方的教程（语言参考暂不打算看），在iBooks上做了一些笔记（看英文伤不起），感觉Swift是一门大杂烩类型的语言，我会记录一些我自认为以前遇到较少或者需要重点记忆的语法特性，在此作为分享，这次是运算符的重载，几乎每门语言都有，只是语法不一样罢了。(2014-8-8更新至beta5语法)">
-<meta property="og:updated_time" content="2018-09-15T08:28:13.658Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.913Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Swift重载和自定义运算符">
 <meta name="twitter:description" content="最近一直边忙毕设边学Swift，终于看完了官方的教程（语言参考暂不打算看），在iBooks上做了一些笔记（看英文伤不起），感觉Swift是一门大杂烩类型的语言，我会记录一些我自认为以前遇到较少或者需要重点记忆的语法特性，在此作为分享，这次是运算符的重载，几乎每门语言都有，只是语法不一样罢了。(2014-8-8更新至beta5语法)">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -99,7 +102,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#运算符重载"><span class="toc-number">1.</span> <span class="toc-text">运算符重载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#中缀运算符的重载"><span class="toc-number">1.1.</span> <span class="toc-text">中缀运算符的重载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前缀和后缀运算符的重载"><span class="toc-number">1.2.</span> <span class="toc-text">前缀和后缀运算符的重载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组合赋值运算符的重载"><span class="toc-number">1.3.</span> <span class="toc-text">组合赋值运算符的重载</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义运算符"><span class="toc-number">2.</span> <span class="toc-text">自定义运算符</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#运算符重载"><span class="toc-number">1.</span> <span class="toc-text">运算符重载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#中缀运算符的重载"><span class="toc-number">1.1.</span> <span class="toc-text">中缀运算符的重载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前缀和后缀运算符的重载"><span class="toc-number">1.2.</span> <span class="toc-text">前缀和后缀运算符的重载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组合赋值运算符的重载"><span class="toc-number">1.3.</span> <span class="toc-text">组合赋值运算符的重载</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义运算符"><span class="toc-number">2.</span> <span class="toc-text">自定义运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -133,6 +136,7 @@
 <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> toBeDoubled = Vector2D(x: <span class="number">1.0</span>, y: <span class="number">4.0</span>)</span><br><span class="line"><span class="keyword">let</span> afterDoubling = +++toBeDoubled</span><br><span class="line"><span class="comment">// toBeDoubled 现在是 (2.0, 8.0)</span></span><br><span class="line"><span class="comment">// afterDoubling 现在也是 (2.0, 8.0)</span></span><br></pre></td></tr></table></figure>
 <p>此外还可以定义运算符的结合性(associativity)和优先级(precedence)，结合性(associativity)的值可取的值有left，right和none。左结合运算符跟其他优先级相同的左结合运算符写在一起时，会跟左边的操作数结合。同理，右结合运算符会跟右边的操作数结合。而非结合运算符不能跟其他相同优先级的运算符写在一起。<br>结合性(associativity)的值默认为none，优先级(precedence)默认为100。  </p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">infix</span> <span class="keyword">operator</span> +- &#123; <span class="keyword">associativity</span> <span class="keyword">left</span> <span class="keyword">precedence</span> <span class="number">140</span> &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> +- <span class="params">(<span class="keyword">left</span>: Vector2D, <span class="keyword">right</span>: Vector2D)</span></span> -&gt; <span class="type">Vector2D</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Vector2D</span>(x: <span class="keyword">left</span>.x + <span class="keyword">right</span>.x, y: <span class="keyword">left</span>.y - <span class="keyword">right</span>.y)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> firstVector = <span class="type">Vector2D</span>(x: <span class="number">1.0</span>, y: <span class="number">2.0</span>)</span><br><span class="line"><span class="keyword">let</span> secondVector = <span class="type">Vector2D</span>(x: <span class="number">3.0</span>, y: <span class="number">4.0</span>)</span><br><span class="line"><span class="keyword">let</span> plusMinusVector = firstVector +- secondVector</span><br><span class="line"><span class="comment">// plusMinusVector 此时的值为 (4.0, -2.0)</span></span><br></pre></td></tr></table></figure>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -198,7 +202,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#运算符重载"><span class="toc-number">1.</span> <span class="toc-text">运算符重载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#中缀运算符的重载"><span class="toc-number">1.1.</span> <span class="toc-text">中缀运算符的重载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前缀和后缀运算符的重载"><span class="toc-number">1.2.</span> <span class="toc-text">前缀和后缀运算符的重载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组合赋值运算符的重载"><span class="toc-number">1.3.</span> <span class="toc-text">组合赋值运算符的重载</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义运算符"><span class="toc-number">2.</span> <span class="toc-text">自定义运算符</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#运算符重载"><span class="toc-number">1.</span> <span class="toc-text">运算符重载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#中缀运算符的重载"><span class="toc-number">1.1.</span> <span class="toc-text">中缀运算符的重载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前缀和后缀运算符的重载"><span class="toc-number">1.2.</span> <span class="toc-text">前缀和后缀运算符的重载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组合赋值运算符的重载"><span class="toc-number">1.3.</span> <span class="toc-text">组合赋值运算符的重载</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义运算符"><span class="toc-number">2.</span> <span class="toc-text">自定义运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

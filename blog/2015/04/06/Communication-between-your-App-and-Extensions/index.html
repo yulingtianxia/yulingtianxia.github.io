@@ -18,7 +18,9 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="最近玩了玩Watch开发，而目前Watch的主要逻辑处理都是放在WatchKit Extension。真正的Host App，也就是WatchKit App只是用来在界面上显示数据的。于是实践了下containing app与app extension之间的通信和数据共享。">
 <meta property="og:image" content="http://yulingtianxia.com/resources/hardchoice.gif">
-<meta property="og:updated_time" content="2018-09-15T08:28:13.845Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.940Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="App与Extensions间通信共享数据">
 <meta name="twitter:description" content="最近玩了玩Watch开发，而目前Watch的主要逻辑处理都是放在WatchKit Extension。真正的Host App，也就是WatchKit App只是用来在界面上显示数据的。于是实践了下containing app与app extension之间的通信和数据共享。">
@@ -101,7 +103,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#App-Groups-amp-Framework"><span class="toc-number">1.</span> <span class="toc-text">App Groups & Framework</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-app-与-Extension的通信"><span class="toc-number">2.</span> <span class="toc-text">Container app 与 Extension的通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CFNotificationCenterGetDarwinNotifyCenter"><span class="toc-number">2.1.</span> <span class="toc-text">CFNotificationCenterGetDarwinNotifyCenter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MMWormhole"><span class="toc-number">2.2.</span> <span class="toc-text">MMWormhole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Swift与CoreFoundation"><span class="toc-number">2.3.</span> <span class="toc-text">Swift与CoreFoundation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在Framework中混编OC"><span class="toc-number">2.4.</span> <span class="toc-text">在Framework中混编OC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#App-Groups-amp-Framework"><span class="toc-number">1.</span> <span class="toc-text">App Groups & Framework</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-app-与-Extension的通信"><span class="toc-number">2.</span> <span class="toc-text">Container app 与 Extension的通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CFNotificationCenterGetDarwinNotifyCenter"><span class="toc-number">2.1.</span> <span class="toc-text">CFNotificationCenterGetDarwinNotifyCenter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MMWormhole"><span class="toc-number">2.2.</span> <span class="toc-text">MMWormhole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Swift与CoreFoundation"><span class="toc-number">2.3.</span> <span class="toc-text">Swift与CoreFoundation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在Framework中混编OC"><span class="toc-number">2.4.</span> <span class="toc-text">在Framework中混编OC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -219,6 +221,7 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>来个效果图：  </p>
 <p><img src="http://yulingtianxia.com/resources/hardchoice.gif" alt="">  </p>
 <p>这是我第一次写Watch的App(废话谁不是第一次)，经验并不是很多，也因为Swift1.2还未正式发布，遇到了一些坑。好歹最后克服了，但也丢了贞操(毕竟不是纯Swift的App了)。有不对的地方还请多多指教。随着Swift的不断完善，希望以后能够支持创建<code>CFunctionPointer</code>对象，这样它好我也好😄</p>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -227,7 +230,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Swift/">Swift</a><a href="/tags/iOS/">iOS</a><a href="/tags/AppGroups/">AppGroups</a><a href="/tags/App-Extensions/">App Extensions</a>
+  <span></span> <a href="/tags/iOS/">iOS</a><a href="/tags/Swift/">Swift</a><a href="/tags/AppGroups/">AppGroups</a><a href="/tags/App-Extensions/">App Extensions</a>
   </div>
 
 </div>
@@ -284,7 +287,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#App-Groups-amp-Framework"><span class="toc-number">1.</span> <span class="toc-text">App Groups & Framework</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-app-与-Extension的通信"><span class="toc-number">2.</span> <span class="toc-text">Container app 与 Extension的通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CFNotificationCenterGetDarwinNotifyCenter"><span class="toc-number">2.1.</span> <span class="toc-text">CFNotificationCenterGetDarwinNotifyCenter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MMWormhole"><span class="toc-number">2.2.</span> <span class="toc-text">MMWormhole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Swift与CoreFoundation"><span class="toc-number">2.3.</span> <span class="toc-text">Swift与CoreFoundation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在Framework中混编OC"><span class="toc-number">2.4.</span> <span class="toc-text">在Framework中混编OC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#App-Groups-amp-Framework"><span class="toc-number">1.</span> <span class="toc-text">App Groups & Framework</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-app-与-Extension的通信"><span class="toc-number">2.</span> <span class="toc-text">Container app 与 Extension的通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CFNotificationCenterGetDarwinNotifyCenter"><span class="toc-number">2.1.</span> <span class="toc-text">CFNotificationCenterGetDarwinNotifyCenter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MMWormhole"><span class="toc-number">2.2.</span> <span class="toc-text">MMWormhole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Swift与CoreFoundation"><span class="toc-number">2.3.</span> <span class="toc-text">Swift与CoreFoundation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在Framework中混编OC"><span class="toc-number">2.4.</span> <span class="toc-text">在Framework中混编OC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

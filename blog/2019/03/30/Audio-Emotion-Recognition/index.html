@@ -25,7 +25,9 @@
 
 使用 VGGish 网络做特征提取，输入自定义网络进行训练。
 使用音频库导出一系列特征作为输">
-<meta property="og:updated_time" content="2019-04-27T08:39:53.992Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.943Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="音频情绪识别">
 <meta name="twitter:description" content="如何识别声音所蕴含的情绪呢？在大部分场景下，人声的情绪更有意义。可以先将人声转文字，再通过 NLP 分析语义情绪。不过人类语言博大精深，一句『卧槽』的不同语调和语境下会有很多种意义，真的是卧槽啊！
@@ -33,6 +35,7 @@
 
 使用 VGGish 网络做特征提取，输入自定义网络进行训练。
 使用音频库导出一系列特征作为输">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -111,7 +114,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dataset"><span class="toc-number">1.</span> <span class="toc-text">Dataset</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Turicreate-Sound-Classifier"><span class="toc-number">2.</span> <span class="toc-text">Turicreate Sound Classifier</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#加载音频文件"><span class="toc-number">2.1.</span> <span class="toc-text">加载音频文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义神经网络"><span class="toc-number">2.2.</span> <span class="toc-text">自定义神经网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署到-Core-ML"><span class="toc-number">2.3.</span> <span class="toc-text">部署到 Core ML</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Put-features-to-Keras"><span class="toc-number">3.</span> <span class="toc-text">Put features to Keras</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dataset"><span class="toc-number">1.</span> <span class="toc-text">Dataset</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Turicreate-Sound-Classifier"><span class="toc-number">2.</span> <span class="toc-text">Turicreate Sound Classifier</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#加载音频文件"><span class="toc-number">2.1.</span> <span class="toc-text">加载音频文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义神经网络"><span class="toc-number">2.2.</span> <span class="toc-text">自定义神经网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署到-Core-ML"><span class="toc-number">2.3.</span> <span class="toc-text">部署到 Core ML</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Put-features-to-Keras"><span class="toc-number">3.</span> <span class="toc-text">Put features to Keras</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -156,6 +159,7 @@
 <p><a href="https://apple.github.io/turicreate/docs/userguide/sound_classifier/" target="_blank" rel="external">Sound Classifier</a></p>
 <p><a href="https://zenodo.org/record/1188976" target="_blank" rel="external">The Ryerson Audio-Visual Database of Emotional Speech and Song (RAVDESS)</a></p>
 <p><a href="https://towardsdatascience.com/music-genre-classification-with-python-c714d032f0d8" target="_blank" rel="external">Music Genre Classification with Python</a></p>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -221,7 +225,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dataset"><span class="toc-number">1.</span> <span class="toc-text">Dataset</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Turicreate-Sound-Classifier"><span class="toc-number">2.</span> <span class="toc-text">Turicreate Sound Classifier</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#加载音频文件"><span class="toc-number">2.1.</span> <span class="toc-text">加载音频文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义神经网络"><span class="toc-number">2.2.</span> <span class="toc-text">自定义神经网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署到-Core-ML"><span class="toc-number">2.3.</span> <span class="toc-text">部署到 Core ML</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Put-features-to-Keras"><span class="toc-number">3.</span> <span class="toc-text">Put features to Keras</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dataset"><span class="toc-number">1.</span> <span class="toc-text">Dataset</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Turicreate-Sound-Classifier"><span class="toc-number">2.</span> <span class="toc-text">Turicreate Sound Classifier</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#加载音频文件"><span class="toc-number">2.1.</span> <span class="toc-text">加载音频文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义神经网络"><span class="toc-number">2.2.</span> <span class="toc-text">自定义神经网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署到-Core-ML"><span class="toc-number">2.3.</span> <span class="toc-text">部署到 Core ML</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Put-features-to-Keras"><span class="toc-number">3.</span> <span class="toc-text">Put features to Keras</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

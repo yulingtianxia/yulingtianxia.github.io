@@ -17,10 +17,13 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2017/12/15/Associated-Object-and-Dealloc/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="我的 Objective-C 消息节流防抖库 MessageThrottle 需要实现一个特性：当 MTRule 的 target 释放后，自动调用 MTRule 的 discard 方法。后来使用了业界很早就已有的方案：Associated Object，在这里整理下相关的知识点。">
-<meta property="og:updated_time" content="2018-09-15T08:28:13.669Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.915Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Associated Object 与 Dealloc">
 <meta name="twitter:description" content="我的 Objective-C 消息节流防抖库 MessageThrottle 需要实现一个特性：当 MTRule 的 target 释放后，自动调用 MTRule 的 discard 方法。后来使用了业界很早就已有的方案：Associated Object，在这里整理下相关的知识点。">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -99,7 +102,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题的由来"><span class="toc-number">1.</span> <span class="toc-text">问题的由来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MessageThrottle-的特殊定制"><span class="toc-number">3.</span> <span class="toc-text">MessageThrottle 的特殊定制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题的由来"><span class="toc-number">1.</span> <span class="toc-text">问题的由来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MessageThrottle-的特殊定制"><span class="toc-number">3.</span> <span class="toc-text">MessageThrottle 的特殊定制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -125,6 +128,7 @@
 <li><a href="https://github.com/ChenYilong/CYLDeallocBlockExecutor" target="_blank" rel="external">CYLDeallocBlockExecutor</a></li>
 <li><a href="https://opensource.apple.com/source/objc4/objc4-723/" target="_blank" rel="external">objc4-723</a></li>
 </ul>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -190,7 +194,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题的由来"><span class="toc-number">1.</span> <span class="toc-text">问题的由来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MessageThrottle-的特殊定制"><span class="toc-number">3.</span> <span class="toc-text">MessageThrottle 的特殊定制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题的由来"><span class="toc-number">1.</span> <span class="toc-text">问题的由来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MessageThrottle-的特殊定制"><span class="toc-number">3.</span> <span class="toc-text">MessageThrottle 的特殊定制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

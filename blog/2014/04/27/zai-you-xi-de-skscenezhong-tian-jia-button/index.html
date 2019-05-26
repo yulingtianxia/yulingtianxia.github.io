@@ -17,10 +17,13 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/04/27/zai-you-xi-de-skscenezhong-tian-jia-button/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="偶然发现SpriteKit中的SKNode也有userInteractionEnabled属性，就像UIKit中的userInteractionEnabled一样，于是我对以前的代码进行重构，发现了在游戏中添加交互button的新的方式（估计很多大神们早就发现了）">
-<meta property="og:updated_time" content="2018-09-15T08:28:13.742Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.927Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="在游戏的SKScene中添加Button">
 <meta name="twitter:description" content="偶然发现SpriteKit中的SKNode也有userInteractionEnabled属性，就像UIKit中的userInteractionEnabled一样，于是我对以前的代码进行重构，发现了在游戏中添加交互button的新的方式（估计很多大神们早就发现了）">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -99,7 +102,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#在SKScene中添加SKNode对象作为Button"><span class="toc-number">1.</span> <span class="toc-text">在SKScene中添加SKNode对象作为Button</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通过继承来封装自己的Button"><span class="toc-number">2.</span> <span class="toc-text">通过继承来封装自己的Button</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#在SKScene中添加SKNode对象作为Button"><span class="toc-number">1.</span> <span class="toc-text">在SKScene中添加SKNode对象作为Button</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通过继承来封装自己的Button"><span class="toc-number">2.</span> <span class="toc-text">通过继承来封装自己的Button</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -121,6 +124,7 @@
 <p>MainScene是我的一个SKScene，通过点击MainSceneButton来切换到MainScene<br><strong>最后在某个场景中将button添加上去，跟之前的类似</strong>  </p>
 <figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MainSceneButton *mainScene = [[MainSceneButton alloc] init];</span><br><span class="line">mainScene.<span class="built_in">position</span> = CGPointMake(self.<span class="built_in">size</span>.<span class="built_in">width</span>/<span class="number">2</span>, self.<span class="built_in">size</span>.<span class="built_in">height</span>/<span class="number">2</span>);</span><br><span class="line">[self addChild:mainScene];</span><br></pre></td></tr></table></figure>
 <p>感觉这样做是不是很像以前继承一个UIView然后封装自己的Custom View呢？给SKScene瘦身的方法还有很多，参照给UIViewController瘦身的方法，我们还可以把其他SKNode也从SKScene中剥离出去，一些用于设置SKNode的方法也会随之剥离到自定义的类中，便于以后维护代码  </p>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -186,7 +190,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#在SKScene中添加SKNode对象作为Button"><span class="toc-number">1.</span> <span class="toc-text">在SKScene中添加SKNode对象作为Button</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通过继承来封装自己的Button"><span class="toc-number">2.</span> <span class="toc-text">通过继承来封装自己的Button</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#在SKScene中添加SKNode对象作为Button"><span class="toc-number">1.</span> <span class="toc-text">在SKScene中添加SKNode对象作为Button</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通过继承来封装自己的Button"><span class="toc-number">2.</span> <span class="toc-text">通过继承来封装自己的Button</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

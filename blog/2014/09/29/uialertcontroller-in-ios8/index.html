@@ -18,7 +18,9 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="iOS8新推出的UIAlertController究竟是为了什么？已有的UIActionSheet和UIAlertView就这样被打酱油了么？其实不然。。。">
 <meta property="og:image" content="http://yulingtianxia.com/resources/IMG_0906.PNG">
-<meta property="og:updated_time" content="2018-09-15T08:28:13.591Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.904Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UIAlertController in iOS8">
 <meta name="twitter:description" content="iOS8新推出的UIAlertController究竟是为了什么？已有的UIActionSheet和UIAlertView就这样被打酱油了么？其实不然。。。">
@@ -101,7 +103,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIAlertController是什么"><span class="toc-number">1.</span> <span class="toc-text">UIAlertController是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么不直接使用UIActionSheet和UIAlertView"><span class="toc-number">2.</span> <span class="toc-text">为什么不直接使用UIActionSheet和UIAlertView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个UIAlertController"><span class="toc-number">3.</span> <span class="toc-text">创建一个UIAlertController</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加动作"><span class="toc-number">4.</span> <span class="toc-text">添加动作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加文本框"><span class="toc-number">5.</span> <span class="toc-text">添加文本框</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIAlertController是什么"><span class="toc-number">1.</span> <span class="toc-text">UIAlertController是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么不直接使用UIActionSheet和UIAlertView"><span class="toc-number">2.</span> <span class="toc-text">为什么不直接使用UIActionSheet和UIAlertView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个UIAlertController"><span class="toc-number">3.</span> <span class="toc-text">创建一个UIAlertController</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加动作"><span class="toc-number">4.</span> <span class="toc-text">添加动作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加文本框"><span class="toc-number">5.</span> <span class="toc-text">添加文本框</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">7.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -132,6 +134,7 @@
 <p>最后，贴上一张效果图：  </p>
 <p><img src="http://yulingtianxia.com/resources/IMG_0906.PNG" alt="">  </p>
 <p>图片截取自<a href="https://itunes.apple.com/cn/app/hardchoice/id923977271?mt=8" target="_blank" rel="external">HardChoice</a>  </p>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -197,7 +200,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIAlertController是什么"><span class="toc-number">1.</span> <span class="toc-text">UIAlertController是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么不直接使用UIActionSheet和UIAlertView"><span class="toc-number">2.</span> <span class="toc-text">为什么不直接使用UIActionSheet和UIAlertView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个UIAlertController"><span class="toc-number">3.</span> <span class="toc-text">创建一个UIAlertController</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加动作"><span class="toc-number">4.</span> <span class="toc-text">添加动作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加文本框"><span class="toc-number">5.</span> <span class="toc-text">添加文本框</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIAlertController是什么"><span class="toc-number">1.</span> <span class="toc-text">UIAlertController是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么不直接使用UIActionSheet和UIAlertView"><span class="toc-number">2.</span> <span class="toc-text">为什么不直接使用UIActionSheet和UIAlertView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个UIAlertController"><span class="toc-number">3.</span> <span class="toc-text">创建一个UIAlertController</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加动作"><span class="toc-number">4.</span> <span class="toc-text">添加动作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加文本框"><span class="toc-number">5.</span> <span class="toc-text">添加文本框</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">7.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

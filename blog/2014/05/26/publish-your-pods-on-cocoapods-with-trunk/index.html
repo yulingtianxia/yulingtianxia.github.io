@@ -20,7 +20,9 @@
 <meta property="og:description" content="简介2014年5月20日，CocoaPods不再接受向CocoaPods/Specs的pull request，官方的说法是为了安全考虑，防止每个人的pod被其他人修改，于是CocoaPods团队开发了trunk服务，这样每个人都是其发布的pod的owner，没有权限的人无法修改，这样更安全。  
 更改后的提交架构是这样的：(来自官方图片)">
 <meta property="og:image" content="http://blog.cocoapods.org/assets/blog_img/trunk/architecture-diagram.png">
-<meta property="og:updated_time" content="2018-09-15T08:28:13.851Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.940Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Publish Your Pods on CocoaPods with Trunk">
 <meta name="twitter:description" content="简介2014年5月20日，CocoaPods不再接受向CocoaPods/Specs的pull request，官方的说法是为了安全考虑，防止每个人的pod被其他人修改，于是CocoaPods团队开发了trunk服务，这样每个人都是其发布的pod的owner，没有权限的人无法修改，这样更安全。  
@@ -104,7 +106,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始注册"><span class="toc-number">2.</span> <span class="toc-text">开始注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署你的Pod"><span class="toc-number">3.</span> <span class="toc-text">部署你的Pod</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#将其他人加入到你的Pod"><span class="toc-number">4.</span> <span class="toc-text">将其他人加入到你的Pod</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始注册"><span class="toc-number">2.</span> <span class="toc-text">开始注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署你的Pod"><span class="toc-number">3.</span> <span class="toc-text">部署你的Pod</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#将其他人加入到你的Pod"><span class="toc-number">4.</span> <span class="toc-text">将其他人加入到你的Pod</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -144,6 +146,7 @@
 <figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-<span class="ruby">&gt; YXYNumberAnimationLabel (<span class="number">1.0</span>.<span class="number">1</span>)</span><br><span class="line"></span>   一个可以动起来的数字Label</span><br><span class="line">   pod 'YXYNumberAnimationLabel', '~&gt; 1.0.1'</span><br><span class="line">   -<span class="ruby"> <span class="symbol">Homepage:</span> <span class="symbol">https:</span>/<span class="regexp">/github.com/yulingtianxia</span><span class="regexp">/YXYNumberAnimationLabel</span><br><span class="line"></span></span>   -<span class="ruby"><span class="regexp"> Source:   https:/</span><span class="regexp">/github.com/yulingtianxia</span><span class="regexp">/YXYNumberAnimationLabel.git</span><br><span class="line"></span></span>   -<span class="ruby"><span class="regexp"> Versions: 1.0.1, 1.0.0 [master repo]</span></span></span><br></pre></td></tr></table></figure>
 <h2 id="将其他人加入到你的Pod"><a href="#将其他人加入到你的Pod" class="headerlink" title="将其他人加入到你的Pod"></a>将其他人加入到你的Pod</h2><p>为了让其他人也有权限来和你一起建设你的代码，你需要运行下面的命令来赋予别人权限，假如我将<code>kyle@cocoapods.org</code>加入到我的名字叫<code>ARAnalytics</code>的库中，我需要运行下面的命令：  </p>
 <figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pod trunk<span class="built_in"> add-owner </span>ARAnalytics kyle@cocoapods.org</span><br></pre></td></tr></table></figure>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -209,7 +212,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始注册"><span class="toc-number">2.</span> <span class="toc-text">开始注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署你的Pod"><span class="toc-number">3.</span> <span class="toc-text">部署你的Pod</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#将其他人加入到你的Pod"><span class="toc-number">4.</span> <span class="toc-text">将其他人加入到你的Pod</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始注册"><span class="toc-number">2.</span> <span class="toc-text">开始注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署你的Pod"><span class="toc-number">3.</span> <span class="toc-text">部署你的Pod</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#将其他人加入到你的Pod"><span class="toc-number">4.</span> <span class="toc-text">将其他人加入到你的Pod</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

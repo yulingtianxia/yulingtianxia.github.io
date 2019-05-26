@@ -19,11 +19,14 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="本文翻译自 Ryan Kaplan 的 More than you want to know about @synchronized  
 因为原文一些内容写的不太准确，我按照我的理解做出了批注和补充。">
-<meta property="og:updated_time" content="2018-09-15T08:28:14.023Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.968Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于 @synchronized，这儿比你想知道的还要多">
 <meta name="twitter:description" content="本文翻译自 Ryan Kaplan 的 More than you want to know about @synchronized  
 因为原文一些内容写的不太准确，我按照我的理解做出了批注和补充。">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -102,7 +105,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#用到-synchronized-的例子"><span class="toc-number">1.</span> <span class="toc-text">用到 @synchronized 的例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回到研究上来"><span class="toc-number">2.</span> <span class="toc-text">回到研究上来</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#用到-synchronized-的例子"><span class="toc-number">1.</span> <span class="toc-text">用到 @synchronized 的例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回到研究上来"><span class="toc-number">2.</span> <span class="toc-text">回到研究上来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -174,6 +177,7 @@
 <li>注意不要向你的 <code>sychronized</code> block 传入 <code>nil</code>！这将会从代码中移走线程安全。你可以通过在 <code>objc_sync_nil</code> 上加断点来查看是否发生了这样的事情。</li>
 </ol>
 <p>研究的下一步将是研究下 “synchronized block” 输出的汇编，看看它是否跟我上面的例子相似。我打赌 <code>@synchronized</code> block 的汇编输出不会跟任何我们设计的 Objective-C 代码相同，上面的代码充其量是 <code>@synchronized</code> 的工作模型。你能想到更好的模型么？我的模型在哪些情形下会有瑕疵么？告诉我吧！</p>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -239,7 +243,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#用到-synchronized-的例子"><span class="toc-number">1.</span> <span class="toc-text">用到 @synchronized 的例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回到研究上来"><span class="toc-number">2.</span> <span class="toc-text">回到研究上来</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#用到-synchronized-的例子"><span class="toc-number">1.</span> <span class="toc-text">用到 @synchronized 的例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回到研究上来"><span class="toc-number">2.</span> <span class="toc-text">回到研究上来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

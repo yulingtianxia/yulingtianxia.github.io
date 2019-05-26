@@ -18,7 +18,9 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="之前用SpriteKit做过一个叫做ColorAtom的小游戏，用了访问者模式处理碰撞检测，还用了SpriteKit中的粒子系统、连接体、力场和动画等，可以说是一个学习SpriteKit比较不错的Demo，随着Swift的火热，我也用Swift和SpriteKit写了一个更为简单的小游戏Spiral">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140557437844.gif">
-<meta property="og:updated_time" content="2018-09-15T08:28:13.689Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.917Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="用Swift和SpriteKit开发iOS游戏">
 <meta name="twitter:description" content="之前用SpriteKit做过一个叫做ColorAtom的小游戏，用了访问者模式处理碰撞检测，还用了SpriteKit中的粒子系统、连接体、力场和动画等，可以说是一个学习SpriteKit比较不错的Demo，随着Swift的火热，我也用Swift和SpriteKit写了一个更为简单的小游戏Spiral">
@@ -101,7 +103,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绘制基本界面"><span class="toc-number">2.</span> <span class="toc-text">绘制基本界面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#螺旋线的绘制"><span class="toc-number">2.1.</span> <span class="toc-text">螺旋线的绘制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四种精灵的绘制"><span class="toc-number">2.2.</span> <span class="toc-text">四种精灵的绘制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift中用访问者模式处理碰撞"><span class="toc-number">3.</span> <span class="toc-text">Swift中用访问者模式处理碰撞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#界面数据显示"><span class="toc-number">4.</span> <span class="toc-text">界面数据显示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按钮的绘制和截图分享"><span class="toc-number">5.</span> <span class="toc-text">按钮的绘制和截图分享</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绘制基本界面"><span class="toc-number">2.</span> <span class="toc-text">绘制基本界面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#螺旋线的绘制"><span class="toc-number">2.1.</span> <span class="toc-text">螺旋线的绘制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四种精灵的绘制"><span class="toc-number">2.2.</span> <span class="toc-text">四种精灵的绘制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift中用访问者模式处理碰撞"><span class="toc-number">3.</span> <span class="toc-text">Swift中用访问者模式处理碰撞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#界面数据显示"><span class="toc-number">4.</span> <span class="toc-text">界面数据显示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按钮的绘制和截图分享"><span class="toc-number">5.</span> <span class="toc-text">按钮的绘制和截图分享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">6.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -169,6 +171,7 @@
 <h2 id="按钮的绘制和截图分享"><a href="#按钮的绘制和截图分享" class="headerlink" title="按钮的绘制和截图分享"></a>按钮的绘制和截图分享</h2><p>参考我的另外两篇文章：<a href="http://yulingtianxia.com/blog/2014/04/27/zai-you-xi-de-skscenezhong-tian-jia-button/">在游戏的SKScene中添加Button</a>和<a href="http://yulingtianxia.com/blog/2014/04/22/spritekitjie-ping-bing-fen-xiang-zhi-she-jiao-wang-luo/">SpriteKit截屏并分享至社交网络</a>  </p>
 <p>在本工程中只有<code>ShareButton</code>和<code>ReplayButton</code>两个按钮，Swift版本的代码很简洁，而我通过<code>Social.Framework</code>中的<code>UIActivityViewController</code>来分享得分，这部分代码写在了<code>ShareButton.swift</code>中：  </p>
 <figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> <span class="built_in">scene</span> = self.<span class="built_in">scene</span> as GameScene</span><br><span class="line"><span class="built_in">let</span> <span class="built_in">image</span> = <span class="built_in">scene</span>.imageFromNode(<span class="built_in">scene</span>)</span><br><span class="line"><span class="built_in">let</span> text = <span class="string">"我在Spiral游戏中得了\(Data.score)分，快来追逐我的步伐吧！"</span></span><br><span class="line"><span class="built_in">let</span> activityItems = [<span class="built_in">image</span>,text]</span><br><span class="line"><span class="built_in">let</span> activityController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)</span><br><span class="line">(<span class="built_in">scene</span>.<span class="built_in">view</span>.nextResponder() as UIViewController).presentViewController(activityController, animated: <span class="literal">true</span>, completion: nil)</span><br></pre></td></tr></table></figure>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -177,7 +180,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Swift/">Swift</a><a href="/tags/iOS/">iOS</a><a href="/tags/SpriteKit/">SpriteKit</a>
+  <span></span> <a href="/tags/iOS/">iOS</a><a href="/tags/Swift/">Swift</a><a href="/tags/SpriteKit/">SpriteKit</a>
   </div>
 
 </div>
@@ -234,7 +237,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绘制基本界面"><span class="toc-number">2.</span> <span class="toc-text">绘制基本界面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#螺旋线的绘制"><span class="toc-number">2.1.</span> <span class="toc-text">螺旋线的绘制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四种精灵的绘制"><span class="toc-number">2.2.</span> <span class="toc-text">四种精灵的绘制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift中用访问者模式处理碰撞"><span class="toc-number">3.</span> <span class="toc-text">Swift中用访问者模式处理碰撞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#界面数据显示"><span class="toc-number">4.</span> <span class="toc-text">界面数据显示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按钮的绘制和截图分享"><span class="toc-number">5.</span> <span class="toc-text">按钮的绘制和截图分享</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绘制基本界面"><span class="toc-number">2.</span> <span class="toc-text">绘制基本界面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#螺旋线的绘制"><span class="toc-number">2.1.</span> <span class="toc-text">螺旋线的绘制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四种精灵的绘制"><span class="toc-number">2.2.</span> <span class="toc-text">四种精灵的绘制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift中用访问者模式处理碰撞"><span class="toc-number">3.</span> <span class="toc-text">Swift中用访问者模式处理碰撞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#界面数据显示"><span class="toc-number">4.</span> <span class="toc-text">界面数据显示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按钮的绘制和截图分享"><span class="toc-number">5.</span> <span class="toc-text">按钮的绘制和截图分享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">6.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

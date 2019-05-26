@@ -19,11 +19,14 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="本文通过参照 MABlockClosure 的实现和 Aspects 的 API 设计，基于 libffi 实现了对 Objective-C Block 的 hook。GitHub 地址：https://github.com/yulingtianxia/BlockHook
 什么场景下需要 hook block 呢？在有源码的情况下，大部分程序员会选择直接在 block 中插代码。假如方法 A 的入">
-<meta property="og:updated_time" content="2018-09-15T08:28:13.567Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.901Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hook Objective-C Block with Libffi">
 <meta name="twitter:description" content="本文通过参照 MABlockClosure 的实现和 Aspects 的 API 设计，基于 libffi 实现了对 Objective-C Block 的 hook。GitHub 地址：https://github.com/yulingtianxia/BlockHook
 什么场景下需要 hook block 呢？在有源码的情况下，大部分程序员会选择直接在 block 中插代码。假如方法 A 的入">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -102,7 +105,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#如何使用"><span class="toc-number">1.</span> <span class="toc-text">如何使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#通过-Block-创建函数模板"><span class="toc-number">2.1.</span> <span class="toc-text">通过 Block 创建函数模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建闭包，替换-Block-的-invoke"><span class="toc-number">2.2.</span> <span class="toc-text">创建闭包，替换 Block 的 invoke</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现通用-Hook-函数"><span class="toc-number">2.3.</span> <span class="toc-text">实现通用 Hook 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组装-NSInvocation-执行-Hook-逻辑"><span class="toc-number">2.4.</span> <span class="toc-text">组装 NSInvocation 执行 Hook 逻辑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#如何使用"><span class="toc-number">1.</span> <span class="toc-text">如何使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#通过-Block-创建函数模板"><span class="toc-number">2.1.</span> <span class="toc-text">通过 Block 创建函数模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建闭包，替换-Block-的-invoke"><span class="toc-number">2.2.</span> <span class="toc-text">创建闭包，替换 Block 的 invoke</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现通用-Hook-函数"><span class="toc-number">2.3.</span> <span class="toc-text">实现通用 Hook 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组装-NSInvocation-执行-Hook-逻辑"><span class="toc-number">2.4.</span> <span class="toc-text">组装 NSInvocation 执行 Hook 逻辑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -155,6 +158,7 @@
 <p>因为用户传入的 <code>hookBlock</code> 签名是不确定的，所以需要针对参数数量判断临界条件。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>又是大水文一篇，总算是在月末憋出来了。因为只花了一天时间写代码，实在太仓促，肯定还有一堆 bug。目前不建议用到生产环境上，辅助 debug 还是可以的，以后会慢慢优化。也欢迎各位老铁们提 PR：<a href="https://github.com/yulingtianxia/BlockHook/pulls" target="_blank" rel="external">https://github.com/yulingtianxia/BlockHook/pulls</a></p>
 <p>代码大量参考了 <a href="https://github.com/mikeash/MABlockClosure" target="_blank" rel="external">MABlockClosure</a> 的一些工具函数，API 设计上致敬 <a href="https://github.com/steipete/Aspects" target="_blank" rel="external">Aspects</a>。技术上如有疏漏，还请各位大佬们多多指教。</p>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -220,7 +224,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#如何使用"><span class="toc-number">1.</span> <span class="toc-text">如何使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#通过-Block-创建函数模板"><span class="toc-number">2.1.</span> <span class="toc-text">通过 Block 创建函数模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建闭包，替换-Block-的-invoke"><span class="toc-number">2.2.</span> <span class="toc-text">创建闭包，替换 Block 的 invoke</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现通用-Hook-函数"><span class="toc-number">2.3.</span> <span class="toc-text">实现通用 Hook 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组装-NSInvocation-执行-Hook-逻辑"><span class="toc-number">2.4.</span> <span class="toc-text">组装 NSInvocation 执行 Hook 逻辑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#如何使用"><span class="toc-number">1.</span> <span class="toc-text">如何使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#通过-Block-创建函数模板"><span class="toc-number">2.1.</span> <span class="toc-text">通过 Block 创建函数模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建闭包，替换-Block-的-invoke"><span class="toc-number">2.2.</span> <span class="toc-text">创建闭包，替换 Block 的 invoke</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现通用-Hook-函数"><span class="toc-number">2.3.</span> <span class="toc-text">实现通用 Hook 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组装-NSInvocation-执行-Hook-逻辑"><span class="toc-number">2.4.</span> <span class="toc-text">组装 NSInvocation 执行 Hook 逻辑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

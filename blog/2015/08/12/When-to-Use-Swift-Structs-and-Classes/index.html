@@ -17,10 +17,13 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="本文翻译自 Mike Ash 的 Friday Q&amp;amp;A 2015-07-17: When to Use Swift Structs and Classes">
-<meta property="og:updated_time" content="2018-09-15T08:28:13.863Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.944Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="When to Use Swift Structs and Classes">
 <meta name="twitter:description" content="本文翻译自 Mike Ash 的 Friday Q&amp;amp;A 2015-07-17: When to Use Swift Structs and Classes">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -99,7 +102,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#值-VS-引用"><span class="toc-number">1.</span> <span class="toc-text">值 VS 引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值类型的经验"><span class="toc-number">2.</span> <span class="toc-text">值类型的经验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#做出抉择"><span class="toc-number">3.</span> <span class="toc-text">做出抉择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#嵌套类型"><span class="toc-number">4.</span> <span class="toc-text">嵌套类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#值-VS-引用"><span class="toc-number">1.</span> <span class="toc-text">值 VS 引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值类型的经验"><span class="toc-number">2.</span> <span class="toc-text">值类型的经验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#做出抉择"><span class="toc-number">3.</span> <span class="toc-text">做出抉择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#嵌套类型"><span class="toc-number">4.</span> <span class="toc-text">嵌套类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">6.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -169,6 +172,7 @@
 <p>在 Swift 中解决方案更简单些:使用值类型而不是引用类型.在这种情况下,让 <code>name</code> 成为 <code>String</code>.再也不用担心无意中把引用共享咯.</p>
 <p>在其他情况下,解决方案可能更简单.比如,你创建了一个包含视图的 <code>struct</code>,而视图是引用类型且不能改成值类型.这<em>或许</em>是个好的迹象表明你不该用 <code>struct</code>, 因为你不管怎样都不能维持值语义.</p>
 <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>当移动值类型时它们会被拷贝,然而引用类型只是得到了一个对相同底层对象新引用.这意味着对引用类型的修改在每个引用上都看的到,然而对值类型的修改只会影响你修改的那块存储区.当选择使用哪种类型时,思考下如何拷贝你的类型比较恰当,如果需要深层拷贝就倾向于选择值类型.最后,谨防值类型中嵌入的引用类型,稍有不慎就会遭殃.</p>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -234,7 +238,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#值-VS-引用"><span class="toc-number">1.</span> <span class="toc-text">值 VS 引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值类型的经验"><span class="toc-number">2.</span> <span class="toc-text">值类型的经验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#做出抉择"><span class="toc-number">3.</span> <span class="toc-text">做出抉择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#嵌套类型"><span class="toc-number">4.</span> <span class="toc-text">嵌套类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#值-VS-引用"><span class="toc-number">1.</span> <span class="toc-text">值 VS 引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值类型的经验"><span class="toc-number">2.</span> <span class="toc-text">值类型的经验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#做出抉择"><span class="toc-number">3.</span> <span class="toc-text">做出抉择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#嵌套类型"><span class="toc-number">4.</span> <span class="toc-text">嵌套类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">6.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 

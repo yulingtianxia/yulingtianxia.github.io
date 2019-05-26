@@ -51,7 +51,9 @@
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353404264.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353404745.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353405697.png">
-<meta property="og:updated_time" content="2018-09-15T08:28:13.790Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
+<meta property="og:updated_time" content="2019-05-26T09:55:30.933Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="初识Core Data(2)">
 <meta name="twitter:description" content="本文内容：  
@@ -142,7 +144,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义NSManagedObject"><span class="toc-number">1.</span> <span class="toc-text">自定义NSManagedObject</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用数据模型设计器"><span class="toc-number">2.</span> <span class="toc-text">使用数据模型设计器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#探究Core-Data在SQLite中的实现"><span class="toc-number">3.</span> <span class="toc-text">探究Core Data在SQLite中的实现</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义NSManagedObject"><span class="toc-number">1.</span> <span class="toc-text">自定义NSManagedObject</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用数据模型设计器"><span class="toc-number">2.</span> <span class="toc-text">使用数据模型设计器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#探究Core-Data在SQLite中的实现"><span class="toc-number">3.</span> <span class="toc-text">探究Core Data在SQLite中的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
 		
 		</div>
 		
@@ -272,6 +274,7 @@
 <p><img src="http://yulingtianxia.com/resources/140353405697.png" alt="">  </p>
 <p>这次一目了然了：   </p>
 <p>ZPERSON表存储了子类所有字段数据，其Z_ENT字段标志着这条数据的类型，Z_ENT与类型名Z_NAME的映射关系储存在Z_PRIMARYKEY表中，而Z_3TEACHERS存储的则是ZPERSON表中数据项之间的关系，也就是之前我们建立的学生和老师的对应关系，其原理是将ZPERSON表中的Z_PK字段内容两个一组对应起来，这样就相当于把ZPERSON表中两条数据项关联起来了。之前我们在代码中只将LiLei同学添加到了MissGao老师的学生列表中，但是Core Data已经自动维护起了关系，让MissGao也存在于LiLei的老师列表中。Core Data把底层的数据库封装起来，通过简单的操作让程序员更高校的管理数据，所以SQLite这部分我们只是了解下就可以了。  </p>
+<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -337,7 +340,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义NSManagedObject"><span class="toc-number">1.</span> <span class="toc-text">自定义NSManagedObject</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用数据模型设计器"><span class="toc-number">2.</span> <span class="toc-text">使用数据模型设计器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#探究Core-Data在SQLite中的实现"><span class="toc-number">3.</span> <span class="toc-text">探究Core Data在SQLite中的实现</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义NSManagedObject"><span class="toc-number">1.</span> <span class="toc-text">自定义NSManagedObject</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用数据模型设计器"><span class="toc-number">2.</span> <span class="toc-text">使用数据模型设计器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#探究Core-Data在SQLite中的实现"><span class="toc-number">3.</span> <span class="toc-text">探究Core Data在SQLite中的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
  
   </div>
 
