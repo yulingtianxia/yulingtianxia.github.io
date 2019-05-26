@@ -19,14 +19,11 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，所以相比直接调用方法，会有一些性能上的损耗。本篇文章记录了对其性能进行测试的结果，并通过使用 NSMapTable 改进存储结构和缓存来对性能进行大幅度的优化。
 这是你从未体验过的船新版本。">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.900Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.539Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MessageThrottle Performance Benchmark and Optimization">
 <meta name="twitter:description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，所以相比直接调用方法，会有一些性能上的损耗。本篇文章记录了对其性能进行测试的结果，并通过使用 NSMapTable 改进存储结构和缓存来对性能进行大幅度的优化。
 这是你从未体验过的船新版本。">
-<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -105,7 +102,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Benchmark"><span class="toc-number">1.</span> <span class="toc-text">Benchmark</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Optimization"><span class="toc-number">2.</span> <span class="toc-text">Optimization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Benchmark"><span class="toc-number">1.</span> <span class="toc-text">Benchmark</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Optimization"><span class="toc-number">2.</span> <span class="toc-text">Optimization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
 		
 		</div>
 		
@@ -201,7 +198,6 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>更新 <a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="external">MessageThrottle</a> 到最新版即可获取到更快更强更安全的 Objective 消息节流限频功能，一行代码搞定频繁调用的问题。</p>
 <p>新版本在废除消息的时候，也增强了对合法性和安全性的检查。（说白了就是改 bug）</p>
 <p>理论上我的另一个组件 <a href="https://github.com/yulingtianxia/BlockTracker" target="_blank" rel="external">BlockTracker</a> 也可以按照本文的方案优化性能了，嘿嘿，有时间搞下。</p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -267,7 +263,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Benchmark"><span class="toc-number">1.</span> <span class="toc-text">Benchmark</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Optimization"><span class="toc-number">2.</span> <span class="toc-text">Optimization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Benchmark"><span class="toc-number">1.</span> <span class="toc-text">Benchmark</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Optimization"><span class="toc-number">2.</span> <span class="toc-text">Optimization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
  
   </div>
 

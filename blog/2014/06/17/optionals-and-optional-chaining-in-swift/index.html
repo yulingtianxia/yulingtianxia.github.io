@@ -17,13 +17,10 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/06/17/optionals-and-optional-chaining-in-swift/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="可选类型（Optionals）在Swift中用于处理值可能缺失的情况，也就是说可能存在没有值的情况。C 和 Objective-C 中并没有可选类型这个概念。但在Objective-C中，一个方法的返回值可以是一个对象或nil值（nil表示缺少一个合法对象），而对象只是针对类而言，结构体、基本C类型和枚举并不适用nil来表示值的缺失，对于这些类型，Objective-C 方法一般会返回一个特殊值（">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.909Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.485Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Optionals and Optional Chaining in Swift">
 <meta name="twitter:description" content="可选类型（Optionals）在Swift中用于处理值可能缺失的情况，也就是说可能存在没有值的情况。C 和 Objective-C 中并没有可选类型这个概念。但在Objective-C中，一个方法的返回值可以是一个对象或nil值（nil表示缺少一个合法对象），而对象只是针对类而言，结构体、基本C类型和枚举并不适用nil来表示值的缺失，对于这些类型，Objective-C 方法一般会返回一个特殊值（">
-<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -102,7 +99,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#可选类型（Optionals）"><span class="toc-number">1.</span> <span class="toc-text">可选类型（Optionals）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理论"><span class="toc-number">1.1.</span> <span class="toc-text">理论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#if条件判断和强制解析"><span class="toc-number">1.2.</span> <span class="toc-text">if条件判断和强制解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可选绑定"><span class="toc-number">1.3.</span> <span class="toc-text">可选绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Nil-Coalescing-Operator"><span class="toc-number">1.4.</span> <span class="toc-text">Nil Coalescing Operator</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可选链（Optional-Chaining）"><span class="toc-number">2.</span> <span class="toc-text">可选链（Optional Chaining）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#可选类型（Optionals）"><span class="toc-number">1.</span> <span class="toc-text">可选类型（Optionals）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理论"><span class="toc-number">1.1.</span> <span class="toc-text">理论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#if条件判断和强制解析"><span class="toc-number">1.2.</span> <span class="toc-text">if条件判断和强制解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可选绑定"><span class="toc-number">1.3.</span> <span class="toc-text">可选绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Nil-Coalescing-Operator"><span class="toc-number">1.4.</span> <span class="toc-text">Nil Coalescing Operator</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可选链（Optional-Chaining）"><span class="toc-number">2.</span> <span class="toc-text">可选链（Optional Chaining）</span></a></li></ol>
 		
 		</div>
 		
@@ -177,7 +174,6 @@
 <p>如果你还想进一步对方法返回值执行可选链，将可选链问号符放在方法括号的后面：  </p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> upper = john.residence?.address?.buildingIdentifier()?.uppercaseString &#123;</span><br><span class="line">    <span class="built_in">println</span>(<span class="string">"John's uppercase building identifier is <span class="subst">\(upper)</span>."</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 打印 "John's uppercase building identifier is THE LARCHES."</span></span><br></pre></td></tr></table></figure>
 <p>你将可选链问号符放在括号后面是因为你想要链接的可选值是<code>buildingIdentifier</code>方法的返回值，不是<code>buildingIdentifier</code>方法本身。</p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -243,7 +239,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#可选类型（Optionals）"><span class="toc-number">1.</span> <span class="toc-text">可选类型（Optionals）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理论"><span class="toc-number">1.1.</span> <span class="toc-text">理论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#if条件判断和强制解析"><span class="toc-number">1.2.</span> <span class="toc-text">if条件判断和强制解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可选绑定"><span class="toc-number">1.3.</span> <span class="toc-text">可选绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Nil-Coalescing-Operator"><span class="toc-number">1.4.</span> <span class="toc-text">Nil Coalescing Operator</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可选链（Optional-Chaining）"><span class="toc-number">2.</span> <span class="toc-text">可选链（Optional Chaining）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#可选类型（Optionals）"><span class="toc-number">1.</span> <span class="toc-text">可选类型（Optionals）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理论"><span class="toc-number">1.1.</span> <span class="toc-text">理论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#if条件判断和强制解析"><span class="toc-number">1.2.</span> <span class="toc-text">if条件判断和强制解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可选绑定"><span class="toc-number">1.3.</span> <span class="toc-text">可选绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Nil-Coalescing-Operator"><span class="toc-number">1.4.</span> <span class="toc-text">Nil Coalescing Operator</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可选链（Optional-Chaining）"><span class="toc-number">2.</span> <span class="toc-text">可选链（Optional Chaining）</span></a></li></ol>
  
   </div>
 

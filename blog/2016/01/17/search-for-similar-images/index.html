@@ -21,9 +21,7 @@ Github 地址：https://github.com/yu">
 Github 地址：https://github.com/yu">
 <meta property="og:image" content="https://github.com/yulingtianxia/SimilarImageHunter/blob/master/images/01.png?raw=true">
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQ20160117-3.png">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.895Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.513Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何自制一款寻找相似图片的 Mac 工具">
 <meta name="twitter:description" content="这周花了一天半的时间做了个 Mac OS X 上的小工具，用来查找相似内容的图片。起因是公司的 iOS 项目中已有的图片管理混乱，有些图片文件名不规范，还有一些内容重复但文件名不同的图片。现在视觉要给出一些 3x 分辨率的图片，如何与已有的低分辨率图片匹配，这又是个问题。人工一个个去找固然好，但这种技术含量低的体力活很浪费精力和时间。
@@ -107,7 +105,7 @@ Github 地址：https://github.com/yu">
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#获取图片路径"><span class="toc-number">1.</span> <span class="toc-text">获取图片路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法实现"><span class="toc-number">2.</span> <span class="toc-text">算法实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AspectRatio"><span class="toc-number">2.1.</span> <span class="toc-text">AspectRatio</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#像素-RGBA-信息"><span class="toc-number">2.2.</span> <span class="toc-text">像素 RGBA 信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#像素位置信息"><span class="toc-number">2.3.</span> <span class="toc-text">像素位置信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造指纹向量"><span class="toc-number">2.4.</span> <span class="toc-text">构造指纹向量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算向量相似性"><span class="toc-number">2.5.</span> <span class="toc-text">计算向量相似性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-实现"><span class="toc-number">3.</span> <span class="toc-text">UI 实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#获取图片路径"><span class="toc-number">1.</span> <span class="toc-text">获取图片路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法实现"><span class="toc-number">2.</span> <span class="toc-text">算法实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AspectRatio"><span class="toc-number">2.1.</span> <span class="toc-text">AspectRatio</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#像素-RGBA-信息"><span class="toc-number">2.2.</span> <span class="toc-text">像素 RGBA 信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#像素位置信息"><span class="toc-number">2.3.</span> <span class="toc-text">像素位置信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造指纹向量"><span class="toc-number">2.4.</span> <span class="toc-text">构造指纹向量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算向量相似性"><span class="toc-number">2.5.</span> <span class="toc-text">计算向量相似性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-实现"><span class="toc-number">3.</span> <span class="toc-text">UI 实现</span></a></li></ol>
 		
 		</div>
 		
@@ -152,7 +150,6 @@ Github 地址：https://github.com/yu">
 <p>毛玻璃效果、后台异步任务、Autolayout 之类的常识这些就不细说了。更多的细节还是看源码吧：<a href="https://github.com/yulingtianxia/SimilarImageHunter" target="_blank" rel="external">SimilarImageHunter</a></p>
 <p>至于之后的一键替换文件名等功能，虽然是刚需，但是还需等安全可靠的替换策略制定出之后才可以祭出。</p>
 <p>我现在看太阳都是绿色的。</p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -218,7 +215,7 @@ Github 地址：https://github.com/yu">
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#获取图片路径"><span class="toc-number">1.</span> <span class="toc-text">获取图片路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法实现"><span class="toc-number">2.</span> <span class="toc-text">算法实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AspectRatio"><span class="toc-number">2.1.</span> <span class="toc-text">AspectRatio</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#像素-RGBA-信息"><span class="toc-number">2.2.</span> <span class="toc-text">像素 RGBA 信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#像素位置信息"><span class="toc-number">2.3.</span> <span class="toc-text">像素位置信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造指纹向量"><span class="toc-number">2.4.</span> <span class="toc-text">构造指纹向量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算向量相似性"><span class="toc-number">2.5.</span> <span class="toc-text">计算向量相似性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-实现"><span class="toc-number">3.</span> <span class="toc-text">UI 实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#获取图片路径"><span class="toc-number">1.</span> <span class="toc-text">获取图片路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法实现"><span class="toc-number">2.</span> <span class="toc-text">算法实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AspectRatio"><span class="toc-number">2.1.</span> <span class="toc-text">AspectRatio</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#像素-RGBA-信息"><span class="toc-number">2.2.</span> <span class="toc-text">像素 RGBA 信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#像素位置信息"><span class="toc-number">2.3.</span> <span class="toc-text">像素位置信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造指纹向量"><span class="toc-number">2.4.</span> <span class="toc-text">构造指纹向量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算向量相似性"><span class="toc-number">2.5.</span> <span class="toc-text">计算向量相似性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-实现"><span class="toc-number">3.</span> <span class="toc-text">UI 实现</span></a></li></ol>
  
   </div>
 

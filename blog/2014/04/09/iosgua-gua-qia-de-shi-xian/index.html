@@ -22,9 +22,7 @@
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353391416.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353390318.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353391637.png">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.937Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.466Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS刮刮卡的实现">
 <meta name="twitter:description" content="前言去年在实习的期间，需要写一个类似刮刮乐的小功能，当时是从网上下载的demo，后来经过自己研读代码和debug后，终于整理出了一套比较easy的实现方法">
@@ -107,7 +105,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正文"><span class="toc-number">2.</span> <span class="toc-text">正文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正文"><span class="toc-number">2.</span> <span class="toc-text">正文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
 		
 		</div>
 		
@@ -119,7 +117,6 @@
 <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#pragma</span> <span class="selector-tag">mark</span> <span class="selector-tag">ImageMaskFilledDelegate</span></span><br><span class="line"><span class="selector-tag">-</span> (void) <span class="selector-tag">imageMaskView</span><span class="selector-pseudo">:(ImageMaskView</span> *)<span class="selector-tag">maskView</span> <span class="selector-tag">clearPercentDidChanged</span><span class="selector-pseudo">:(float)clearPercent</span>&#123;</span><br><span class="line">    <span class="selector-tag">if</span> (clearPercent &gt; <span class="number">50</span>) &#123;</span><br><span class="line">        <span class="selector-attr">[UIView animateWithDuration:2</span><br><span class="line">                         animations:^&#123;</span><br><span class="line">                             FengjieMask.userInteractionEnabled = NO;</span><br><span class="line">                             FengjieMask.alpha = 0;</span><br><span class="line">                             FengjieMask.imageMaskFilledDelegate = nil;</span><br><span class="line">                         &#125;</span><br><span class="line">                         completion:^(BOOL finished) &#123;</span><br><span class="line">                         &#125;]</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面的代码先是做了个判断，当被涂刮的面积超过50%的时候，产生一个时长2秒的动画，让ImageMaskView渐渐变透明，传入的animations参数是个block块<br>好的，现在可以运行啦，我的demo效果如下<br><img src="http://yulingtianxia.com/resources/140353391637.png" alt="QQ20140409-4@2x">  </p>
 <h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>对iOS的Core Graphics不是很熟悉，还没有去深入看代码中的实现过程，不过修复了一个小bug：在UITouchPhaseBegan的时候刮开的圆形面积坐标错位了，并针对Retina和非Retina进行测试，效果都不错。以前用过其他的刮刮乐的代码，缺点是跟图片像素比之类的有关，显示效果很不好；但这个demo可以适配任意大小的Image而不用更改代码。</p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -185,7 +182,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正文"><span class="toc-number">2.</span> <span class="toc-text">正文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正文"><span class="toc-number">2.</span> <span class="toc-text">正文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
  
   </div>
 

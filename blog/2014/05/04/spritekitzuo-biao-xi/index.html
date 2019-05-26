@@ -26,9 +26,7 @@
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353410886.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353411872.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140353412174.png">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.907Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.479Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SpriteKit坐标系">
 <meta name="twitter:description" content="前一阵子在用SpriteKit写一个小游戏的时候，因为对坐标系系统不是很熟悉，结果耽误了不少时间，现在将这些SKNode(及其子类)中常用的部分记下来，以利于以后快速查找  
@@ -113,7 +111,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SKScene"><span class="toc-number">1.</span> <span class="toc-text">SKScene</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKNode"><span class="toc-number">2.</span> <span class="toc-text">SKNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKEmitterNode"><span class="toc-number">3.</span> <span class="toc-text">SKEmitterNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKLabelNode"><span class="toc-number">4.</span> <span class="toc-text">SKLabelNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKShapeNode"><span class="toc-number">5.</span> <span class="toc-text">SKShapeNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKSpriteNode"><span class="toc-number">6.</span> <span class="toc-text">SKSpriteNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">8.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SKScene"><span class="toc-number">1.</span> <span class="toc-text">SKScene</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKNode"><span class="toc-number">2.</span> <span class="toc-text">SKNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKEmitterNode"><span class="toc-number">3.</span> <span class="toc-text">SKEmitterNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKLabelNode"><span class="toc-number">4.</span> <span class="toc-text">SKLabelNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKShapeNode"><span class="toc-number">5.</span> <span class="toc-text">SKShapeNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKSpriteNode"><span class="toc-number">6.</span> <span class="toc-text">SKSpriteNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol>
 		
 		</div>
 		
@@ -140,7 +138,6 @@
 <h2 id="SKSpriteNode"><a href="#SKSpriteNode" class="headerlink" title="SKSpriteNode"></a>SKSpriteNode</h2><p>坐标原点在其frame中心，也就是(0.5,0.5)  </p>
 <p><img src="http://yulingtianxia.com/resources/140353412174.png" alt="">  </p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实之所以会出现坐标系原点位置一说，是因为不同类型的Node其frame大小也不一样，而其原点在其frame中的位置也不一样，这就给人一种错觉：有的Node原点在左下角，只暴漏给我们第一象限；有的Node原点在中间，其四个象限都被填充了。。。无论原点在哪，其x轴，y轴方向都是不变的，所以本质都是一样的，只是写代码的时候需要注意，比如如果觉得将一个<code>SKLabelNode</code>的position设置为屏幕中心，则其文字内容就会正好居中，其实那就错了，因为y轴并没有居中。  </p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -206,7 +203,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SKScene"><span class="toc-number">1.</span> <span class="toc-text">SKScene</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKNode"><span class="toc-number">2.</span> <span class="toc-text">SKNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKEmitterNode"><span class="toc-number">3.</span> <span class="toc-text">SKEmitterNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKLabelNode"><span class="toc-number">4.</span> <span class="toc-text">SKLabelNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKShapeNode"><span class="toc-number">5.</span> <span class="toc-text">SKShapeNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKSpriteNode"><span class="toc-number">6.</span> <span class="toc-text">SKSpriteNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">8.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SKScene"><span class="toc-number">1.</span> <span class="toc-text">SKScene</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKNode"><span class="toc-number">2.</span> <span class="toc-text">SKNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKEmitterNode"><span class="toc-number">3.</span> <span class="toc-text">SKEmitterNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKLabelNode"><span class="toc-number">4.</span> <span class="toc-text">SKLabelNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKShapeNode"><span class="toc-number">5.</span> <span class="toc-text">SKShapeNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SKSpriteNode"><span class="toc-number">6.</span> <span class="toc-text">SKSpriteNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol>
  
   </div>
 

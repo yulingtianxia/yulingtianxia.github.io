@@ -25,9 +25,7 @@
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowAddition_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowUnsignedSubtraction_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowSignedSubtraction_2x.png">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.957Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.490Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Swift中的位运算符和溢出运算符">
 <meta name="twitter:description" content="位运算符（Bitwise Operators），在各种语言中都存在，虽然用的有些少，但是在诸如类别判断，类型检测等方案中经常用位运算来实现。很多枚举类型的成员都是将0x1左移位来赋值，而不是从0递增，这其中就蕴含着位运算。而数值运算中的溢出也是一个不常遇到但又值得注意的地方，虽然很少有人用Int8来存储大数，但了解下Swift处理溢出的这一特性也是很有用的。">
@@ -110,7 +108,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本位运算符"><span class="toc-number">1.</span> <span class="toc-text">基本位运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#溢出运算符"><span class="toc-number">2.</span> <span class="toc-text">溢出运算符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#值的上溢出"><span class="toc-number">2.1.</span> <span class="toc-text">值的上溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#值的下溢出"><span class="toc-number">2.2.</span> <span class="toc-text">值的下溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#除零溢出"><span class="toc-number">2.3.</span> <span class="toc-text">除零溢出</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本位运算符"><span class="toc-number">1.</span> <span class="toc-text">基本位运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#溢出运算符"><span class="toc-number">2.</span> <span class="toc-text">溢出运算符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#值的上溢出"><span class="toc-number">2.1.</span> <span class="toc-text">值的上溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#值的下溢出"><span class="toc-number">2.2.</span> <span class="toc-text">值的下溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#除零溢出"><span class="toc-number">2.3.</span> <span class="toc-text">除零溢出</span></a></li></ol></li></ol>
 		
 		</div>
 		
@@ -144,7 +142,6 @@
 <p><img src="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/overflowSignedSubtraction_2x.png" alt="">  </p>
 <h3 id="除零溢出"><a href="#除零溢出" class="headerlink" title="除零溢出"></a>除零溢出</h3><p>一个数除以0，或者对0求余数，就会产生一个错误；使用它们对应的可溢出的版本的运算符<code>&amp;/</code>和<code>&amp;%</code>进行除0操作时就会得到0值。</p>
 <figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="attr">x</span> = <span class="number">1</span></span><br><span class="line"><span class="keyword">let</span> <span class="attr">y</span> = x &amp;/ <span class="number">0</span></span><br><span class="line">// y 等于 <span class="number">0</span></span><br></pre></td></tr></table></figure>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -210,7 +207,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本位运算符"><span class="toc-number">1.</span> <span class="toc-text">基本位运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#溢出运算符"><span class="toc-number">2.</span> <span class="toc-text">溢出运算符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#值的上溢出"><span class="toc-number">2.1.</span> <span class="toc-text">值的上溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#值的下溢出"><span class="toc-number">2.2.</span> <span class="toc-text">值的下溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#除零溢出"><span class="toc-number">2.3.</span> <span class="toc-text">除零溢出</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本位运算符"><span class="toc-number">1.</span> <span class="toc-text">基本位运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#溢出运算符"><span class="toc-number">2.</span> <span class="toc-text">溢出运算符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#值的上溢出"><span class="toc-number">2.1.</span> <span class="toc-text">值的上溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#值的下溢出"><span class="toc-number">2.2.</span> <span class="toc-text">值的下溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#除零溢出"><span class="toc-number">2.3.</span> <span class="toc-text">除零溢出</span></a></li></ol></li></ol>
  
   </div>
 

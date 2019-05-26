@@ -27,9 +27,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/grid coordinates.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/underutilization of threads.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/nonuniform threadgroups.png">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.950Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.553Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Parallel Computation using MPS">
 <meta name="twitter:description" content="在照片质量评分组件 PhotoAssessment 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。
@@ -113,7 +111,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#性能对比"><span class="toc-number">1.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader-的实现"><span class="toc-number">2.</span> <span class="toc-text">Shader 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Threadgroup"><span class="toc-number">2.1.</span> <span class="toc-text">Threadgroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Non-uniform-Threadgroup-Size"><span class="toc-number">2.2.</span> <span class="toc-text">Non-uniform Threadgroup Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原子操作生成-Histogram"><span class="toc-number">2.3.</span> <span class="toc-text">原子操作生成 Histogram</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#踩坑"><span class="toc-number">2.4.</span> <span class="toc-text">踩坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#性能对比"><span class="toc-number">1.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader-的实现"><span class="toc-number">2.</span> <span class="toc-text">Shader 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Threadgroup"><span class="toc-number">2.1.</span> <span class="toc-text">Threadgroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Non-uniform-Threadgroup-Size"><span class="toc-number">2.2.</span> <span class="toc-text">Non-uniform Threadgroup Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原子操作生成-Histogram"><span class="toc-number">2.3.</span> <span class="toc-text">原子操作生成 Histogram</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#踩坑"><span class="toc-number">2.4.</span> <span class="toc-text">踩坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li></ol>
 		
 		</div>
 		
@@ -189,7 +187,6 @@
 <li><a href="https://stackoverflow.com/questions/47738441/passing-textures-with-uint8-component-type-to-metal-compute-shader" target="_blank" rel="external">https://stackoverflow.com/questions/47738441/passing-textures-with-uint8-component-type-to-metal-compute-shader</a></li>
 <li><a href="https://stackoverflow.com/questions/15095909/from-rgb-to-hsv-in-opengl-glsl" target="_blank" rel="external">https://stackoverflow.com/questions/15095909/from-rgb-to-hsv-in-opengl-glsl</a></li>
 </ul>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -255,7 +252,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#性能对比"><span class="toc-number">1.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader-的实现"><span class="toc-number">2.</span> <span class="toc-text">Shader 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Threadgroup"><span class="toc-number">2.1.</span> <span class="toc-text">Threadgroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Non-uniform-Threadgroup-Size"><span class="toc-number">2.2.</span> <span class="toc-text">Non-uniform Threadgroup Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原子操作生成-Histogram"><span class="toc-number">2.3.</span> <span class="toc-text">原子操作生成 Histogram</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#踩坑"><span class="toc-number">2.4.</span> <span class="toc-text">踩坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#性能对比"><span class="toc-number">1.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader-的实现"><span class="toc-number">2.</span> <span class="toc-text">Shader 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Threadgroup"><span class="toc-number">2.1.</span> <span class="toc-text">Threadgroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Non-uniform-Threadgroup-Size"><span class="toc-number">2.2.</span> <span class="toc-text">Non-uniform Threadgroup Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原子操作生成-Histogram"><span class="toc-number">2.3.</span> <span class="toc-text">原子操作生成 Histogram</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#踩坑"><span class="toc-number">2.4.</span> <span class="toc-text">踩坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li></ol>
  
   </div>
 

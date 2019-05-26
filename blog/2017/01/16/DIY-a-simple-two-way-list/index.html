@@ -19,9 +19,7 @@
 <meta property="og:description" content="公司项目中有个页面是双向滑动的列表，遂用 UIScrollView 手撸了之，把一些 UI 和数据上的心得记录下来。">
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQStoryMemory/原型.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQStoryMemory/reusableitem.png">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.960Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.526Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DIY 双向滑动列表">
 <meta name="twitter:description" content="公司项目中有个页面是双向滑动的列表，遂用 UIScrollView 手撸了之，把一些 UI 和数据上的心得记录下来。">
@@ -104,7 +102,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#需求简介"><span class="toc-number">1.</span> <span class="toc-text">需求简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据请求"><span class="toc-number">2.</span> <span class="toc-text">数据请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#格式设计"><span class="toc-number">2.1.</span> <span class="toc-text">格式设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#请求时机"><span class="toc-number">2.2.</span> <span class="toc-text">请求时机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可重用的-ItemView"><span class="toc-number">3.</span> <span class="toc-text">可重用的 ItemView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受"><span class="toc-number">4.</span> <span class="toc-text">感受</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#需求简介"><span class="toc-number">1.</span> <span class="toc-text">需求简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据请求"><span class="toc-number">2.</span> <span class="toc-text">数据请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#格式设计"><span class="toc-number">2.1.</span> <span class="toc-text">格式设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#请求时机"><span class="toc-number">2.2.</span> <span class="toc-text">请求时机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可重用的-ItemView"><span class="toc-number">3.</span> <span class="toc-text">可重用的 ItemView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受"><span class="toc-number">4.</span> <span class="toc-text">感受</span></a></li></ol>
 		
 		</div>
 		
@@ -149,7 +147,6 @@
 <p>曾经还设想把可重用的范围扩大到整个屏幕，也就是屏幕上所有横向滑动的 <code>ListView</code> 全都共用一个可重用列表。但后来计算一下这样做收益不高，毕竟横向滑动的 <code>ListView</code> 在正常滑动时可重用列表中会有一到两个 <code>ItemView</code> 对象，而全屏最多同时存在 5 个 <code>ListView</code>，节省的内存很有限。</p>
 <p>其实还有许多细节实现没有叙述，比如记录 <code>ListView</code> 上次横向滑动位置，因为 <code>ListView</code> 是加在全屏 TableView 的每个 cell 中，而 cell 也是重用的，所以上次滑动偏移是需要每次 cell 消失时记录和 cell 出现时刷新的。</p>
 <p>在公司项目用了快半年的 MRC，有时还要切换到 ARC 做做其他事情，或者来一发 Swift 玩票儿，真是一种奇(dan)妙(teng)的体验。</p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -210,7 +207,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#需求简介"><span class="toc-number">1.</span> <span class="toc-text">需求简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据请求"><span class="toc-number">2.</span> <span class="toc-text">数据请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#格式设计"><span class="toc-number">2.1.</span> <span class="toc-text">格式设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#请求时机"><span class="toc-number">2.2.</span> <span class="toc-text">请求时机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可重用的-ItemView"><span class="toc-number">3.</span> <span class="toc-text">可重用的 ItemView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受"><span class="toc-number">4.</span> <span class="toc-text">感受</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#需求简介"><span class="toc-number">1.</span> <span class="toc-text">需求简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据请求"><span class="toc-number">2.</span> <span class="toc-text">数据请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#格式设计"><span class="toc-number">2.1.</span> <span class="toc-text">格式设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#请求时机"><span class="toc-number">2.2.</span> <span class="toc-text">请求时机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可重用的-ItemView"><span class="toc-number">3.</span> <span class="toc-text">可重用的 ItemView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受"><span class="toc-number">4.</span> <span class="toc-text">感受</span></a></li></ol>
  
   </div>
 

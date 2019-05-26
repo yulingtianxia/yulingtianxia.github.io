@@ -19,14 +19,11 @@ Block">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="很多方法最后一个参数是类似于 completionBlock 这种回调，然而有些 API 实现一些异常逻辑时会忘记调用传入的 Block 参数（当然这肯定是 bug 啦），或者存在多次调用。在调试的时候可能会碰到这种大坑，需要追踪下 Block 参数何时调用了，甚至是否调用过。如果不方便直接在 Block 实现中加代码，或者没有源码的情况下，就需要无侵入式地追踪 Block 参数对象。
 Block">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.934Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.538Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="追踪 Objective-C 方法中的 Block 参数对象">
 <meta name="twitter:description" content="很多方法最后一个参数是类似于 completionBlock 这种回调，然而有些 API 实现一些异常逻辑时会忘记调用传入的 Block 参数（当然这肯定是 bug 啦），或者存在多次调用。在调试的时候可能会碰到这种大坑，需要追踪下 Block 参数何时调用了，甚至是否调用过。如果不方便直接在 Block 实现中加代码，或者没有源码的情况下，就需要无侵入式地追踪 Block 参数对象。
 Block">
-<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -105,7 +102,7 @@ Block">
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">1.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#过滤方法的-Block-参数"><span class="toc-number">2.1.</span> <span class="toc-text">过滤方法的 Block 参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行-Callback"><span class="toc-number">2.2.</span> <span class="toc-text">执行 Callback</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对-NSInvocation-的一点探索"><span class="toc-number">2.3.</span> <span class="toc-text">对 NSInvocation 的一点探索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">1.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#过滤方法的-Block-参数"><span class="toc-number">2.1.</span> <span class="toc-text">过滤方法的 Block 参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行-Callback"><span class="toc-number">2.2.</span> <span class="toc-text">执行 Callback</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对-NSInvocation-的一点探索"><span class="toc-number">2.3.</span> <span class="toc-text">对 NSInvocation 的一点探索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
 		
 		</div>
 		
@@ -144,7 +141,6 @@ Block">
 <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">struct <span class="keyword">BTInvocaton </span>&#123;</span><br><span class="line">    void *isa<span class="comment">;</span></span><br><span class="line">    void *frame<span class="comment">;</span></span><br><span class="line">    void *retdata<span class="comment">;</span></span><br><span class="line">    void *signature<span class="comment">;</span></span><br><span class="line">    void *container<span class="comment">;</span></span><br><span class="line">    uint8_t retainedArgs<span class="comment">;</span></span><br><span class="line">    uint8_t reserved[<span class="number">15</span>]<span class="comment">;</span></span><br><span class="line">&#125;<span class="comment">;</span></span><br></pre></td></tr></table></figure>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>由于 Hook Method 的逻辑是在消息转发流程搞事情，所以跟 Aspects 一样不能同时 Hook 父类和子类类相同方法。因为如果子类调用父类的实现，就会死循环。如果 Hook 方法这部分使用 <a href="http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/">Method Swizzling</a> 等交换 IMP 的方式实现，也会有着严重依赖 Hook 顺序导致调用错乱的问题。还是基于桥的 Hook 牛逼，汇编跳板，我这辈子是看不懂了。</p>
 <p>老子终于在这个月最后一天快结束的时候憋出来一篇大水文！搬砖累死了没时间研究技术，你们尽管喷！</p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -210,7 +206,7 @@ Block">
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">1.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#过滤方法的-Block-参数"><span class="toc-number">2.1.</span> <span class="toc-text">过滤方法的 Block 参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行-Callback"><span class="toc-number">2.2.</span> <span class="toc-text">执行 Callback</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对-NSInvocation-的一点探索"><span class="toc-number">2.3.</span> <span class="toc-text">对 NSInvocation 的一点探索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">1.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#过滤方法的-Block-参数"><span class="toc-number">2.1.</span> <span class="toc-text">过滤方法的 Block 参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行-Callback"><span class="toc-number">2.2.</span> <span class="toc-text">执行 Callback</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对-NSInvocation-的一点探索"><span class="toc-number">2.3.</span> <span class="toc-text">对 NSInvocation 的一点探索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
  
   </div>
 

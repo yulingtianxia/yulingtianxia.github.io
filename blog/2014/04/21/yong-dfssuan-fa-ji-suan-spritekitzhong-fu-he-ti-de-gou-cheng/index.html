@@ -17,13 +17,10 @@
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/04/21/yong-dfssuan-fa-ji-suan-spritekitzhong-fu-he-ti-de-gou-cheng/index.html">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="在使用Sprite Kit开发iOS游戏的时候，有时我们需要把一些SKNode(或者其子类)的物理体(SKPhysicsBody)通过某种方式连在一起组合成一个SKPhysicsJoint，这样就可以让这个连接体在物理世界一起被模拟。例如我们可以将两个SKNode用绳子(SKPhysicsJointLimit)，弹簧(SKPhysicsJointSpring)，胶水(SKPhysicsJointF">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.951Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.469Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="用DFS算法计算SpriteKit中复合体的构成">
 <meta name="twitter:description" content="在使用Sprite Kit开发iOS游戏的时候，有时我们需要把一些SKNode(或者其子类)的物理体(SKPhysicsBody)通过某种方式连在一起组合成一个SKPhysicsJoint，这样就可以让这个连接体在物理世界一起被模拟。例如我们可以将两个SKNode用绳子(SKPhysicsJointLimit)，弹簧(SKPhysicsJointSpring)，胶水(SKPhysicsJointF">
-<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -102,7 +99,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">1.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			
 		
 		</div>
 		
@@ -119,7 +116,6 @@
 <p>完整代码在<a href="https://github.com/yulingtianxia/MyFirstGame.git" target="_blank" rel="external">这里</a>的<code>ColorAtom</code>工程<br>在向<code>SKSpriteNode.userdata</code>写键值对的时候，发现写进去后再读取依然是nil，这是因为<code>userdata</code>属性完全归用户随意使用，苹果甚至在SKSpriteNode初始化的时候干脆默认<code>userdata</code>是<code>nil</code>，所以需要初始化下：  </p>
 <figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">((<span class="name">SKSpriteNode</span> *)nodes[<span class="name">i</span>]).userData = [<span class="name">NSMutableDictionary</span> dictionary]<span class="comment">;</span></span><br></pre></td></tr></table></figure>
 <p>感谢StackOverFlow网友的回答：<a href="http://stackoverflow.com/questions/19073199/sprite-kit-ios7-sknode-userdata-property-not-storing-values" target="_blank" rel="external">http://stackoverflow.com/questions/19073199/sprite-kit-ios7-sknode-userdata-property-not-storing-values</a></p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -185,7 +181,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">1.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ 
  
   </div>
 

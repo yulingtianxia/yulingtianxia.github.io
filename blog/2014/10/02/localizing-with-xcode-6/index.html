@@ -26,9 +26,7 @@
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-6%402x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-7%402x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-10%402x.png">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.924Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.500Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用Xcode6将你的项目本地化">
 <meta name="twitter:description" content="iOS和OSX支持40种语言的本地化，Xcode无疑为这一过程提供了强有力的支持。苹果将这一多语言适配过程细分为Internationalization（国际化）和Localization（本地化）两个阶段。">
@@ -111,7 +109,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#国际化–准备你的APP"><span class="toc-number">1.</span> <span class="toc-text">国际化–准备你的APP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSLocalizedString"><span class="toc-number">1.1.</span> <span class="toc-text">NSLocalizedString</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSFormatter"><span class="toc-number">1.2.</span> <span class="toc-text">NSFormatter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSBundle"><span class="toc-number">1.3.</span> <span class="toc-text">NSBundle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xcode"><span class="toc-number">1.4.</span> <span class="toc-text">Xcode</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地化–翻译你的APP"><span class="toc-number">2.</span> <span class="toc-text">本地化–翻译你的APP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迭代开发–更新你的APP"><span class="toc-number">3.</span> <span class="toc-text">迭代开发–更新你的APP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#国际化–准备你的APP"><span class="toc-number">1.</span> <span class="toc-text">国际化–准备你的APP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSLocalizedString"><span class="toc-number">1.1.</span> <span class="toc-text">NSLocalizedString</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSFormatter"><span class="toc-number">1.2.</span> <span class="toc-text">NSFormatter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSBundle"><span class="toc-number">1.3.</span> <span class="toc-text">NSBundle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xcode"><span class="toc-number">1.4.</span> <span class="toc-text">Xcode</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地化–翻译你的APP"><span class="toc-number">2.</span> <span class="toc-text">本地化–翻译你的APP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迭代开发–更新你的APP"><span class="toc-number">3.</span> <span class="toc-text">迭代开发–更新你的APP</span></a></li></ol>
 		
 		</div>
 		
@@ -154,7 +152,6 @@
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xcodebuide -exportLocalizations -project <span class="tag">&lt;<span class="name">project</span>&gt;</span> -localizationPath <span class="tag">&lt;<span class="name">path</span>&gt;</span></span><br><span class="line">xcodebuide -importLocalizations -project <span class="tag">&lt;<span class="name">project</span>&gt;</span> -localizationPath <span class="tag">&lt;<span class="name">path</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <h2 id="迭代开发–更新你的APP"><a href="#迭代开发–更新你的APP" class="headerlink" title="迭代开发–更新你的APP"></a>迭代开发–更新你的APP</h2><p><img src="http://yulingtianxia.com/resources/QQ20141002-10%402x.png" alt="">  </p>
 <p>无需把翻译工作推到最后去做，因为导入和导出XLIFF文件是可以持续集成的，一边写代码，一边把现有内容导出XLIFF给他人翻译，这样能提高效率。每当有新的翻译修改时也可以及时更新，Xcode会把XLIFF文件内容与当前翻译进度合并；在导出XLIFF时可以选择导出当前开发使用的语言还是已经翻译中的语言，这些强大的服务无疑是Xcode6所赐予我们的。  </p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -220,7 +217,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#国际化–准备你的APP"><span class="toc-number">1.</span> <span class="toc-text">国际化–准备你的APP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSLocalizedString"><span class="toc-number">1.1.</span> <span class="toc-text">NSLocalizedString</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSFormatter"><span class="toc-number">1.2.</span> <span class="toc-text">NSFormatter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSBundle"><span class="toc-number">1.3.</span> <span class="toc-text">NSBundle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xcode"><span class="toc-number">1.4.</span> <span class="toc-text">Xcode</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地化–翻译你的APP"><span class="toc-number">2.</span> <span class="toc-text">本地化–翻译你的APP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迭代开发–更新你的APP"><span class="toc-number">3.</span> <span class="toc-text">迭代开发–更新你的APP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#国际化–准备你的APP"><span class="toc-number">1.</span> <span class="toc-text">国际化–准备你的APP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSLocalizedString"><span class="toc-number">1.1.</span> <span class="toc-text">NSLocalizedString</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSFormatter"><span class="toc-number">1.2.</span> <span class="toc-text">NSFormatter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSBundle"><span class="toc-number">1.3.</span> <span class="toc-text">NSBundle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xcode"><span class="toc-number">1.4.</span> <span class="toc-text">Xcode</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地化–翻译你的APP"><span class="toc-number">2.</span> <span class="toc-text">本地化–翻译你的APP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迭代开发–更新你的APP"><span class="toc-number">3.</span> <span class="toc-text">迭代开发–更新你的APP</span></a></li></ol>
  
   </div>
 

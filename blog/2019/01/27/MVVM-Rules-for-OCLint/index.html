@@ -20,9 +20,7 @@
 <meta property="og:description" content="最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。
 然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：https://github.com/yulingtianxia/oclint/t">
 <meta property="og:image" content="http://yulingtianxia.com/resources/QQ20190127-175054@2x.png">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.949Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.552Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 OCLint 自定义 MVVM 规则">
 <meta name="twitter:description" content="最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。
@@ -106,7 +104,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#编译-OCLint"><span class="toc-number">1.</span> <span class="toc-text">编译 OCLint</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义规则"><span class="toc-number">2.</span> <span class="toc-text">自定义规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建规则"><span class="toc-number">2.1.</span> <span class="toc-text">创建规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生成调试工程"><span class="toc-number">2.2.</span> <span class="toc-text">生成调试工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现规则"><span class="toc-number">2.3.</span> <span class="toc-text">实现规则</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成到-Xcode"><span class="toc-number">3.</span> <span class="toc-text">集成到 Xcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">5.</span> <span class="toc-text">Reference</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">6.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#编译-OCLint"><span class="toc-number">1.</span> <span class="toc-text">编译 OCLint</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义规则"><span class="toc-number">2.</span> <span class="toc-text">自定义规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建规则"><span class="toc-number">2.1.</span> <span class="toc-text">创建规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生成调试工程"><span class="toc-number">2.2.</span> <span class="toc-text">生成调试工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现规则"><span class="toc-number">2.3.</span> <span class="toc-text">实现规则</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成到-Xcode"><span class="toc-number">3.</span> <span class="toc-text">集成到 Xcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">5.</span> <span class="toc-text">Reference</span></a></li></ol>
 		
 		</div>
 		
@@ -148,7 +146,6 @@
 <li><a href="https://github.com/llvm/llvm-project" target="_blank" rel="external">llvm-project</a></li>
 <li><a href="http://clang.llvm.org/docs/IntroductionToTheClangAST.html" target="_blank" rel="external">Introduction to the Clang AST</a></li>
 </ul>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -214,7 +211,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#编译-OCLint"><span class="toc-number">1.</span> <span class="toc-text">编译 OCLint</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义规则"><span class="toc-number">2.</span> <span class="toc-text">自定义规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建规则"><span class="toc-number">2.1.</span> <span class="toc-text">创建规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生成调试工程"><span class="toc-number">2.2.</span> <span class="toc-text">生成调试工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现规则"><span class="toc-number">2.3.</span> <span class="toc-text">实现规则</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成到-Xcode"><span class="toc-number">3.</span> <span class="toc-text">集成到 Xcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">5.</span> <span class="toc-text">Reference</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">6.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#编译-OCLint"><span class="toc-number">1.</span> <span class="toc-text">编译 OCLint</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义规则"><span class="toc-number">2.</span> <span class="toc-text">自定义规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建规则"><span class="toc-number">2.1.</span> <span class="toc-text">创建规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生成调试工程"><span class="toc-number">2.2.</span> <span class="toc-text">生成调试工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现规则"><span class="toc-number">2.3.</span> <span class="toc-text">实现规则</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成到-Xcode"><span class="toc-number">3.</span> <span class="toc-text">集成到 Xcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">5.</span> <span class="toc-text">Reference</span></a></li></ol>
  
   </div>
 

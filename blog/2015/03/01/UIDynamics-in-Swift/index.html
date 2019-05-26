@@ -24,9 +24,7 @@
 <meta property="og:image" content="http://www.bignerdranch.com/img/blog/2014/07/round3.gif">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/UIKit/Reference/UIAcceleration_Class/Art/device_axes.jpg">
 <meta property="og:image" content="http://www.bignerdranch.com/img/blog/2014/07/round4.gif">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.954Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.503Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UIDynamics in Swift">
 <meta name="twitter:description" content="本文翻译自BigNerdRanch，作者Steve Sparks">
@@ -109,7 +107,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#魁首：UIDynamicAnimator"><span class="toc-number">1.</span> <span class="toc-text">魁首：UIDynamicAnimator</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最简单的行为：UIGravityBehavior"><span class="toc-number">2.</span> <span class="toc-text">最简单的行为：UIGravityBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反弹的墙壁：UICollisionBehavior"><span class="toc-number">3.</span> <span class="toc-text">反弹的墙壁：UICollisionBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-Motion"><span class="toc-number">4.</span> <span class="toc-text">Core Motion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他的行为"><span class="toc-number">5.</span> <span class="toc-text">其他的行为</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">6.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#魁首：UIDynamicAnimator"><span class="toc-number">1.</span> <span class="toc-text">魁首：UIDynamicAnimator</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最简单的行为：UIGravityBehavior"><span class="toc-number">2.</span> <span class="toc-text">最简单的行为：UIGravityBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反弹的墙壁：UICollisionBehavior"><span class="toc-number">3.</span> <span class="toc-text">反弹的墙壁：UICollisionBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-Motion"><span class="toc-number">4.</span> <span class="toc-text">Core Motion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他的行为"><span class="toc-number">5.</span> <span class="toc-text">其他的行为</span></a></li></ol>
 		
 		</div>
 		
@@ -174,7 +172,6 @@
 <p>下一个<a href="https://github.com/stevesparks/RockBox/commit/ac1a838d2b4ef575f8581f1ff8c9e9433f8362a8" target="_blank" rel="external">commit</a>添加了一些<code>UIAttachmentBehaviors</code>使10个箱子变成一串箱子。它有点破坏了应用的可玩性，但我想让你看看这些物体是怎么相互连接起来的。  </p>
 <hr>
 <p>译者注：最后一节是作者吐槽Swift经历的，因为Swift版本更新了，这节内容不是很重要所以没翻译。原作者代码风格不够Swift而且语法老旧，我提了个<a href="https://github.com/stevesparks/RockBox/pull/2" target="_blank" rel="external">PR</a>，将语法更新到最新的Swift 1.2。  </p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -240,7 +237,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#魁首：UIDynamicAnimator"><span class="toc-number">1.</span> <span class="toc-text">魁首：UIDynamicAnimator</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最简单的行为：UIGravityBehavior"><span class="toc-number">2.</span> <span class="toc-text">最简单的行为：UIGravityBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反弹的墙壁：UICollisionBehavior"><span class="toc-number">3.</span> <span class="toc-text">反弹的墙壁：UICollisionBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-Motion"><span class="toc-number">4.</span> <span class="toc-text">Core Motion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他的行为"><span class="toc-number">5.</span> <span class="toc-text">其他的行为</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">6.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#魁首：UIDynamicAnimator"><span class="toc-number">1.</span> <span class="toc-text">魁首：UIDynamicAnimator</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最简单的行为：UIGravityBehavior"><span class="toc-number">2.</span> <span class="toc-text">最简单的行为：UIGravityBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反弹的墙壁：UICollisionBehavior"><span class="toc-number">3.</span> <span class="toc-text">反弹的墙壁：UICollisionBehavior</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-Motion"><span class="toc-number">4.</span> <span class="toc-text">Core Motion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他的行为"><span class="toc-number">5.</span> <span class="toc-text">其他的行为</span></a></li></ol>
  
   </div>
 

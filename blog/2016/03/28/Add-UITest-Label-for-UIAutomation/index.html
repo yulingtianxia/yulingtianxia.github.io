@@ -19,14 +19,11 @@ Github 传送门: TB">
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。
 Github 传送门: TB">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.909Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.515Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="为 UIAutomation 添加自动化测试标签的探索">
 <meta name="twitter:description" content="UIAutomation 是苹果提供的自动化测试框架，iOS 不像 Android 那样可以在 xml 文件中自动生成唯一的 id 作为标签，需要我们手动为控件添加可访问性（Accessibility）。如何让一个控件的可访问标签在当前页面唯一且不变呢？当然纯手工在代码中插入加标签的逻辑代码肯定是可行的，但费时费力，所以我在这里做一些用程序自动化添加标签尝试性的探索。
 Github 传送门: TB">
-<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -105,7 +102,7 @@ Github 传送门: TB">
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析-amp-方案"><span class="toc-number">1.</span> <span class="toc-text">分析&方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践-amp-探索"><span class="toc-number">2.</span> <span class="toc-text">实践&探索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受-amp-总结"><span class="toc-number">3.</span> <span class="toc-text">感受&总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析-amp-方案"><span class="toc-number">1.</span> <span class="toc-text">分析&方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践-amp-探索"><span class="toc-number">2.</span> <span class="toc-text">实践&探索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受-amp-总结"><span class="toc-number">3.</span> <span class="toc-text">感受&总结</span></a></li></ol>
 		
 		</div>
 		
@@ -155,7 +152,6 @@ Github 传送门: TB">
 <p>呵呵后来发现<del>大部分人</del>所有人都看不懂，但这个方案真的好用！</p>
 <p>如果大家有更好的方案，或者觉得我的方案一开始就跑偏了，甚至是已经有一个不用手动加标签代码的现成的超屌超牛逼的 iOS 自动化测试框架，请告诉我！据说整个腾讯都是手动加自动化测试标签，老大说做有挑战的事情才有意思嘛。</p>
 <p>欢迎给 <a href="https://github.com/yulingtianxia/TBUIAutoTest" target="_blank" rel="external">TBUIAutoTest</a> 提 PR 和 Issue！</p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -221,7 +217,7 @@ Github 传送门: TB">
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析-amp-方案"><span class="toc-number">1.</span> <span class="toc-text">分析&方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践-amp-探索"><span class="toc-number">2.</span> <span class="toc-text">实践&探索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受-amp-总结"><span class="toc-number">3.</span> <span class="toc-text">感受&总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">4.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析-amp-方案"><span class="toc-number">1.</span> <span class="toc-text">分析&方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践-amp-探索"><span class="toc-number">2.</span> <span class="toc-text">实践&探索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受-amp-总结"><span class="toc-number">3.</span> <span class="toc-text">感受&总结</span></a></li></ol>
  
   </div>
 

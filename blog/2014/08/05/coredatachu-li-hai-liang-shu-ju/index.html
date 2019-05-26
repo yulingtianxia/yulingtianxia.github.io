@@ -18,9 +18,7 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="随着iOS8和OSX10.10的发布，Core Data也迎来了更新。这次的更新可谓是重量级的，它使得程序员能够更加直接高效的操作数据库，在处理大量数据时速度明显提升（这在以前不知有多少程序员因为Core Data批量更新数据效率之低而不得不放弃使用它）。Batch Updates可用于批量快速更新数据，Asynchronous Fetching可用于异步抓取海量数据，并可以通过NSProgres">
 <meta property="og:image" content="http://yulingtianxia.com/resources/IMG_1439.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.913Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.494Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CoreData处理海量数据">
 <meta name="twitter:description" content="随着iOS8和OSX10.10的发布，Core Data也迎来了更新。这次的更新可谓是重量级的，它使得程序员能够更加直接高效的操作数据库，在处理大量数据时速度明显提升（这在以前不知有多少程序员因为Core Data批量更新数据效率之低而不得不放弃使用它）。Batch Updates可用于批量快速更新数据，Asynchronous Fetching可用于异步抓取海量数据，并可以通过NSProgres">
@@ -103,7 +101,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Batch-Updates"><span class="toc-number">1.</span> <span class="toc-text">Batch Updates</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Asynchronous-Fetching"><span class="toc-number">2.</span> <span class="toc-text">Asynchronous Fetching</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Batch-Updates"><span class="toc-number">1.</span> <span class="toc-text">Batch Updates</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Asynchronous-Fetching"><span class="toc-number">2.</span> <span class="toc-text">Asynchronous Fetching</span></a></li></ol>
 		
 		</div>
 		
@@ -144,7 +142,6 @@
 <p>而取消获取数据只需要取消<code>NSProgress</code>就可以了！取消行为会沿着数的根节点蔓延到叶子。</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">progress</span><span class="selector-class">.cancel</span>()</span><br></pre></td></tr></table></figure>
 <p>可以在<code>cancellationHandler</code>属性设置取消后执行的block，这里不再多说。</p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -210,7 +207,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Batch-Updates"><span class="toc-number">1.</span> <span class="toc-text">Batch Updates</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Asynchronous-Fetching"><span class="toc-number">2.</span> <span class="toc-text">Asynchronous Fetching</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">3.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Batch-Updates"><span class="toc-number">1.</span> <span class="toc-text">Batch Updates</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Asynchronous-Fetching"><span class="toc-number">2.</span> <span class="toc-text">Asynchronous Fetching</span></a></li></ol>
  
   </div>
 

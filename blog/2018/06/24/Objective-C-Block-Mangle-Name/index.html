@@ -19,14 +19,11 @@
 <meta property="og:site_name" content="yulingtianxia's blog">
 <meta property="og:description" content="之前写了一篇文章《追踪 Objective-C 方法中的 Block 参数对象》，利用 BlockHook 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。
 主要代码已经整合到 BlockHook 1.0.2 版本">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
-<meta property="og:image" content="http://yulingtianxia.com/resources/payme/wechatpay.jpg">
-<meta property="og:updated_time" content="2019-05-26T09:55:30.929Z">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.541Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="追踪 Objective-C Block 代码定义的位置">
 <meta name="twitter:description" content="之前写了一篇文章《追踪 Objective-C 方法中的 Block 参数对象》，利用 BlockHook 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。
 主要代码已经整合到 BlockHook 1.0.2 版本">
-<meta name="twitter:image" content="http://yulingtianxia.com/resources/payme/alipay.jpg">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -105,7 +102,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#解决思路"><span class="toc-number">1.</span> <span class="toc-text">解决思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mach-O-文件格式"><span class="toc-number">2.</span> <span class="toc-text">Mach-O 文件格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Block-Mangle-Name"><span class="toc-number">3.</span> <span class="toc-text">Block Mangle Name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#解决思路"><span class="toc-number">1.</span> <span class="toc-text">解决思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mach-O-文件格式"><span class="toc-number">2.</span> <span class="toc-text">Mach-O 文件格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Block-Mangle-Name"><span class="toc-number">3.</span> <span class="toc-text">Block Mangle Name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
 		
 		</div>
 		
@@ -143,7 +140,6 @@
 <p>然而我还是这么菜，赶在月底前写了个篇幅短小全是常识的大水文。。。</p>
 <p>本文完。。。</p>
 <p>太水了！！！</p>
-<h2 id="赞赏码"><a href="#赞赏码" class="headerlink" title="赞赏码"></a>赞赏码</h2><p><img src="http://yulingtianxia.com/resources/payme/alipay.jpg" alt="支付宝"><br><img src="http://yulingtianxia.com/resources/payme/wechatpay.jpg" alt="微信支付"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -209,7 +205,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#解决思路"><span class="toc-number">1.</span> <span class="toc-text">解决思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mach-O-文件格式"><span class="toc-number">2.</span> <span class="toc-text">Mach-O 文件格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Block-Mangle-Name"><span class="toc-number">3.</span> <span class="toc-text">Block Mangle Name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#赞赏码"><span class="toc-number">5.</span> <span class="toc-text">赞赏码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#解决思路"><span class="toc-number">1.</span> <span class="toc-text">解决思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mach-O-文件格式"><span class="toc-number">2.</span> <span class="toc-text">Mach-O 文件格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Block-Mangle-Name"><span class="toc-number">3.</span> <span class="toc-text">Block Mangle Name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
  
   </div>
 
