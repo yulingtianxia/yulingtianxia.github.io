@@ -115,18 +115,24 @@
 		
 		</div>
 		
-		<p>iOS和OSX支持40种语言的本地化，Xcode无疑为这一过程提供了强有力的支持。苹果将这一多语言适配过程细分为Internationalization（国际化）和Localization（本地化）两个阶段。<br><a id="more"></a></p>
+		<p>iOS和OSX支持40种语言的本地化，Xcode无疑为这一过程提供了强有力的支持。苹果将这一多语言适配过程细分为Internationalization（国际化）和Localization（本地化）两个阶段。  </p>
+<a id="more"></a>
 <h2 id="国际化–准备你的APP"><a href="#国际化–准备你的APP" class="headerlink" title="国际化–准备你的APP"></a>国际化–准备你的APP</h2><p><img src="http://yulingtianxia.com/resources/QQ20141002-9%402x.png" alt>  </p>
 <p>在将你的APP适配各种语言本地化之前，你得先让你的APP富有国际范儿，也就是说国际化是一条通往本地化的必经之路。在国际化阶段，你需要让你的APP与语言和区域独立。  </p>
 <p>苹果的框架已经帮我们把不同语言的数据分离开，这更有助于我们管理这些资源，包括图片、声音、视频、文档、用户界面文字（甚至代码中编写的用户界面文字），它们会被建立在同一个bundle中。  </p>
 <h3 id="NSLocalizedString"><a href="#NSLocalizedString" class="headerlink" title="NSLocalizedString"></a>NSLocalizedString</h3><p>我们来使用<code>NSLocalizedString</code>来让用户界面的文字国际化，不过这些文字不是在IB上输入的，而是在代码中产生并赋值的：  </p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NSLocalizedString</span><span class="params">(key: String, tableName: String? = <span class="keyword">default</span>, bundle: NSBundle = <span class="keyword">default</span>, value: String = <span class="keyword">default</span>, #comment: String)</span></span> -&gt; <span class="type">String</span></span><br></pre></td></tr></table></figure>
-<p>上面这个Swift语言声明的函数可以直接返回一个经过本地化处理过的字符串，这就使得你在代码中给一些控件文本赋值时更有“国际化视野”：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">self</span>.text = <span class="built_in">NSLocalizedString</span>(<span class="string">"SHARE"</span>, comment: <span class="string">"share score"</span>)</span><br></pre></td></tr></table></figure></p>
+
+<p>上面这个Swift语言声明的函数可以直接返回一个经过本地化处理过的字符串，这就使得你在代码中给一些控件文本赋值时更有“国际化视野”：  </p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">self.text</span> = NSLocalizedString(<span class="string">"SHARE"</span>, comment: <span class="string">"share score"</span>)</span><br></pre></td></tr></table></figure>
+
 <p>因为不用的语言会有不同的专业名词，所以最后的comment参数很重要，它可以暗示翻译人员这段文字要表达的含义。而第一个参数key的内容为基础语种的内容，将它作为“键”来映射其他语言对应翻译后的“值”。如果我们需要在字符串中插入其他内容，这时需要改进下：  </p>
 <figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> text = <span class="built_in">String</span>.localizedStringWithFormat(NSLocalizedString(<span class="string">"I got %d points in Spiral. Come on with me! https://itunes.apple.com/us/app/square-spiral/id920811081"</span>, comment: <span class="string">"share content"</span>), <span class="built_in">Data</span>.score)</span><br></pre></td></tr></table></figure>
+
 <p><code>localizedStringWithFormat:</code>方法保证了插入字符串中的内容也被转化成本地格式，比如时间格式、数字的格式等。而此时在Swift字符串中插入其他数据就不能使用<code>\()</code>了，只能用百分号占位的形式。  </p>
 <p>对应的在Localizable.strings中可以这样写：  </p>
 <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*share score*/</span></span><br><span class="line"><span class="string">"SHARE"</span>=<span class="string">"分享战绩"</span><span class="comment">;</span></span><br><span class="line"><span class="comment">/*share content*/</span></span><br><span class="line"><span class="string">"I got %d points in Spiral. Come on with me! https://itunes.apple.com/us/app/square-spiral/id920811081"</span>=<span class="string">"我在Spiral游戏中得了%1$d分，快来超越我吧！https://itunes.apple.com/cn/app/square-spiral/id920811081"</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
 <p>这样就将英文与中文键值对应起来了，注意那个<code>1$</code>表示是在键内容（即英文原文）中第一个插入的数据，因为不用语言表达同一个意思时，插入字符串中的数据顺序可能会有变化，这个<code>数字+$</code>的标记记录了它们原本的顺序。</p>
 <h3 id="NSFormatter"><a href="#NSFormatter" class="headerlink" title="NSFormatter"></a>NSFormatter</h3><p>NSFormatter算是老朋友了，它把数据转化成人们易读的字符串，而且还会根据不同语言和区域进行格式上的优化。它默认使用当地的语言习惯，我们不需要配置任何参数。比如显示时间日期，数字，金融，字节计数等格式上的本地化。现在iOS8和OSX Yosemite加入了健康相关的功能，NSFormatter也加入了很多新的量词，比如能量、长度高度、重量等方面。  </p>
 <h3 id="NSBundle"><a href="#NSBundle" class="headerlink" title="NSBundle"></a>NSBundle</h3><p>你的APP构建于很多文件夹中，而不是一个单独的文件。这些文件夹被叫做bundle。它们不仅仅包含了你的APP，还有你APP的扩展(extensions)，你的构架(frameworks)等。而NSBundle提供了获取这些bundle中资源的标准API。当你使用这些API的时候，它们会自动使用符合当前地区语言的最恰当的资源。建立bundle是Xcode的活儿，所以我们不需要手动去管理这些资源文件放在bundle的具体位置，而是告诉Xcode哪些资源可以被本地化，设置好资源文件对应的语言，然后就交给Xcode去管理这些资源文件在bundle中的位置吧。  </p>
@@ -152,6 +158,7 @@
 <p><img src="http://yulingtianxia.com/resources/QQ20141002-7%402x.png" alt>  </p>
 <p>也可以通过命令行的方式进行导入导出XLIFF文件操作：  </p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xcodebuide -exportLocalizations -project <span class="tag">&lt;<span class="name">project</span>&gt;</span> -localizationPath <span class="tag">&lt;<span class="name">path</span>&gt;</span></span><br><span class="line">xcodebuide -importLocalizations -project <span class="tag">&lt;<span class="name">project</span>&gt;</span> -localizationPath <span class="tag">&lt;<span class="name">path</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="迭代开发–更新你的APP"><a href="#迭代开发–更新你的APP" class="headerlink" title="迭代开发–更新你的APP"></a>迭代开发–更新你的APP</h2><p><img src="http://yulingtianxia.com/resources/QQ20141002-10%402x.png" alt>  </p>
 <p>无需把翻译工作推到最后去做，因为导入和导出XLIFF文件是可以持续集成的，一边写代码，一边把现有内容导出XLIFF给他人翻译，这样能提高效率。每当有新的翻译修改时也可以及时更新，Xcode会把XLIFF文件内容与当前翻译进度合并；在导出XLIFF时可以选择导出当前开发使用的语言还是已经翻译中的语言，这些强大的服务无疑是Xcode6所赐予我们的。  </p>
   

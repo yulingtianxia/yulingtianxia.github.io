@@ -109,114 +109,119 @@
 		
 		<p>最近玩了玩Watch开发，而目前Watch的主要逻辑处理都是放在WatchKit Extension。真正的Host App，也就是WatchKit App只是用来在界面上显示数据的。于是实践了下containing app与app extension之间的通信和数据共享。  </p>
 <a id="more"></a>
+
 <h2 id="App-Groups-amp-Framework"><a href="#App-Groups-amp-Framework" class="headerlink" title="App Groups &amp; Framework"></a>App Groups &amp; Framework</h2><p>这两样兵器大家都很熟悉。想要共享数据就需要开启App Groups，给group起一个风骚的名字，这样无论是<code>NSUserDefaults</code>还是<code>NSFileManager</code>都能通过App Groups共享持久层数据了。Core Data也需要<code>NSFileManager</code>提供存储的URL支持，而存取Core Data中的数据需要大量的模板代码，在持久层文件共享之后，代码也应该做到共享，所以将能够重用的代码打包成Framework就显得尤为重要。(除非是为了做毕设凑代码量)  </p>
-<p>还是以<a href="https://github.com/yulingtianxia/HardChoice" target="_blank" rel="external">HardChoice</a>为例，我新建了一个类型为Cocoa Touch Framework的target，名字叫DataKit。新建一个DataAccess.swift文件并将以前AppDelegate.swift中自动生成的Core Data模版代码转移过来。得益于Swift1.2的改进，构造一个线程安全的单例模式变得无比简单：  </p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">private<span class="keyword"> static</span> let<span class="built_in"> instance </span>= DataAccess()<span class="keyword"></span><br><span class="line">public</span> class var sharedInstance<span class="keyword"> :</span> DataAccess &#123;</span><br><span class="line">  <span class="built_in"> return </span>instance</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还是以<a href="https://github.com/yulingtianxia/HardChoice" target="_blank" rel="noopener">HardChoice</a>为例，我新建了一个类型为Cocoa Touch Framework的target，名字叫DataKit。新建一个DataAccess.swift文件并将以前AppDelegate.swift中自动生成的Core Data模版代码转移过来。得益于Swift1.2的改进，构造一个线程安全的单例模式变得无比简单：  </p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">private static let<span class="built_in"> instance </span>= DataAccess()</span><br><span class="line">public class var sharedInstance : DataAccess &#123;</span><br><span class="line">   return instance</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>需要注意Swift的权限控制问题，我们需要在暴漏给框架使用者的公开接口和属性前加上<code>public</code>关键字修饰。  </p>
 <p>为了实现Core Data持久层共享，需要修改原先的<code>applicationDocumentsDirectory</code>属性：  </p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">lazy var applicationDocumentsDirectory: <span class="built_in">NSURL</span> = &#123;</span><br><span class="line">   <span class="comment">// The directory the application uses to store the Core Data store file. This code uses a directory named "com.yxy.iCloudCoreDataTest" in the application's documents Application Support directory.</span></span><br><span class="line">   <span class="comment">//        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)</span></span><br><span class="line">   <span class="comment">//        return urls[urls.count-1] as! NSURL</span></span><br><span class="line">   var sharedContainerURL:<span class="built_in">NSURL</span>? = <span class="built_in">NSFileManager</span>.defaultManager().containerURLForSecurityApplicationGroupIdentifier(appGroupIdentifier)</span><br><span class="line">   <span class="keyword">return</span> sharedContainerURL ?? <span class="built_in">NSURL</span>()</span><br><span class="line">   &#125;()</span><br></pre></td></tr></table></figure>
+
 <p>在这里<code>containerURLForSecurityApplicationGroupIdentifier</code>方法起到了至关作用。  </p>
 <p>同样能够共享的代码就是Model层，它们都是<code>NSManagedObject</code>的子类，用于存储Core Data中的数据实例。在把它们从原来的位置拖拽过来时别忘了更改下文件的target：”File inspector”-&gt;”Target Membership”，选中DataKit。  </p>
 <p>在处理iCloud与Core Data同步数据时，我对<code>NSPersistentStoreCoordinatorStoresWillChangeNotification</code>、<code>NSPersistentStoreCoordinatorStoresDidChangeNotification</code>和<code>NSPersistentStoreDidImportUbiquitousContentChangesNotification</code>这三个数据更新的通知进行了观察和处理，但是写在了<code>persistentStoreCoordinator</code>计算属性的get方法中。现在使用<code>lazy</code>关键字进行惰性加载，导致对这三个数据更新通知的观察延后，这会引发严重的错误。所以需要将那三个<code>addObserverForName(name, object, queue, usingBlock)</code>方法挪到<code>init()</code>方法中，在第一时间观察通知。</p>
 <p>最后在AppDelegate.swift中添加<code>import DataKit</code>，替换掉中的<code>application(application, didFinishLaunchingWithOptions) -&gt; Bool</code>方法中<code>controller.managedObjectContext = managedObjectContext</code>为<code>controller.managedObjectContext = DataAccess.sharedInstance.managedObjectContext</code>，也就是不再使用以前的模板代码中的上下文实例，而是用DataAccess单例中的<code>managedObjectContext</code>。  </p>
 <p>同理，<code>applicationWillTerminate(application)</code>方法中的<code>saveContext()</code>也要替换成<code>DataAccess.sharedInstance.saveContext()</code>。  </p>
 <p>于是我们也可以在App Extensions中import进来DataKit，进行地存取Core Data中的数据啦。而且用的是同一段代码，同一块数据。简直是同一个世界，同一个梦想啊。  </p>
-<h2 id="Container-app-与-Extension的通信"><a href="#Container-app-与-Extension的通信" class="headerlink" title="Container app 与 Extension的通信"></a>Container app 与 Extension的通信</h2><p>要知道之前做的共享数据只能是主动获取数据，并不能在数据变化时实时获取通知。如果用户在iPhone上更改了数据，我们需要在Watch上实时更改界面上数据的显示。这点<code>NSNotificationCenter</code>是做不到的，因为它只在App内部工作而不会在两个App之间发通知。同样KVO也无能为力，自己手写委托什么的更是别想了(因为我试过了)。直到我在<a href="https://medium.com/@saberjack/ios-sending-notifications-between-your-apps-3fe7422d6a41" target="_blank" rel="external">这篇文章</a>找到了救世主，问题迎刃而解：  </p>
+<h2 id="Container-app-与-Extension的通信"><a href="#Container-app-与-Extension的通信" class="headerlink" title="Container app 与 Extension的通信"></a>Container app 与 Extension的通信</h2><p>要知道之前做的共享数据只能是主动获取数据，并不能在数据变化时实时获取通知。如果用户在iPhone上更改了数据，我们需要在Watch上实时更改界面上数据的显示。这点<code>NSNotificationCenter</code>是做不到的，因为它只在App内部工作而不会在两个App之间发通知。同样KVO也无能为力，自己手写委托什么的更是别想了(因为我试过了)。直到我在<a href="https://medium.com/@saberjack/ios-sending-notifications-between-your-apps-3fe7422d6a41" target="_blank" rel="noopener">这篇文章</a>找到了救世主，问题迎刃而解：  </p>
 <h3 id="CFNotificationCenterGetDarwinNotifyCenter"><a href="#CFNotificationCenterGetDarwinNotifyCenter" class="headerlink" title="CFNotificationCenterGetDarwinNotifyCenter"></a>CFNotificationCenterGetDarwinNotifyCenter</h3><p>这是CoreFoundation库中一个系统级的通知中心，苹果的系统自己也在用它，看清了”Darwin”了没有？哈哈！看了下<code>CFNotificationCenter</code>相关的API，跟<code>NSNotificationCenter</code>有点像。需要用到Toll-Bridge的知识与CoreFoundation相关的类进行桥接，这虽不常用但也不难。还需要注意下个别参数的使用。  </p>
-<h3 id="MMWormhole"><a href="#MMWormhole" class="headerlink" title="MMWormhole"></a>MMWormhole</h3><p>更有趣的是几乎同时我也发现了<a href="https://github.com/mutualmobile/MMWormhole" target="_blank" rel="external">MMWormhole</a>这个开源库，它专门用于在Container app 与 Extension间传递消息。我读了下它的代码，虽然只有一个类，但是依然学到了很多。虽然在我的<a href="https://github.com/yulingtianxia/HardChoice" target="_blank" rel="external">HardChoice</a>上完全可以只用<code>CFNotificationCenter</code>进行通知就可以了，完全不需要使用MMWormhole来持久化数据和传递数据。但我觉得以后还可能会用到MMWormhole，于是我用Swift1.2重新写了一个<a href="https://github.com/yulingtianxia/HardChoice/blob/master/HardChoice/DataKit/Wormhole.swift" target="_blank" rel="external">Wormhole.swift</a>，放在了DataKit里。  </p>
-<h3 id="Swift与CoreFoundation"><a href="#Swift与CoreFoundation" class="headerlink" title="Swift与CoreFoundation"></a>Swift与CoreFoundation</h3><p>原来OC写的两百多行的MMWormhole被我用150行“清新优雅”的Swift代码取代。之所以打上引号是因为Swift与CoreFoundation之间的桥接有些不愉快。因为CoreFoundation中都是C的API，C中的指针和类型转换很出格，有安全隐患。Swift是一门安全的语言，但为了调用由历史原因造成的不安全的C的API，Swift中引入了很多类型来映射C中的类型，参考<a href="https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html#//apple_ref/doc/uid/TP40014216-CH8-XID_11" target="_blank" rel="external">Interacting with C APIs</a>  </p>
+<h3 id="MMWormhole"><a href="#MMWormhole" class="headerlink" title="MMWormhole"></a>MMWormhole</h3><p>更有趣的是几乎同时我也发现了<a href="https://github.com/mutualmobile/MMWormhole" target="_blank" rel="noopener">MMWormhole</a>这个开源库，它专门用于在Container app 与 Extension间传递消息。我读了下它的代码，虽然只有一个类，但是依然学到了很多。虽然在我的<a href="https://github.com/yulingtianxia/HardChoice" target="_blank" rel="noopener">HardChoice</a>上完全可以只用<code>CFNotificationCenter</code>进行通知就可以了，完全不需要使用MMWormhole来持久化数据和传递数据。但我觉得以后还可能会用到MMWormhole，于是我用Swift1.2重新写了一个<a href="https://github.com/yulingtianxia/HardChoice/blob/master/HardChoice/DataKit/Wormhole.swift" target="_blank" rel="noopener">Wormhole.swift</a>，放在了DataKit里。  </p>
+<h3 id="Swift与CoreFoundation"><a href="#Swift与CoreFoundation" class="headerlink" title="Swift与CoreFoundation"></a>Swift与CoreFoundation</h3><p>原来OC写的两百多行的MMWormhole被我用150行“清新优雅”的Swift代码取代。之所以打上引号是因为Swift与CoreFoundation之间的桥接有些不愉快。因为CoreFoundation中都是C的API，C中的指针和类型转换很出格，有安全隐患。Swift是一门安全的语言，但为了调用由历史原因造成的不安全的C的API，Swift中引入了很多类型来映射C中的类型，参考<a href="https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html#//apple_ref/doc/uid/TP40014216-CH8-XID_11" target="_blank" rel="noopener">Interacting with C APIs</a>  </p>
 <p>Swift中不用像OC那样使用<code>__bridge</code>和类型转换、内存管理交接，因为这些全都交给Swift了：如果Swift中存在类型映射到C的API所需的参数类型，那么可以直接将其传入API。此外内存管理也归Swift中的ARC统一管理。于是Swift大大简化了与CoreFoundation打交道的过程。  </p>
 <p>我们最关心的是指针，<code>UnsafePointer&lt;SwiftType&gt;</code>对应了<code>const CType *</code>，<code>UnsafeMutablePointer&lt;SwiftType&gt;</code>对应了<code>CType *</code>。当然SwiftType与CType也是对应的：  </p>
 <table>
 <thead>
 <tr>
 <th>C Type</th>
-<th style="text-align:center">Swift Type</th>
+<th align="center">Swift Type</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>bool</td>
-<td style="text-align:center">CBool</td>
+<td align="center">CBool</td>
 </tr>
 <tr>
 <td>char, signed char</td>
-<td style="text-align:center">CChar</td>
+<td align="center">CChar</td>
 </tr>
 <tr>
 <td>unsigned char</td>
-<td style="text-align:center">CUnsignedChar</td>
+<td align="center">CUnsignedChar</td>
 </tr>
 <tr>
 <td>short</td>
-<td style="text-align:center">CShort</td>
+<td align="center">CShort</td>
 </tr>
 <tr>
 <td>unsigned short</td>
-<td style="text-align:center">CUnsignedShort</td>
+<td align="center">CUnsignedShort</td>
 </tr>
 <tr>
 <td>int</td>
-<td style="text-align:center">CInt</td>
+<td align="center">CInt</td>
 </tr>
 <tr>
 <td>unsigned int</td>
-<td style="text-align:center">CUnsignedInt</td>
+<td align="center">CUnsignedInt</td>
 </tr>
 <tr>
 <td>long</td>
-<td style="text-align:center">CLong</td>
+<td align="center">CLong</td>
 </tr>
 <tr>
 <td>unsigned long</td>
-<td style="text-align:center">CUnsignedLong</td>
+<td align="center">CUnsignedLong</td>
 </tr>
 <tr>
 <td>long long</td>
-<td style="text-align:center">CLongLong</td>
+<td align="center">CLongLong</td>
 </tr>
 <tr>
 <td>unsigned long long</td>
-<td style="text-align:center">CUnsignedLongLong</td>
+<td align="center">CUnsignedLongLong</td>
 </tr>
 <tr>
 <td>wchar_t</td>
-<td style="text-align:center">CWideChar</td>
+<td align="center">CWideChar</td>
 </tr>
 <tr>
 <td>char16_t</td>
-<td style="text-align:center">CChar16</td>
+<td align="center">CChar16</td>
 </tr>
 <tr>
 <td>char32_t</td>
-<td style="text-align:center">CChar32</td>
+<td align="center">CChar32</td>
 </tr>
 <tr>
 <td>float</td>
-<td style="text-align:center">CFloat</td>
+<td align="center">CFloat</td>
 </tr>
 <tr>
 <td>double</td>
-<td style="text-align:center">CDouble</td>
+<td align="center">CDouble</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>更多的转换规则，在上面提到的官方文档有很详细的描述，这里只说三个tips：  </p>
 <ol>
 <li>在Swift中将<code>self</code>转成<code>UnsafePointer&lt;Void&gt;</code>(也就是<code>const void *</code>)只需用这个函数：<code>unsafeAddressOf(self)</code>  </li>
 <li>CoreFoundation库中后缀为”Ref”的类在Swift中已经去掉后缀。  </li>
-<li>Swift中函数指针被表示为<code>CFunctionPointer&lt;Type&gt;</code>，Type就是函数的类型，但还不允许你将Swift写的函数或闭包转化成<code>CFunctionPointer</code>，也就是干脆没提供建立<code>CFunctionPointer</code>实例的方法，只能通过外部引入C的函数。这就涉及到了Swift与OC混编，请戳<a href="https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html#//apple_ref/doc/uid/TP40014216-CH10-XID_77" target="_blank" rel="external">Swift and Objective-C in the Same Project</a>  </li>
+<li>Swift中函数指针被表示为<code>CFunctionPointer&lt;Type&gt;</code>，Type就是函数的类型，但还不允许你将Swift写的函数或闭包转化成<code>CFunctionPointer</code>，也就是干脆没提供建立<code>CFunctionPointer</code>实例的方法，只能通过外部引入C的函数。这就涉及到了Swift与OC混编，请戳<a href="https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html#//apple_ref/doc/uid/TP40014216-CH10-XID_77" target="_blank" rel="noopener">Swift and Objective-C in the Same Project</a>  </li>
 </ol>
 <h3 id="在Framework中混编OC"><a href="#在Framework中混编OC" class="headerlink" title="在Framework中混编OC"></a>在Framework中混编OC</h3><p>我之所以需要做这种破坏工程纯洁性的事儿，是因为要用到下面这个方法来对通知进行观察：  </p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CFNotificationCenterAddObserver</span><span class="params">(center: CFNotificationCenter!, observer: UnsafePointer&lt;Void&gt;, callBack: CFNotificationCallback, name: CFString!, object: UnsafePointer&lt;Void&gt;, suspensionBehavior: CFNotificationSuspensionBehavior)</span></span></span><br></pre></td></tr></table></figure>
+
 <p>除了类型为<code>CFNotificationCallback</code>的参数，其余的都好说：  </p>
 <figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">typealias <span class="type">CFNotificationCallback</span> = <span class="type">CFunctionPointer</span>&lt;((<span class="type">CFNotificationCenter</span>!, <span class="type">UnsafeMutablePointer</span>&lt;<span class="type">Void</span>&gt;, <span class="type">CFString</span>!, <span class="type">UnsafePointer</span>&lt;<span class="type">Void</span>&gt;, <span class="type">CFDictionary</span>!) -&gt; <span class="type">Void</span>)&gt;</span><br></pre></td></tr></table></figure>
+
 <p>于是就回到了<code>CFunctionPointer</code>这块蛋疼地上了，只好在OC里写C函数然后调用之：  </p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="built_in">NSString</span> * <span class="keyword">const</span> WormholeNotificationName = <span class="string">@"WormholeNotificationName"</span>;</span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HelpMethod</span></span></span><br><span class="line">- (instancetype)init</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        _callback = wormholeNotificationCallback;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">void</span> wormholeNotificationCallback(<span class="built_in">CFNotificationCenterRef</span> center,</span><br><span class="line">                                  <span class="keyword">void</span> * observer,</span><br><span class="line">                                  <span class="built_in">CFStringRef</span> name,</span><br><span class="line">                                  <span class="keyword">void</span> <span class="keyword">const</span> * object,</span><br><span class="line">                                  <span class="built_in">CFDictionaryRef</span> userInfo) &#123;</span><br><span class="line">    <span class="built_in">NSString</span> *identifier = (__bridge <span class="built_in">NSString</span> *)name;</span><br><span class="line">    [[<span class="built_in">NSNotificationCenter</span> defaultCenter] postNotificationName:WormholeNotificationName</span><br><span class="line">                                                        object:<span class="literal">nil</span></span><br><span class="line">                                                      userInfo:@&#123;<span class="string">@"identifier"</span> : identifier&#125;];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="built_in">NSString</span> * <span class="keyword">const</span> WormholeNotificationName = <span class="string">@"WormholeNotificationName"</span>;</span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HelpMethod</span></span></span><br><span class="line">- (<span class="keyword">instancetype</span>)init</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        _callback = wormholeNotificationCallback;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">void</span> wormholeNotificationCallback(<span class="built_in">CFNotificationCenterRef</span> center,</span><br><span class="line">                                  <span class="keyword">void</span> * observer,</span><br><span class="line">                                  <span class="built_in">CFStringRef</span> name,</span><br><span class="line">                                  <span class="keyword">void</span> <span class="keyword">const</span> * object,</span><br><span class="line">                                  <span class="built_in">CFDictionaryRef</span> userInfo) &#123;</span><br><span class="line">    <span class="built_in">NSString</span> *identifier = (__bridge <span class="built_in">NSString</span> *)name;</span><br><span class="line">    [[<span class="built_in">NSNotificationCenter</span> defaultCenter] postNotificationName:WormholeNotificationName</span><br><span class="line">                                                        object:<span class="literal">nil</span></span><br><span class="line">                                                      userInfo:@&#123;<span class="string">@"identifier"</span> : identifier&#125;];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
 <p>然后在Swift中这样写就可以了：  </p>
 <figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CFNotificationCenterAddObserver(<span class="name">center</span>, unsafeAddressOf(<span class="name">self</span>), helpMethod.callback, identifier, <span class="literal">nil</span>, CFNotificationSuspensionBehavior.DeliverImmediately)</span><br></pre></td></tr></table></figure>
+
 <p>在Swift中使用OC写的类本来是一件很easy的事儿，但是到了Framework中就变得不寻常。我在DataKit中新建了<code>HelpMethod</code>类，并建立”DataKit-Bridging-Header.h”文件，将HelpMethod.h头文件引入，然后在DataKit target下的”Build Settings” -&gt; “Swift Complier-Code Generation” -&gt; “Objective-C Bridging Header”下填入”DataKit-Bridging-Header.h”，编译出错：<strong>using bridging headers with framework targets is unsupported</strong>。  </p>
-<p>在stackoverflow上找到了<a href="http://stackoverflow.com/questions/24875745/xcode-6-beta-4-using-bridging-headers-with-framework-targets-is-unsupported" target="_blank" rel="external">解决方案</a>，于是删除之前的”DataKit-Bridging-Header.h”文件并清除”Build Settings”关于Bridging Header的引用；在DataKit.h添加<code>#import &quot;HelpMethod.h&quot;</code>，并在HelpMethod.h文件的 “File inspector”-&gt;”Target Membership”中DataKit右侧将”project”修改为”public”(否则会出现<strong>include of non-modular header inside framework module ‘DataKit’</strong>的编译错误)。  </p>
+<p>在stackoverflow上找到了<a href="http://stackoverflow.com/questions/24875745/xcode-6-beta-4-using-bridging-headers-with-framework-targets-is-unsupported" target="_blank" rel="noopener">解决方案</a>，于是删除之前的”DataKit-Bridging-Header.h”文件并清除”Build Settings”关于Bridging Header的引用；在DataKit.h添加<code>#import &quot;HelpMethod.h&quot;</code>，并在HelpMethod.h文件的 “File inspector”-&gt;”Target Membership”中DataKit右侧将”project”修改为”public”(否则会出现<strong>include of non-modular header inside framework module ‘DataKit’</strong>的编译错误)。  </p>
 <p>至此，我们可以在<code>HelpMethod</code>类中实现一个函数指针，并在Wormhole.swift文件中直接使用这个函数指针来为<code>CFunctionPointer</code>类型的参数传值。  </p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>来个效果图：  </p>
 <p><img src="http://yulingtianxia.com/resources/hardchoice.gif" alt>  </p>

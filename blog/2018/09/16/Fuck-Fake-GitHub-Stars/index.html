@@ -105,11 +105,12 @@
 		
 		</div>
 		
-		<p>前一阵子看到一篇文章 <a href="https://juejin.im/post/5b8c9310f265da4361530560" target="_blank" rel="external">《石锤 github 买 star 行为》</a>，第一反应是很震惊。是真的很震惊，因为文章中提到的 CocoaDebug 我也 star 了，没想到竟然涉嫌购买 star 炒作，蒙蔽了好多人的双眼。没错，我就是跟风 star，看别的大神 star 啥就顺手 star。 也有的人看 Trending 上啥火顺手 star，甚至用脚本自动 star。</p>
+		<p>前一阵子看到一篇文章 <a href="https://juejin.im/post/5b8c9310f265da4361530560" target="_blank" rel="noopener">《石锤 github 买 star 行为》</a>，第一反应是很震惊。是真的很震惊，因为文章中提到的 CocoaDebug 我也 star 了，没想到竟然涉嫌购买 star 炒作，蒙蔽了好多人的双眼。没错，我就是跟风 star，看别的大神 star 啥就顺手 star。 也有的人看 Trending 上啥火顺手 star，甚至用脚本自动 star。</p>
 <p>这条黑产背后到底隐藏着什么？GitHub 上还有哪些大笨蛋也曾靠买 Star 蒙蔽了大神们的双眼呢？我写了个简单的程序用于挖掘基于 Star 的关系链，并进行聚类分析。然后从 CocoaDebug 这个 repo 入手，沿着关系链一层层深挖下去。</p>
 <p>用数据说话，结果一定也会让你大开眼界。正义可能会迟到，但绝不会缺席！</p>
-<p>项目源码：<a href="https://github.com/yulingtianxia/FuckFakeGitHubStars" target="_blank" rel="external">FuckFakeGitHubStars</a></p>
+<p>项目源码：<a href="https://github.com/yulingtianxia/FuckFakeGitHubStars" target="_blank" rel="noopener">FuckFakeGitHubStars</a></p>
 <a id="more"></a>
+
 <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><ol>
 <li>用 GitHub 的 API 获取 repo 有哪些用户 star 了，然后再看看这些用户都 star 了哪些 repo。</li>
 <li>将 star 行为相似的用户和 repo 聚类</li>
@@ -126,13 +127,16 @@
 </ol>
 <p>由于数据量实在是太大了，而且也受限于 GitHub API 请求频率的限制和 CPU 计算的耗时，在上面思路中的第五步中只运行了一部分。当然，全部深挖都只是时间问题，无奈数据量级的恐怖，先把阶段性成果输出下。</p>
 <ol>
-<li>从 CocoaDebug 入手挖掘出的疑似黑产账号达到了900左右。</li>
-<li>CocoaDebug 有 30% 左右的 Star 可能是买的。</li>
-<li><p>在 <a href="https://juejin.im/post/5b8c9310f265da4361530560" target="_blank" rel="external">《石锤 github 买 star 行为》</a> 文章中跟 CocoaDebug 一起被揭露的『难兄难弟』所购买的 Star 更为夸张，超过了半数：</p>
+<li><p>从 CocoaDebug 入手挖掘出的疑似黑产账号达到了900左右。</p>
+</li>
+<li><p>CocoaDebug 有 30% 左右的 Star 可能是买的。</p>
+</li>
+<li><p>在 <a href="https://juejin.im/post/5b8c9310f265da4361530560" target="_blank" rel="noopener">《石锤 github 买 star 行为》</a> 文章中跟 CocoaDebug 一起被揭露的『难兄难弟』所购买的 Star 更为夸张，超过了半数：</p>
  <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">repo owner<span class="regexp">/name: baoleiji/</span>QilinBaoleiji stargazer <span class="string">num:</span> <span class="number">1447</span> black <span class="string">percent:</span><span class="number">0.5770559778852798</span></span><br><span class="line">repo owner<span class="regexp">/name: 3348375016/</span>ITSecrets stargazer <span class="string">num:</span> <span class="number">1589</span> black <span class="string">percent:</span><span class="number">0.5173064820641913</span></span><br></pre></td></tr></table></figure>
+
 <p> 当然，再深挖跑一轮数据可能会发现这个比例更大。</p>
 </li>
-<li><p>Jinxiansen 的 SwiftServerSide-Vapor 曾在 8 月 5 日登上了 Trending，当日收获 104个 Star。如果我没记错的话，mattt 大神也 star 并 follow 过（现在发现又取关了，果然即便蒙蔽了大神的双眼那也只是暂时的事儿）。神奇的是，这个 repo 中有 105 个 Star 疑似来自黑产。附上<a href="https://www.v2ex.com/t/471479" target="_blank" rel="external">这篇 V 站的贴子更有趣</a>。这哥们写的另外一个 JHUD 也是同理。</p>
+<li><p>Jinxiansen 的 SwiftServerSide-Vapor 曾在 8 月 5 日登上了 Trending，当日收获 104个 Star。如果我没记错的话，mattt 大神也 star 并 follow 过（现在发现又取关了，果然即便蒙蔽了大神的双眼那也只是暂时的事儿）。神奇的是，这个 repo 中有 105 个 Star 疑似来自黑产。附上<a href="https://www.v2ex.com/t/471479" target="_blank" rel="noopener">这篇 V 站的贴子更有趣</a>。这哥们写的另外一个 JHUD 也是同理。</p>
  <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repo owner<span class="regexp">/name: Jinxiansen/</span>SwiftServerSide-Vapor stargazer <span class="string">num:</span> <span class="number">583</span> black <span class="string">percent:</span><span class="number">0.18010291595197256</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>UCodeUStory 的 S-MVP，你慢慢涨 Star 就能逃得了么？</p>
@@ -146,12 +150,13 @@
 </li>
 <li><p>仿豆瓣的、仿知乎的。MelonRice 还有个放虎扑的，我脚本还没扫到它，手动点进去一看 star 的人，还是那尿性，也都 star 了前面那位 Jinxiansen。</p>
  <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">repo owner<span class="regexp">/name: jianxiaoBai/</span>douban stargazer <span class="string">num:</span> <span class="number">288</span> black <span class="string">percent:</span><span class="number">0.3715277777777778</span></span><br><span class="line">repo owner<span class="regexp">/name: MelonRice/</span>zhihudaily_flutter stargazer <span class="string">num:</span> <span class="number">163</span> black <span class="string">percent:</span><span class="number">0.2085889570552147</span></span><br></pre></td></tr></table></figure>
+
 </li>
 </ol>
 <p>因为找出来的数据太多了，这里就不逐个去看了，这里只是随便拎几个出来。</p>
 <p>要是 GitHub API 没有请求限频，再搞个云服务器成天跑，再做个前端页面支持查找，就完美了。要是家里有矿，说不定还能上 GPU 搞神经网络在线学习？！</p>
 <p>我好担心被这些人报复啊。</p>
-<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>直接看 <a href="https://github.com/yulingtianxia/FuckFakeGitHubStars/blob/master/README.md" target="_blank" rel="external">README.md</a> 吧。</p>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>直接看 <a href="https://github.com/yulingtianxia/FuckFakeGitHubStars/blob/master/README.md" target="_blank" rel="noopener">README.md</a> 吧。</p>
 <p>因为 GitHub API 用到的 token 没有上传，所以需要填你自己的 token 才可以抓数据。而且我只上传了部分数据，生成的 json 文件太大了，又懒得用数据库。</p>
 <p>最终的可读性比较强的信息输出在 log 里，没有上传。有兴趣的可以自己跑下。</p>
 <h2 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h2><p>技术栈就是 python3 + GraphQL。</p>

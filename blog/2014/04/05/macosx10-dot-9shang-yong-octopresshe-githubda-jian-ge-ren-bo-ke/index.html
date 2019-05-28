@@ -101,9 +101,9 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#"><span class="toc-number">1.</span> <span class="toc-text"></span></a></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#Octopress搭建"><span class="toc-number"></span> <span class="toc-text">Octopress搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Github-Page-部署"><span class="toc-number"></span> <span class="toc-text">Github Page 部署</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Blog的美化工作"><span class="toc-number"></span> <span class="toc-text">Blog的美化工作</span></a>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Octopress搭建"><span class="toc-number">1.</span> <span class="toc-text">Octopress搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Github-Page-部署"><span class="toc-number">2.</span> <span class="toc-text">Github Page 部署</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Blog的美化工作"><span class="toc-number">3.</span> <span class="toc-text">Blog的美化工作</span></a></li></ol>
 		
-		</li></div>
+		</div>
 		
 		<p>网上已经有很多关于搭建Octopress的文章了，但我写这篇文章的目的是帮助Mac新手们搭建自己的Octopress，尤其是最新的Mavericks系统</p>
 <p>这篇博文包括：</p>
@@ -112,31 +112,27 @@
 <li>Github Page 部署</li>
 <li>Blog的美化工作</li>
 </ul>
-<h2 id><a href="#" class="headerlink" title></a><a id="more"></a></h2><h1 id="Octopress搭建"><a href="#Octopress搭建" class="headerlink" title="Octopress搭建"></a>Octopress搭建</h1><p>众所周知，MacOSX自带Ruby，10.9系统带了两个版本的Ruby：1.8和2.0，因为Octopress需要Ruby1.9.3以上的支持，所以Mavericks自带的Ruby2.0是可以胜任的，新手们可以松一口气了。<br>如果没有安装command line tools，可以直接安装Xcode。Xcode5之后，command line tools都是跟随Xcode自带的，不用单独安装，想卸载也就麻烦了，可以在Xcode中Preferences-&gt;Locations中查看command line tools版本。  </p>
+<a id="more"></a>
+<hr>
+<h1 id="Octopress搭建"><a href="#Octopress搭建" class="headerlink" title="Octopress搭建"></a>Octopress搭建</h1><p>众所周知，MacOSX自带Ruby，10.9系统带了两个版本的Ruby：1.8和2.0，因为Octopress需要Ruby1.9.3以上的支持，所以Mavericks自带的Ruby2.0是可以胜任的，新手们可以松一口气了。<br>如果没有安装command line tools，可以直接安装Xcode。Xcode5之后，command line tools都是跟随Xcode自带的，不用单独安装，想卸载也就麻烦了，可以在Xcode中Preferences-&gt;Locations中查看command line tools版本。  </p>
 <p>系统没升级到最新版的童鞋，可以打开终端（terminal）通过下面的命令查看自己的Ruby版本：</p>
-<pre><code>ruby --version
-</code></pre><p>没安装RVM的童鞋运行下面的命令：</p>
-<pre><code>curl -L https://get.rvm.io | bash -s stable --ruby
-</code></pre><p>下面我们需要从Github上clone下Octopress</p>
-<pre><code>git clone git://github.com/imathis/octopress.git octopress
-</code></pre><p>这条命令将octopress的源码下载到了你个人文件夹下的octopress文件夹，如果对git命令不太熟，可以在<a href="https://mac.github.com" target="_blank" rel="external">这里</a>下载Github的Mac客户端，关于Github的使用，网上有很多教程。<br>下一步，安装依赖</p>
+<pre><code>ruby --version</code></pre><p>没安装RVM的童鞋运行下面的命令：</p>
+<pre><code>curl -L https://get.rvm.io | bash -s stable --ruby</code></pre><p>下面我们需要从Github上clone下Octopress</p>
+<pre><code>git clone git://github.com/imathis/octopress.git octopress</code></pre><p>这条命令将octopress的源码下载到了你个人文件夹下的octopress文件夹，如果对git命令不太熟，可以在<a href="https://mac.github.com" target="_blank" rel="noopener">这里</a>下载Github的Mac客户端，关于Github的使用，网上有很多教程。<br>下一步，安装依赖</p>
 <pre><code>cd octopress ＃进入octopress目录
-gem install bundler
-</code></pre><p>这里碰到的问题可能有两种：  </p>
+gem install bundler</code></pre><p>这里碰到的问题可能有两种：  </p>
 <ol>
-<li>权限不够，无法访问到一些文件夹  </li>
+<li><p>权限不够，无法访问到一些文件夹  </p>
+</li>
 <li><p>等了很久没有反应<br>如果你之前对Linux比较熟，第一个问题可以很简单的解决，这是因为一些文件夹需要root权限访问，运行</p>
-<p> sudo gem install bundler<br>提示输入密码的时候，输入你自己的MacOSX开机密码后回车，注意输入密码的过程中终端无任何显示，这跟Linux一样<br>如果半天都没有反应，这是因为rubygems.org 的文件资源被墙了，可以在<a href="http://ruby.taobao.org" target="_blank" rel="external">这里</a>查看解决方法，或者干脆翻墙，推荐<a href="http://tizipro.com/?r=ee0508bc191f5651" target="_blank" rel="external">云梯VPN</a>科学上网，我个人比较推荐翻墙。  </p>
+<p> sudo gem install bundler<br>提示输入密码的时候，输入你自己的MacOSX开机密码后回车，注意输入密码的过程中终端无任何显示，这跟Linux一样<br>如果半天都没有反应，这是因为rubygems.org 的文件资源被墙了，可以在<a href="http://ruby.taobao.org" target="_blank" rel="noopener">这里</a>查看解决方法，或者干脆翻墙，推荐<a href="http://tizipro.com/?r=ee0508bc191f5651" target="_blank" rel="noopener">云梯VPN</a>科学上网，我个人比较推荐翻墙。  </p>
 </li>
 </ol>
-<p>PS：云梯VPN优惠链接：<a href="http://tizipro.com/?r=ee0508bc191f5651" target="_blank" rel="external">http://tizipro.com/?r=ee0508bc191f5651</a></p>
+<p>PS：云梯VPN优惠链接：<a href="http://tizipro.com/?r=ee0508bc191f5651" target="_blank" rel="noopener">http://tizipro.com/?r=ee0508bc191f5651</a></p>
 <p>接下来运行：    </p>
-<pre><code>bundle install
-</code></pre><p>不出意外，肯定会出错，最后一句应该是“Make sure that <code>gem install RedCloth -v &#39;4.2.9&#39;</code> succeeds before bundling.”再往前追寻问题的根源，会发现这么一句“clang: error: unknown argument: ‘-multiply_definedsuppress’ [-Wunused-command-line-argument-hard-err”。<br>这是因为Xcode 5.1的LLVM编译器将未识别的命令行选项认为是error，导致诸如Python本地拓展和Ruby Gem报错，解决方案：在执行命令行前加ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future，这样就忽略了报错。感谢<a href="http://www.andrewhay.ca/archives/2558?utm_source=tuicool" target="_blank" rel="external">Andrew Hay的文章</a>帮我解决了问题。<br>所以应该这样：</p>
-<pre><code>ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future bundle install
-</code></pre><p>问题解决<br>最后安装默认的主题</p>
-<pre><code>rake install    
-</code></pre><p>如果出现“You have already activated rake 10.3.1, but your Gemfile requires rake 0.9.6. Prepending <code>bundle exec</code> to your command may solve this.”这样的提示，有三种解决方法：  </p>
+<pre><code>bundle install</code></pre><p>不出意外，肯定会出错，最后一句应该是“Make sure that <code>gem install RedCloth -v &#39;4.2.9&#39;</code> succeeds before bundling.”再往前追寻问题的根源，会发现这么一句“clang: error: unknown argument: ‘-multiply_definedsuppress’ [-Wunused-command-line-argument-hard-err”。<br>这是因为Xcode 5.1的LLVM编译器将未识别的命令行选项认为是error，导致诸如Python本地拓展和Ruby Gem报错，解决方案：在执行命令行前加ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future，这样就忽略了报错。感谢<a href="http://www.andrewhay.ca/archives/2558?utm_source=tuicool" target="_blank" rel="noopener">Andrew Hay的文章</a>帮我解决了问题。<br>所以应该这样：</p>
+<pre><code>ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future bundle install</code></pre><p>问题解决<br>最后安装默认的主题</p>
+<pre><code>rake install    </code></pre><p>如果出现“You have already activated rake 10.3.1, but your Gemfile requires rake 0.9.6. Prepending <code>bundle exec</code> to your command may solve this.”这样的提示，有三种解决方法：  </p>
 <ol>
 <li>运行<code>bundle update</code></li>
 <li>按照提示在前面加上<code>bundle exec</code>，即运行<code>bundle exec rake install</code></li>
@@ -144,28 +140,25 @@ gem install bundler
 </ol>
 <p><strong>关于创建博文</strong></p>
 <pre><code>rake new_post[&quot;first post&quot;]＃双引号中为博文标题，可以自己定义，生成markdown文件
-rake generate ＃生成HTML文件
-</code></pre><p>这里推荐一个markdown编辑器<a href="http://mouapp.com" target="_blank" rel="external">Mou</a>，markdown是用来编写我们博客的语言，文件后缀名为md或markdown，学过Latex的童鞋可能会了解得更快一些，用markdown编写HTML版面是再好不过得了，markdown速成<a href="http://www.ituring.com.cn/article/23" target="_blank" rel="external">传送门</a>。网上教程也挺多的，语法风格跟Latex有点像。  </p>
+rake generate ＃生成HTML文件</code></pre><p>这里推荐一个markdown编辑器<a href="http://mouapp.com" target="_blank" rel="noopener">Mou</a>，markdown是用来编写我们博客的语言，文件后缀名为md或markdown，学过Latex的童鞋可能会了解得更快一些，用markdown编写HTML版面是再好不过得了，markdown速成<a href="http://www.ituring.com.cn/article/23" target="_blank" rel="noopener">传送门</a>。网上教程也挺多的，语法风格跟Latex有点像。  </p>
 <h1 id="Github-Page-部署"><a href="#Github-Page-部署" class="headerlink" title="Github Page 部署"></a>Github Page 部署</h1><p>首先要有一个Github账号，假设用户名为username，那么新建一个仓库，名字叫“username.github.io”，Github会自动识别它为你的个人页面。你可以通过username.github.io这个网址来访问你部署的静态网页。创建完成后，获取你这个仓库的Git Url，SSH或者Http协议的都可以，然后执行<code>rake setup_github_pages</code>，当提示你的时候输入你前面创建的仓库的Git Url。比如<code>git@github.com:username/username.github.com.git</code><br>你会发现octopress文件夹中多了_deploy目录，并将这个目录当作master分支，而其余的文件都作为新建立的source分支。octopress原理是在source分支保存框架所需要的文件，还有博客的markdown文件，然后每次将生成的html文件放入master分支，通过username.github.io访问到的是已经生成好的master分支的文件，也就是_deploy文件夹的内容。<br>运行下面代码来生成部署网页到Github：</p>
 <pre><code>rake generate
-rake deploy
-</code></pre><p>现在访问你的网站，已经有了一个页面，使用的是系统默认主题。为了避免博客的源码受到破坏，需要把source分支也commit上去。不会用git命令的同学可以用Github的Mac客户端。</p>
+rake deploy</code></pre><p>现在访问你的网站，已经有了一个页面，使用的是系统默认主题。为了避免博客的源码受到破坏，需要把source分支也commit上去。不会用git命令的同学可以用Github的Mac客户端。</p>
 <pre><code>git add .
 git commit -m &apos;your message&apos;
-git push origin source
-</code></pre><p>如果你有自己的域名，可以通过在仓库中新建CNAME文件进行配置映射，这里不再细说。</p>
-<h1 id="Blog的美化工作"><a href="#Blog的美化工作" class="headerlink" title="Blog的美化工作"></a>Blog的美化工作</h1><p>可以用<a href="https://github.com/shashankmehta/greyshade" target="_blank" rel="external">greyshade</a>或者<a href="https://github.com/tommy351/Octopress-Theme-Slash" target="_blank" rel="external">slash</a>主题美化博客，根据个人喜好了。需要注意的是，greyshade这个主题有些不足之处，比如，disqus实效，还有如何添加新浪微博链接，请看<a href="http://bryanone.com/blog/2014/03/01/problem-with-greyshade/" target="_blank" rel="external">这里</a>和<a href="http://imallen.com/blog/2013/05/12/add-support-for-weibo-and-dribbble-to-greyshade.html" target="_blank" rel="external">这里</a>。如果首页左侧没有显示title和subtitle等信息，可以修改/source/_includes/header.html文件，添加</p>
+git push origin source</code></pre><p>如果你有自己的域名，可以通过在仓库中新建CNAME文件进行配置映射，这里不再细说。</p>
+<h1 id="Blog的美化工作"><a href="#Blog的美化工作" class="headerlink" title="Blog的美化工作"></a>Blog的美化工作</h1><p>可以用<a href="https://github.com/shashankmehta/greyshade" target="_blank" rel="noopener">greyshade</a>或者<a href="https://github.com/tommy351/Octopress-Theme-Slash" target="_blank" rel="noopener">slash</a>主题美化博客，根据个人喜好了。需要注意的是，greyshade这个主题有些不足之处，比如，disqus实效，还有如何添加新浪微博链接，请看<a href="http://bryanone.com/blog/2014/03/01/problem-with-greyshade/" target="_blank" rel="noopener">这里</a>和<a href="http://imallen.com/blog/2013/05/12/add-support-for-weibo-and-dribbble-to-greyshade.html" target="_blank" rel="noopener">这里</a>。如果首页左侧没有显示title和subtitle等信息，可以修改/source/_includes/header.html文件，添加</p>
 <pre><code>&lt;h1&gt;&lt;a href=&quot;{{ root_url }}/&quot;&gt;{{ site.title }}&lt;/a&gt;&lt;/h1&gt;
-&lt;p class=&quot;subtitle&quot;&gt;{{ site.subtitle }}&lt;/p&gt;
-</code></pre><p>修改_config.yml文件，可以配置博客的参数，网上有很多详细的教程来说明每个属性是干什么的，需要注意的一点就是冒号后面一定要加空格，否则编译不通过。建议下载一个Sublime Text来打开这些前台文件，增加效率。博客头像和Github一样采用<a href="www.gravatar.com">gravatar</a>的头像托管服务，在_config.yml文件中的email属性中填入你在gravatar的邮件或者在email_md5属性中填入md5码也可。<br><strong>关于添加标签云效果</strong>  </p>
+&lt;p class=&quot;subtitle&quot;&gt;{{ site.subtitle }}&lt;/p&gt;</code></pre><p>修改_config.yml文件，可以配置博客的参数，网上有很多详细的教程来说明每个属性是干什么的，需要注意的一点就是冒号后面一定要加空格，否则编译不通过。建议下载一个Sublime Text来打开这些前台文件，增加效率。博客头像和Github一样采用<a href="www.gravatar.com">gravatar</a>的头像托管服务，在_config.yml文件中的email属性中填入你在gravatar的邮件或者在email_md5属性中填入md5码也可。<br><strong>关于添加标签云效果</strong>  </p>
 <ol>
-<li>将<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/plugins/category_cloud.rb" target="_blank" rel="external">category_cloud.rb</a>复制到你的<code>/octopress/plugins/</code>文件夹下  </li>
-<li>拷贝<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/source/_includes/custom/asides/category_cloud.html" target="_blank" rel="external">category_cloud.html</a>到你的<code>octopress/source/_includes/custom/asides/</code>目录  </li>
+<li>将<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/plugins/category_cloud.rb" target="_blank" rel="noopener">category_cloud.rb</a>复制到你的<code>/octopress/plugins/</code>文件夹下  </li>
+<li>拷贝<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/source/_includes/custom/asides/category_cloud.html" target="_blank" rel="noopener">category_cloud.html</a>到你的<code>octopress/source/_includes/custom/asides/</code>目录  </li>
 <li>在你的 <code>octopress/_config.yml</code> 文件中的<code>default_asides</code>项中加入第二步添加的路径：<code>custom/asides/category_cloud.html</code>  </li>
-<li>拷贝<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/source/javascripts/tagcloud.swf" target="_blank" rel="external">tagcloud.swf</a>到<code>source/javascripts/</code>文件夹<br>如果想修改标签云的颜色可以在<code>category_cloud.rb</code>文件中改变：  <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@opts</span>[<span class="string">'bgcolor'</span>] = <span class="string">'#3D4349'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'tcolor1'</span>] = <span class="string">'#8B85C3'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'tcolor2'</span>] = <span class="string">'#C03999'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'hicolor'</span>] = <span class="string">'#ffffff'</span></span><br></pre></td></tr></table></figure>
+<li>拷贝<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/source/javascripts/tagcloud.swf" target="_blank" rel="noopener">tagcloud.swf</a>到<code>source/javascripts/</code>文件夹<br>如果想修改标签云的颜色可以在<code>category_cloud.rb</code>文件中改变：  <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@opts</span>[<span class="string">'bgcolor'</span>] = <span class="string">'#3D4349'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'tcolor1'</span>] = <span class="string">'#8B85C3'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'tcolor2'</span>] = <span class="string">'#C03999'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'hicolor'</span>] = <span class="string">'#ffffff'</span></span><br></pre></td></tr></table></figure>
+
 </li>
 </ol>
-<p><code>tcolor1</code>为文章数量比较多的分类颜色<br><code>tcolor2</code>为普通分类颜色<br><code>hicolor</code>为鼠标高亮颜色<br>诸如添加Google Analyse和百度统计，添加分享和评论系统，还有版权信息，网上的教程也很多，参考<a href="http://www.cnblogs.com/oec2003/archive/2013/05/31/3109577.html" target="_blank" rel="external">oec2003</a>和<a href="http://beyondvincent.com/blog/2013/07/27/107-hello-page-of-github/" target="_blank" rel="external">破船</a>的文章，本文主要是介绍MacOSX上面的部署工作。</p>
+<p><code>tcolor1</code>为文章数量比较多的分类颜色<br><code>tcolor2</code>为普通分类颜色<br><code>hicolor</code>为鼠标高亮颜色<br>诸如添加Google Analyse和百度统计，添加分享和评论系统，还有版权信息，网上的教程也很多，参考<a href="http://www.cnblogs.com/oec2003/archive/2013/05/31/3109577.html" target="_blank" rel="noopener">oec2003</a>和<a href="http://beyondvincent.com/blog/2013/07/27/107-hello-page-of-github/" target="_blank" rel="noopener">破船</a>的文章，本文主要是介绍MacOSX上面的部署工作。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -223,9 +216,9 @@ git push origin source
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#"><span class="toc-number">1.</span> <span class="toc-text"></span></a></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#Octopress搭建"><span class="toc-number"></span> <span class="toc-text">Octopress搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Github-Page-部署"><span class="toc-number"></span> <span class="toc-text">Github Page 部署</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Blog的美化工作"><span class="toc-number"></span> <span class="toc-text">Blog的美化工作</span></a>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Octopress搭建"><span class="toc-number">1.</span> <span class="toc-text">Octopress搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Github-Page-部署"><span class="toc-number">2.</span> <span class="toc-text">Github Page 部署</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Blog的美化工作"><span class="toc-number">3.</span> <span class="toc-text">Blog的美化工作</span></a></li></ol>
  
-  </li></div>
+  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>

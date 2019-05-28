@@ -120,7 +120,8 @@
 		
 		</div>
 		
-		<p>这是一篇 WWDC2015 Session 604 的学习笔记,在看 WWDC2014 的 Session 时也总结过一篇<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>,从 iOS7 发布 SpriteKit 以来我一直利用课余时间做些小游戏,感受着 SpriteKit 的一路成长.这次也在第一时间总结了下 今年 WWDC SpriteKit 的新特性.<br><a id="more"></a></p>
+		<p>这是一篇 WWDC2015 Session 604 的学习笔记,在看 WWDC2014 的 Session 时也总结过一篇<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>,从 iOS7 发布 SpriteKit 以来我一直利用课余时间做些小游戏,感受着 SpriteKit 的一路成长.这次也在第一时间总结了下 今年 WWDC SpriteKit 的新特性.  </p>
+<a id="more"></a>
 <h2 id="Viewport-和-SKCameraNode"><a href="#Viewport-和-SKCameraNode" class="headerlink" title="Viewport 和 SKCameraNode"></a>Viewport 和 SKCameraNode</h2><p><img src="http://yulingtianxia.com/resources/QQ20150612-1@2x.png" alt="viewport">  </p>
 <p>Viewport(视口) 指的是当前场景中哪些部分是可见的.也就是说场景很大时,我们要计算哪块区域是要呈现给玩家的,这块区域是可以移动的.就像是摄像头跟着玩家在一张大地图中跑一样,这些工作现在可以交给 SpriteKit 了, <code>SKCameraNode</code> 就是干这个的.有了它就能确定哪些部分是可见的.它相当于viewport的中心,所以我们可以移动场景的摄像头,而不用像以前那样移动整个场景. SpriteKit 终于也能像其他游戏框架一样移动摄像头啦!<code>SKScene</code> 中有个 <code>camera</code> 属性,类型就是 <code>SKCameraNode</code>.所以我们可以给场景任意一个选择合适的摄像头.更令人欣喜的是 <code>SKCameraNode</code> 也是个 <code>SKNode</code>,所以我们可以给摄像头加上动作,约束,旋转和缩放.(这里自行脑补长镜头,视角跟踪,天旋地转,鼠标滚轮)  </p>
 <p><img src="http://yulingtianxia.com/resources/QQ20150612-2@2x.png" alt="SKCameraNode">  </p>
@@ -139,8 +140,10 @@
 <p><img src="http://yulingtianxia.com/resources/QQ20150612-7@2x.png" alt>  </p>
 <p>我们可以用下面这些 <code>SKAction</code> 新加入的 API 来从 sks 文件中加载自定义动作:  </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">actionNamed:</span></span><br><span class="line"><span class="string">actionNamed:</span><span class="string">duration:</span></span><br><span class="line"><span class="string">actionNamed:</span><span class="string">fromURL:</span></span><br><span class="line"><span class="string">actionNamed:</span><span class="string">fromURL:</span><span class="string">duration:</span></span><br></pre></td></tr></table></figure>
+
 <p>此外,这回 <code>SKAction</code> 还增添了一些新动作:  </p>
-<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">play //用于 `SKAudioNode` 的播放</span><br><span class="line">pause //用于 `SKAudioNode` 的暂停</span><br><span class="line"><span class="symbol">changePlaybackRateTo:duration:</span> //调节 `SKAudioNode` 的播放速率</span><br><span class="line"><span class="symbol">changeVolumeTo:duration:</span> //调节 `SKAudioNode` 的播放音量</span><br><span class="line"><span class="symbol">animateWithNormalTextures:</span> //使 `SKSpriteNode` 的法线贴图按照给定贴图数组的顺序动起来</span><br></pre></td></tr></table></figure>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">play //用于 `SKAudioNode` 的播放</span><br><span class="line"><span class="keyword">pause</span> //用于 `SKAudioNode` 的暂停</span><br><span class="line"><span class="symbol">changePlaybackRateTo:duration:</span> //调节 `SKAudioNode` 的播放速率</span><br><span class="line"><span class="symbol">changeVolumeTo:duration:</span> //调节 `SKAudioNode` 的播放音量</span><br><span class="line"><span class="symbol">animateWithNormalTextures:</span> //使 `SKSpriteNode` 的法线贴图按照给定贴图数组的顺序动起来</span><br></pre></td></tr></table></figure>
+
 <p>在之前的动作中只提供了贴图切换的动作,而没有法线贴图切换的动作,这就让光照效果只能应用在贴图固定的<code>SKSpriteNode</code>中.这回我们可以让法线贴图和跟着动起来了!    </p>
 <h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><p><img src="http://yulingtianxia.com/resources/QQ20150612-8@2x.png" alt="Metal">  </p>
 <p>苹果总不会忘记夸赞自己在底层优化所作出的努力. SpriteKit 会自动使用 Metal 技术,将其 CPU 使用率降低,性能更赞之类的. 最关键的是这些事苹果已经帮你做好了,程序员们微笑接受.因为这种优化不需要我们重新编译项目,就能在支持 Metal 的设备上自动使用它.  </p>
@@ -175,8 +178,8 @@
 <h3 id="动作编辑器"><a href="#动作编辑器" class="headerlink" title="动作编辑器"></a>动作编辑器</h3><p>最让人激动的是我们可以在动作编辑器中像做视频一样基于时间线构建出复杂的交互动画!支持 2D 和 3D, 并能实时预览:  </p>
 <p><img src="http://yulingtianxia.com/resources/QQ20150612-15@2x.png" alt="Action">  </p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>老实说作为一个游戏引擎, SpriteKit 这次带来的新功能大部分依然是其他各大游戏引擎早就有的标配,但苹果最吸引人的地方就是它学得很快,每次总会给大家带来新的变化,会让它的粉丝们看到希望. SpriteKit 和 SceneKit 这两个苹果自家的游戏引擎一直不温不火,一是不够成熟,二是不能跨平台,但我相信苹果每年都会给它们带来更新更炫的功能,让开发者接受它们.  </p>
-<p>这次没来得及做 Demo, 但等到 iOS9 稳定后,我肯定会继续在<a href="http://coloratom.yulingtianxia.com" target="_blank" rel="external">ColorAtom</a> 和 <a href="http://spiral.yulingtianxia.com" target="_blank" rel="external">Spiral</a> 上分别用 Objective-C 和 Swift 来写一些新的游戏模式作为 SpriteKit 新特性的演示 Demo.  </p>
-<p>最后, Apple 给我们提供了一个 SpriteKit 和 GameplayKit 的 <a href="https://developer.apple.com/library/prerelease/ios/samplecode/DemoBots/Introduction/Intro.html" target="_blank" rel="external">Demo</a></p>
+<p>这次没来得及做 Demo, 但等到 iOS9 稳定后,我肯定会继续在<a href="http://coloratom.yulingtianxia.com" target="_blank" rel="noopener">ColorAtom</a> 和 <a href="http://spiral.yulingtianxia.com" target="_blank" rel="noopener">Spiral</a> 上分别用 Objective-C 和 Swift 来写一些新的游戏模式作为 SpriteKit 新特性的演示 Demo.  </p>
+<p>最后, Apple 给我们提供了一个 SpriteKit 和 GameplayKit 的 <a href="https://developer.apple.com/library/prerelease/ios/samplecode/DemoBots/Introduction/Intro.html" target="_blank" rel="noopener">Demo</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">

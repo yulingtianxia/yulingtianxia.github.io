@@ -117,7 +117,8 @@
 		
 		</div>
 		
-		<p>在iOS8和OSX10.10中SpriteKit迎来了重大升级。在物理表现方面增加了着色器，光照和阴影；在物理模拟方面增加了像素物理体、力场和宇宙动力学和约束等；在Xcode中集成了场景编辑器，你不需要写代码就能完成一些复杂的工作；此外它还集成了SceneKit以及其他的改进。<br><a id="more"></a></p>
+		<p>在iOS8和OSX10.10中SpriteKit迎来了重大升级。在物理表现方面增加了着色器，光照和阴影；在物理模拟方面增加了像素物理体、力场和宇宙动力学和约束等；在Xcode中集成了场景编辑器，你不需要写代码就能完成一些复杂的工作；此外它还集成了SceneKit以及其他的改进。  </p>
+<a id="more"></a>
 <h2 id="Shader"><a href="#Shader" class="headerlink" title="Shader"></a>Shader</h2><p>有时候为了表现一些形变和模糊效果，比如透过热气和火焰看一些物体，或者是飞船被攻击而产生弯曲。SpriteKit新加入了<code>SKShader</code>类来帮助我们更简单的实现这个效果。它通过使用自定义的OpenGL ES碎片着色来完成绘制一些<code>SKNode</code>的自定义行为。现在支持以下几种类型的绘制：  </p>
 <ul>
 <li><code>SKSpriteNode</code></li>
@@ -131,6 +132,7 @@
 <p><code>SKShader</code>内建了一些<code>uniforms</code>，用<code>SKUniform</code>来描述，当你创建一个<code>SKShader</code>时，需要通过一个<code>fsh</code>文件或者一个字符串代码来创建，也可选择性的传入<code>uniforms</code>来定义游戏中一些额外的参数。下面是创建Shader方法的集合：  </p>
 <p>（下面的只是伪代码，不是OC也不是Swift语法，只是为了更简洁的标记方法名，后面类似情形都会标记为“伪代码”）  </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+ <span class="string">shaderWithFileNamed:</span></span><br><span class="line">+ <span class="string">shaderWithSource:</span><span class="string">uniforms:</span></span><br><span class="line">+ <span class="string">shaderWithSource:</span></span><br><span class="line">+ shader</span><br><span class="line">- <span class="string">initWithSource:</span><span class="string">uniforms:</span></span><br><span class="line">- <span class="string">initWithSource:</span></span><br></pre></td></tr></table></figure>
+
 <p>这些方法很相似，都是传入<code>source</code>或<code>source</code>与<code>uniforms</code>来创建shader。官方建议我们用<code>fsh</code>文件作为<code>source</code>而不是字符串代码；并且避免更改<code>source</code>或添加删除<code>uniforms</code>（修改<code>uniforms</code>是可以的），因为这样会导致后台花时间重新编译shader；尽量在加载时初始化shader。这些注意事项都可以总结为尽量使用内建的<code>uniforms</code>和共享shader对象。</p>
 <p>我们可以将创建好的<code>SKShader</code>对象赋值给支持Shader渲染对象的<code>shader</code>属性。  </p>
 <p>下面列举一下Shader中的预定义符号：  </p>
@@ -153,6 +155,7 @@
 <p>SpriteKit能够根据给出的纹理图片，用一系列算法分析原贴图，然后生成一个最佳的法线贴图，又是苹果的黑魔法！</p>
 <p>毕竟众口难调，所以SpriteKit让你也可以在生成法线贴图的时候给出平滑度(smoothness)和对比度(contrast)来调节你想要的效果：（伪代码）  </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- <span class="string">textureByGeneratingNormalMapWithSmoothness:</span><span class="string">contrast:</span></span><br></pre></td></tr></table></figure>
+
 <p>PS：法线贴图将具有高细节的模型通过映射烘焙出法线贴图，贴在低端模型的法线贴图通道上，使之拥有法线贴图的渲染效果。可以大大降低渲染时需要的面数和计算内容，从而达到优化动画渲染和游戏渲染的效果。</p>
 <p>在一个场景中可以添加多个光源，程序会运行的很快；但是如果用两个或以上的光源照亮同一个精灵，在某些iOS设备上可能保证不了60帧的刷新频率。  </p>
 <h2 id="New-Physics"><a href="#New-Physics" class="headerlink" title="New Physics"></a>New Physics</h2><h3 id="Per-Pixel-Physics"><a href="#Per-Pixel-Physics" class="headerlink" title="Per-Pixel Physics"></a>Per-Pixel Physics</h3><p>在定义一些复杂轮廓的物理体时，我们经常用简单图形代替，否则就用<code>CGPath</code>一点点描绘多边形或者把多个物理体组合在一起（这也是新加入的API，后面会提到），比如下面这把斧头，大多数程序员直接用矩形当做它的物理体：  </p>
@@ -161,6 +164,7 @@
 <p><img src="http://yulingtianxia.com/resources/140740040721.png" alt>  </p>
 <p>毕竟众口难调，所以SpriteKit给出了一个可以自由调节alpha阈值的物理体生成方法，所有alpha值大于<code>alphaThreshold</code>的像素点都将被认为是不透明的，并纳入物理体范围内：（伪代码）  </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ <span class="string">bodyWithTexture:</span><span class="string">alphaThreshold:</span><span class="string">size:</span></span><br></pre></td></tr></table></figure>
+
 <p>因为SpriteKit是逐个像素计算才得出精确的物理体轮廓，所以我们应该尽量给出合适大小的图片，不要将分辨率过高的图片用在很小的<code>SKSpriteNode</code>上。  </p>
 <h3 id="Constrains"><a href="#Constrains" class="headerlink" title="Constrains"></a>Constrains</h3><p>试想如果你要做一款塔防游戏，你需要让你的大炮一直瞄准某个怪物，大炮会随着怪物的行走来转动炮台。我们需要不停地根据怪物和大炮的位置来计算需要旋转的角度，甚至当怪物跑的快的时候还要考虑怪物的速度来调整大炮旋转的速度，这是一个很麻烦的事情。现在SpriteKit帮你把这些都做好了，你只需要建立一个<code>SKConstrains</code>对象，并约束大炮的角度跟怪物一致就行。  </p>
 <p>约束的计算工作发生在模拟物理之后，SpriteKit提供了一个回调函数<code>didApplyConstraints</code>，我们可以在约束完成后在里面做一些善后工作：  </p>
@@ -170,22 +174,27 @@
 <li>位置约束：  </li>
 </ul>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//约束节点的X坐标范围</span></span><br><span class="line">+ <span class="string">positionX:</span></span><br><span class="line"><span class="comment">//约束节点的Y坐标范围</span></span><br><span class="line">+ <span class="string">positionY:</span></span><br><span class="line"><span class="comment">//约束节点的X和Y坐标范围</span></span><br><span class="line">+ <span class="string">positionX:</span><span class="string">Y:</span></span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>方向约束：  </li>
 </ul>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//约束节点基于另一个SKNode旋转</span></span><br><span class="line">+ <span class="string">orientToNode:</span><span class="string">offset:</span></span><br><span class="line"><span class="comment">//约束节点基于一个固定点旋转</span></span><br><span class="line">+ <span class="string">orientToPoint:</span><span class="string">offset:</span></span><br><span class="line"><span class="comment">//约束节点基于另一个SKNode坐标系中的一个固定点旋转</span></span><br><span class="line">+ <span class="string">orientToPoint:</span><span class="string">inNode:</span><span class="string">offset:</span></span><br><span class="line"><span class="comment">//约束节点的方向范围</span></span><br><span class="line">+ <span class="string">zRotation:</span></span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>距离约束：  </li>
 </ul>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//约束节点与另一节点保持一定距离</span></span><br><span class="line">+ <span class="string">distance:</span><span class="string">toNode:</span></span><br><span class="line"><span class="comment">//约束节点与一个固定点保持一定距离</span></span><br><span class="line">+ <span class="string">distance:</span><span class="string">toPoint:</span></span><br><span class="line"><span class="comment">//约束节点与另一个SKNode坐标系中的一个固定点保持一定距离</span></span><br><span class="line">+ <span class="string">distance:</span><span class="string">toPoint:</span><span class="string">inNode:</span></span><br></pre></td></tr></table></figure>
+
 <p>向<code>SKNode</code>添加约束很简单，只需要将一个<code>SKConstrains</code>数组赋值给<code>SKNode.constraints</code>属性即可。约束执行的顺序取决于它们在数组中的顺序。  </p>
 <h3 id="Inverse-Kinematics"><a href="#Inverse-Kinematics" class="headerlink" title="Inverse Kinematics"></a>Inverse Kinematics</h3><p>反向运动学，没有机械工程学位或没写过动画引擎的人干脆不知道这是个啥。它其实是解决连接体运动的，比如现在有一个机器人的手臂，我们想让它动起来去用手抓某个东西。我们会想到每个关节转多少度才能准确让机器手抓到物体，计算的时候还应该考虑连接体的层级关系：肩膀连接上臂，上臂连接小臂，小臂连接手。哦天啊这真蛋疼，不过SpriteKit的反向动力学解决了这一点，我们只需要指定每个<code>SKNode</code>的活动约束还有需要抓取物体的位置，那么这一切只需要几行代码就能搞定。  </p>
 <p><img src="http://yulingtianxia.com/resources/140741648388.gif" alt>  </p>
 <p>机器人手臂转动约束是靠<code>SKReachConstraints</code>类来定义的，它只有一个初始化方法：（伪代码）  </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- <span class="string">initWithLowerAngleLimit:</span><span class="string">upperAngleLimit:</span></span><br></pre></td></tr></table></figure>
+
 <p>这个方法给<code>lowerAngleLimit</code>和<code>upperAngleLimit</code>属性赋值，约束了reach事件使其发生旋转角度的下限和上限。  </p>
 <p>当一个<code>SKReachConstraints</code>创建好后，将其赋值给<code>SKNode</code>的<code>reachConstraints</code>属性，然后用<code>SKPhysicsJoint</code>将这些<code>SKNode</code>连接起来。使用<code>SKAction</code>的一套工厂方法创建来让连接体reach到活动目标或固定点的动作：（伪代码）    </p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">+ <span class="string">reachTo:</span><span class="string">rootNode:</span><span class="string">duration:</span></span><br><span class="line">+ <span class="string">reachTo:</span><span class="string">rootNode:</span><span class="string">velocity:</span></span><br><span class="line">+ <span class="string">reachToNode:</span><span class="string">rootNode:</span><span class="string">duration:</span></span><br><span class="line">+ <span class="string">reachToNode:</span><span class="string">rootNode:</span><span class="string">velocity:</span></span><br></pre></td></tr></table></figure>
+
 <p>让机器人的手部节点运行创建好的<code>SKAction</code>对象即可达到最初描述的动画效果。如果机器人的手触碰不到指定的位置或节点（gif中就是这样），<code>SKAction</code>会执行动画让其尽可能接近目的地。</p>
 <p>PS：IK（Inverse Kinematics）也能在SceneKit上运行。  </p>
 <h3 id="Physics-Fields"><a href="#Physics-Fields" class="headerlink" title="Physics Fields"></a>Physics Fields</h3><p>在一个模拟宇宙空间的游戏中，星球对其他物体的引力是不可忽视的，这就涉及到物理场。SpriteKit为我们提供了一个专门描述物理场的类<code>SKFieldNode</code>，它继承于<code>SKNode</code>，也就是说它可以被添加到其他节点中。它能够描述多种场：电场、磁场、矢量重力场、辐射重力场、噪声场等十余种场。<code>SKFieldNode</code>的<code>strength</code>和<code>falloff</code>属性决定了场的强度和衰减比率。  </p>
@@ -197,7 +206,7 @@
 <li><strong><code>enabled</code></strong> 场的“开关”</li>
 <li><strong><code>exclusive</code></strong> 唯我独尊，这个场的地盘内，别的场的影响被无视。别让两个唯我独尊的场影响区域重叠，那样会出乱子的。默认为<code>NO</code>。</li>
 </ul>
-<p>我用SpriteKit的力场中的噪声场和辐射重力场做了一个小游戏<a href="http://coloratom.yulingtianxia.com" target="_blank" rel="external">ColorAtom</a>，有兴趣的可以去看看。应用了很多粒子系统和碰撞检测知识，把SpriteKit之前的内容能加的都加进去了，欢迎指正。    </p>
+<p>我用SpriteKit的力场中的噪声场和辐射重力场做了一个小游戏<a href="http://coloratom.yulingtianxia.com" target="_blank" rel="noopener">ColorAtom</a>，有兴趣的可以去看看。应用了很多粒子系统和碰撞检测知识，把SpriteKit之前的内容能加的都加进去了，欢迎指正。    </p>
 <h2 id="Integration-with-SceneKit"><a href="#Integration-with-SceneKit" class="headerlink" title="Integration with SceneKit"></a>Integration with SceneKit</h2><p>在SpriteKit这样的2D游戏引擎中也可以引入3D的内容，可以将SceneKit中的3D物体当做SpriteKit中的<code>SKNode</code>来操作，为了达到这一目的SpriteKit这次增加了<code>SK3DNode</code>类作为3D物体到SpriteKit中的桥接。  </p>
 <p>通过<code>SK3DNode</code>的<code>scnScene</code>属性可以获取到<code>SCNScene</code>，因为<code>SK3DNode</code>把3D场景渲染成2D贴图，所以创建<code>SK3DNode</code>对象的时候需要传入一个渲染后贴图的尺寸<code>viewportSize</code>。<code>pointOfView</code>属性存储了游戏视角的位置，你可以尝试实现个上帝视角。  </p>
 <p>由于我也不太了解“新”出的SceneKit，所以这部分不过多介绍了。  </p>

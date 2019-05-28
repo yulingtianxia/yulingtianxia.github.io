@@ -98,9 +98,9 @@
 </header>
     <div class="article-content">
         
-        <p><a href="https://github.com/yulingtianxia/MessageThrottle">MessageThrottle</a> 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。</p>
-<p>新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。<a href="https://github.com/yulingtianxia/MessageThrottle">MessageThrottle</a> 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有发现和解决的。</p>
-<p>本文是关于 <a href="https://github.com/yulingtianxia/MessageThrottle">MessageThrottle</a> 的第四篇文章。前三篇如下：</p>
+        <p><a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="noopener">MessageThrottle</a> 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，在运行时应用了一套节流限频的规则。</p>
+<p>新版本再次提升性能的同时，确保了 hook 流程、多线程操作、规则管理的安全性，支持了持久化规则，并对 KVO 等场景进行兼容。<a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="noopener">MessageThrottle</a> 的代码测试覆盖率在 80% 以上，在编写测试用例的同时也发现了一些安全隐患，有些甚至是业界知名开源库都没有发现和解决的。</p>
+<p>本文是关于 <a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="noopener">MessageThrottle</a> 的第四篇文章。前三篇如下：</p>
 <ul>
 <li><a href="http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/">Objective-C Message Throttle and Debounce</a></li>
 <li><a href="http://yulingtianxia.com/blog/2017/12/15/Associated-Object-and-Dealloc/">Associated Object 与 Dealloc</a></li>
@@ -164,8 +164,8 @@
 </header>
     <div class="article-content">
         
-        <p>之前写了一篇文章<a href="http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/">《追踪 Objective-C 方法中的 Block 参数对象》</a>，利用 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。</p>
-<p>主要代码已经整合到 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 1.0.2 版本中。</p>
+        <p>之前写了一篇文章<a href="http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/">《追踪 Objective-C 方法中的 Block 参数对象》</a>，利用 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 和 Objective-C 的动态特性实现对 block 对象执行和销毁的追踪。本文在此基础上，通过 Mach-O 文件格式获取 Mangle Name 并根据 Clang 源码实现对其解析，探寻如何追踪 block 代码定义的位置。</p>
+<p>主要代码已经整合到 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 1.0.2 版本中。</p>
         
         
         <p class="article-more-link">
@@ -224,7 +224,7 @@
 </header>
     <div class="article-content">
         
-        <p><a href="https://github.com/yulingtianxia/MessageThrottle">MessageThrottle</a> 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，所以相比直接调用方法，会有一些性能上的损耗。本篇文章记录了对其性能进行测试的结果，并通过使用 <code>NSMapTable</code> 改进存储结构和缓存来对性能进行大幅度的优化。</p>
+        <p><a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="noopener">MessageThrottle</a> 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，所以相比直接调用方法，会有一些性能上的损耗。本篇文章记录了对其性能进行测试的结果，并通过使用 <code>NSMapTable</code> 改进存储结构和缓存来对性能进行大幅度的优化。</p>
 <p>这是你从未体验过的船新版本。</p>
         
         
@@ -287,7 +287,7 @@
         <p>产品经理要求做个能展示进度的分段彩色外环，大概长这样：</p>
 <p><img src="https://github.com/yulingtianxia/YXYDashLayer/blob/master/Assets/YXYDashLayer.gif?raw=true" alt></p>
 <p>花了两天左右来实现和优化，记录下踩坑经历。</p>
-<p>组件已经开源，取个名字叫 <code>YXYDashLayer</code> 吧：<a href="https://github.com/yulingtianxia/YXYDashLayer">https://github.com/yulingtianxia/YXYDashLayer</a></p>
+<p>组件已经开源，取个名字叫 <code>YXYDashLayer</code> 吧：<a href="https://github.com/yulingtianxia/YXYDashLayer" target="_blank" rel="noopener">https://github.com/yulingtianxia/YXYDashLayer</a></p>
         
         
         <p class="article-more-link">
@@ -347,7 +347,7 @@
     <div class="article-content">
         
         <p>很多方法最后一个参数是类似于 <code>completionBlock</code> 这种回调，然而有些 API 实现一些异常逻辑时会忘记调用传入的 Block 参数（当然这肯定是 bug 啦），或者存在多次调用。在调试的时候可能会碰到这种大坑，需要追踪下 Block 参数何时调用了，甚至是否调用过。如果不方便直接在 Block 实现中加代码，或者没有源码的情况下，就需要无侵入式地追踪 Block 参数对象。</p>
-<p><a href="https://github.com/yulingtianxia/BlockTracker">BlockTracker</a> 可以追踪方法调用时传入的 Block 类型的参数的执行和销毁。基于 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 实现。本文讲述了它的使用方法和实现原理。</p>
+<p><a href="https://github.com/yulingtianxia/BlockTracker" target="_blank" rel="noopener">BlockTracker</a> 可以追踪方法调用时传入的 Block 类型的参数的执行和销毁。基于 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 实现。本文讲述了它的使用方法和实现原理。</p>
         
         
         <p class="article-more-link">
@@ -406,7 +406,7 @@
 </header>
     <div class="article-content">
         
-        <p>本文通过参照 <code>MABlockClosure</code> 的实现和 <code>Aspects</code> 的 API 设计，基于 libffi 实现了对 Objective-C Block 的 hook。GitHub 地址：<a href="https://github.com/yulingtianxia/BlockHook">https://github.com/yulingtianxia/BlockHook</a></p>
+        <p>本文通过参照 <code>MABlockClosure</code> 的实现和 <code>Aspects</code> 的 API 设计，基于 libffi 实现了对 Objective-C Block 的 hook。GitHub 地址：<a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">https://github.com/yulingtianxia/BlockHook</a></p>
 <p>什么场景下需要 hook block 呢？在有源码的情况下，大部分程序员会选择直接在 block 中插代码。假如方法 A 的入参是个 block 对象，方法 A 将 block 传给方法 B,C…等。如果只有方法 A 的源码，上层传入的 block 和下层方法实现都是黑盒的话，想追踪 block 调用的时机，打印些 log，就得 hook 这个 block 对象了。</p>
         
         
@@ -525,7 +525,7 @@
 </header>
     <div class="article-content">
         
-        <p>我的 Objective-C 消息节流防抖库 <a href="https://github.com/yulingtianxia/MessageThrottle">MessageThrottle</a> 需要实现一个特性：当 <code>MTRule</code> 的 <code>target</code> 释放后，自动调用 <code>MTRule</code> 的 <code>discard</code> 方法。后来使用了业界很早就已有的方案：Associated Object，在这里整理下相关的知识点。</p>
+        <p>我的 Objective-C 消息节流防抖库 <a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="noopener">MessageThrottle</a> 需要实现一个特性：当 <code>MTRule</code> 的 <code>target</code> 释放后，自动调用 <code>MTRule</code> 的 <code>discard</code> 方法。后来使用了业界很早就已有的方案：Associated Object，在这里整理下相关的知识点。</p>
         
         
         <p class="article-more-link">
@@ -584,7 +584,7 @@
 </header>
     <div class="article-content">
         
-        <p>在实际项目中经常会遇到因方法调用频繁而导致的 UI 闪动问题和性能问题，这时用某种策略需要控制调用频率，以达到节流和防抖的效果。<a href="https://github.com/yulingtianxia/MessageThrottle">MessageThrottle</a> 是我实现的一个 Objective-C 消息节流和防抖的轻量级工具库，使用便捷且业务无关。</p>
+        <p>在实际项目中经常会遇到因方法调用频繁而导致的 UI 闪动问题和性能问题，这时用某种策略需要控制调用频率，以达到节流和防抖的效果。<a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="noopener">MessageThrottle</a> 是我实现的一个 Objective-C 消息节流和防抖的轻量级工具库，使用便捷且业务无关。</p>
         
         
         <p class="article-more-link">
@@ -643,7 +643,7 @@
 </header>
     <div class="article-content">
         
-        <p><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1">Threading Programming Guide</a> 的学习笔记&amp;翻译，第三部分。关于同步的内容。</p>
+        <p><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1" target="_blank" rel="noopener">Threading Programming Guide</a> 的学习笔记&amp;翻译，第三部分。关于同步的内容。</p>
 <ul>
 <li><a href="http://yulingtianxia.com/blog/2017/08/28/Threading-Programming-Guide-1/">Threading Programming Guide(1)</a></li>
 <li><a href="http://yulingtianxia.com/blog/2017/09/17/Threading-Programming-Guide-2/">Threading Programming Guide(2)</a></li>

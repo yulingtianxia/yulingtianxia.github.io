@@ -107,6 +107,7 @@
 		
 		<p>这是一篇 WWDC 2016 Session 406 的学习笔记，从原理到实践讲述了如何优化 App 的启动时间。</p>
 <a id="more"></a>
+
 <h2 id="App-运行理论"><a href="#App-运行理论" class="headerlink" title="App 运行理论"></a>App 运行理论</h2><ul>
 <li><code>main()</code> 执行前发生的事</li>
 <li>Mach-O 格式</li>
@@ -130,7 +131,7 @@
 <li><code>__DATA</code> 包含全局变量，静态变量等。可读写（rw-）。</li>
 <li><code>__LINKEDIT</code> 包含了加载程序的『元数据』，比如函数的名称和地址。只读（r–）。</li>
 </ul>
-<h4 id="Mach-O-Universal-文件"><a href="#Mach-O-Universal-文件" class="headerlink" title="Mach-O Universal 文件"></a>Mach-O Universal 文件</h4><p><a href="https://en.wikipedia.org/wiki/Fat_binary" target="_blank" rel="external">FAT 二进制</a>文件，将多种架构的 Mach-O 文件合并而成。它通过 Fat Header 来记录不同架构在文件中的偏移量，Fat Header 占一页的空间。</p>
+<h4 id="Mach-O-Universal-文件"><a href="#Mach-O-Universal-文件" class="headerlink" title="Mach-O Universal 文件"></a>Mach-O Universal 文件</h4><p><a href="https://en.wikipedia.org/wiki/Fat_binary" target="_blank" rel="noopener">FAT 二进制</a>文件，将多种架构的 Mach-O 文件合并而成。它通过 Fat Header 来记录不同架构在文件中的偏移量，Fat Header 占一页的空间。</p>
 <p>按分页来存储这些 segement 和 header 会浪费空间，但这有利于虚拟内存的实现。</p>
 <h4 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h4><p>虚拟内存就是一层间接寻址（indirection）。软件工程中有句格言就是任何问题都能通过添加一个间接层来解决。虚拟内存解决的是管理所有进程使用物理 RAM 的问题。通过添加间接层来让每个进程使用逻辑地址空间，它可以映射到 RAM 上的某个物理页上。这种映射不是一对一的，逻辑地址可能映射不到 RAM 上，也可能有多个逻辑地址映射到同一个物理 RAM 上。针对第一种情况，当进程要存储逻辑地址内容时会触发 page fault；第二种情况就是多进程共享内存。</p>
 <p>对于文件可以不用一次性读入整个文件，可以使用分页映射（<code>mmap()</code>）的方式读取。也就是把文件某个片段映射到进程逻辑内存的某个页上。当某个想要读取的页没有在内存中，就会触发 page fault，内核只会读入那一页，实现文件的懒加载。</p>
@@ -139,7 +140,7 @@
 <h4 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h4><p>ASLR（Address Space Layout Randomization）：地址空间布局随机化，镜像会在随机的地址上加载。这其实是一二十年前的旧技术了。</p>
 <p>代码签名：可能我们认为 Xcode 会把整个文件都做加密 hash 并用做数字签名。其实为了在运行时验证 Mach-O 文件的签名，并不是每次重复读入整个文件，而是把每页内容都生成一个单独的加密散列值，并存储在 <code>__LINKEDIT</code> 中。这使得文件每页的内容都能及时被校验确并保不被篡改。</p>
 <h3 id="从-exec-到-main"><a href="#从-exec-到-main" class="headerlink" title="从 exec() 到 main()"></a>从 <code>exec()</code> 到 <code>main()</code></h3><p><code>exec()</code> 是一个系统调用。系统内核把应用映射到新的地址空间，且每次起始位置都是随机的（因为使用 ASLR）。并将起始位置到 <code>0x000000</code> 这段范围的进程权限都标记为不可读写不可执行。如果是 32 位进程，这个范围<strong>至少</strong>是 4KB；对于 64 位进程则<strong>至少</strong>是 4GB。NULL 指针引用和指针截断误差都是会被它捕获。</p>
-<h3 id="dyld-加载-dylib-文件"><a href="#dyld-加载-dylib-文件" class="headerlink" title="dyld 加载 dylib 文件"></a><code>dyld</code> 加载 dylib 文件</h3><p>Unix 的前二十年很安逸，因为那时还没有发明动态链接库。有了动态链接库后，一个用于加载链接库的帮助程序被创建。在苹果的平台里是 <code>dyld</code>，其他 Unix 系统也有 <a href="https://zh.wikipedia.org/wiki/Ld.so" target="_blank" rel="external"><code>ld.so</code></a>。 当内核完成映射进程的工作后会将名字为 <code>dyld</code> 的Mach-O 文件映射到进程中的随机地址，它将 PC 寄存器设为 <code>dyld</code> 的地址并运行。<code>dyld</code> 在应用进程中运行的工作是加载应用依赖的所有动态链接库，准备好运行所需的一切，它拥有的权限跟应用一样。</p>
+<h3 id="dyld-加载-dylib-文件"><a href="#dyld-加载-dylib-文件" class="headerlink" title="dyld 加载 dylib 文件"></a><code>dyld</code> 加载 dylib 文件</h3><p>Unix 的前二十年很安逸，因为那时还没有发明动态链接库。有了动态链接库后，一个用于加载链接库的帮助程序被创建。在苹果的平台里是 <code>dyld</code>，其他 Unix 系统也有 <a href="https://zh.wikipedia.org/wiki/Ld.so" target="_blank" rel="noopener"><code>ld.so</code></a>。 当内核完成映射进程的工作后会将名字为 <code>dyld</code> 的Mach-O 文件映射到进程中的随机地址，它将 PC 寄存器设为 <code>dyld</code> 的地址并运行。<code>dyld</code> 在应用进程中运行的工作是加载应用依赖的所有动态链接库，准备好运行所需的一切，它拥有的权限跟应用一样。</p>
 <p>下面的步骤构成了 <code>dyld</code> 的时间线：</p>
 <p>Load dylibs -&gt; Rebase -&gt; Bind -&gt; ObjC -&gt; Initializers</p>
 <h4 id="加载-Dylib"><a href="#加载-Dylib" class="headerlink" title="加载 Dylib"></a>加载 Dylib</h4><p>从主执行文件的 header 获取到需要加载的所依赖动态库列表，而 header 早就被内核映射过。然后它需要找到每个 dylib，然后打开文件读取文件起始位置，确保它是 Mach-O 文件。接着会找到代码签名并将其注册到内核。然后在 dylib 文件的每个 segment 上调用 <code>mmap()</code>。应用所依赖的 dylib 文件可能会再依赖其他 dylib，所以 <code>dyld</code> 所需要加载的是动态库列表一个递归依赖的集合。一般应用会加载 100 到 400 个 dylib 文件，但大部分都是系统 dylib，它们会被预先计算和缓存起来，加载速度很快。</p>
@@ -149,6 +150,7 @@
 <h4 id="Rebasing-和-Binding"><a href="#Rebasing-和-Binding" class="headerlink" title="Rebasing 和 Binding"></a>Rebasing 和 Binding</h4><p>Rebasing：在镜像内部调整指针的指向<br>Binding：将指针指向镜像外部的内容</p>
 <p>可以通过命令行查看 rebase 和 bind 等信息：</p>
 <figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">xcrun</span> dyldinfo -rebase -<span class="keyword">bind </span>-lazy_bind myapp.app/myapp</span><br></pre></td></tr></table></figure>
+
 <p>通过这个命令可以查看所有的 Fix-up。rebase，bind，weak_bind，lazy_bind 都存储在 <code>__LINKEDIT</code> 段中，并可通过 <code>LC_DYLD_INFO_ONLY</code> 查看各种信息的偏移量和大小。</p>
 <p>建议用 MachOView 查看更加方便直观。</p>
 <p>从 <code>dyld</code> 源码层面简要介绍下 Rebasing 和 Binding 的流程。</p>
@@ -180,13 +182,14 @@
 <p>C++ 中有个问题叫做易碎的基类（fragile base class）。ObjC 就没有这个问题，因为会在加载时通过 fix-up 动态类中改变实例变量的偏移量。</p>
 <p>在 ObjC 中可以通过定义类别（Category）的方式改变一个类的方法。有时你想要添加方法的类在另一个 dylib 中，而不在你的镜像中（也就是对系统或别人的类动刀），这时也需要做些 fix-up。</p>
 <p>ObjC 中的 selector 必须是唯一的。</p>
-<h4 id="Initializers"><a href="#Initializers" class="headerlink" title="Initializers"></a>Initializers</h4><p>C++ 会为静态创建的对象生成初始化器。而在 ObjC 中有个叫 <code>+load</code> 的方法，然而它被废弃了，现在建议使用 <code>+initialize</code>。对比详见：<a href="http://stackoverflow.com/questions/13326435/nsobject-load-and-initialize-what-do-they-do" target="_blank" rel="external">http://stackoverflow.com/questions/13326435/nsobject-load-and-initialize-what-do-they-do</a></p>
+<h4 id="Initializers"><a href="#Initializers" class="headerlink" title="Initializers"></a>Initializers</h4><p>C++ 会为静态创建的对象生成初始化器。而在 ObjC 中有个叫 <code>+load</code> 的方法，然而它被废弃了，现在建议使用 <code>+initialize</code>。对比详见：<a href="http://stackoverflow.com/questions/13326435/nsobject-load-and-initialize-what-do-they-do" target="_blank" rel="noopener">http://stackoverflow.com/questions/13326435/nsobject-load-and-initialize-what-do-they-do</a></p>
 <p>现在有了主执行文件，一堆 dylib，其依赖关系构成了一张巨大的有向图，那么执行初始化器的顺序是什么？自底向上！按照依赖关系，先加载叶子节点，然后逐步向上加载中间节点，直至最后加载根节点。这种加载顺序确保了安全性，加载某个 dylib 前，其所依赖的其余 dylib 文件肯定已经被预先加载。</p>
 <p>最后 <code>dyld</code> 会调用 <code>main()</code> 函数。<code>main()</code> 会调用 <code>UIApplicationMain()</code>。</p>
 <h2 id="改善启动时间"><a href="#改善启动时间" class="headerlink" title="改善启动时间"></a>改善启动时间</h2><p>从点击 App 图标到加载 App 闪屏之间会有个动画，我们希望 App 启动速度比这个动画更快。虽然不同设备上 App 启动速度不一样，但启动时间最好控制在 400ms。需要注意的是启动时间一旦超过 20s，系统会认为发生了死循环并杀掉 App 进程。当然启动时间最好以 App 所支持的最低配置设备为准。直到 <code>applicationWillFinishLaunching</code> 被调动，App 才启动结束。</p>
 <h3 id="测量启动时间"><a href="#测量启动时间" class="headerlink" title="测量启动时间"></a>测量启动时间</h3><p>Warm launch: App 和数据已经在内存中<br>Cold launch: App 不在内核缓冲存储器中</p>
 <p>冷启动（Cold launch）耗时才是我们需要测量的重要数据，为了准确测量冷启动耗时，测量前需要重启设备。在 <code>main()</code> 方法执行前测量是很难的，好在 <code>dyld</code> 提供了内建的测量方法：在 Xcode 中 Edit scheme -&gt; Run -&gt; Auguments 将环境变量 <code>DYLD_PRINT_STATISTICS</code> 设为 <code>1</code>。控制台输出的内容如下：</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Total pre-main <span class="selector-tag">time</span>: <span class="number">228.41</span> milliseconds (<span class="number">100.0%</span>)</span><br><span class="line">         dylib loading <span class="selector-tag">time</span>:  <span class="number">82.35</span> milliseconds (<span class="number">36.0%</span>)</span><br><span class="line">        rebase/binding <span class="selector-tag">time</span>:   <span class="number">6.12</span> milliseconds (<span class="number">2.6%</span>)</span><br><span class="line">            ObjC setup <span class="selector-tag">time</span>:   <span class="number">7.82</span> milliseconds (<span class="number">3.4%</span>)</span><br><span class="line">           initializer <span class="selector-tag">time</span>: <span class="number">132.02</span> milliseconds (<span class="number">57.8%</span>)</span><br><span class="line">           slowest intializers :</span><br><span class="line">             libSystem<span class="selector-class">.B</span><span class="selector-class">.dylib</span> : <span class="number">122.07</span> milliseconds (<span class="number">53.4%</span>)</span><br><span class="line">                CoreFoundation :   <span class="number">5.59</span> milliseconds (<span class="number">2.4%</span>)</span><br></pre></td></tr></table></figure>
+
 <h3 id="优化启动时间"><a href="#优化启动时间" class="headerlink" title="优化启动时间"></a>优化启动时间</h3><p>可以针对 App 启动前的每个步骤进行相应的优化工作。</p>
 <h4 id="加载-Dylib-1"><a href="#加载-Dylib-1" class="headerlink" title="加载 Dylib"></a>加载 Dylib</h4><p>之前提到过加载系统的 dylib 很快，因为有优化。但加载内嵌（embedded）的 dylib 文件很占时间，所以尽可能把多个内嵌 dylib 合并成一个来加载，或者使用 static archive。使用 <code>dlopen()</code> 来在运行时懒加载是不建议的，这么做可能会带来一些问题，并且总的开销更大。</p>
 <h4 id="Rebase-Binding"><a href="#Rebase-Binding" class="headerlink" title="Rebase/Binding"></a>Rebase/Binding</h4><p>之前提过 Rebaing 消耗了大量时间在 I/O 上，而在之后的 Binding 就不怎么需要 I/O 了，而是将时间耗费在计算上。所以这两个步骤的耗时是混在一起的。</p>
@@ -198,7 +201,7 @@
 <li>不要使用 <code>__atribute__((constructor))</code> 将方法显式标记为初始化器，而是让初始化方法调用时才执行。比如使用 <code>dispatch_once()</code>,<code>pthread_once()</code> 或 <code>std::once()</code>。也就是在第一次使用时才初始化，推迟了一部分工作耗时。</li>
 </ul>
 <p><strong>隐式初始化</strong></p>
-<p>对于带有<a href="http://stackoverflow.com/questions/3899223/what-is-a-non-trivial-constructor-in-c" target="_blank" rel="external">复杂（non-trivial）构造器</a>的 C++ 静态变量：</p>
+<p>对于带有<a href="http://stackoverflow.com/questions/3899223/what-is-a-non-trivial-constructor-in-c" target="_blank" rel="noopener">复杂（non-trivial）构造器</a>的 C++ 静态变量：</p>
 <ol>
 <li>在调用的地方使用初始化器。</li>
 <li>只用简单值类型赋值（POD:Plain Old Data），这样静态链接器会预先计算 <code>__DATA</code> 中的数据，无需再进行 fix-up 工作。</li>
@@ -206,7 +209,7 @@
 <li>使用 Swift 重写代码，因为 Swift 已经预先处理好了，强力推荐。</li>
 </ol>
 <p>不要在初始化方法中调用 <code>dlopen()</code>，对性能有影响。因为 <code>dyld</code> 在 App 开始前运行，由于此时是单线程运行所以系统会取消加锁，但 <code>dlopen()</code> 开启了多线程，系统不得不加锁，这就严重影响了性能，还可能会造成死锁以及产生未知的后果。所以也不要在初始化器中创建线程。</p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://developer.apple.com/videos/play/wwdc2016/406/" target="_blank" rel="external">https://developer.apple.com/videos/play/wwdc2016/406/</a></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://developer.apple.com/videos/play/wwdc2016/406/" target="_blank" rel="noopener">https://developer.apple.com/videos/play/wwdc2016/406/</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">

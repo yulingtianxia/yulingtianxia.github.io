@@ -98,14 +98,14 @@
 </header>
     <div class="article-content">
         
-        <p><a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：</p>
+        <p><a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：</p>
 <ol>
 <li>如何知道某个 Block 对象被谁 Hook 过？</li>
 <li>多次 Hook 的先后顺序？</li>
 <li>如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？</li>
 </ol>
 <p>这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。</p>
-<p>关于 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 的原理，可以先阅读之前的文章：</p>
+<p>关于 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 的原理，可以先阅读之前的文章：</p>
 <ul>
 <li><a href="http://yulingtianxia.com/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/">Hook Objective-C Block with Libffi</a></li>
 <li><a href="http://yulingtianxia.com/blog/2019/04/27/BlockHook-with-Struct/">BlockHook with Struct</a></li>
@@ -168,8 +168,8 @@
 </header>
     <div class="article-content">
         
-        <p>一年前，我开发了 <a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a>，（应该是）填补了 Objective-C 业界在 Hook Block 技术领域的空白。但是对于 Block 的参数和返回值有限制，仅定制了 <code>CGRect</code>, <code>CGSize</code>, <code>CGPoint</code> 等结构体，不支持自定义 struct。这次就把这个坑给填上。</p>
-<p>至此，<a href="https://github.com/yulingtianxia/BlockHook">BlockHook</a> 已支持 macOS 和 iOS 平台全架构、tvOS 和 watchOS 模拟器，<code>BlockHook.m</code> 测试覆盖率达到 92% 以上。</p>
+        <p>一年前，我开发了 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a>，（应该是）填补了 Objective-C 业界在 Hook Block 技术领域的空白。但是对于 Block 的参数和返回值有限制，仅定制了 <code>CGRect</code>, <code>CGSize</code>, <code>CGPoint</code> 等结构体，不支持自定义 struct。这次就把这个坑给填上。</p>
+<p>至此，<a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 已支持 macOS 和 iOS 平台全架构、tvOS 和 watchOS 模拟器，<code>BlockHook.m</code> 测试覆盖率达到 92% 以上。</p>
         
         
         <p class="article-more-link">
@@ -234,7 +234,7 @@
 <li>使用 VGGish 网络做特征提取，输入自定义网络进行训练。</li>
 <li>使用音频库导出一系列特征作为输入向量，自定义网络进行训练。</li>
 </ol>
-<p>Python 工程和 iOS Sample 开源在 GitHub 上了：<a href="https://github.com/yulingtianxia/AudioEmotion">https://github.com/yulingtianxia/AudioEmotion</a></p>
+<p>Python 工程和 iOS Sample 开源在 GitHub 上了：<a href="https://github.com/yulingtianxia/AudioEmotion" target="_blank" rel="noopener">https://github.com/yulingtianxia/AudioEmotion</a></p>
         
         
         <p class="article-more-link">
@@ -293,9 +293,9 @@
 </header>
     <div class="article-content">
         
-        <p>在照片质量评分组件 <a href="https://github.com/yulingtianxia/PhotoAssessment">PhotoAssessment</a> 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。</p>
+        <p>在照片质量评分组件 <a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="noopener">PhotoAssessment</a> 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。</p>
 <p>至此，几乎所有图像处理与计算任务都交由 GPU 完成。之前利用 Sobel 算子边缘检测是使用了苹果封装好的 MPS 类，剩余的色彩分布指纹向量和饱和度均值当然都是需要自己写 Shader 的，现在终于补齐了。Metal Shading Language 与 GLSL 使用习惯和理念很相似，只不过 Metal Shader 的语法是基于 C++ 14 的。</p>
-<p>关于整个组件的实现思路，可以查阅<a href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/">『使用 Metal 和 Core ML 评价照片质量』</a>。本篇文章所涉及到的 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/PhotoAssessmentShaders.metal">Shader 代码</a> 也在其中。</p>
+<p>关于整个组件的实现思路，可以查阅<a href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/">『使用 Metal 和 Core ML 评价照片质量』</a>。本篇文章所涉及到的 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/PhotoAssessmentShaders.metal" target="_blank" rel="noopener">Shader 代码</a> 也在其中。</p>
         
         
         <p class="article-more-link">
@@ -355,8 +355,8 @@
     <div class="article-content">
         
         <p>最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。</p>
-<p>然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：<a href="https://github.com/yulingtianxia/oclint/tree/llvm-7.0">https://github.com/yulingtianxia/oclint/tree/llvm-7.0</a></p>
-<p>伸手党也可以使用我写的<a href="https://github.com/yulingtianxia/oclint/releases/download/0.18.10/install-0.18.10">脚本</a>直接安装，已包含 MVVM 规则。</p>
+<p>然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：<a href="https://github.com/yulingtianxia/oclint/tree/llvm-7.0" target="_blank" rel="noopener">https://github.com/yulingtianxia/oclint/tree/llvm-7.0</a></p>
+<p>伸手党也可以使用我写的<a href="https://github.com/yulingtianxia/oclint/releases/download/0.18.10/install-0.18.10" target="_blank" rel="noopener">脚本</a>直接安装，已包含 MVVM 规则。</p>
         
         
         <p class="article-more-link">
@@ -415,10 +415,10 @@
 </header>
     <div class="article-content">
         
-        <p>开发者经常会在代码中看到各类脏话，有吐槽产品的瞎改早晚还会改回来的，有吐槽这块代码写的太烂无法直视的，或是干脆心情不好就一顿骂。公司内部的项目想必是无数天坑 f*ck 无数，连对外开源的项目也难逃一劫，比如前一段时间 <a href="https://bugs.openjdk.java.net/browse/JDK-8215217">OpenJDK</a> 就因为脏话太多火了一把。</p>
-<p>于是我做了一个 Xcode 插件来寻找代码中的脏话，将其高亮可以被选中，作为一个强提示让开发者修改。目前逻辑还只是简单替换而已，代码在这里：<a href="https://github.com/yulingtianxia/DirtyWords-for-Xcode">DirtyWords-for-Xcode</a></p>
+        <p>开发者经常会在代码中看到各类脏话，有吐槽产品的瞎改早晚还会改回来的，有吐槽这块代码写的太烂无法直视的，或是干脆心情不好就一顿骂。公司内部的项目想必是无数天坑 f*ck 无数，连对外开源的项目也难逃一劫，比如前一段时间 <a href="https://bugs.openjdk.java.net/browse/JDK-8215217" target="_blank" rel="noopener">OpenJDK</a> 就因为脏话太多火了一把。</p>
+<p>于是我做了一个 Xcode 插件来寻找代码中的脏话，将其高亮可以被选中，作为一个强提示让开发者修改。目前逻辑还只是简单替换而已，代码在这里：<a href="https://github.com/yulingtianxia/DirtyWords-for-Xcode" target="_blank" rel="noopener">DirtyWords-for-Xcode</a></p>
 <p>为了体现汉字的博大精深，瞎画了个 icon，见笑了：</p>
-<p><img src="https://github.com/yulingtianxia/DirtyWords-for-Xcode/blob/master/images/艹.png?raw=true" alt></p>
+<p><img src="https://github.com/yulingtianxia/DirtyWords-for-Xcode/blob/master/images/%E8%89%B9.png?raw=true" alt></p>
         
         
         <p class="article-more-link">
@@ -474,8 +474,8 @@
         
         <p>如何评价一张照片的质量呢？</p>
 <p>用算法可以客观地评价照片质量，也可以人为主观地给照片打分，并运用机器学习来训练模型。</p>
-<p>我用 Swift 写了个 <a href="https://github.com/yulingtianxia/PhotoAssessment">Demo</a>。用苹果的 Metal 跑一些算法得出客观评分，再用 Core ML 预测主观评分。得到照片评分后，就可以检测相似照片，并从中挑选最优的照片推荐给用户。</p>
-<p><a href="https://github.com/yulingtianxia/PhotoAssessment">Demo</a> 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、图片的 HSB 色彩空间、以及边缘检测结果的平均值和方差。代码兼容 iOS 和 macOS。下面示例图片拍摄自胡里山炮王和西塘。</p>
+<p>我用 Swift 写了个 <a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="noopener">Demo</a>。用苹果的 Metal 跑一些算法得出客观评分，再用 Core ML 预测主观评分。得到照片评分后，就可以检测相似照片，并从中挑选最优的照片推荐给用户。</p>
+<p><a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="noopener">Demo</a> 中展示了图片在 NIMA 模型预测结合人脸识别的主观评分、图片的 HSB 色彩空间、以及边缘检测结果的平均值和方差。代码兼容 iOS 和 macOS。下面示例图片拍摄自胡里山炮王和西塘。</p>
 <p><img src="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult1.png?raw=true" alt><img src="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/PhotoAssessment/AssessmentResult2.png?raw=true" alt></p>
         
         
@@ -491,7 +491,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Machine-Leaning/">Machine Leaning</a><a href="/tags/Metal/">Metal</a>
+  <span></span> <a href="/tags/Metal/">Metal</a><a href="/tags/Machine-Leaning/">Machine Leaning</a>
   </div>
 
 </div>
@@ -535,7 +535,7 @@
 </header>
     <div class="article-content">
         
-        <p>之前 <a href="https://github.com/yulingtianxia/TBUIAutoTest">TBUIAutoTest</a> 有个 <a href="https://github.com/yulingtianxia/TBUIAutoTest/issues/7">issue</a>，我发现原因跟 Swift 有关，在解决问题时顺带稍微研究了下 Swift 编写的类。</p>
+        <p>之前 <a href="https://github.com/yulingtianxia/TBUIAutoTest" target="_blank" rel="noopener">TBUIAutoTest</a> 有个 <a href="https://github.com/yulingtianxia/TBUIAutoTest/issues/7" target="_blank" rel="noopener">issue</a>，我发现原因跟 Swift 有关，在解决问题时顺带稍微研究了下 Swift 编写的类。</p>
         
         
         <p class="article-more-link">
@@ -594,10 +594,10 @@
 </header>
     <div class="article-content">
         
-        <p>前一阵子看到一篇文章 <a href="https://juejin.im/post/5b8c9310f265da4361530560">《石锤 github 买 star 行为》</a>，第一反应是很震惊。是真的很震惊，因为文章中提到的 CocoaDebug 我也 star 了，没想到竟然涉嫌购买 star 炒作，蒙蔽了好多人的双眼。没错，我就是跟风 star，看别的大神 star 啥就顺手 star。 也有的人看 Trending 上啥火顺手 star，甚至用脚本自动 star。</p>
+        <p>前一阵子看到一篇文章 <a href="https://juejin.im/post/5b8c9310f265da4361530560" target="_blank" rel="noopener">《石锤 github 买 star 行为》</a>，第一反应是很震惊。是真的很震惊，因为文章中提到的 CocoaDebug 我也 star 了，没想到竟然涉嫌购买 star 炒作，蒙蔽了好多人的双眼。没错，我就是跟风 star，看别的大神 star 啥就顺手 star。 也有的人看 Trending 上啥火顺手 star，甚至用脚本自动 star。</p>
 <p>这条黑产背后到底隐藏着什么？GitHub 上还有哪些大笨蛋也曾靠买 Star 蒙蔽了大神们的双眼呢？我写了个简单的程序用于挖掘基于 Star 的关系链，并进行聚类分析。然后从 CocoaDebug 这个 repo 入手，沿着关系链一层层深挖下去。</p>
 <p>用数据说话，结果一定也会让你大开眼界。正义可能会迟到，但绝不会缺席！</p>
-<p>项目源码：<a href="https://github.com/yulingtianxia/FuckFakeGitHubStars">FuckFakeGitHubStars</a></p>
+<p>项目源码：<a href="https://github.com/yulingtianxia/FuckFakeGitHubStars" target="_blank" rel="noopener">FuckFakeGitHubStars</a></p>
         
         
         <p class="article-more-link">
@@ -656,7 +656,7 @@
 </header>
     <div class="article-content">
         
-        <p><a href="https://github.com/yulingtianxia/TBUIAutoTest">TBUIAutoTest</a> 可以帮开发人员生成UI 控件的标签，便于自动化测试。只需一行代码或一个配置，几乎所有的 iOS Native UI 都会在运行时生成一个页面内唯一且不变的标签。不仅节省了开发人员手动为每个 UI 控件加标签的时间，也节省了测试人员与开发人员的沟通成本。</p>
+        <p><a href="https://github.com/yulingtianxia/TBUIAutoTest" target="_blank" rel="noopener">TBUIAutoTest</a> 可以帮开发人员生成UI 控件的标签，便于自动化测试。只需一行代码或一个配置，几乎所有的 iOS Native UI 都会在运行时生成一个页面内唯一且不变的标签。不仅节省了开发人员手动为每个 UI 控件加标签的时间，也节省了测试人员与开发人员的沟通成本。</p>
         
         
         <p class="article-more-link">
