@@ -1,0 +1,592 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>BlockHook with Private Data | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="在使用 BlockHook Hook 所有 Block 对象时，发现有些 Block 被 Hook 后会 Crash。究其原因发现是它们骨骼惊奇，夹带了很多『私货』，不能直接 Hook！本文讲述 BlockHook 在处理这种 Block 时的技术原理，解开含有 Private Data 的 Block 的神秘面纱。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BlockHook with Private Data">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2019/06/19/BlockHook-with-Private-Data/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="在使用 BlockHook Hook 所有 Block 对象时，发现有些 Block 被 Hook 后会 Crash。究其原因发现是它们骨骼惊奇，夹带了很多『私货』，不能直接 Hook！本文讲述 BlockHook 在处理这种 Block 时的技术原理，解开含有 Private Data 的 Block 的神秘面纱。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/BlockHook%20PrivateData.png?raw=true">
+<meta property="og:updated_time" content="2019-06-19T14:49:48.275Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BlockHook with Private Data">
+<meta name="twitter:description" content="在使用 BlockHook Hook 所有 Block 对象时，发现有些 Block 被 Hook 后会 Crash。究其原因发现是它们骨骼惊奇，夹带了很多『私货』，不能直接 Hook！本文讲述 BlockHook 在处理这种 Block 时的技术原理，解开含有 Private Data 的 Block 的神秘面纱。">
+<meta name="twitter:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/BlockHook%20PrivateData.png?raw=true">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/06/19/BlockHook-with-Private-Data/" title="BlockHook with Private Data" itemprop="url">BlockHook with Private Data</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  </p><p class="article-time">
+    <time datetime="2019-06-19T14:50:39.000Z" itemprop="datePublished"> 发表于 2019-06-19</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Block-为何会有-Private-Data"><span class="toc-number">1.</span> <span class="toc-text">Block 为何会有 Private Data</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#特殊的-invoke-函数"><span class="toc-number">1.1.</span> <span class="toc-text">特殊的 invoke 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取-Private-Data"><span class="toc-number">1.2.</span> <span class="toc-text">获取 Private Data</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#适配-BlockHook"><span class="toc-number">2.</span> <span class="toc-text">适配 BlockHook</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-真正要执行的-Block"><span class="toc-number">2.1.</span> <span class="toc-text">Hook 真正要执行的 Block</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取-Block-当前-Hook-Token"><span class="toc-number">2.2.</span> <span class="toc-text">获取 Block 当前 Hook Token</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>在使用 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> Hook 所有 Block 对象时，发现有些 Block 被 Hook 后会 Crash。究其原因发现是它们骨骼惊奇，夹带了很多『私货』，不能直接 Hook！本文讲述 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 在处理这种 Block 时的技术原理，解开含有 Private Data 的 Block 的神秘面纱。</p>
+<a id="more"></a>
+
+<p>由于关于 Block Private Data 的资料几乎没有，所以我完全可以当回标题党，把这篇文章的标题叫做『你真的了解 Block 么？』或者『这才是 Hook Block 的正确姿势』之类的。但想想还是算了吧，怕被大佬们嘲笑称又『改变业界』了啊。</p>
+<h2 id="Block-为何会有-Private-Data"><a href="#Block-为何会有-Private-Data" class="headerlink" title="Block 为何会有 Private Data"></a>Block 为何会有 Private Data</h2><p>首先来看一段代码：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dispatch_block_t </span><span class="keyword">block </span>= <span class="keyword">dispatch_block_create(0, </span>^&#123;</span><br><span class="line">    NSLog(@<span class="string">"I'm dispatch_block_t"</span>)<span class="comment">;</span></span><br><span class="line">&#125;)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p>用 <code>dispatch_block_create</code> 创建的 Block 都很特殊，返回的 Block 包含了参数里传入的 Block。此时 <code>dispatch_block_t</code> 虽然表面上是一种普通的 Block，但它的构造暗藏玄机，含有 Private Data，下面会详细解读。</p>
+<h3 id="特殊的-invoke-函数"><a href="#特殊的-invoke-函数" class="headerlink" title="特殊的 invoke 函数"></a>特殊的 invoke 函数</h3><p>这种 Block 的 <code>invoke</code> 函数指针是固定的，函数名为 <code>___dispatch_block_create_block_invoke</code>。在 linux 系统下，函数名为 <code>__dispatch_block_create_block_invoke</code>，嗯少了个下划线。这个函数的定义来自 libdispatch.dylib，也就是我们常用的 GCD。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="comment">// The compiler hides the name of the function it generates, and changes it if</span></span><br><span class="line"><span class="comment">// we try to reference it directly, but the linker still sees it.</span></span><br><span class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">DISPATCH_BLOCK_SPECIAL_INVOKE</span><span class="params">(<span class="keyword">void</span> *)</span></span></span><br><span class="line"><span class="function"><span class="meta">#<span class="meta-keyword">ifdef</span> __linux__</span></span></span><br><span class="line"><span class="function">		<span class="title">asm</span><span class="params">(<span class="string">"___dispatch_block_create_block_invoke"</span>)</span></span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">		<span class="keyword">asm</span>(<span class="string">"____dispatch_block_create_block_invoke"</span>);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="keyword">void</span> (*<span class="keyword">const</span> _dispatch_block_special_invoke)(<span class="keyword">void</span>*) = DISPATCH_BLOCK_SPECIAL_INVOKE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>libdispatch 会通过判断 Block 的 <code>invoke</code> 指针是否为 <code>_dispatch_block_special_invoke</code>，来知道这个 Block 是否含有 Private Data。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DISPATCH_ALWAYS_INLINE</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">bool</span></span><br><span class="line">_dispatch_block_has_private_data(<span class="keyword">const</span> <span class="keyword">dispatch_block_t</span> block)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> (_dispatch_Block_invoke(block) == _dispatch_block_special_invoke);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>不幸的是，<code>_dispatch_block_special_invoke</code> 是私有的。在非调试场景下是无法通过 <code>dladdr</code> 等方式来获取它的函数名的。也就无法用类似上面的代码来判断 Block 是否含有 Private Data 了。</p>
+<h3 id="获取-Private-Data"><a href="#获取-Private-Data" class="headerlink" title="获取 Private Data"></a>获取 Private Data</h3><p>使用 <code>dispatch_block_create</code> 创建的 <code>dispatch_block_t</code> 只是个『壳』，真正执行的是其内部包含的 Block。再加上 GCD 所需的一些数据（queue，group，thread，priority 等），这些数据都需要作为 Private Data 追加在 Block 上。对实现 BlockHook 来说最需要关注的就是 <code>dbpd_magic</code> 和 <code>dbpd_block</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">OS_OBJECT_DECL_CLASS(voucher);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dispatch_block_private_data_s</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> dbpd_magic;</span><br><span class="line">    <span class="keyword">dispatch_block_flags_t</span> dbpd_flags;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="keyword">volatile</span> dbpd_atomic_flags;</span><br><span class="line">    <span class="keyword">int</span> <span class="keyword">volatile</span> dbpd_performed;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> dbpd_priority;</span><br><span class="line">    <span class="keyword">voucher_t</span> dbpd_voucher;</span><br><span class="line">    <span class="keyword">dispatch_block_t</span> dbpd_block;</span><br><span class="line">    <span class="keyword">dispatch_group_t</span> dbpd_group;</span><br><span class="line">    <span class="keyword">dispatch_queue_t</span> dbpd_queue;</span><br><span class="line">    <span class="keyword">mach_port_t</span> dbpd_thread;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dispatch_block_private_data_s</span> *<span class="title">dispatch_block_private_data_t</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>既然无法用 <code>_dispatch_block_special_invoke</code> 来判断 Block 是否含有 Private Data，可以使用 <code>dbpd_magic</code> 魔数来判断。当其值为 <code>0xD159B10C</code> 时（DisBloc 的意思），则表明含有 Private Data。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DISPATCH_BLOCK_PRIVATE_DATA_MAGIC 0xD159B10C <span class="comment">// 0xDISPatch_BLOCk</span></span></span><br><span class="line"></span><br><span class="line">DISPATCH_ALWAYS_INLINE</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">dispatch_block_private_data_t</span></span><br><span class="line">bh_dispatch_block_get_private_data(struct _BHBlock *block)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Keep in sync with _dispatch_block_create implementation</span></span><br><span class="line">    <span class="keyword">uint8_t</span> *x = (<span class="keyword">uint8_t</span> *)block;</span><br><span class="line">    <span class="comment">// x points to base of struct Block_layout</span></span><br><span class="line">    x += <span class="keyword">sizeof</span>(struct _BHBlock);</span><br><span class="line">    <span class="comment">// x points to base of captured dispatch_block_private_data_s object</span></span><br><span class="line">    <span class="keyword">dispatch_block_private_data_t</span> dbpd = (<span class="keyword">dispatch_block_private_data_t</span>)x;</span><br><span class="line">    <span class="keyword">if</span> (dbpd-&gt;dbpd_magic != DISPATCH_BLOCK_PRIVATE_DATA_MAGIC) &#123;</span><br><span class="line">        <span class="keyword">return</span> nil;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dbpd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后真正执行的其实是 <code>dbpd_block</code> 这个 Block，<code>dispatch_block_t</code> 只是个保存各种元数据的壳。</p>
+<h2 id="适配-BlockHook"><a href="#适配-BlockHook" class="headerlink" title="适配 BlockHook"></a>适配 BlockHook</h2><p>虽然说 Private Data 本身并不是 Block 实现中必要的一环，它只是 GCD 对 Block 数据结构的一种『魔改』扩充。但由于 GCD 内部的一些保护机制，会在修改了 Block 的 <code>invoke</code> 指针后触发 crash（<code>__builtin_trap</code>），所以不能直接对含有 Private Data 的 Block 进行 Hook。这就需要 BlockHook 组件做一些适配工作。</p>
+<h3 id="Hook-真正要执行的-Block"><a href="#Hook-真正要执行的-Block" class="headerlink" title="Hook 真正要执行的 Block"></a>Hook 真正要执行的 Block</h3><p>既然 <code>dbpd_block</code> 才是真正要执行的 Block，那么 Hook 的时候需要先获取 Private Data，然后对其 <code>dbpd_block</code> 进行 Hook:</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">- (BHToken *)block_hookWithMode:(BlockHookMode)mode</span><br><span class="line">                     usingBlock:(<span class="keyword">id</span>)aspectBlock</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!aspectBlock || ![<span class="keyword">self</span> block_checkValid]) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">struct</span> _BHBlock *bh_block = (__bridge <span class="keyword">void</span> *)<span class="keyword">self</span>;</span><br><span class="line">    <span class="keyword">if</span> (!_bh_Block_descriptor_3(bh_block)) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Block has no signature! Required ABI.2010.3.16. %@"</span>, <span class="keyword">self</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Handle blocks have private data.</span></span><br><span class="line">    dispatch_block_private_data_t dbpd = bh_dispatch_block_get_private_data(bh_block);</span><br><span class="line">    <span class="keyword">if</span> (dbpd &amp;&amp; dbpd-&gt;dbpd_block) &#123;</span><br><span class="line">        <span class="keyword">return</span> [dbpd-&gt;dbpd_block block_hookWithMode:mode usingBlock:aspectBlock];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> [[BHToken alloc] initWithBlock:<span class="keyword">self</span> mode:mode aspectBlockBlock:aspectBlock];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取-Block-当前-Hook-Token"><a href="#获取-Block-当前-Hook-Token" class="headerlink" title="获取 Block 当前 Hook Token"></a>获取 Block 当前 Hook Token</h3><p>因为 Hook 的是 <code>dbpd_block</code>，所以获取 Token 的时候也需要额外处理下。要在 <code>dbpd_block</code> 上通过 AssociatedObject 来获取 Token，而不是 <code>dispatch_block_t</code> 上。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">BHToken </span>*)<span class="keyword">block_currentHookToken</span></span><br><span class="line"><span class="keyword">&#123;</span></span><br><span class="line"><span class="keyword"> </span>   <span class="meta">if</span> (![<span class="keyword">self </span><span class="keyword">block_checkValid]) </span>&#123;</span><br><span class="line">        return nil<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">    dispatch_block_private_data_t dbpd = <span class="keyword">bh_dispatch_block_get_private_data((__bridge </span><span class="keyword">struct </span>_BHBlock *)(<span class="keyword">self));</span></span><br><span class="line"><span class="keyword"> </span>   <span class="meta">if</span> (dbpd &amp;&amp; dbpd-&gt;dbpd_block) &#123;</span><br><span class="line">        return [dbpd-&gt;dbpd_block <span class="keyword">block_currentHookToken];</span></span><br><span class="line"><span class="keyword"> </span>   &#125;</span><br><span class="line">    void *invoke = [<span class="keyword">self </span><span class="keyword">block_currentInvokeFunction];</span></span><br><span class="line"><span class="keyword"> </span>   return objc_getAssociatedObject(<span class="keyword">self, </span>invoke)<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>一图以蔽之。</p>
+<p><img src="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/BlockHook%20PrivateData.png?raw=true" alt></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2019/06/19/BlockHook-with-Private-Data/" data-title="BlockHook with Private Data | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/blog/2019/05/26/BlockHook-with-Revocation/" title="BlockHook with Revocation">
+ <strong>下一篇：</strong><br> 
+ <span>BlockHook with Revocation
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Block-为何会有-Private-Data"><span class="toc-number">1.</span> <span class="toc-text">Block 为何会有 Private Data</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#特殊的-invoke-函数"><span class="toc-number">1.1.</span> <span class="toc-text">特殊的 invoke 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取-Private-Data"><span class="toc-number">1.2.</span> <span class="toc-text">获取 Private Data</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#适配-BlockHook"><span class="toc-number">2.</span> <span class="toc-text">适配 BlockHook</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-真正要执行的-Block"><span class="toc-number">2.1.</span> <span class="toc-text">Hook 真正要执行的 Block</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取-Block-当前-Hook-Token"><span class="toc-number">2.2.</span> <span class="toc-text">获取 Block 当前 Hook Token</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://pbxproj.yulingtianxia.com" target="_blank" title="pbxprojHelper">pbxprojHelper</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 13.33px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 15.56px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 14.44px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 12.22px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 11.11px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 12.22px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 11.11px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 11.11px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.78px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 17.78px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.89px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 14.44px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/macOS/" style="font-size: 17.78px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.11px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 16.67px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 14.44px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
