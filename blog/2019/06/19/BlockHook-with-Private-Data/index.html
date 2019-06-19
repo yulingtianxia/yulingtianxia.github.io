@@ -19,7 +19,7 @@
 <meta property="og:description" content="在使用 BlockHook Hook 所有 Block 对象时，发现有些 Block 被 Hook 后会 Crash。究其原因发现是它们骨骼惊奇，夹带了很多『私货』，不能直接 Hook！本文讲述 BlockHook 在处理这种 Block 时的技术原理，解开含有 Private Data 的 Block 的神秘面纱。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/BlockHook%20PrivateData.png?raw=true">
-<meta property="og:updated_time" content="2019-06-19T14:49:48.275Z">
+<meta property="og:updated_time" content="2019-06-19T14:59:46.484Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BlockHook with Private Data">
 <meta name="twitter:description" content="在使用 BlockHook Hook 所有 Block 对象时，发现有些 Block 被 Hook 后会 Crash。究其原因发现是它们骨骼惊奇，夹带了很多『私货』，不能直接 Hook！本文讲述 BlockHook 在处理这种 Block 时的技术原理，解开含有 Private Data 的 Block 的神秘面纱。">
@@ -124,7 +124,7 @@
 <h3 id="获取-Private-Data"><a href="#获取-Private-Data" class="headerlink" title="获取 Private Data"></a>获取 Private Data</h3><p>使用 <code>dispatch_block_create</code> 创建的 <code>dispatch_block_t</code> 只是个『壳』，真正执行的是其内部包含的 Block。再加上 GCD 所需的一些数据（queue，group，thread，priority 等），这些数据都需要作为 Private Data 追加在 Block 上。对实现 BlockHook 来说最需要关注的就是 <code>dbpd_magic</code> 和 <code>dbpd_block</code>。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">OS_OBJECT_DECL_CLASS(voucher);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dispatch_block_private_data_s</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> dbpd_magic;</span><br><span class="line">    <span class="keyword">dispatch_block_flags_t</span> dbpd_flags;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="keyword">volatile</span> dbpd_atomic_flags;</span><br><span class="line">    <span class="keyword">int</span> <span class="keyword">volatile</span> dbpd_performed;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> dbpd_priority;</span><br><span class="line">    <span class="keyword">voucher_t</span> dbpd_voucher;</span><br><span class="line">    <span class="keyword">dispatch_block_t</span> dbpd_block;</span><br><span class="line">    <span class="keyword">dispatch_group_t</span> dbpd_group;</span><br><span class="line">    <span class="keyword">dispatch_queue_t</span> dbpd_queue;</span><br><span class="line">    <span class="keyword">mach_port_t</span> dbpd_thread;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dispatch_block_private_data_s</span> *<span class="title">dispatch_block_private_data_t</span>;</span></span><br></pre></td></tr></table></figure>
 
-<p>既然无法用 <code>_dispatch_block_special_invoke</code> 来判断 Block 是否含有 Private Data，可以使用 <code>dbpd_magic</code> 魔数来判断。当其值为 <code>0xD159B10C</code> 时（DisBloc 的意思），则表明含有 Private Data。</p>
+<p>既然无法用 <code>_dispatch_block_special_invoke</code> 来判断 Block 是否含有 Private Data，可以使用 <code>dbpd_magic</code> 魔数来判断。当其值为 <code>0xD159B10C</code> 时（DisBloc 的意思），则表明含有 Private Data。<strong>当然这种溢出的方式同样是有风险的，但触及到 PAGEZERO 概率很低</strong>。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DISPATCH_BLOCK_PRIVATE_DATA_MAGIC 0xD159B10C <span class="comment">// 0xDISPatch_BLOCk</span></span></span><br><span class="line"></span><br><span class="line">DISPATCH_ALWAYS_INLINE</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">dispatch_block_private_data_t</span></span><br><span class="line">bh_dispatch_block_get_private_data(struct _BHBlock *block)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Keep in sync with _dispatch_block_create implementation</span></span><br><span class="line">    <span class="keyword">uint8_t</span> *x = (<span class="keyword">uint8_t</span> *)block;</span><br><span class="line">    <span class="comment">// x points to base of struct Block_layout</span></span><br><span class="line">    x += <span class="keyword">sizeof</span>(struct _BHBlock);</span><br><span class="line">    <span class="comment">// x points to base of captured dispatch_block_private_data_s object</span></span><br><span class="line">    <span class="keyword">dispatch_block_private_data_t</span> dbpd = (<span class="keyword">dispatch_block_private_data_t</span>)x;</span><br><span class="line">    <span class="keyword">if</span> (dbpd-&gt;dbpd_magic != DISPATCH_BLOCK_PRIVATE_DATA_MAGIC) &#123;</span><br><span class="line">        <span class="keyword">return</span> nil;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dbpd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>最后真正执行的其实是 <code>dbpd_block</code> 这个 Block，<code>dispatch_block_t</code> 只是个保存各种元数据的壳。</p>
@@ -573,20 +573,5 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+  </body>
 </html>

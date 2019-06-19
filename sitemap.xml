@@ -4,7 +4,7 @@
   <url>
     <loc>http://yulingtianxia.com/blog/2019/06/19/BlockHook-with-Private-Data/</loc>
     
-    <lastmod>2019-06-19T14:49:48.275Z</lastmod>
+    <lastmod>2019-06-19T14:59:46.484Z</lastmod>
     
   </url>
   
@@ -184,14 +184,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/</loc>
+    <loc>http://yulingtianxia.com/blog/2017/03/06/How-to-hook-the-correct-method-in-reverse-engineering/</loc>
     
     <lastmod>2019-05-26T10:08:45.528Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2017/03/06/How-to-hook-the-correct-method-in-reverse-engineering/</loc>
+    <loc>http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/</loc>
     
     <lastmod>2019-05-26T10:08:45.528Z</lastmod>
     
@@ -233,14 +233,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2016/09/28/Let-s-Talk-About-project-pbxproj/</loc>
+    <loc>http://yulingtianxia.com/blog/2016/08/29/Some-Experience-of-Gesture/</loc>
     
     <lastmod>2019-05-26T10:08:45.520Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2016/08/29/Some-Experience-of-Gesture/</loc>
+    <loc>http://yulingtianxia.com/blog/2016/09/28/Let-s-Talk-About-project-pbxproj/</loc>
     
     <lastmod>2019-05-26T10:08:45.520Z</lastmod>
     
@@ -394,14 +394,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/09/29/uialertcontroller-in-ios8/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/09/26/building-assert-in-swift-2/</loc>
     
     <lastmod>2019-05-26T10:08:45.500Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/09/26/building-assert-in-swift-2/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/09/29/uialertcontroller-in-ios8/</loc>
     
     <lastmod>2019-05-26T10:08:45.500Z</lastmod>
     
@@ -569,13 +569,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/28/iosdan-yuan-ce-shi-xctest/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.472Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/04/27/zai-you-xi-de-skscenezhong-tian-jia-button/</loc>
     
     <lastmod>2019-05-26T10:08:45.472Z</lastmod>
@@ -583,9 +576,9 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/24/ios7zi-ti-hui-zong/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/04/28/iosdan-yuan-ce-shi-xctest/</loc>
     
-    <lastmod>2019-05-26T10:08:45.471Z</lastmod>
+    <lastmod>2019-05-26T10:08:45.472Z</lastmod>
     
   </url>
   
@@ -597,14 +590,21 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/22/spritekitjie-ping-bing-fen-xiang-zhi-she-jiao-wang-luo/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/04/24/ios7zi-ti-hui-zong/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.471Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/04/21/yong-dfssuan-fa-ji-suan-spritekitzhong-fu-he-ti-de-gou-cheng/</loc>
     
     <lastmod>2019-05-26T10:08:45.470Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/21/yong-dfssuan-fa-ji-suan-spritekitzhong-fu-he-ti-de-gou-cheng/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/04/22/spritekitjie-ping-bing-fen-xiang-zhi-she-jiao-wang-luo/</loc>
     
     <lastmod>2019-05-26T10:08:45.470Z</lastmod>
     
