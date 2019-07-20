@@ -19,10 +19,13 @@
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="BlockHook 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：  如何知道某个 Block 对象被谁 Hook 过？ 多次 Hook 的先后顺序？ 如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？  这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。 关于 BlockHook 的原理，">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-05-28T14:39:15.371Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook_Token_List.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook_invoke_call.png">
+<meta property="og:updated_time" content="2019-07-20T09:47:18.621Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BlockHook with Revocation">
 <meta name="twitter:description" content="BlockHook 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：  如何知道某个 Block 对象被谁 Hook 过？ 多次 Hook 的先后顺序？ 如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？  这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。 关于 BlockHook 的原理，">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook_Token_List.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -121,7 +124,7 @@
 
 <h2 id="按顺序构造『虚拟的』-Hook-链表"><a href="#按顺序构造『虚拟的』-Hook-链表" class="headerlink" title="按顺序构造『虚拟的』 Hook 链表"></a>按顺序构造『虚拟的』 Hook 链表</h2><p>首先要有一个链表来按先后顺序记录一个 Block 对象上所有的 Hook。这个链表的格式以及持有关系也需要考虑在内。</p>
 <p>为此我构造了一个虚拟的链表来记录 Hook 的先后关系，而不是单独创建一个链表显式的记录。首先介绍下 Block 与 token 之间的引用关系：</p>
-<p>![](<a href="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook" target="_blank" rel="noopener">https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook</a> Token List.png)</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook_Token_List.png" alt></p>
 <p>可以看出每个 <code>BHToken</code> 记录了原始和替换后的 <code>invoke</code> 函数指针，那么先后两次 Hook 就靠 <code>invoke</code> 函数指针来关联了：<strong>每个 tokne 的 <code>originalInvoke</code> 就是上一次 Hook 的 token 的 <code>replacementInvoke</code></strong>。而拿到 token 又是靠 Block 对象上的 <code>AssociatedObject</code>，且 key 为 <code>replacementInvoke</code>。这样就构造了一条虚拟的链表：想要获得上次 Hook 的 token，只需在 Hook 的 Block 对象上使用 <code>originalInvoke</code> 作为 key 即可。</p>
 <p>下面的代码展示了获取下个 token 的 <code>next</code> 实现。因为链表可能会有新的插入和删除节点操作，所以需确保线程安全。</p>
 <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">BHToken </span>*)next</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">BHLock </span>*lock = [self.<span class="keyword">block </span><span class="keyword">bh_lockForKey:@selector(next)];</span></span><br><span class="line"><span class="keyword"> </span>   [lock lock]<span class="comment">;</span></span><br><span class="line">    if (!_next) &#123;</span><br><span class="line">        _next = objc_getAssociatedObject(self.<span class="keyword">block, </span>self.<span class="keyword">originInvoke);</span></span><br><span class="line"><span class="keyword"> </span>   &#125;</span><br><span class="line">    <span class="keyword">BHToken </span>*result = _next<span class="comment">;</span></span><br><span class="line">    [lock unlock]<span class="comment">;</span></span><br><span class="line">    return result<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -137,7 +140,7 @@
 
 <h2 id="撤销-Hook"><a href="#撤销-Hook" class="headerlink" title="撤销 Hook"></a>撤销 Hook</h2><p>俗话说『请神容易送神难』。好多 Hook 框架只解决的如何 Hook，但是却无法撤销恢复原样，留下一堆烂摊子。</p>
 <p>在搭建了 Hook 链表的基础上，多次 Hook 的链表可以简化成 <code>invoke</code> 函数指针之间的关系：</p>
-<p>![](<a href="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook" target="_blank" rel="noopener">https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook</a> invoke call.png)</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook_invoke_call.png" alt></p>
 <p>那么撤销 Hook 就可以从链表头部开始遍历，找到当前要 <code>remove</code> 的 token。接着链表上删除这个 token，而这又可以分为两个子问题：</p>
 <ol>
 <li>移除最后一次 Hook：需要将 Block 的 <code>invoke</code> 指针指向 token 的 <code>originalInvoke</code>。</li>

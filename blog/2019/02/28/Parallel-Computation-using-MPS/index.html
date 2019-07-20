@@ -19,13 +19,19 @@
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="在照片质量评分组件 PhotoAssessment 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。 至此，几乎所有图像处理与计算任务都交由 GP">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command%20structure0.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command%20structure1.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/Cmd-Model-threads.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/threadgroups.png">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.554Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/SIMD%20group.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/grid%20coordinates.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/underutilization%20of%20threads.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/nonuniform%20threadgroups.png">
+<meta property="og:updated_time" content="2019-07-20T09:51:45.781Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Parallel Computation using MPS">
 <meta name="twitter:description" content="在照片质量评分组件 PhotoAssessment 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。 至此，几乎所有图像处理与计算任务都交由 GP">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/Cmd-Model-threads.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command%20structure0.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -124,9 +130,9 @@
 <p>可以看出，降采样有一定耗时。即便是降采样到 50x50 这种很小的尺寸，在 CPU 上运行算法也会有较多的耗时。<strong>相比之下，直接 GPU 处理 500x500 尺寸图片具有更大的优势：耗时远小于降采样后跑 CPU，略高于降采样后跑 GPU，但能够处理更大尺寸更多信息，相当于有更高的准确率。</strong></p>
 <p>实现这两个功能的 Shader kernel 函数分别封装成 Swift 类： <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MPSSaturationKernel.swift" target="_blank" rel="noopener"><code>MPSSaturationKernel</code></a> 和 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MSPFingerprintImageKernel.swift" target="_blank" rel="noopener"><code>MSPFingerprintImageKernel</code></a>。</p>
 <h2 id="Shader-的实现"><a href="#Shader-的实现" class="headerlink" title="Shader 的实现"></a>Shader 的实现</h2><p>Command Encoder 会使用 Texture、Buffer、Sampler、Pipeline 等内容构建出 Command，并装载到 Command Buffer 上。</p>
-<p>![from Apple Doc](<a href="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command" target="_blank" rel="noopener">https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command</a> structure0.png)</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command%20structure0.png" alt="from Apple Doc"></p>
 <p>从 CPU 各个线程创建的 Command Buffer 都将会传入 Command Queue。运行在 GPU 上的 Shader 代码会处理这些 Command。</p>
-<p>![from Apple Doc](<a href="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command" target="_blank" rel="noopener">https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command</a> structure1.png)</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command%20structure1.png" alt="from Apple Doc"></p>
 <p>Command Encoder 有三种：Render、Compute 和 Blit。区别在于用途和用法，但创建的 Command 都可以放入同一个 Command Buffer 中。</p>
 <p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/Cmd-Model-threads.png" alt="from Apple Doc"></p>
 <p>为了在 GPU 上并行计算图片的饱和度和指纹向量，需要用到 Compute Command Encoder，并传入以下几个参数构建 Command：</p>
@@ -138,7 +144,7 @@
 <h3 id="Threadgroup"><a href="#Threadgroup" class="headerlink" title="Threadgroup"></a>Threadgroup</h3><p>GPU 并行计算时，每条线程处理一个像素。整个 Texture 看做一个 Grid，可以进一步划分成多个 threadgroup。</p>
 <p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/threadgroups.png" alt="from Apple Doc"></p>
 <p>threadgroup 还会按照 GPU 能同时执行的线程数 <code>threadExecutionWidth</code> 被划分为 SIMD group。</p>
-<p>![from Apple Doc](<a href="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/SIMD" target="_blank" rel="noopener">https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/SIMD</a> group.png)</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/SIMD%20group.png" alt="from Apple Doc"></p>
 <p>为了达到更好的性能，需要将 threadgroup 包含的线程数量设定为 <code>threadExecutionWidth</code> 的整数倍。</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">let w</span> = computePipelineState.threadExecutionWidth;</span><br><span class="line"><span class="attribute">let h</span> = computePipelineState.maxTotalThreadsPerThreadgroup / w;</span><br><span class="line"><span class="attribute">threadGroupSize</span> = MTLSize(width: w, height: h, depth: 1);</span><br></pre></td></tr></table></figure>
 
@@ -147,7 +153,7 @@
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kernel void</span><br><span class="line">rgb2hsvKernelNonuniform(texture2d&lt;float, access::<span class="built_in">read</span>&gt; inTexture <span class="string">[[texture(0)]]</span>,</span><br><span class="line">              texture2d&lt;float, access::<span class="built_in">write</span>&gt; outTexture <span class="string">[[texture(1)]]</span>,</span><br><span class="line">              uint2 gid <span class="string">[[thread_position_in_grid]]</span>)</span><br><span class="line">&#123;</span><br><span class="line">    float4 pixel = inTexture.<span class="built_in">read</span>(gid);</span><br><span class="line">    // 省略部分代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>比如传入的 <code>gid</code> 为 (9, 10)，那么就可以从 <code>inTexture</code> 中读取到此位置像素的数据。因为 Grid 坐标系是基于这个 Texture 的。</p>
-<p>![from Apple Doc](<a href="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/grid" target="_blank" rel="noopener">https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/grid</a> coordinates.png)</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/grid%20coordinates.png" alt="from Apple Doc"></p>
 <h3 id="Non-uniform-Threadgroup-Size"><a href="#Non-uniform-Threadgroup-Size" class="headerlink" title="Non-uniform Threadgroup Size"></a>Non-uniform Threadgroup Size</h3><p>Command Encoder 需要知道要处理的 Grid 的分组情况，比如Grid 包含多少 threadgroup，每个 threadgroup 包含多少 thread。</p>
 <figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> w = threadGroupSize.<span class="built_in">width</span>;</span><br><span class="line"><span class="built_in">let</span> h = threadGroupSize.<span class="built_in">height</span>;</span><br><span class="line"><span class="built_in">let</span> threadgroupsPerGrid = MTLSize(<span class="built_in">width</span>: (sourceTexture.<span class="built_in">width</span> + w - <span class="number">1</span>) / w, <span class="built_in">height</span>: (sourceTexture.<span class="built_in">height</span> + h - <span class="number">1</span>) / h, depth: <span class="number">1</span>);</span><br><span class="line">encoder?.dispatchThreadgroups(threadgroupsPerGrid, threadsPerThreadgroup: threadGroupSize)</span><br></pre></td></tr></table></figure>
 
@@ -155,9 +161,9 @@
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kernel void</span><br><span class="line">rgb2hsvKernel(texture2d&lt;float, access::<span class="built_in">read</span>&gt; inTexture <span class="string">[[texture(0)]]</span>,</span><br><span class="line">              texture2d&lt;float, access::<span class="built_in">write</span>&gt; outTexture <span class="string">[[texture(1)]]</span>,</span><br><span class="line">              uint2 gid <span class="string">[[thread_position_in_grid]]</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>((gid.x &gt;= outTexture.get_width()) || (gid.y &gt;= outTexture.get_height()))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    rgb2hsv(inTexture, outTexture, gid);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>也就是超范围的调用都被 <code>return</code> 掉了，GPU 的一些线程没利用上，造成了浪费:</p>
-<p>![from Apple Doc](<a href="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/underutilization" target="_blank" rel="noopener">https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/underutilization</a> of threads.png)</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/underutilization%20of%20threads.png" alt="from Apple Doc"></p>
 <p>为了提升性能，Metal 在部分 GPU 特性集上支持了 “Non-uniform Threadgroup Size”。可以允许存在不同 size 的 threadgroup：</p>
-<p>![from Apple Doc](<a href="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/nonuniform" target="_blank" rel="noopener">https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/nonuniform</a> threadgroups.png)</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/nonuniform%20threadgroups.png" alt="from Apple Doc"></p>
 <p>这样只需要传入 Grid 的 size，以及 threadgroup 的 size，Metal 就会自动划分边缘部分的 threadgroup size，充分利用好 GPU 的运算效率。</p>
 <figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> threadsPerGrid = MTLSize(<span class="built_in">width</span>: sourceTexture.<span class="built_in">width</span>, <span class="built_in">height</span>: sourceTexture.<span class="built_in">height</span>, depth: <span class="number">1</span>);</span><br><span class="line">encoder?.dispatchThreads(threadsPerGrid, threadsPerThreadgroup: threadGroupSize)</span><br></pre></td></tr></table></figure>
 
