@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head><meta name="generator" content="Hexo 3.8.0">
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>yulingtianxia&#39;s blog</title>
@@ -43,7 +43,7 @@
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
 			</div>
 			
 			<div id="textlogo">
@@ -68,16 +68,74 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
 					</form>
 					
 					</li>
 				</ul>
-			</ul></nav>			
+			</nav>			
 </div>
     </header>
     <div id="container">
       <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/07/27/BlockHook-with-Invocation/" title="BlockHook with Invocation" itemprop="url">BlockHook with Invocation</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-27T09:14:27.000Z" itemprop="datePublished"> 发表于 2019-07-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 在业界已经率先解决了在<strong>同步</strong>调用场景下对 Objective-C Block 的 AOP 问题，在很多场景需要先调用一段自己的逻辑，然后再<strong>异步延时</strong>执行 Block。</p>
+<p>比如从外部跳转到 App 某个页面前需要检查下登录态，如果未登录则需要走完登录流程后才能继续跳转页面，而几乎所有基于 Block callback 的路由组件都没提供路由拦截器的功能。不同的路由组件内部实现不同，想要实现拦截器就需要针对不同的内部实现来修改路由组件源码。</p>
+<p>因此我实现了 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 的异步拦截功能，所有基于 Block 的路由组件就都有了通用的路由拦截器！</p>
+<p>当然，Block 拦截器的应用场景不仅于此。只要是需要『同步改异步执行』 Block 的场景都可以用到。</p>
+<p>让子弹再飞一会儿！</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2019/07/27/BlockHook-with-Invocation/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2019/07/27/BlockHook-with-Invocation/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
 
    
     
@@ -91,7 +149,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  </p><p class="article-time">
+  <p class="article-time">
     <time datetime="2019-06-19T14:50:39.000Z" itemprop="datePublished"> 发表于 2019-06-19</time>
     
   </p>
@@ -145,7 +203,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  </p><p class="article-time">
+  <p class="article-time">
     <time datetime="2019-05-26T09:20:10.000Z" itemprop="datePublished"> 发表于 2019-05-26</time>
     
   </p>
@@ -215,7 +273,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  </p><p class="article-time">
+  <p class="article-time">
     <time datetime="2019-04-27T13:26:55.000Z" itemprop="datePublished"> 发表于 2019-04-27</time>
     
   </p>
@@ -275,7 +333,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  </p><p class="article-time">
+  <p class="article-time">
     <time datetime="2019-03-30T13:30:46.000Z" itemprop="datePublished"> 发表于 2019-03-30</time>
     
   </p>
@@ -340,7 +398,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  </p><p class="article-time">
+  <p class="article-time">
     <time datetime="2019-02-27T17:50:50.000Z" itemprop="datePublished"> 发表于 2019-02-28</time>
     
   </p>
@@ -401,7 +459,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  </p><p class="article-time">
+  <p class="article-time">
     <time datetime="2019-01-27T11:00:51.000Z" itemprop="datePublished"> 发表于 2019-01-27</time>
     
   </p>
@@ -462,7 +520,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  </p><p class="article-time">
+  <p class="article-time">
     <time datetime="2018-12-30T03:26:27.000Z" itemprop="datePublished"> 发表于 2018-12-30</time>
     
   </p>
@@ -519,7 +577,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  </p><p class="article-time">
+  <p class="article-time">
     <time datetime="2018-11-30T14:53:14.000Z" itemprop="datePublished"> 发表于 2018-11-30</time>
     
   </p>
@@ -582,7 +640,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  </p><p class="article-time">
+  <p class="article-time">
     <time datetime="2018-10-27T17:13:46.000Z" itemprop="datePublished"> 发表于 2018-10-28</time>
     
   </p>
@@ -629,68 +687,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2018/09/16/Fuck-Fake-GitHub-Stars/" title="GitHub 虚假 Star 净网行动" itemprop="url">GitHub 虚假 Star 净网行动</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  </p><p class="article-time">
-    <time datetime="2018-09-16T08:20:55.000Z" itemprop="datePublished"> 发表于 2018-09-16</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>前一阵子看到一篇文章 <a href="https://juejin.im/post/5b8c9310f265da4361530560" target="_blank" rel="noopener">《石锤 github 买 star 行为》</a>，第一反应是很震惊。是真的很震惊，因为文章中提到的 CocoaDebug 我也 star 了，没想到竟然涉嫌购买 star 炒作，蒙蔽了好多人的双眼。没错，我就是跟风 star，看别的大神 star 啥就顺手 star。 也有的人看 Trending 上啥火顺手 star，甚至用脚本自动 star。</p>
-<p>这条黑产背后到底隐藏着什么？GitHub 上还有哪些大笨蛋也曾靠买 Star 蒙蔽了大神们的双眼呢？我写了个简单的程序用于挖掘基于 Star 的关系链，并进行聚类分析。然后从 CocoaDebug 这个 repo 入手，沿着关系链一层层深挖下去。</p>
-<p>用数据说话，结果一定也会让你大开眼界。正义可能会迟到，但绝不会缺席！</p>
-<p>项目源码：<a href="https://github.com/yulingtianxia/FuckFakeGitHubStars" target="_blank" rel="noopener">FuckFakeGitHubStars</a></p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2018/09/16/Fuck-Fake-GitHub-Stars/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/GitHub/">GitHub</a><a href="/tags/瞎折腾/">瞎折腾</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2018/09/16/Fuck-Fake-GitHub-Stars/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -707,7 +703,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
 </div>
 
 
@@ -772,7 +768,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -781,7 +777,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
 </div>
 </div>
 
@@ -789,7 +785,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer">
+    <footer><div id="footer" >
 	
 	<div class="line">
 		<span></span>
@@ -798,11 +794,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br>
+		<p> Stay hungry, stay foolish <br/>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font">
+	<div class="social-font" class="clearfix">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -838,7 +834,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
           </a>
         </div>
     
@@ -966,7 +962,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

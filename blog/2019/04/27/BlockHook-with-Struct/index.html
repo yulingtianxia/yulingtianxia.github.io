@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head><meta name="generator" content="Hexo 3.8.0">
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>BlockHook with Struct | yulingtianxia&#39;s blog</title>
@@ -19,10 +19,12 @@
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="一年前，我开发了 BlockHook，（应该是）填补了 Objective-C 业界在 Hook Block 技术领域的空白。但是对于 Block 的参数和返回值有限制，仅定制了 CGRect, CGSize, CGPoint 等结构体，不支持自定义 struct。这次就把这个坑给填上。 至此，BlockHook 已支持 macOS 和 iOS 平台全架构、tvOS 和 watchOS 模拟器，B">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/realArgs.png?raw=true">
+<meta property="og:updated_time" content="2019-07-27T12:53:59.287Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BlockHook with Struct">
 <meta name="twitter:description" content="一年前，我开发了 BlockHook，（应该是）填补了 Objective-C 业界在 Hook Block 技术领域的空白。但是对于 Block 的参数和返回值有限制，仅定制了 CGRect, CGSize, CGPoint 等结构体，不支持自定义 struct。这次就把这个坑给填上。 至此，BlockHook 已支持 macOS 和 iOS 平台全架构、tvOS 和 watchOS 模拟器，B">
+<meta name="twitter:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/realArgs.png?raw=true">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -45,7 +47,7 @@
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
 			</div>
 			
 			<div id="textlogo">
@@ -70,12 +72,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
 					</form>
 					
 					</li>
 				</ul>
-			</ul></nav>			
+			</nav>			
 </div>
     </header>
     <div id="container">
@@ -91,7 +93,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  </p><p class="article-time">
+  <p class="article-time">
     <time datetime="2019-04-27T13:26:55.000Z" itemprop="datePublished"> 发表于 2019-04-27</time>
     
   </p>
@@ -125,6 +127,7 @@
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">BLOCK_HAS_STRET</span> =         (<span class="number">1</span> &lt;&lt; <span class="number">29</span>)</span><br></pre></td></tr></table></figure>
 
 <p>那么在使用 libffi 定义 Hook 函数的返回值和参数列表的时候就需要注意了，虽然 signature 还是正常的，但是参数列表顺序调整了啊！当 <code>BLOCK_HAS_STRET</code> 生效时，得特殊处理下。<code>_typesWithEncodeString</code> 方法负责解析 signature 字符串中的 Type Encoding 列表，支持加偏移量。而 <code>_argsWithEncodeString</code> 是调用了前者，<code>startIndex</code> 传入 <code>1</code>，略过了第一个返回值。</p>
+<p><img src="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/realArgs.png?raw=true" alt></p>
 <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">int argCount<span class="comment">;</span></span><br><span class="line">ffi_type **argTypes<span class="comment">;</span></span><br><span class="line">ffi_type *returnType<span class="comment">;</span></span><br><span class="line">struct _BHBlock *<span class="keyword">bh_block </span>= (__bridge void *)self.<span class="keyword">block;</span></span><br><span class="line"><span class="keyword">if </span>((<span class="keyword">bh_block-&gt;flags </span>&amp; <span class="keyword">BLOCK_HAS_STRET)) </span>&#123;</span><br><span class="line">    argTypes = [self _typesWithEncodeString:str getCount:&amp;argCount startIndex:<span class="number">0</span>]<span class="comment">;</span></span><br><span class="line">    argTypes[<span class="number">0</span>] = &amp;ffi_type_pointer<span class="comment">;</span></span><br><span class="line">    returnType = &amp;ffi_type_void<span class="comment">;</span></span><br><span class="line">    self.stret = YES<span class="comment">;</span></span><br><span class="line">    NSLog(@<span class="string">"Block has stret!"</span>)<span class="comment">;</span></span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">    argTypes = [self _argsWithEncodeString:str getCount:&amp;argCount]<span class="comment">;</span></span><br><span class="line">    returnType = [self _ffiTypeForEncode:str]<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>在 Hook 的处理函数 <code>BHFFIClosureFunc</code> 中，可以获取到 Block 调用时传入的参数。为了让使用方对 <code>BLOCK_HAS_STRET</code> 无感知，需要将参数和返回值『纠正』回正常的顺序，并通过 <code>BHToken</code> 提供给使用者。这样就实现了动态修改 Block 任意参数和返回值的功能。</p>
@@ -164,9 +167,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev">
+ <div class="prev" >
  <a href="/blog/2019/05/26/BlockHook-with-Revocation/" title="BlockHook with Revocation">
-  <strong>上一篇：</strong><br>
+  <strong>上一篇：</strong><br/>
   <span>
   BlockHook with Revocation</span>
 </a>
@@ -174,8 +177,8 @@
 
 
 <div class="next">
-<a href="/blog/2019/03/30/Audio-Emotion-Recognition/" title="音频情绪识别">
- <strong>下一篇：</strong><br> 
+<a href="/blog/2019/03/30/Audio-Emotion-Recognition/"  title="音频情绪识别">
+ <strong>下一篇：</strong><br/> 
  <span>音频情绪识别
 </span>
 </a>
@@ -211,7 +214,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
 </div>
 
 
@@ -276,7 +279,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -285,7 +288,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
 </div>
 </div>
 
@@ -293,7 +296,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer">
+    <footer><div id="footer" >
 	
 	<div class="line">
 		<span></span>
@@ -302,11 +305,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br>
+		<p> Stay hungry, stay foolish <br/>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font">
+	<div class="social-font" class="clearfix">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -342,7 +345,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
           </a>
         </div>
     
@@ -567,7 +570,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 
@@ -583,20 +586,5 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+  </body>
 </html>

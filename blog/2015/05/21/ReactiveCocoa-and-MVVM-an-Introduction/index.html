@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head><meta name="generator" content="Hexo 3.8.0">
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>ReactiveCocoa 和 MVVM 入门 | yulingtianxia&#39;s blog</title>
@@ -61,7 +61,7 @@
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"></a>
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
 			</div>
 			
 			<div id="textlogo">
@@ -86,12 +86,12 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google">
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
 					</form>
 					
 					</li>
 				</ul>
-			</ul></nav>			
+			</nav>			
 </div>
     </header>
     <div id="container">
@@ -107,7 +107,7 @@
        
 		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
 		
-  </p><p class="article-time">
+  <p class="article-time">
     <time datetime="2015-05-21T13:43:37.000Z" itemprop="datePublished"> 发表于 2015-05-21</time>
     
   </p>
@@ -117,7 +117,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC"><span class="toc-number">1.</span> <span class="toc-text">MVC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVVM"><span class="toc-number">2.</span> <span class="toc-text">MVVM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义-MVVM"><span class="toc-number">2.1.</span> <span class="toc-text">定义 MVVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于-view-model-的更多内容"><span class="toc-number">2.2.</span> <span class="toc-text">关于 view-model 的更多内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC-世界中的-MVVM"><span class="toc-number">3.</span> <span class="toc-text">MVC 世界中的 MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#View-Model-和-View-Controller-在一起，但独立"><span class="toc-number">4.</span> <span class="toc-text">View-Model 和 View Controller,  在一起，但独立</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-实例"><span class="toc-number">4.1.</span> <span class="toc-text">View-Model 实例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#view-model-不做的事儿"><span class="toc-number">4.1.1.</span> <span class="toc-text">view-model 不做的事儿</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Controller-视图控制器"><span class="toc-number">4.2.</span> <span class="toc-text">View Controller(视图控制器)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器从-view-model-获取的数据将用来"><span class="toc-number">4.2.1.</span> <span class="toc-text">视图控制器从 view-model 获取的数据将用来:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器将对-view-model-起如下作用"><span class="toc-number">4.2.2.</span> <span class="toc-text">视图控制器将对 view-model 起如下作用:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器不做的事儿"><span class="toc-number">4.2.3.</span> <span class="toc-text">视图控制器不做的事儿:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#子-View-Model"><span class="toc-number">5.</span> <span class="toc-text">子 View-Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-从哪来"><span class="toc-number">5.1.</span> <span class="toc-text">View-Model 从哪来?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-产生-View-Model"><span class="toc-number">5.1.1.</span> <span class="toc-text">View-Model 产生 View-Model</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-列表"><span class="toc-number">5.1.2.</span> <span class="toc-text">View-Model 列表</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Functional-Core-Imperative-Shell"><span class="toc-number">6.</span> <span class="toc-text">Functional Core,  Imperative Shell</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Functional-Core"><span class="toc-number">6.1.</span> <span class="toc-text">Functional Core</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Imperative-Declarative-Shell"><span class="toc-number">6.2.</span> <span class="toc-text">Imperative (Declarative?) Shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可测试的核心"><span class="toc-number">6.3.</span> <span class="toc-text">可测试的核心</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接一切"><span class="toc-number">7.</span> <span class="toc-text">连接一切</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进入-ReactiveCocoa"><span class="toc-number">8.</span> <span class="toc-text">进入 ReactiveCocoa</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RACSignal"><span class="toc-number">8.1.</span> <span class="toc-text">RACSignal</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#那么什么是信号呢-这是一个信号"><span class="toc-number">8.1.1.</span> <span class="toc-text">那么什么是信号呢?这是一个信号:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#信号发送的值是从哪获得的"><span class="toc-number">8.1.2.</span> <span class="toc-text">信号发送的值是从哪获得的?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是订阅者"><span class="toc-number">8.1.3.</span> <span class="toc-text">什么是订阅者?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#转换数据流"><span class="toc-number">8.1.4.</span> <span class="toc-text">转换数据流</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多个订阅者-副作用-昂贵的操作"><span class="toc-number">8.2.</span> <span class="toc-text">多个订阅者, 副作用, 昂贵的操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tweetboat-Plus"><span class="toc-number">9.</span> <span class="toc-text">Tweetboat Plus</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#福利-消除更多的状态"><span class="toc-number">9.0.1.</span> <span class="toc-text">福利-消除更多的状态</span></a></li></ol></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">10.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#拓展阅读"><span class="toc-number">10.1.</span> <span class="toc-text">拓展阅读</span></a></li></ol></li>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC"><span class="toc-number">1.</span> <span class="toc-text">MVC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVVM"><span class="toc-number">2.</span> <span class="toc-text">MVVM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义-MVVM"><span class="toc-number">2.1.</span> <span class="toc-text">定义 MVVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于-view-model-的更多内容"><span class="toc-number">2.2.</span> <span class="toc-text">关于 view-model 的更多内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC-世界中的-MVVM"><span class="toc-number">3.</span> <span class="toc-text">MVC 世界中的 MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#View-Model-和-View-Controller-在一起，但独立"><span class="toc-number">4.</span> <span class="toc-text">View-Model 和 View Controller,  在一起，但独立</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-实例"><span class="toc-number">4.1.</span> <span class="toc-text">View-Model 实例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#view-model-不做的事儿"><span class="toc-number">4.1.1.</span> <span class="toc-text">view-model 不做的事儿</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Controller-视图控制器"><span class="toc-number">4.2.</span> <span class="toc-text">View Controller(视图控制器)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器从-view-model-获取的数据将用来"><span class="toc-number">4.2.1.</span> <span class="toc-text">视图控制器从 view-model 获取的数据将用来:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器将对-view-model-起如下作用"><span class="toc-number">4.2.2.</span> <span class="toc-text">视图控制器将对 view-model 起如下作用:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器不做的事儿"><span class="toc-number">4.2.3.</span> <span class="toc-text">视图控制器不做的事儿:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#子-View-Model"><span class="toc-number">5.</span> <span class="toc-text">子 View-Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-从哪来"><span class="toc-number">5.1.</span> <span class="toc-text">View-Model 从哪来?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-产生-View-Model"><span class="toc-number">5.1.1.</span> <span class="toc-text">View-Model 产生 View-Model</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-列表"><span class="toc-number">5.1.2.</span> <span class="toc-text">View-Model 列表</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Functional-Core-Imperative-Shell"><span class="toc-number">6.</span> <span class="toc-text">Functional Core,  Imperative Shell</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Functional-Core"><span class="toc-number">6.1.</span> <span class="toc-text">Functional Core</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Imperative-Declarative-Shell"><span class="toc-number">6.2.</span> <span class="toc-text">Imperative (Declarative?) Shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可测试的核心"><span class="toc-number">6.3.</span> <span class="toc-text">可测试的核心</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接一切"><span class="toc-number">7.</span> <span class="toc-text">连接一切</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进入-ReactiveCocoa"><span class="toc-number">8.</span> <span class="toc-text">进入 ReactiveCocoa</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RACSignal"><span class="toc-number">8.1.</span> <span class="toc-text">RACSignal</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#那么什么是信号呢-这是一个信号"><span class="toc-number">8.1.1.</span> <span class="toc-text">那么什么是信号呢?这是一个信号:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#信号发送的值是从哪获得的"><span class="toc-number">8.1.2.</span> <span class="toc-text">信号发送的值是从哪获得的?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是订阅者"><span class="toc-number">8.1.3.</span> <span class="toc-text">什么是订阅者?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#转换数据流"><span class="toc-number">8.1.4.</span> <span class="toc-text">转换数据流</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多个订阅者-副作用-昂贵的操作"><span class="toc-number">8.2.</span> <span class="toc-text">多个订阅者, 副作用, 昂贵的操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tweetboat-Plus"><span class="toc-number">9.</span> <span class="toc-text">Tweetboat Plus</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#福利-消除更多的状态"><span class="toc-number">9.0.1.</span> <span class="toc-text">福利-消除更多的状态</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">10.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#拓展阅读"><span class="toc-number">10.1.</span> <span class="toc-text">拓展阅读</span></a></li></ol></li></ol>
 		
 		</div>
 		
@@ -363,9 +363,9 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev">
+ <div class="prev" >
  <a href="/blog/2015/06/12/SpriteKit在iOS9和OSX10-11中的新特性/" title="SpriteKit在iOS9和OSX10.11中的新特性">
-  <strong>上一篇：</strong><br>
+  <strong>上一篇：</strong><br/>
   <span>
   SpriteKit在iOS9和OSX10.11中的新特性</span>
 </a>
@@ -373,8 +373,8 @@
 
 
 <div class="next">
-<a href="/blog/2015/04/06/Communication-between-your-App-and-Extensions/" title="App与Extensions间通信共享数据">
- <strong>下一篇：</strong><br> 
+<a href="/blog/2015/04/06/Communication-between-your-App-and-Extensions/"  title="App与Extensions间通信共享数据">
+ <strong>下一篇：</strong><br/> 
  <span>App与Extensions间通信共享数据
 </span>
 </a>
@@ -398,7 +398,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC"><span class="toc-number">1.</span> <span class="toc-text">MVC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVVM"><span class="toc-number">2.</span> <span class="toc-text">MVVM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义-MVVM"><span class="toc-number">2.1.</span> <span class="toc-text">定义 MVVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于-view-model-的更多内容"><span class="toc-number">2.2.</span> <span class="toc-text">关于 view-model 的更多内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC-世界中的-MVVM"><span class="toc-number">3.</span> <span class="toc-text">MVC 世界中的 MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#View-Model-和-View-Controller-在一起，但独立"><span class="toc-number">4.</span> <span class="toc-text">View-Model 和 View Controller,  在一起，但独立</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-实例"><span class="toc-number">4.1.</span> <span class="toc-text">View-Model 实例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#view-model-不做的事儿"><span class="toc-number">4.1.1.</span> <span class="toc-text">view-model 不做的事儿</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Controller-视图控制器"><span class="toc-number">4.2.</span> <span class="toc-text">View Controller(视图控制器)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器从-view-model-获取的数据将用来"><span class="toc-number">4.2.1.</span> <span class="toc-text">视图控制器从 view-model 获取的数据将用来:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器将对-view-model-起如下作用"><span class="toc-number">4.2.2.</span> <span class="toc-text">视图控制器将对 view-model 起如下作用:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器不做的事儿"><span class="toc-number">4.2.3.</span> <span class="toc-text">视图控制器不做的事儿:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#子-View-Model"><span class="toc-number">5.</span> <span class="toc-text">子 View-Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-从哪来"><span class="toc-number">5.1.</span> <span class="toc-text">View-Model 从哪来?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-产生-View-Model"><span class="toc-number">5.1.1.</span> <span class="toc-text">View-Model 产生 View-Model</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-列表"><span class="toc-number">5.1.2.</span> <span class="toc-text">View-Model 列表</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Functional-Core-Imperative-Shell"><span class="toc-number">6.</span> <span class="toc-text">Functional Core,  Imperative Shell</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Functional-Core"><span class="toc-number">6.1.</span> <span class="toc-text">Functional Core</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Imperative-Declarative-Shell"><span class="toc-number">6.2.</span> <span class="toc-text">Imperative (Declarative?) Shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可测试的核心"><span class="toc-number">6.3.</span> <span class="toc-text">可测试的核心</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接一切"><span class="toc-number">7.</span> <span class="toc-text">连接一切</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进入-ReactiveCocoa"><span class="toc-number">8.</span> <span class="toc-text">进入 ReactiveCocoa</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RACSignal"><span class="toc-number">8.1.</span> <span class="toc-text">RACSignal</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#那么什么是信号呢-这是一个信号"><span class="toc-number">8.1.1.</span> <span class="toc-text">那么什么是信号呢?这是一个信号:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#信号发送的值是从哪获得的"><span class="toc-number">8.1.2.</span> <span class="toc-text">信号发送的值是从哪获得的?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是订阅者"><span class="toc-number">8.1.3.</span> <span class="toc-text">什么是订阅者?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#转换数据流"><span class="toc-number">8.1.4.</span> <span class="toc-text">转换数据流</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多个订阅者-副作用-昂贵的操作"><span class="toc-number">8.2.</span> <span class="toc-text">多个订阅者, 副作用, 昂贵的操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tweetboat-Plus"><span class="toc-number">9.</span> <span class="toc-text">Tweetboat Plus</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#福利-消除更多的状态"><span class="toc-number">9.0.1.</span> <span class="toc-text">福利-消除更多的状态</span></a></li></ol></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">10.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#拓展阅读"><span class="toc-number">10.1.</span> <span class="toc-text">拓展阅读</span></a></li></ol></li>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC"><span class="toc-number">1.</span> <span class="toc-text">MVC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVVM"><span class="toc-number">2.</span> <span class="toc-text">MVVM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义-MVVM"><span class="toc-number">2.1.</span> <span class="toc-text">定义 MVVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于-view-model-的更多内容"><span class="toc-number">2.2.</span> <span class="toc-text">关于 view-model 的更多内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC-世界中的-MVVM"><span class="toc-number">3.</span> <span class="toc-text">MVC 世界中的 MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#View-Model-和-View-Controller-在一起，但独立"><span class="toc-number">4.</span> <span class="toc-text">View-Model 和 View Controller,  在一起，但独立</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-实例"><span class="toc-number">4.1.</span> <span class="toc-text">View-Model 实例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#view-model-不做的事儿"><span class="toc-number">4.1.1.</span> <span class="toc-text">view-model 不做的事儿</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Controller-视图控制器"><span class="toc-number">4.2.</span> <span class="toc-text">View Controller(视图控制器)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器从-view-model-获取的数据将用来"><span class="toc-number">4.2.1.</span> <span class="toc-text">视图控制器从 view-model 获取的数据将用来:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器将对-view-model-起如下作用"><span class="toc-number">4.2.2.</span> <span class="toc-text">视图控制器将对 view-model 起如下作用:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视图控制器不做的事儿"><span class="toc-number">4.2.3.</span> <span class="toc-text">视图控制器不做的事儿:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#子-View-Model"><span class="toc-number">5.</span> <span class="toc-text">子 View-Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Model-从哪来"><span class="toc-number">5.1.</span> <span class="toc-text">View-Model 从哪来?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-产生-View-Model"><span class="toc-number">5.1.1.</span> <span class="toc-text">View-Model 产生 View-Model</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View-Model-列表"><span class="toc-number">5.1.2.</span> <span class="toc-text">View-Model 列表</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Functional-Core-Imperative-Shell"><span class="toc-number">6.</span> <span class="toc-text">Functional Core,  Imperative Shell</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Functional-Core"><span class="toc-number">6.1.</span> <span class="toc-text">Functional Core</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Imperative-Declarative-Shell"><span class="toc-number">6.2.</span> <span class="toc-text">Imperative (Declarative?) Shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可测试的核心"><span class="toc-number">6.3.</span> <span class="toc-text">可测试的核心</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接一切"><span class="toc-number">7.</span> <span class="toc-text">连接一切</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进入-ReactiveCocoa"><span class="toc-number">8.</span> <span class="toc-text">进入 ReactiveCocoa</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RACSignal"><span class="toc-number">8.1.</span> <span class="toc-text">RACSignal</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#那么什么是信号呢-这是一个信号"><span class="toc-number">8.1.1.</span> <span class="toc-text">那么什么是信号呢?这是一个信号:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#信号发送的值是从哪获得的"><span class="toc-number">8.1.2.</span> <span class="toc-text">信号发送的值是从哪获得的?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是订阅者"><span class="toc-number">8.1.3.</span> <span class="toc-text">什么是订阅者?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#转换数据流"><span class="toc-number">8.1.4.</span> <span class="toc-text">转换数据流</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多个订阅者-副作用-昂贵的操作"><span class="toc-number">8.2.</span> <span class="toc-text">多个订阅者, 副作用, 昂贵的操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tweetboat-Plus"><span class="toc-number">9.</span> <span class="toc-text">Tweetboat Plus</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#福利-消除更多的状态"><span class="toc-number">9.0.1.</span> <span class="toc-text">福利-消除更多的状态</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">10.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#拓展阅读"><span class="toc-number">10.1.</span> <span class="toc-text">拓展阅读</span></a></li></ol></li></ol>
  
   </div>
 
@@ -410,7 +410,7 @@
 <div class="github-card">
 <p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
 </div>
 
 
@@ -475,7 +475,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
 </div>
 
 
@@ -484,7 +484,7 @@
 <div class="doubanshow">
 <p class="asidetitle">豆瓣秀</p>
 <div>
-<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie"></script>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
 </div>
 </div>
 
@@ -492,7 +492,7 @@
 </aside>
 </div>
     </div>
-    <footer><div id="footer">
+    <footer><div id="footer" >
 	
 	<div class="line">
 		<span></span>
@@ -501,11 +501,11 @@
 	
 	
 	<section class="info">
-		<p> Stay hungry, stay foolish <br>
+		<p> Stay hungry, stay foolish <br/>
 			Talk is cheap, show me the code.</p>
 	</section>
 	 
-	<div class="social-font">
+	<div class="social-font" class="clearfix">
 		
 		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
 		
@@ -541,7 +541,7 @@
 		
 				<div class="cc-license">
           <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
-            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
           </a>
         </div>
     
@@ -766,7 +766,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 
@@ -782,20 +782,5 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+  </body>
 </html>
