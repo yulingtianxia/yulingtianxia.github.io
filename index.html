@@ -98,7 +98,7 @@
 </header>
     <div class="article-content">
         
-        <p><a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 在业界已经率先解决了在<strong>同步</strong>调用场景下对 Objective-C Block 的 AOP 问题，在很多场景需要先调用一段自己的逻辑，然后再<strong>异步延时</strong>执行 Block。</p>
+        <p><a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 在业界已经率先解决了在<strong>同步</strong>调用场景下对 Objective-C Block 的 AOP 问题。但也有很多场景是需要先调用一段自己的逻辑，然后再<strong>异步延时</strong>执行 Block。</p>
 <p>比如从外部跳转到 App 某个页面前需要检查下登录态，如果未登录则需要走完登录流程后才能继续跳转页面，而几乎所有基于 Block callback 的路由组件都没提供路由拦截器的功能。不同的路由组件内部实现不同，想要实现拦截器就需要针对不同的内部实现来修改路由组件源码。</p>
 <p>因此我实现了 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 的异步拦截功能，所有基于 Block 的路由组件就都有了通用的路由拦截器！</p>
 <p>当然，Block 拦截器的应用场景不仅于此。只要是需要『同步改异步执行』 Block 的场景都可以用到。</p>
