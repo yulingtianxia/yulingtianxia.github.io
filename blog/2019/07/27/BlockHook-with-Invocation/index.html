@@ -4,7 +4,7 @@
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
-    <title>BlockHook with Invocation | yulingtianxia&#39;s blog</title>
+    <title>BlockHook with Invocation(1) | yulingtianxia&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="杨萧玉">
@@ -13,7 +13,7 @@
     
     <meta name="description" content="BlockHook 在业界已经率先解决了在同步调用场景下对 Objective-C Block 的 AOP 问题。但也有很多场景是需要先调用一段自己的逻辑，然后再异步延时执行 Block。 比如从外部跳转到 App 某个页面前需要检查下登录态，如果未登录则需要走完登录流程后才能继续跳转页面，而几乎所有基于 Block callback 的路由组件都没提供路由拦截器的功能。不同的路由组件内部实现不同">
 <meta property="og:type" content="article">
-<meta property="og:title" content="BlockHook with Invocation">
+<meta property="og:title" content="BlockHook with Invocation(1)">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2019/07/27/BlockHook-with-Invocation/index.html">
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="BlockHook 在业界已经率先解决了在同步调用场景下对 Objective-C Block 的 AOP 问题。但也有很多场景是需要先调用一段自己的逻辑，然后再异步延时执行 Block。 比如从外部跳转到 App 某个页面前需要检查下登录态，如果未登录则需要走完登录流程后才能继续跳转页面，而几乎所有基于 Block callback 的路由组件都没提供路由拦截器的功能。不同的路由组件内部实现不同">
@@ -22,9 +22,9 @@
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/realArgs.png?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/BHInvocation.png?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/retainArguments.png?raw=true">
-<meta property="og:updated_time" content="2019-07-28T03:53:46.690Z">
+<meta property="og:updated_time" content="2019-08-03T11:50:23.361Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="BlockHook with Invocation">
+<meta name="twitter:title" content="BlockHook with Invocation(1)">
 <meta name="twitter:description" content="BlockHook 在业界已经率先解决了在同步调用场景下对 Objective-C Block 的 AOP 问题。但也有很多场景是需要先调用一段自己的逻辑，然后再异步延时执行 Block。 比如从外部跳转到 App 某个页面前需要检查下登录态，如果未登录则需要走完登录流程后才能继续跳转页面，而几乎所有基于 Block callback 的路由组件都没提供路由拦截器的功能。不同的路由组件内部实现不同">
 <meta name="twitter:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/BlockInterceptor.png?raw=true">
 <meta name="twitter:creator" content="@yulingtianxia">
@@ -89,7 +89,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/blog/2019/07/27/BlockHook-with-Invocation/" title="BlockHook with Invocation" itemprop="url">BlockHook with Invocation</a>
+      <a href="/blog/2019/07/27/BlockHook-with-Invocation/" title="BlockHook with Invocation(1)" itemprop="url">BlockHook with Invocation(1)</a>
   </h1>
   <p class="article-author">By
        
@@ -131,7 +131,7 @@
 <p>为了兼容这种情况，需要两套 <code>args</code> 和 <code>retValue</code>。一套『真的』用于传给 libffi 调用原始函数指针，另一套『假的』提供给使用方读写参数和返回值。这样使用方无需关心底层特殊逻辑，直接用就行了。</p>
 <p><code>BHInvocation</code> 主要结构如下：</p>
 <p><img src="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/BlockHook/BHInvocation.png?raw=true" alt></p>
-<p>PS：<code>BHInvocation</code> 与 <code>NSInvocation</code> 的场景和用法有些不同，所以实现上也会有差异。<code>NSInvocation</code> 没有公开源码，想了解原理的可以看看 mikeash 的实现： <a href="https://github.com/mikeash/MAInvocation" target="_blank" rel="noopener">MAInvocation</a>。但我并没有参考过 mikeash 的源码。</p>
+<p>PS：<code>BHInvocation</code> 与 <code>NSInvocation</code> 的场景和用法有些不同，所以实现上也会有差异。<code>NSInvocation</code> 没有公开源码，想了解原理的可以看看 mikeash 的实现： <a href="https://github.com/mikeash/MAInvocation" target="_blank" rel="noopener">MAInvocation</a>。但我并没有参考过 mikeash 的源码，因为等我写完了才发现它。。。</p>
 <h3 id="retainArguments-实现"><a href="#retainArguments-实现" class="headerlink" title="retainArguments 实现"></a><code>retainArguments</code> 实现</h3><p><code>retainArguments</code> 实现策略：</p>
 <ol>
 <li>拷贝 <code>void **args</code> 指针数组和返回值指针</li>
@@ -146,6 +146,7 @@
 
 <h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>写了这么多关于 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 的文章，我越来越发现自己在苹果爸爸面前所表现出的无知。几乎每一步都要去踩很多坑，看很多源码。而这次是看着苹果爸爸的文档脑补如何实现，业界也没有能参考的先例。</p>
 <p>这种感觉犹如自己在黑暗中不断探索，并享受着这种孤独。</p>
+<p>标题暗示着，这篇文章可能会有后续的。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -158,7 +159,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yulingtianxia.com/blog/2019/07/27/BlockHook-with-Invocation/" data-title="BlockHook with Invocation | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  <div data-url="http://yulingtianxia.com/blog/2019/07/27/BlockHook-with-Invocation/" data-title="BlockHook with Invocation(1) | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
 	  </div>
 	
 	</div>
