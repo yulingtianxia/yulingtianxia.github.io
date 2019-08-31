@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，整了个 AppOrder">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-31T18:10:46.935Z">
+<meta property="og:updated_time" content="2019-08-31T18:23:40.335Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="App 二进制文件重排已经被玩坏了">
 <meta name="twitter:description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，整了个 AppOrder">
@@ -107,7 +107,7 @@
 		
 		<p>『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。</p>
 <p><del>说真话可能会得罪人，但是我怕过吗？</del> 我怂了，这段掐了。</p>
-<p>其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，整了个 <a href="https://github.com/yulingtianxia/AppOrderFiles" target="_blank" rel="noopener">AppOrderFiles</a>，一个调用搞定！</p>
+<p>其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，整了个 <a href="https://github.com/yulingtianxia/AppOrderFiles" target="_blank" rel="noopener">AppOrderFiles</a>，一个调用搞定！Enjoy it！</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">AppOrderFiles(^(<span class="built_in">NSString</span> *orderFilePath) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"OrderFilePath:%@"</span>, orderFilePath);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
 <a id="more"></a>
@@ -120,8 +120,8 @@
 <p>当然这也不完全是我的原创，对照着 Clang 文档的同时，还参考了 <a href="https://medium.com/@michael.eisel/improving-app-performance-with-order-files-c7fff549907f" target="_blank" rel="noopener">Improving App Performance with Order Files</a> 这篇文章的代码。人家这篇文章虽然早就给出了，不过还是有一些 bug 和优化空间的。</p>
 <h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>苹果官方也提供了 PGO 的详细文档，而且操作很简单。不过它跟二进制文件重排还是有区别的，这里不展开讲了。毕竟相对于对业务代码加载优先级的优化来说，PGO 对启动优化性价比没那么高，应该就是高频调用函数内联之类的（这句纯属瞎扯）。</p>
 <p>我为啥过了这么久才发此文呢？猜猜原因是啥：</p>
-<p>A. 不爱蹭热度<br>B. 喜欢炒冷饭<br>C. 忙着准备答辩<br>D. 8 月发过文章了，这篇得等 9 月才能发，这样不浪费</p>
-<p>三短一长选最长，全都不会就选 C。</p>
+<p>A. 不爱蹭热度<br>B. 喜欢炒冷饭<br>C. 忙晋升答辩<br>D. 8 月发过文章了，这篇得等 9 月才能发，这样不浪费</p>
+<p>碰到不会的题，我一般三短一长选最长，大鹏老师说《都选C》。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
