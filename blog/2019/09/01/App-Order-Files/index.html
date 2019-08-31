@@ -11,18 +11,18 @@
     
 
     
-    <meta name="description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，搞了个 AppOrder">
+    <meta name="description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，整了个 AppOrder">
 <meta name="keywords" content="瞎折腾">
 <meta property="og:type" content="article">
 <meta property="og:title" content="App 二进制文件重排已经被玩坏了">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2019/09/01/App-Order-Files/index.html">
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
-<meta property="og:description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，搞了个 AppOrder">
+<meta property="og:description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，整了个 AppOrder">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-31T18:08:53.848Z">
+<meta property="og:updated_time" content="2019-08-31T18:10:46.935Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="App 二进制文件重排已经被玩坏了">
-<meta name="twitter:description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，搞了个 AppOrder">
+<meta name="twitter:description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，整了个 AppOrder">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -107,7 +107,9 @@
 		
 		<p>『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。</p>
 <p><del>说真话可能会得罪人，但是我怕过吗？</del> 我怂了，这段掐了。</p>
-<p>其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，搞了个 <a href="https://github.com/yulingtianxia/AppOrderFiles" target="_blank" rel="noopener">AppOrderFiles</a>，一行代码搞定！</p>
+<p>其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，整了个 <a href="https://github.com/yulingtianxia/AppOrderFiles" target="_blank" rel="noopener">AppOrderFiles</a>，一个调用搞定！</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">AppOrderFiles(^(<span class="built_in">NSString</span> *orderFilePath) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"OrderFilePath:%@"</span>, orderFilePath);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
 <a id="more"></a>
 
 <h2 id="苹果官方文档的古老方案"><a href="#苹果官方文档的古老方案" class="headerlink" title="苹果官方文档的古老方案"></a>苹果官方文档的古老方案</h2><p>苹果的官方文档很早就给了二进制文件重排的方案：<a href="https://developer.apple.com/library/archive/documentation/Performance/Conceptual/CodeFootprint/Articles/ImprovingLocality.html#//apple_ref/doc/uid/20001862-117091-BCIBJEBH" target="_blank" rel="noopener">Improving Locality of Reference</a>，『早』到甚至被苹果提示这份文档已经年久失修，部分工具和链接失效了。文档的过时不仅体现在还是 GCC 时代，连工具链比如像 ‘gprof’ 也不能用了，不过 Google 也给出了 macOS 上的替代品，有兴趣的可以去研究下。</p>
