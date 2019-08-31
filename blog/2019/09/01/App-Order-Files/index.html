@@ -1,0 +1,580 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>App 二进制文件重排已经被你们玩坏了 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，搞了个 AppOrder">
+<meta name="keywords" content="瞎折腾">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App 二进制文件重排已经被你们玩坏了">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2019/09/01/App-Order-Files/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，搞了个 AppOrder">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-31T18:03:08.995Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="App 二进制文件重排已经被你们玩坏了">
+<meta name="twitter:description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，搞了个 AppOrder">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/09/01/App-Order-Files/" title="App 二进制文件重排已经被你们玩坏了" itemprop="url">App 二进制文件重排已经被你们玩坏了</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-08-31T16:47:39.000Z" itemprop="datePublished"> 发表于 2019-09-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#苹果官方文档的古老方案"><span class="toc-number">1.</span> <span class="toc-text">苹果官方文档的古老方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于-Clang-SanitizerCoverage-的方案"><span class="toc-number">2.</span> <span class="toc-text">基于 Clang SanitizerCoverage 的方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+		
+		</div>
+		
+		<p>『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩的烂大街的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。</p>
+<p><del>说真话可能会得罪人，但是我怕过吗？</del> 我怂了，这段掐了。</p>
+<p>其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，搞了个 <a href="https://github.com/yulingtianxia/AppOrderFiles" target="_blank" rel="noopener">AppOrderFiles</a>，一行代码搞定！</p>
+<a id="more"></a>
+
+<h2 id="苹果官方文档的古老方案"><a href="#苹果官方文档的古老方案" class="headerlink" title="苹果官方文档的古老方案"></a>苹果官方文档的古老方案</h2><p>苹果的官方文档很早就给了二进制文件重排的方案：<a href="https://developer.apple.com/library/archive/documentation/Performance/Conceptual/CodeFootprint/Articles/ImprovingLocality.html#//apple_ref/doc/uid/20001862-117091-BCIBJEBH" target="_blank" rel="noopener">Improving Locality of Reference</a>，『早』到甚至被苹果提示这份文档已经年久失修，部分工具和链接失效了。文档的过时不仅体现在还是 GCC 时代，连工具链比如像 ‘gprof’ 也不能用了，不过 Google 也给出了 macOS 上的替代品，有兴趣的可以去研究下。</p>
+<h2 id="基于-Clang-SanitizerCoverage-的方案"><a href="#基于-Clang-SanitizerCoverage-的方案" class="headerlink" title="基于 Clang SanitizerCoverage 的方案"></a>基于 Clang SanitizerCoverage 的方案</h2><p>在 <a href="https://clang.llvm.org/docs/SanitizerCoverage.html#tracing-pcs" target="_blank" rel="noopener">Clang 10 documentation</a> 中可以看到 LLVM 官方对 SanitizerCoverage 的详细介绍，包含了示例代码。</p>
+<p>简单来说 SanitizerCoverage 是 Clang 内置的一个代码覆盖工具。它把一系列以 <code>__sanitizer_cov_trace_pc_</code> 为前缀的函数调用插入到用户定义的函数里，借此实现了全局 AOP 的大杀器。其覆盖之广，包含 Swift/Objective-C/C/C++ 等语言，Method/Function/Block 全支持。</p>
+<p>开启 SanitizerCoverage 的方法是：在 build settings 里的 “Other C Flags” 中添加 <code>-fsanitize-coverage=func,trace-pc-guard</code>。如果含有 Swift 代码的话，还需要在 “Other Swift Flags” 中加入 <code>-sanitize-coverage=func</code> 和 <code>-sanitize=undefined</code>。所有链接到 App 中的二进制都需要开启 SanitizerCoverage，这样才能完全覆盖到所有调用。</p>
+<p>基于 Clang SanitizerCoverage 我写了个工具 AppOrderFiles。CocoaPods 接入，一行调用生成 Order File。啥也不说了，全在 GayHub 里了：<a href="https://github.com/yulingtianxia/AppOrderFiles" target="_blank" rel="noopener">https://github.com/yulingtianxia/AppOrderFiles</a></p>
+<p>当然这也不完全是我的原创，对照着 Clang 文档的同时，还参考了 <a href="https://medium.com/@michael.eisel/improving-app-performance-with-order-files-c7fff549907f" target="_blank" rel="noopener">Improving App Performance with Order Files</a> 这篇文章的代码。人家这篇文章虽然早就给出了，不过还是有一些 bug 和优化空间的。</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>苹果官方也提供了 PGO 的详细文档，而且操作很简单。不过它跟二进制文件重排还是有区别的，这里不展开讲了。毕竟相对于对业务代码加载优先级的优化来说，PGO 对启动优化性价比没那么高，应该就是高频调用函数内联之类的（这句纯属瞎扯）。</p>
+<p>我为啥过了这么久才发此文呢？猜猜原因是啥：</p>
+<p>A. 不爱蹭热度<br>B. 喜欢炒冷饭<br>C. 忙着准备答辩<br>D. 8 月发过文章了，这篇得等 9 月才能发，这样不浪费</p>
+<p>三短一长选最长，全都不会就选 C。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/瞎折腾/">瞎折腾</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2019/09/01/App-Order-Files/" data-title="App 二进制文件重排已经被你们玩坏了 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/blog/2019/08/11/BlockHook-with-Invocation-2/"  title="BlockHook with Invocation(2)">
+ <strong>下一篇：</strong><br/> 
+ <span>BlockHook with Invocation(2)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#苹果官方文档的古老方案"><span class="toc-number">1.</span> <span class="toc-text">苹果官方文档的古老方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于-Clang-SanitizerCoverage-的方案"><span class="toc-number">2.</span> <span class="toc-text">基于 Clang SanitizerCoverage 的方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://pbxproj.yulingtianxia.com" target="_blank" title="pbxprojHelper">pbxprojHelper</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://similarimagehunter.yulingtianxia.com" target="_blank" title="SimilarImageHunter">SimilarImageHunter</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://spiral.yulingtianxia.com" target="_blank" title="Spiral">Spiral</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coloratom.yulingtianxia.com" target="_blank" title="ColorAtom">ColorAtom</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://resume.yulingtianxia.com" target="_blank" title="我的简历">我的简历</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
