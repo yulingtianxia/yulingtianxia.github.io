@@ -100,7 +100,7 @@
         
         <p>『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩过的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。</p>
 <p><del>说真话可能会得罪人，但是我怕过吗？</del> 我怂了，这段掐了。</p>
-<p>其实二进制文件重排很简单啊，我基于 Clang SanitizerCoverage 和业界已有的经验，整了个 <a href="https://github.com/yulingtianxia/AppOrderFiles" target="_blank" rel="noopener">AppOrderFiles</a>，一个调用搞定！Enjoy it！</p>
+<p>其实二进制文件重排很简单啊，重点在于生成 order 文件。我基于 Clang SanitizerCoverage 和业界已有的经验，整了个 <a href="https://github.com/yulingtianxia/AppOrderFiles" target="_blank" rel="noopener">AppOrderFiles</a>，一个调用搞定！Enjoy it！</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">AppOrderFiles(^(<span class="built_in">NSString</span> *orderFilePath) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"OrderFilePath:%@"</span>, orderFilePath);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
         
         
