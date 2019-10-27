@@ -145,7 +145,7 @@
 <li>完成游戏：将美工给你的素材替代以前的纯色，增加关卡和效果（Shader，滤镜等），迭代测试。</li>
 </ol>
 <p>PS：两种搜索节点元素的方法：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">– <span class="string">childNodeWithName:</span></span><br><span class="line">– <span class="string">enumerateChildNodesWithName:</span><span class="string">usingBlock:</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">– childNodeWithName:</span><br><span class="line">– enumerateChildNodesWithName:usingBlock:</span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>关于搜索文本的语法补充：<br>通过name查找：  </p>
@@ -180,7 +180,7 @@
 </ul>
 <p>下面的工具能帮你评估图形性能：  </p>
 <p><code>SKView</code>上的HUD flags：  </p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">showsFPS</span></span><br><span class="line"><span class="keyword">showsDrawCount</span></span><br><span class="line"><span class="keyword">showsNodeCount</span></span><br><span class="line"><span class="keyword">showsQuadCount</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">showsFPS</span><br><span class="line">showsDrawCount</span><br><span class="line">showsNodeCount</span><br><span class="line">showsQuadCount</span><br></pre></td></tr></table></figure>
 
 <p>profile：检测硬件使用情况。</p>
 <h3 id="Actions-and-constraints"><a href="#Actions-and-constraints" class="headerlink" title="Actions and constraints"></a>Actions and constraints</h3><p>使用<code>SKAction</code>类实现SpriteKit中的动画是很高效的。用一行代码就能实现诸如平移、旋转、缩放、渐入渐出等动画效果。你可以将多个动画组成一个序列（sequence）来依次执行，也可组成一个group来同时执行，sequence和group之间也可以互相嵌套。<code>SKAction</code>有很多方法，可以查看它的API文档。  </p>
@@ -203,7 +203,7 @@
 <p>Shader是一个不错的选择，它不需要离屏渲染，想用就用，节能环保。有关<code>SKShader</code>的知识可以查看<a href="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/">SpriteKit在iOS8和OSX10.10中的新特性</a>中Shader那节。  </p>
 <p><code>shouldRasterize</code>属性暗示是否缓存以备将来之需。如果你的画面会停留一段时间，可以考虑设置为YES。</p>
 <p>我们还可以从<code>SKNode</code>中获取纹理（这不费吹灰之力），还可以对纹理进行滤镜加工：   </p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">SKTexture</span> <span class="meta">*texture</span> <span class="string">=</span> <span class="string">[myView</span> <span class="attr">textureFromNode:node</span> <span class="attr">size:size];</span></span><br><span class="line"><span class="string">SKTexture</span> <span class="meta">*texture</span> <span class="string">=</span> <span class="string">[myTexture</span> <span class="attr">textureByApplyingCIFiler:filer];</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SKTexture *texture = [myView textureFromNode:node size:size];</span><br><span class="line">SKTexture *texture = [myTexture textureByApplyingCIFiler:filer];</span><br></pre></td></tr></table></figure>
 
 <h3 id="Lighting"><a href="#Lighting" class="headerlink" title="Lighting"></a>Lighting</h3><p>光照的功耗是跟像素数量成比例的，每个<code>SKSpriteNode</code>最多能被八个光源照射，你可以利用光照掩码来优化性能。  </p>
 <p>环境光照（ambient light）所需功耗是免费的，而法线贴图（Normal Maps）功耗很低。  </p>
@@ -658,5 +658,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

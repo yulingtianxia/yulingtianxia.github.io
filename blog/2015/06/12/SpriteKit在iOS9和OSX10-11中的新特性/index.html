@@ -139,10 +139,10 @@
 <p>嗯动作(Action)也能以文件的方式共享了.我们可以创建一个sks 文件用于保存自定义动作. Xcode7 为我们提供了一些基本动作对象,可以拖拽到编辑器中:  </p>
 <p><img src="http://yulingtianxia.com/resources/QQ20150612-7@2x.png" alt>  </p>
 <p>我们可以用下面这些 <code>SKAction</code> 新加入的 API 来从 sks 文件中加载自定义动作:  </p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">actionNamed:</span></span><br><span class="line"><span class="string">actionNamed:</span><span class="string">duration:</span></span><br><span class="line"><span class="string">actionNamed:</span><span class="string">fromURL:</span></span><br><span class="line"><span class="string">actionNamed:</span><span class="string">fromURL:</span><span class="string">duration:</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">actionNamed:</span><br><span class="line">actionNamed:duration:</span><br><span class="line">actionNamed:fromURL:</span><br><span class="line">actionNamed:fromURL:duration:</span><br></pre></td></tr></table></figure>
 
 <p>此外,这回 <code>SKAction</code> 还增添了一些新动作:  </p>
-<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">play //用于 `SKAudioNode` 的播放</span><br><span class="line"><span class="keyword">pause</span> //用于 `SKAudioNode` 的暂停</span><br><span class="line"><span class="symbol">changePlaybackRateTo:duration:</span> //调节 `SKAudioNode` 的播放速率</span><br><span class="line"><span class="symbol">changeVolumeTo:duration:</span> //调节 `SKAudioNode` 的播放音量</span><br><span class="line"><span class="symbol">animateWithNormalTextures:</span> //使 `SKSpriteNode` 的法线贴图按照给定贴图数组的顺序动起来</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">play //用于 `SKAudioNode` 的播放</span><br><span class="line">pause //用于 `SKAudioNode` 的暂停</span><br><span class="line">changePlaybackRateTo:duration: //调节 `SKAudioNode` 的播放速率</span><br><span class="line">changeVolumeTo:duration: //调节 `SKAudioNode` 的播放音量</span><br><span class="line">animateWithNormalTextures: //使 `SKSpriteNode` 的法线贴图按照给定贴图数组的顺序动起来</span><br></pre></td></tr></table></figure>
 
 <p>在之前的动作中只提供了贴图切换的动作,而没有法线贴图切换的动作,这就让光照效果只能应用在贴图固定的<code>SKSpriteNode</code>中.这回我们可以让法线贴图和跟着动起来了!    </p>
 <h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><p><img src="http://yulingtianxia.com/resources/QQ20150612-8@2x.png" alt="Metal">  </p>
@@ -629,5 +629,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

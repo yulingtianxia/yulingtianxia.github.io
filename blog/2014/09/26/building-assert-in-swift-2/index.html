@@ -114,10 +114,10 @@
 
 <p>上面的代码将会输出实现<code>assert()</code>方法所在文件的文件/行数(file/line)位置，而不是调用者的位置信息。这并不管用。  </p>
 <h2 id="获取调用者位置"><a href="#获取调用者位置" class="headerlink" title="获取调用者位置"></a>获取调用者位置</h2><p>Swift从D语言借鉴了一个非常聪明的特性：当标识符在默认参数列表中被赋值时，它们会在调用者的位置被展开。为了实现这个行为，<code>assert()</code>被如下这样定义：  </p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">func</span> <span class="selector-tag">assert</span>(<span class="attribute">condition</span>: <span class="variable">@autoclosure</span> () -&gt; Bool, _ <span class="attribute">message</span>: String = <span class="string">""</span>,</span><br><span class="line">	<span class="attribute">file</span>: String = __FILE__, <span class="attribute">line</span>: Int = __LINE__) &#123;</span><br><span class="line">		<span class="selector-id">#if</span> <span class="selector-tag">DEBUG</span></span><br><span class="line">			<span class="selector-tag">if</span> !<span class="selector-tag">condition</span>() &#123;</span><br><span class="line">				<span class="selector-tag">println</span>(<span class="string">"assertion failed at \(file):\(line): \(message)"</span>)</span><br><span class="line">				<span class="selector-tag">abort</span>()</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="selector-id">#endif</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">func assert(condition: @autoclosure () -&gt; Bool, _ message: String = &quot;&quot;,</span><br><span class="line">	file: String = __FILE__, line: Int = __LINE__) &#123;</span><br><span class="line">		#if DEBUG</span><br><span class="line">			if !condition() &#123;</span><br><span class="line">				println(&quot;assertion failed at \(file):\(line): \(message)&quot;)</span><br><span class="line">				abort()</span><br><span class="line">			&#125;</span><br><span class="line">		#endif</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>Swift的<code>assert()</code>函数第二个参数是一个供你指明的可选字符串，而第三、四个参数默认为调用者上下文的位置。这就让<code>assert()</code>能默认获得调用者的原始位置。如果你想在断言顶层构建你自己的抽象层，你可以将调用者的位置传递下去。作为一个简易的例子，你可以定义一个日志和断言方法：  </p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">func</span> <span class="selector-tag">logAndAssert</span>(<span class="attribute">condition</span>: <span class="variable">@autoclosure</span> () -&gt; Bool, _ <span class="attribute">message</span>: StaticString = <span class="string">""</span>,</span><br><span class="line">	<span class="attribute">file</span>: StaticString = __FILE__, <span class="attribute">line</span>: UWord = __LINE__) &#123;</span><br><span class="line"></span><br><span class="line">	<span class="selector-tag">logMessage</span>(message)</span><br><span class="line">	<span class="selector-tag">assert</span>(condition, message, <span class="attribute">file</span>: file, <span class="attribute">line</span>: line)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func logAndAssert(condition: @autoclosure () -&gt; Bool, _ message: StaticString = &quot;&quot;,</span><br><span class="line">	file: StaticString = __FILE__, line: UWord = __LINE__) &#123;</span><br><span class="line"></span><br><span class="line">	logMessage(message)</span><br><span class="line">	assert(condition, message, file: file, line: line)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这正确的将<code>logAndAssert()</code>调用者的file/line位置传递给了<code>assert()</code>的实现。注意上面代码中的<code>StaticString</code>，它是一个类似于<code>String</code>的类型，用于存储像<code>__FILE__</code>这种不受内存管理约束的字符串字面量。  </p>
 <p>除此之外，这种实用设计也用于Swift中实现高级XCTest框架，也可以在你自己实现的函数库中发挥作用。  </p>
@@ -570,5 +570,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

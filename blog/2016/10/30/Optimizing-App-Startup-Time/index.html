@@ -149,7 +149,7 @@
 <p>所以 <code>dyld</code> 做的事情就是修正（fix-up）指针和数据。Fix-up 有两种类型，rebasing 和 binding。</p>
 <h4 id="Rebasing-和-Binding"><a href="#Rebasing-和-Binding" class="headerlink" title="Rebasing 和 Binding"></a>Rebasing 和 Binding</h4><p>Rebasing：在镜像内部调整指针的指向<br>Binding：将指针指向镜像外部的内容</p>
 <p>可以通过命令行查看 rebase 和 bind 等信息：</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">xcrun</span> dyldinfo -rebase -<span class="keyword">bind </span>-lazy_bind myapp.app/myapp</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcrun dyldinfo -rebase -bind -lazy_bind myapp.app/myapp</span><br></pre></td></tr></table></figure>
 
 <p>通过这个命令可以查看所有的 Fix-up。rebase，bind，weak_bind，lazy_bind 都存储在 <code>__LINKEDIT</code> 段中，并可通过 <code>LC_DYLD_INFO_ONLY</code> 查看各种信息的偏移量和大小。</p>
 <p>建议用 MachOView 查看更加方便直观。</p>
@@ -188,7 +188,7 @@
 <h2 id="改善启动时间"><a href="#改善启动时间" class="headerlink" title="改善启动时间"></a>改善启动时间</h2><p>从点击 App 图标到加载 App 闪屏之间会有个动画，我们希望 App 启动速度比这个动画更快。虽然不同设备上 App 启动速度不一样，但启动时间最好控制在 400ms。需要注意的是启动时间一旦超过 20s，系统会认为发生了死循环并杀掉 App 进程。当然启动时间最好以 App 所支持的最低配置设备为准。直到 <code>applicationWillFinishLaunching</code> 被调动，App 才启动结束。</p>
 <h3 id="测量启动时间"><a href="#测量启动时间" class="headerlink" title="测量启动时间"></a>测量启动时间</h3><p>Warm launch: App 和数据已经在内存中<br>Cold launch: App 不在内核缓冲存储器中</p>
 <p>冷启动（Cold launch）耗时才是我们需要测量的重要数据，为了准确测量冷启动耗时，测量前需要重启设备。在 <code>main()</code> 方法执行前测量是很难的，好在 <code>dyld</code> 提供了内建的测量方法：在 Xcode 中 Edit scheme -&gt; Run -&gt; Auguments 将环境变量 <code>DYLD_PRINT_STATISTICS</code> 设为 <code>1</code>。控制台输出的内容如下：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Total pre-main <span class="selector-tag">time</span>: <span class="number">228.41</span> milliseconds (<span class="number">100.0%</span>)</span><br><span class="line">         dylib loading <span class="selector-tag">time</span>:  <span class="number">82.35</span> milliseconds (<span class="number">36.0%</span>)</span><br><span class="line">        rebase/binding <span class="selector-tag">time</span>:   <span class="number">6.12</span> milliseconds (<span class="number">2.6%</span>)</span><br><span class="line">            ObjC setup <span class="selector-tag">time</span>:   <span class="number">7.82</span> milliseconds (<span class="number">3.4%</span>)</span><br><span class="line">           initializer <span class="selector-tag">time</span>: <span class="number">132.02</span> milliseconds (<span class="number">57.8%</span>)</span><br><span class="line">           slowest intializers :</span><br><span class="line">             libSystem<span class="selector-class">.B</span><span class="selector-class">.dylib</span> : <span class="number">122.07</span> milliseconds (<span class="number">53.4%</span>)</span><br><span class="line">                CoreFoundation :   <span class="number">5.59</span> milliseconds (<span class="number">2.4%</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Total pre-main time: 228.41 milliseconds (100.0%)</span><br><span class="line">         dylib loading time:  82.35 milliseconds (36.0%)</span><br><span class="line">        rebase/binding time:   6.12 milliseconds (2.6%)</span><br><span class="line">            ObjC setup time:   7.82 milliseconds (3.4%)</span><br><span class="line">           initializer time: 132.02 milliseconds (57.8%)</span><br><span class="line">           slowest intializers :</span><br><span class="line">             libSystem.B.dylib : 122.07 milliseconds (53.4%)</span><br><span class="line">                CoreFoundation :   5.59 milliseconds (2.4%)</span><br></pre></td></tr></table></figure>
 
 <h3 id="优化启动时间"><a href="#优化启动时间" class="headerlink" title="优化启动时间"></a>优化启动时间</h3><p>可以针对 App 启动前的每个步骤进行相应的优化工作。</p>
 <h4 id="加载-Dylib-1"><a href="#加载-Dylib-1" class="headerlink" title="加载 Dylib"></a>加载 Dylib</h4><p>之前提到过加载系统的 dylib 很快，因为有优化。但加载内嵌（embedded）的 dylib 文件很占时间，所以尽可能把多个内嵌 dylib 合并成一个来加载，或者使用 static archive。使用 <code>dlopen()</code> 来在运行时懒加载是不建议的，这么做可能会带来一些问题，并且总的开销更大。</p>
@@ -659,5 +659,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

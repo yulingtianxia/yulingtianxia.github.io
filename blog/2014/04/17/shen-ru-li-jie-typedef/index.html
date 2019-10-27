@@ -108,20 +108,20 @@
 		<p>第一次对typedef语法产生疑惑是在大一使用struct的时候，而在使用Objective－C对Block进行操作的时候，再一次困惑  </p>
 <a id="more"></a>
 
-<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">typedef &lt;#returnType#&gt;(^&lt;#name#&gt;)(&lt;#arguments#&gt;);//typedefBlock <span class="type">Code</span> <span class="type">Snippets</span></span><br><span class="line"></span><br><span class="line">typedef void (^<span class="type">RWAlertViewCompletionBlock</span>)(<span class="type">UIAlertView</span> *alertView, <span class="type">NSInteger</span> buttonIndex);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">typedef &lt;#returnType#&gt;(^&lt;#name#&gt;)(&lt;#arguments#&gt;);//typedefBlock Code Snippets</span><br><span class="line"></span><br><span class="line">typedef void (^RWAlertViewCompletionBlock)(UIAlertView *alertView, NSInteger buttonIndex);</span><br></pre></td></tr></table></figure>
 
 <p>然后就可以把<code>RWAlertViewCompletionBlock</code>当成一个Block的类型大摇大摆的使用啦<br>在这之前楼主心目中的typedef一般都是这样的  </p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> INT32;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">char</span> Line[<span class="number">81</span>];<span class="comment">//表示使用Line代表具有81个元素的char类型数组。</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">typedef int INT32;</span><br><span class="line">typedef char Line[81];//表示使用Line代表具有81个元素的char类型数组。</span><br></pre></td></tr></table></figure>
 
 <p>甚至有时候是这样的  </p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">tagPOINT</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line">    <span class="keyword">int</span> y;</span><br><span class="line">&#125;POINT;</span><br><span class="line">POINT p1;<span class="comment">//在C++中即使不用typedef也可直接中tagPOINT声明变量，但在旧的C中就需要typedef来省略struct关键字</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">typedef struct tagPOINT</span><br><span class="line">&#123;</span><br><span class="line">    int x;</span><br><span class="line">    int y;</span><br><span class="line">&#125;POINT;</span><br><span class="line">POINT p1;//在C++中即使不用typedef也可直接中tagPOINT声明变量，但在旧的C中就需要typedef来省略struct关键字</span><br></pre></td></tr></table></figure>
 
 <p>如今遇到的Block其实可以当作函数指针啦  </p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> (*PF)(<span class="keyword">int</span> *, <span class="keyword">int</span>);</span><br><span class="line"><span class="comment">//也就是说，PF是一个函数指针“变量”。当使用typedef声明后，则PF就成为了一个函数指针“类型”，即：</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*PF)</span><span class="params">(<span class="keyword">int</span> *, <span class="keyword">int</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int (*PF)(int *, int);</span><br><span class="line">//也就是说，PF是一个函数指针“变量”。当使用typedef声明后，则PF就成为了一个函数指针“类型”，即：</span><br><span class="line">typedef int (*PF)(int *, int);</span><br></pre></td></tr></table></figure>
 
 <p><strong>typedef的语法规则其实很简单，一句话来说就是定义对象的语法前加关键字typedef，剩下的不变，原本定义的对象标识符换成类型标识符，对应语义从定义一个对象改成定义一个类型别名。typedef看起来复杂根本原因是对象定义的语法比较复杂，例如分隔符*和[]的用法。</strong>  </p>
 <p>针对经典的const来个例子</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">char</span> * pStr;</span><br><span class="line"><span class="keyword">char</span> <span class="built_in">string</span>[<span class="number">4</span>] = <span class="string">"abc"</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *p1 = <span class="built_in">string</span>;</span><br><span class="line"><span class="keyword">const</span> pStr p2 = <span class="built_in">string</span>;</span><br><span class="line">p1++;</span><br><span class="line">p2++;<span class="comment">//error</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">typedef char * pStr;</span><br><span class="line">char string[4] = &quot;abc&quot;;</span><br><span class="line">const char *p1 = string;</span><br><span class="line">const pStr p2 = string;</span><br><span class="line">p1++;</span><br><span class="line">p2++;//error</span><br></pre></td></tr></table></figure>
 
 <p><code>p2++</code>这句会报错的.<br><code>const char *p1 = string;</code>你可以这样理解：<code>(const char) *p1 = string</code>, <code>p1</code>是一个指针，指向<code>const char</code>的东西，这个东西就是<code>string</code>(string是一个字符数组的首地址，它的地址声明后肯定是<code>const</code>的，除非该数组销毁)，但是<code>p1</code>是一个指针变量，它是可以递增的，即你看到的<code>p1++</code>，它可以完成从数组的来遍历数组的目的。<br>而<code>const pStr p2 = string;</code>是这样的：由于<code>p2</code>不是指针，<code>const</code>直接修饰到了<code>p2</code>,即现在的<code>p2</code>是常量了，它的类型是<code>pStr</code>(我们自己定义的类型)，相当于<code>const int p2</code>, <code>const long p2</code>等等，<code>const</code>都是直接修饰<code>p2</code>的，只不过<code>int</code>，<code>long</code>是系统类型，而<code>pStr</code>是我们定义的类型。为什么会出现这种效果了，就是因为<code>typedef</code>,它把<code>char *</code>定义成一个复合的类型，要从整体上来理解语义，而不是字符替换后来理解语义。  </p>
 <p>最后作死下，引入非人类的案例：  </p>
@@ -603,5 +603,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

@@ -117,10 +117,10 @@
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@synthesize</span> FengjieMask;<span class="comment">//是的，它是个ImageMaskView类的对象，名字很古怪吧</span></span><br><span class="line">- (<span class="keyword">void</span>)viewDidLoad</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">	<span class="comment">// Do any additional setup after loading the view, typically from a nib.</span></span><br><span class="line">    FengjieMask.radius = <span class="number">20</span>;<span class="comment">//设置画笔半径</span></span><br><span class="line">    [FengjieMask beginInteraction];<span class="comment">//初始化方法</span></span><br><span class="line">    FengjieMask.imageMaskFilledDelegate = <span class="keyword">self</span>;<span class="comment">//将代理设置为当前的VC</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这里需要特别说明的是，<code>radius</code>是刮刮卡刮奖的时候画笔的半径，<code>imageMaskFilledDelegate</code>是一个代理，协议类型为<code>ImageMaskFilledDelegate</code>，只声明了一个方法<code>- (void) imageMaskView:(ImageMaskView *)maskView clearPercentDidChanged:(float)clearPercent</code>，这个方法在刮刮卡被刮下的面积变化时被调用，下面让我们的VC实现这个协议，并实现这个方法<br>先在VC头文件增加<code>&lt;ImageMaskFilledDelegate&gt;</code>  </p>
-<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">interface</span> YXYViewController : <span class="type">UIViewController</span>&lt;ImageMaskFilledDelegate&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@interface YXYViewController : UIViewController&lt;ImageMaskFilledDelegate&gt;</span><br></pre></td></tr></table></figure>
 
 <p>然后实现协议方法   </p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma mark ImageMaskFilledDelegate</span></span><br><span class="line">- (<span class="keyword">void</span>) imageMaskView:(ImageMaskView *)maskView clearPercentDidChanged:(<span class="keyword">float</span>)clearPercent&#123;</span><br><span class="line">    <span class="keyword">if</span> (clearPercent &gt; <span class="number">50</span>) &#123;</span><br><span class="line">        [<span class="built_in">UIView</span> animateWithDuration:<span class="number">2</span></span><br><span class="line">                         animations:^&#123;</span><br><span class="line">                             FengjieMask.userInteractionEnabled = <span class="literal">NO</span>;</span><br><span class="line">                             FengjieMask.alpha = <span class="number">0</span>;</span><br><span class="line">                             FengjieMask.imageMaskFilledDelegate = <span class="literal">nil</span>;</span><br><span class="line">                         &#125;</span><br><span class="line">                         completion:^(<span class="built_in">BOOL</span> finished) &#123;</span><br><span class="line">                         &#125;];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#pragma mark ImageMaskFilledDelegate</span><br><span class="line">- (void) imageMaskView:(ImageMaskView *)maskView clearPercentDidChanged:(float)clearPercent&#123;</span><br><span class="line">    if (clearPercent &gt; 50) &#123;</span><br><span class="line">        [UIView animateWithDuration:2</span><br><span class="line">                         animations:^&#123;</span><br><span class="line">                             FengjieMask.userInteractionEnabled = NO;</span><br><span class="line">                             FengjieMask.alpha = 0;</span><br><span class="line">                             FengjieMask.imageMaskFilledDelegate = nil;</span><br><span class="line">                         &#125;</span><br><span class="line">                         completion:^(BOOL finished) &#123;</span><br><span class="line">                         &#125;];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>上面的代码先是做了个判断，当被涂刮的面积超过50%的时候，产生一个时长2秒的动画，让ImageMaskView渐渐变透明，传入的animations参数是个block块<br>好的，现在可以运行啦，我的demo效果如下<br><img src="http://yulingtianxia.com/resources/140353391637.png" alt="QQ20140409-4@2x">  </p>
 <h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>对iOS的Core Graphics不是很熟悉，还没有去深入看代码中的实现过程，不过修复了一个小bug：在UITouchPhaseBegan的时候刮开的圆形面积坐标错位了，并针对Retina和非Retina进行测试，效果都不错。以前用过其他的刮刮乐的代码，缺点是跟图片像素比之类的有关，显示效果很不好；但这个demo可以适配任意大小的Image而不用更改代码。</p>
@@ -573,5 +573,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

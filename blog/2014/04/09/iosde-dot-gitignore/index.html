@@ -108,7 +108,7 @@
 		<p>在多人一起开发XCode项目的时候，很多中间生成的临时文件并不需要加入到版本控制当中，所以记录下XCode需要用到的<code>.gitignore</code>文件</p>
 <a id="more"></a>
 <p>出处：<a href="https://github.com/github/gitignore/blob/master/Objective-C.gitignore" target="_blank" rel="noopener">https://github.com/github/gitignore/blob/master/Objective-C.gitignore</a></p>
-<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Xcode</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">build/</span><br><span class="line">*<span class="string">.pbxuser</span></span><br><span class="line">!default.pbxuser</span><br><span class="line">*<span class="string">.mode1v3</span></span><br><span class="line">!default.mode1v3</span><br><span class="line">*<span class="string">.mode2v3</span></span><br><span class="line">!default.mode2v3</span><br><span class="line">*<span class="string">.perspectivev3</span></span><br><span class="line">!default.perspectivev3</span><br><span class="line">xcuserdata</span><br><span class="line">*<span class="string">.xccheckout</span></span><br><span class="line">*<span class="string">.moved-aside</span></span><br><span class="line">DerivedData</span><br><span class="line">*<span class="string">.hmap</span></span><br><span class="line">*<span class="string">.ipa</span></span><br><span class="line">*<span class="string">.xcuserstate</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># CocoaPods</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># We recommend against adding the Pods directory to your .gitignore. However</span></span><br><span class="line"><span class="comment"># you should judge for yourself, the pros and cons are mentioned at:</span></span><br><span class="line"><span class="comment"># http://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Pods/</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"># Xcode</span><br><span class="line">#</span><br><span class="line">build/</span><br><span class="line">*.pbxuser</span><br><span class="line">!default.pbxuser</span><br><span class="line">*.mode1v3</span><br><span class="line">!default.mode1v3</span><br><span class="line">*.mode2v3</span><br><span class="line">!default.mode2v3</span><br><span class="line">*.perspectivev3</span><br><span class="line">!default.perspectivev3</span><br><span class="line">xcuserdata</span><br><span class="line">*.xccheckout</span><br><span class="line">*.moved-aside</span><br><span class="line">DerivedData</span><br><span class="line">*.hmap</span><br><span class="line">*.ipa</span><br><span class="line">*.xcuserstate</span><br><span class="line"></span><br><span class="line"># CocoaPods</span><br><span class="line">#</span><br><span class="line"># We recommend against adding the Pods directory to your .gitignore. However</span><br><span class="line"># you should judge for yourself, the pros and cons are mentioned at:</span><br><span class="line"># http://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control</span><br><span class="line">#</span><br><span class="line"># Pods/</span><br></pre></td></tr></table></figure>
 
 <p>还有需要记住一点的是，使用IB进行界面设计，无论是xib文件还是storyboard，同一时间只能右一个人更改一个Window或VC，虽然XCode5之后xib和storyboard可读性大大增强，但是仍不像Android开发界面的xml格式那么普及，还是小心谨慎为好</p>
   
@@ -560,5 +560,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

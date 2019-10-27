@@ -118,26 +118,26 @@
 </ol>
 <p>PS：其实最直接的原因就是博主想弹出个Alert，有俩文本框的（不要密码输入框），可惜<code>UIAlertView</code>做不到啊！！！  </p>
 <h2 id="创建一个UIAlertController"><a href="#创建一个UIAlertController" class="headerlink" title="创建一个UIAlertController"></a>创建一个<code>UIAlertController</code></h2><p>创建很简单有木有：</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">convenience init(title title: <span class="keyword">String</span>?,</span><br><span class="line">         <span class="keyword">message</span> <span class="keyword">message</span>: <span class="keyword">String</span>?,</span><br><span class="line">  preferredStyle preferredStyle: UIAlertControllerStyle)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">convenience init(title title: String?,</span><br><span class="line">         message message: String?,</span><br><span class="line">  preferredStyle preferredStyle: UIAlertControllerStyle)</span><br></pre></td></tr></table></figure>
 
 <p>举个栗子：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> title = <span class="string">"Enter Choices of the Trouble"</span></span><br><span class="line"><span class="keyword">let</span> message = detailItem?.content</span><br><span class="line"><span class="keyword">let</span> alert = UIAlertController(title: title, <span class="attr">message</span>: message, <span class="attr">preferredStyle</span>: UIAlertControllerStyle.Alert)</span><br></pre></td></tr></table></figure>
 
 <p><code>title</code>和<code>message</code>自然不用说了吧，需要注意的是<code>preferredStyle</code>一旦设定好以后就不能改了哦，因为它就是区分<code>UIAlertController</code>到底是对应着<code>UIActionSheet</code>还是<code>UIAlertView</code>，一共就这两种Style：  </p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">UIAlertControllerStyle</span> : <span class="title">Int</span> &#123;</span></span><br><span class="line">    <span class="keyword">case</span> ActionSheet</span><br><span class="line">    <span class="keyword">case</span> Alert</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">enum UIAlertControllerStyle : Int &#123;</span><br><span class="line">    case ActionSheet</span><br><span class="line">    case Alert</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="添加动作"><a href="#添加动作" class="headerlink" title="添加动作"></a>添加动作</h2><p>以前的做法是给个按钮标题数组然后在实现协议的代理方法中判断下按钮序列，然后对应给出不同的处理流程。分散的逻辑和代码无疑增加了开发者的工作量，还要求对应的类实现代理协议，真是out了。  </p>
 <p>这里介绍一个新的类：UIAlertAction，<code>UIAlertController</code>弱化了以前添加Button的概念，而是添加UIAlertAction。其实说白了就是将按钮和处理方法捏到一起成为一个“动作”：  </p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">convenience init(<span class="name">title</span> title: String,</span><br><span class="line">           style style: UIAlertActionStyle,</span><br><span class="line">         handler handler: ((<span class="name">UIAlertAction!</span>) -&gt; Void)!)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">convenience init(title title: String,</span><br><span class="line">           style style: UIAlertActionStyle,</span><br><span class="line">         handler handler: ((UIAlertAction!) -&gt; Void)!)</span><br></pre></td></tr></table></figure>
 
 <p><code>title</code>就是按钮的文本内容；<code>style</code>是按钮的风格，一共有三种风格：Default，Cancel和Destructive，其中Destructive会使按钮文字变成红色；<code>handler</code>是处理按钮按下后的一个block，这段代码块与添加的按钮紧密结合成“动作”，最后通过<code>addAction:</code>方法将UIAlertAction添加到<code>UIAlertController</code>中：  </p>
-<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> cancelbtn = <span class="string">"Cancel"</span></span><br><span class="line"><span class="keyword">let</span> cancelAction = UIAlertAction<span class="function"><span class="params">(title: cancelbtn, style: .Cancel)</span> &#123; <span class="params">(action)</span> -&gt;</span> Void <span class="keyword">in</span></span><br><span class="line"><span class="regexp">//add some code...            </span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp">alert.addAction(cancelAction)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">let cancelbtn = &quot;Cancel&quot;</span><br><span class="line">let cancelAction = UIAlertAction(title: cancelbtn, style: .Cancel) &#123; (action) -&gt; Void in</span><br><span class="line">//add some code...            </span><br><span class="line">&#125;</span><br><span class="line">alert.addAction(cancelAction)</span><br></pre></td></tr></table></figure>
 
 <h2 id="添加文本框"><a href="#添加文本框" class="headerlink" title="添加文本框"></a>添加文本框</h2><p>这也是最令博主激动的地方，最然不能自定义Alert中的内容，但起码添加UITextField不受限制了。添加文本框的方法实在是简洁：  </p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">addTextFieldWithConfigurationHandler</span><span class="params">(<span class="number">_</span> configurationHandler: <span class="params">(<span class="params">(UITextField!)</span></span></span></span> -&gt; <span class="type">Void</span>)!)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func addTextFieldWithConfigurationHandler(_ configurationHandler: ((UITextField!) -&gt; Void)!)</span><br></pre></td></tr></table></figure>
 
 <p>一个block就解决了！你只需要在block中配置下文本框的字体、键盘、代理等即可，举个栗子：  </p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">alert<span class="selector-class">.addTextFieldWithConfigurationHandler</span> &#123; (choiceNameTF) -&gt; Void <span class="keyword">in</span></span><br><span class="line">	  choiceNameTF<span class="selector-class">.borderStyle</span> = .None</span><br><span class="line">	  choiceNameTF<span class="selector-class">.placeholder</span> = <span class="string">"An answer of your trouble"</span></span><br><span class="line">	  choiceNameTF<span class="selector-class">.delegate</span> = self</span><br><span class="line">	  choiceNameTF.becomeFirstResponder()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">alert.addTextFieldWithConfigurationHandler &#123; (choiceNameTF) -&gt; Void in</span><br><span class="line">	  choiceNameTF.borderStyle = .None</span><br><span class="line">	  choiceNameTF.placeholder = &quot;An answer of your trouble&quot;</span><br><span class="line">	  choiceNameTF.delegate = self</span><br><span class="line">	  choiceNameTF.becomeFirstResponder()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>美中不足的是文本框的代理还需要在另外一个地方写代码来实现协议，这种历史遗留问题终将被block统统解决！  </p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>UIAlertController</code>的确是方便多了，无论是代码的简洁性还是可读性，都有了较大的提升。不过也有缺点，就是动用Controller的层级略显麻烦，尤其是使用<code>presentViewController:animated:completion:</code>方法来弹出Alert界面与之前的一个潇洒的<code>show</code>相比真是有些“霸气”。看个人喜好了，只要满足需求，咋方便咋用。  </p>
@@ -593,5 +593,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>
