@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩过的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，重点在于生成 order 文件。我基于 Clang SanitizerCoverage 和业界已有的经验">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-01T01:03:08.059Z">
+<meta property="og:updated_time" content="2019-09-01T04:07:37.894Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="App 二进制文件重排已经被玩坏了">
 <meta name="twitter:description" content="『二进制文件重排优化启动速度』本是一项上古 PC 时代就玩过的东东，前一阵子借助某宇宙大厂重新火了一把。不过令我惊讶的是：这么简单个事情竟然搞得如此复杂，而且还声称『开拓性的探索、在没有业界经验可供参考』。。。 说真话可能会得罪人，但是我怕过吗？ 我怂了，这段掐了。 其实二进制文件重排很简单啊，重点在于生成 order 文件。我基于 Clang SanitizerCoverage 和业界已有的经验">
@@ -125,7 +125,7 @@
 
 <h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>苹果官方也提供了 PGO 的详细文档，而且操作很简单。不过它跟二进制文件重排还是有区别的，这里不展开讲了。毕竟相对于对业务代码加载优先级的优化来说，PGO 对启动优化性价比没那么高，应该就是高频调用函数内联之类的（这句纯属瞎扯）。</p>
 <p>我为啥过了这么久才发此文呢？猜猜原因是啥：</p>
-<p>A. 不爱蹭热度<br>B. 喜欢炒冷饭<br>C. 忙准备答辩<br>D. 8 月发过文章了，这篇得等 9 月才能发，这样不浪费</p>
+<p>A. 不爱蹭热度<br>B. 喜欢炒冷饭<br>C. 忙准备答辩<br>D. 8 月已经发过文章了，这篇得等到 9 月发，这样才不浪费</p>
 <p>碰到不会的题，我一般三短一长选最长。</p>
   
 	</div>
@@ -157,6 +157,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/blog/2019/10/27/Write-Objective-C-Code-using-Dart/" title="Write Objective-C Code using Dart">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Write Objective-C Code using Dart</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/blog/2019/08/11/BlockHook-with-Invocation-2/"  title="BlockHook with Invocation(2)">
@@ -250,7 +258,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 10px;">Dart</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
@@ -568,20 +576,5 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+  </body>
 </html>
