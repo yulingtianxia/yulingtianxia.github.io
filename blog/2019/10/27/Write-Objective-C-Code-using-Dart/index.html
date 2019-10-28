@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。 Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 dart_objc，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native 代">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-10-27T13:25:43.670Z">
+<meta property="og:updated_time" content="2019-10-28T07:34:06.497Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="用 Dart 来写 Objective-C 代码">
 <meta name="twitter:description" content="这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。 Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 dart_objc，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native 代">
@@ -101,12 +101,12 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景"><span class="toc-number">1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析问题"><span class="toc-number">2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">3.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后续"><span class="toc-number">4.</span> <span class="toc-text">后续</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景"><span class="toc-number">1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析问题"><span class="toc-number">2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决问题"><span class="toc-number">3.</span> <span class="toc-text">解决问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">4.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后续"><span class="toc-number">5.</span> <span class="toc-text">后续</span></a></li></ol>
 		
 		</div>
 		
 		<p>这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。</p>
-<p>Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 <a href="https://pub.dev/packages/dart_objc" target="_blank" rel="noopener">dart_objc</a>，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native 代码，从此告别在两个工程和 IDE 中切来切去。</p>
+<p>Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 <a href="https://pub.dev/packages/dart_objc" target="_blank" rel="noopener">dart_objc</a>，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native 代码，从此告别在两个工程和 IDE 中切来切去。方法调用性能相比 Channel 也提升很多。</p>
 <p>尚在开发中，开源地址：<a href="https://github.com/yulingtianxia/dart_objc" target="_blank" rel="noopener">https://github.com/yulingtianxia/dart_objc</a></p>
 <a id="more"></a>
 
@@ -132,6 +132,9 @@
 <li>将 Native API 封装成对应的 Dart 语言，解决一系列语言之间的类型转换和语法兼容问题</li>
 <li>通过一个更高效的方式来调用 Native API，这里使用 dart:ffi 调用 C 函数，再通过 Runtime 机制调用 Native</li>
 </ol>
+<h2 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h2><p>提供一个 Flutter 库来提供 Dart 语言的 API，通过 dart:ffi 作为 Flutter 与 Native 之间的桥。对比 Dart 与 Native 的语法特性，对一些类型进行内存级别的底层转换。</p>
+<p><a href="https://pub.dev/packages/dart_objc" target="_blank" rel="noopener">dart_objc</a> 由于采用指针地址直接传递的方式，方法调用性能相比 channel 提升了<strong>几倍甚至一个数量级</strong>。（测试接口为获取系统版本，如涉及复杂参数的序列化可能差异更大）</p>
+<p>由于 <a href="https://pub.dev/packages/dart_objc" target="_blank" rel="noopener">dart_objc</a> 组件还在基于 dev 版本的 Dart 开发，可能后续还会有比较大的变动，甚至是 API 的变化。所以没有过多展开讲实现细节，感兴趣可以去自己看代码：<a href="https://github.com/yulingtianxia/dart_objc" target="_blank" rel="noopener">https://github.com/yulingtianxia/dart_objc</a></p>
 <h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>假如你写了个 Objective-C 的类叫 <code>RuntimeStub</code>，并实现了个 <code>fooBlock:</code> 方法，参数和返回值都是个 block 对象。</p>
 <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@interface</span> RuntimeStub ()</span><br><span class="line"><span class="variable">@end</span></span><br><span class="line"><span class="variable">@implementation</span> RuntimeStub</span><br><span class="line">typedef int(^BarBlock)(NSObject *a);</span><br><span class="line"><span class="selector-tag">-</span> (BarBlock)<span class="selector-tag">fooBlock</span><span class="selector-pseudo">:(BarBlock)block</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">@end</span></span><br></pre></td></tr></table></figure>
 
@@ -148,8 +151,7 @@
 <p>最后也可以用 Dart 封装下 <code>RuntimeStub</code> 类，这样调用代码更简洁。这种模板代码后续会做成自动生成的，而不用手写。</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RuntimeStub</span> <span class="keyword">extends</span> <span class="title">NSObject</span> </span>&#123;</span><br><span class="line">  <span class="type">RuntimeStub</span>() : <span class="keyword">super</span>(<span class="symbol">'RuntimeStu</span>b');</span><br><span class="line"></span><br><span class="line">  <span class="type">Block</span> fooBlock(<span class="type">Function</span> func) &#123;</span><br><span class="line">    <span class="keyword">return</span> perform(<span class="type">Selector</span>(<span class="symbol">'fooBlock</span>:'), args: [func]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><p>由于 <a href="https://pub.dev/packages/dart_objc" target="_blank" rel="noopener">dart_objc</a> 组件还在基于 dev 版本的 Dart 开发，可能后续还会有比较大的变动，甚至是 API 的变化。所以没有过多展开讲实现细节，感兴趣可以去自己看代码：<a href="https://github.com/yulingtianxia/dart_objc" target="_blank" rel="noopener">https://github.com/yulingtianxia/dart_objc</a></p>
-<p>目前的 Cocoa API 封装打算参考 Swift 版本的文档，毕竟 Dart 有些语法跟 Swift 还有点像。</p>
+<h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><p>目前的 Cocoa API 封装打算参考 Swift 版本的文档，毕竟 Dart 有些语法跟 Swift 还有点像。</p>
 <p>Android 平台的实现也在规划中，最终将会结束 Flutter 三端开发现状，实现真正的前端大一统。</p>
 <p>不吹了，还要做的事情真的太多了。。。</p>
   
@@ -209,7 +211,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景"><span class="toc-number">1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析问题"><span class="toc-number">2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">3.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后续"><span class="toc-number">4.</span> <span class="toc-text">后续</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景"><span class="toc-number">1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析问题"><span class="toc-number">2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决问题"><span class="toc-number">3.</span> <span class="toc-text">解决问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">4.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后续"><span class="toc-number">5.</span> <span class="toc-text">后续</span></a></li></ol>
  
   </div>
 
