@@ -85,6 +85,183 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2020/01/31/DartNative-Memory-Management-Cpp-Non-Object/" title="DartNative Memory Management: C++ Non-Object" itemprop="url">DartNative Memory Management: C++ Non-Object</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2020-01-31T15:12:26.000Z" itemprop="datePublished"> 发表于 2020-01-31</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 基于 Dart FFI，通过 C++ 调用 Native 的 API。这种跨多语言的 bridge 就需要考虑到内存管理的问题。<a href="http://yulingtianxia.com/blog/2019/12/26/DartObjC-Memory-Management-Object/">上一篇文章</a> 介绍了 Objective-C 对象类型的管理，本篇算是它的续篇，讲下对 <code>struct</code> 和 <code>char *</code> 内存的管理。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2020/01/31/DartNative-Memory-Management-Cpp-Non-Object/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2020/01/31/DartNative-Memory-Management-Cpp-Non-Object/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/12/26/DartObjC-Memory-Management-Object/" title="DartNative Memory Management: NSObject" itemprop="url">DartNative Memory Management: NSObject</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-12-26T04:49:13.000Z" itemprop="datePublished"> 发表于 2019-12-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 基于 Dart FFI，通过 C++ 调用 Native 的 API。这种跨多语言的 bridge 就需要考虑到内存管理的问题。由于篇幅有限，会分开来讲，本篇文章只涉及 Objective-C 对象类型的管理。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2019/12/26/DartObjC-Memory-Management-Object/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2019/12/26/DartObjC-Memory-Management-Object/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/11/28/DartObjC-Design/" title="谈谈 dart_native 混合编程引擎的设计" itemprop="url">谈谈 dart_native 混合编程引擎的设计</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-11-28T09:07:22.000Z" itemprop="datePublished"> 发表于 2019-11-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>我之前在 『<a href="http://yulingtianxia.com/blog/2019/10/27/Write-Objective-C-Code-using-Dart/">用 Dart 来写 Objective-C 代码</a>』 这篇文章讲了下我在解决 Flutter 三端开发问题的一个思路和方案，并给出了 Demo 和简单的对比。这次讲下 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 的设计，这包含了上层使用方式和底层技术方案的设计。由于涉及到的技术点很多，这次不会深入太多技术实现细节，不过后续可能会分篇讲下。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2019/11/28/DartObjC-Design/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2019/11/28/DartObjC-Design/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2019/10/27/Write-Objective-C-Code-using-Dart/" title="用 Dart 来写 Objective-C 代码" itemprop="url">用 Dart 来写 Objective-C 代码</a>
   </h1>
   <p class="article-author">By
@@ -99,7 +276,7 @@
     <div class="article-content">
         
         <p>这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。</p>
-<p>Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 <a href="https://pub.dev/packages/dart_objc" target="_blank" rel="noopener">dart_objc</a>，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native 代码，从此告别在两个工程和 IDE 中切来切去。方法调用性能相比 Channel 也提升很多。</p>
+<p>Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 <a href="https://pub.dev/packages/dart_native" target="_blank" rel="noopener">dart_native</a>，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native 代码，从此告别在两个工程和 IDE 中切来切去。方法调用性能相比 Channel 也提升很多。</p>
 <p>尚在开发中，开源地址：<a href="https://github.com/yulingtianxia/dart_objc" target="_blank" rel="noopener">https://github.com/yulingtianxia/dart_objc</a></p>
         
         
@@ -513,196 +690,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2019/03/30/Audio-Emotion-Recognition/" title="音频情绪识别" itemprop="url">音频情绪识别</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2019-03-30T13:30:46.000Z" itemprop="datePublished"> 发表于 2019-03-30</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>如何识别声音所蕴含的情绪呢？在大部分场景下，人声的情绪更有意义。可以先将人声转文字，再通过 NLP 分析语义情绪。不过人类语言博大精深，一句『卧槽』的不同语调和语境下会有很多种意义，真的是卧槽啊！</p>
-<p>于是我从音频特征提取入手，将人声分类识别为八种情绪，实现了两个方案并都得到了测试集 70% 以上的准确率：</p>
-<ol>
-<li>使用 VGGish 网络做特征提取，输入自定义网络进行训练。</li>
-<li>使用音频库导出一系列特征作为输入向量，自定义网络进行训练。</li>
-</ol>
-<p>Python 工程和 iOS Sample 开源在 GitHub 上了：<a href="https://github.com/yulingtianxia/AudioEmotion" target="_blank" rel="noopener">https://github.com/yulingtianxia/AudioEmotion</a></p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2019/03/30/Audio-Emotion-Recognition/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Machine-Leaning/">Machine Leaning</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2019/03/30/Audio-Emotion-Recognition/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2019/02/28/Parallel-Computation-using-MPS/" title="Parallel Computation using MPS" itemprop="url">Parallel Computation using MPS</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2019-02-27T17:50:50.000Z" itemprop="datePublished"> 发表于 2019-02-28</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>在照片质量评分组件 <a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="noopener">PhotoAssessment</a> 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。</p>
-<p>至此，几乎所有图像处理与计算任务都交由 GPU 完成。之前利用 Sobel 算子边缘检测是使用了苹果封装好的 MPS 类，剩余的色彩分布指纹向量和饱和度均值当然都是需要自己写 Shader 的，现在终于补齐了。Metal Shading Language 与 GLSL 使用习惯和理念很相似，只不过 Metal Shader 的语法是基于 C++ 14 的。</p>
-<p>关于整个组件的实现思路，可以查阅<a href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/">『使用 Metal 和 Core ML 评价照片质量』</a>。本篇文章所涉及到的 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/PhotoAssessmentShaders.metal" target="_blank" rel="noopener">Shader 代码</a> 也在其中。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2019/02/28/Parallel-Computation-using-MPS/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Metal/">Metal</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2019/02/28/Parallel-Computation-using-MPS/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2019/01/27/MVVM-Rules-for-OCLint/" title="使用 OCLint 自定义 MVVM 规则" itemprop="url">使用 OCLint 自定义 MVVM 规则</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2019-01-27T11:00:51.000Z" itemprop="datePublished"> 发表于 2019-01-27</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。</p>
-<p>然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：<a href="https://github.com/yulingtianxia/oclint/tree/llvm-7.0" target="_blank" rel="noopener">https://github.com/yulingtianxia/oclint/tree/llvm-7.0</a></p>
-<p>伸手党也可以使用我写的<a href="https://github.com/yulingtianxia/oclint/releases/download/0.18.10/install-0.18.10" target="_blank" rel="noopener">脚本</a>直接安装，已包含 MVVM 规则。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2019/01/27/MVVM-Rules-for-OCLint/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2019/01/27/MVVM-Rules-for-OCLint/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
   </nav>
 
 </div>
@@ -740,7 +730,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 10px;">Dart</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 12.73px;">Dart</a> <a href="/tags/Flutter/" style="font-size: 11.82px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
@@ -823,7 +813,7 @@
     
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
 		
 		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
 		

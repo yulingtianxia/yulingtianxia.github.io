@@ -85,6 +85,193 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2019/03/30/Audio-Emotion-Recognition/" title="音频情绪识别" itemprop="url">音频情绪识别</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-03-30T13:30:46.000Z" itemprop="datePublished"> 发表于 2019-03-30</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>如何识别声音所蕴含的情绪呢？在大部分场景下，人声的情绪更有意义。可以先将人声转文字，再通过 NLP 分析语义情绪。不过人类语言博大精深，一句『卧槽』的不同语调和语境下会有很多种意义，真的是卧槽啊！</p>
+<p>于是我从音频特征提取入手，将人声分类识别为八种情绪，实现了两个方案并都得到了测试集 70% 以上的准确率：</p>
+<ol>
+<li>使用 VGGish 网络做特征提取，输入自定义网络进行训练。</li>
+<li>使用音频库导出一系列特征作为输入向量，自定义网络进行训练。</li>
+</ol>
+<p>Python 工程和 iOS Sample 开源在 GitHub 上了：<a href="https://github.com/yulingtianxia/AudioEmotion" target="_blank" rel="noopener">https://github.com/yulingtianxia/AudioEmotion</a></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2019/03/30/Audio-Emotion-Recognition/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Machine-Leaning/">Machine Leaning</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2019/03/30/Audio-Emotion-Recognition/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/02/28/Parallel-Computation-using-MPS/" title="Parallel Computation using MPS" itemprop="url">Parallel Computation using MPS</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-02-27T17:50:50.000Z" itemprop="datePublished"> 发表于 2019-02-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在照片质量评分组件 <a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="noopener">PhotoAssessment</a> 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。</p>
+<p>至此，几乎所有图像处理与计算任务都交由 GPU 完成。之前利用 Sobel 算子边缘检测是使用了苹果封装好的 MPS 类，剩余的色彩分布指纹向量和饱和度均值当然都是需要自己写 Shader 的，现在终于补齐了。Metal Shading Language 与 GLSL 使用习惯和理念很相似，只不过 Metal Shader 的语法是基于 C++ 14 的。</p>
+<p>关于整个组件的实现思路，可以查阅<a href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/">『使用 Metal 和 Core ML 评价照片质量』</a>。本篇文章所涉及到的 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/PhotoAssessmentShaders.metal" target="_blank" rel="noopener">Shader 代码</a> 也在其中。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2019/02/28/Parallel-Computation-using-MPS/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Metal/">Metal</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2019/02/28/Parallel-Computation-using-MPS/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/01/27/MVVM-Rules-for-OCLint/" title="使用 OCLint 自定义 MVVM 规则" itemprop="url">使用 OCLint 自定义 MVVM 规则</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-01-27T11:00:51.000Z" itemprop="datePublished"> 发表于 2019-01-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。</p>
+<p>然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：<a href="https://github.com/yulingtianxia/oclint/tree/llvm-7.0" target="_blank" rel="noopener">https://github.com/yulingtianxia/oclint/tree/llvm-7.0</a></p>
+<p>伸手党也可以使用我写的<a href="https://github.com/yulingtianxia/oclint/releases/download/0.18.10/install-0.18.10" target="_blank" rel="noopener">脚本</a>直接安装，已包含 MVVM 规则。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2019/01/27/MVVM-Rules-for-OCLint/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2019/01/27/MVVM-Rules-for-OCLint/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2018/12/30/Dirty-Words-for-Xcode/" title="DirtyWords for Xcode - 做个文明的程序员" itemprop="url">DirtyWords for Xcode - 做个文明的程序员</a>
   </h1>
   <p class="article-author">By
@@ -500,191 +687,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/" title="MessageThrottle Performance Benchmark and Optimization" itemprop="url">MessageThrottle Performance Benchmark and Optimization</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2018-05-30T18:01:50.000Z" itemprop="datePublished"> 发表于 2018-05-31</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="noopener">MessageThrottle</a> 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，所以相比直接调用方法，会有一些性能上的损耗。本篇文章记录了对其性能进行测试的结果，并通过使用 <code>NSMapTable</code> 改进存储结构和缓存来对性能进行大幅度的优化。</p>
-<p>这是你从未体验过的船新版本。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2018/04/30/Colorful-Rounded-Rect-Dash-Border/" title="Colorful Rounded Rect Dash Border" itemprop="url">Colorful Rounded Rect Dash Border</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2018-04-30T09:25:44.000Z" itemprop="datePublished"> 发表于 2018-04-30</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>产品经理要求做个能展示进度的分段彩色外环，大概长这样：</p>
-<p><img src="https://github.com/yulingtianxia/YXYDashLayer/blob/master/Assets/YXYDashLayer.gif?raw=true" alt></p>
-<p>花了两天左右来实现和优化，记录下踩坑经历。</p>
-<p>组件已经开源，取个名字叫 <code>YXYDashLayer</code> 吧：<a href="https://github.com/yulingtianxia/YXYDashLayer" target="_blank" rel="noopener">https://github.com/yulingtianxia/YXYDashLayer</a></p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2018/04/30/Colorful-Rounded-Rect-Dash-Border/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/iOS/">iOS</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2018/04/30/Colorful-Rounded-Rect-Dash-Border/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/" title="追踪 Objective-C 方法中的 Block 参数对象" itemprop="url">追踪 Objective-C 方法中的 Block 参数对象</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2018-03-31T15:44:39.000Z" itemprop="datePublished"> 发表于 2018-03-31</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>很多方法最后一个参数是类似于 <code>completionBlock</code> 这种回调，然而有些 API 实现一些异常逻辑时会忘记调用传入的 Block 参数（当然这肯定是 bug 啦），或者存在多次调用。在调试的时候可能会碰到这种大坑，需要追踪下 Block 参数何时调用了，甚至是否调用过。如果不方便直接在 Block 实现中加代码，或者没有源码的情况下，就需要无侵入式地追踪 Block 参数对象。</p>
-<p><a href="https://github.com/yulingtianxia/BlockTracker" target="_blank" rel="noopener">BlockTracker</a> 可以追踪方法调用时传入的 Block 类型的参数的执行和销毁。基于 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 实现。本文讲述了它的使用方法和实现原理。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Runtime/">Runtime</a><a href="/tags/BlockHook/">BlockHook</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
+    <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
   </nav>
 
 </div>
@@ -722,7 +727,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 10px;">Dart</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 12.73px;">Dart</a> <a href="/tags/Flutter/" style="font-size: 11.82px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
@@ -805,7 +810,7 @@
     
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
 		
 		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
 		

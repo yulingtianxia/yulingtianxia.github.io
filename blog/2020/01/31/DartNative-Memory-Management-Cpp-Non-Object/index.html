@@ -1,0 +1,585 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>DartNative Memory Management: C++ Non-Object | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="dart_native 基于 Dart FFI，通过 C++ 调用 Native 的 API。这种跨多语言的 bridge 就需要考虑到内存管理的问题。上一篇文章 介绍了 Objective-C 对象类型的管理，本篇算是它的续篇，讲下对 struct 和 char * 内存的管理。">
+<meta name="keywords" content="Dart,Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DartNative Memory Management: C++ Non-Object">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2020/01/31/DartNative-Memory-Management-Cpp-Non-Object/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="dart_native 基于 Dart FFI，通过 C++ 调用 Native 的 API。这种跨多语言的 bridge 就需要考虑到内存管理的问题。上一篇文章 介绍了 Objective-C 对象类型的管理，本篇算是它的续篇，讲下对 struct 和 char * 内存的管理。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-31T15:13:44.191Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DartNative Memory Management: C++ Non-Object">
+<meta name="twitter:description" content="dart_native 基于 Dart FFI，通过 C++ 调用 Native 的 API。这种跨多语言的 bridge 就需要考虑到内存管理的问题。上一篇文章 介绍了 Objective-C 对象类型的管理，本篇算是它的续篇，讲下对 struct 和 char * 内存的管理。">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2020/01/31/DartNative-Memory-Management-Cpp-Non-Object/" title="DartNative Memory Management: C++ Non-Object" itemprop="url">DartNative Memory Management: C++ Non-Object</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2020-01-31T15:12:26.000Z" itemprop="datePublished"> 发表于 2020-01-31</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题分析"><span class="toc-number">1.</span> <span class="toc-text">问题分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#何时销毁非对象类型"><span class="toc-number">2.</span> <span class="toc-text">何时销毁非对象类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dart-从-C-获取非对象类型"><span class="toc-number">3.</span> <span class="toc-text">Dart 从 C++ 获取非对象类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#C-从-Dart-获取非对象类型"><span class="toc-number">4.</span> <span class="toc-text">C++ 从 Dart 获取非对象类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Dart-向-C-传参"><span class="toc-number">4.1.</span> <span class="toc-text">Dart 向 C++ 传参</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Objective-C-调用-Dart-callback-时获取的返回值"><span class="toc-number">4.2.</span> <span class="toc-text">Objective-C 调用 Dart callback 时获取的返回值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">5.</span> <span class="toc-text">后记</span></a></li></ol>
+		
+		</div>
+		
+		<p><a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 基于 Dart FFI，通过 C++ 调用 Native 的 API。这种跨多语言的 bridge 就需要考虑到内存管理的问题。<a href="http://yulingtianxia.com/blog/2019/12/26/DartObjC-Memory-Management-Object/">上一篇文章</a> 介绍了 Objective-C 对象类型的管理，本篇算是它的续篇，讲下对 <code>struct</code> 和 <code>char *</code> 内存的管理。</p>
+<a id="more"></a>
+
+<p>如果你还不了解 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 是什么，建议先看下我之前的两篇文章：</p>
+<ul>
+<li><a href="http://yulingtianxia.com/blog/2019/10/27/Write-Objective-C-Code-using-Dart/">用 Dart 来写 Objective-C 代码</a></li>
+<li><a href="http://yulingtianxia.com/blog/2019/11/28/DartObjC-Design/">谈谈 dart_native 混合编程引擎的设计</a></li>
+<li><a href="http://yulingtianxia.com/blog/2019/12/26/DartObjC-Memory-Management-Object/">DartNative Memory Management: NSObject</a></li>
+</ul>
+<p>PS：dart_objc 已经更名为 dart_native。</p>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>Cocoa(Touch) 中的好多 API 都用到了系统内建的 <code>struct</code> 或 <code>UTF8String</code>(<code>char *</code>) 类型，它们不像 Objective-C 对象那样只存在于堆上（Block 除外），既可以存在堆上也可以在栈上。<strong>如果能将 <code>struct</code> 和 <code>char *</code> 用对象的形式包一层</strong>，那么就可以<strong>将堆上非对象类型的生命周期转换为对象类型，交由 ARC 来管理</strong>。由此继续借助<a href="http://yulingtianxia.com/blog/2019/12/26/DartObjC-Memory-Management-Object/">上一篇文章</a>的经验和流程，自动释放存储在堆上的 <code>struct</code> 和 <code>char *</code> 类型。</p>
+<h2 id="何时销毁非对象类型"><a href="#何时销毁非对象类型" class="headerlink" title="何时销毁非对象类型"></a>何时销毁非对象类型</h2><p>首先要确定非对象类型传递的方式。这里的解决方案是全都存储于堆上，并用一个 Wrapper 对象包一层来传递。下面说说为何这么做。</p>
+<p>非对象类型如果存储在栈上，那么当调用结束返回后就会被销毁。在跨语言异步调用时，栈上的内存也会被回收，Dart 侧无法长期持有并访问这些数据。Objective-C 大多使用 Block 的方式来实现异步调用逻辑，由于 Block 会去捕获外部变量，所以可以正常运行。</p>
+<p>这个 <code>PointerWrapper</code> 类也很简单，它包了个 <code>void *pointer</code> 属性，在析构的时候会释放 <code>pointer</code> 指向的内存：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)dealloc &#123;</span><br><span class="line">    <span class="built_in">free</span>(_pointer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以把一个非对象类型先 copy 到堆上，然后封装成对象类型来传递了。确保其不会过早被释放，且在同步或异步调用完成后由 ARC 自动释放。</p>
+<h2 id="Dart-从-C-获取非对象类型"><a href="#Dart-从-C-获取非对象类型" class="headerlink" title="Dart 从 C++ 获取非对象类型"></a>Dart 从 C++ 获取非对象类型</h2><p>这里分两种情况：</p>
+<ol>
+<li>Dart 创建新的 <code>struct</code> 或 <code>char *</code>（<code>Pointer&lt;Utf8&gt;</code>）。会通过 Dart FFI 的 <code>allocate</code> 在堆上开辟新的内存，<strong>需要释放</strong>。</li>
+<li>Dart 调用 C++ 函数或 Objective-C Block 时获取的返回值。<code>struct</code> 会被拷贝到新创建的堆内存上，<strong>需要释放</strong>；<code>char *</code> 会自动转换成 <code>String</code>，<strong>不需要释放</strong>。</li>
+<li>C++ 调用 Dart callback 时传入的参数。<code>struct</code> 会被拷贝到新创建的堆内存上，<strong>需要释放</strong>；<code>char *</code> 会自动转换成 <code>String</code>，<strong>不需要释放</strong>。</li>
+</ol>
+<p>至于如何在 Dart 侧创建诸如 <code>CGRect</code> 之类的 <code>struct</code>，可能又能单开一篇文章来讲了，这里不细说了。Dart 侧并不会直接从 Objective-C/C++ 侧拿到 <code>struct</code> 类型，而是拿到一份 <code>malloc</code> 并拷贝后的指针。</p>
+<p>上面这些需要释放的 <code>struct</code> 均可以通过 <code>PointerWrapper</code> 来自动释放，也就是默认创建的是临时变量，用完会自动销毁。Dart 的 <code>struct</code> 都以 <code>NativeStruct</code> 作为基类。其中 <code>addressOf</code> 为指向 <code>struct</code> 的指针，<code>wrapper</code> 接管了 <code>struct</code> 的生命周期。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">NativeStruct</span> </span>&#123;</span><br><span class="line">  Pointer <span class="keyword">get</span> addressOf;</span><br><span class="line"></span><br><span class="line">  PointerWrapper _wrapper;</span><br><span class="line">  PointerWrapper <span class="keyword">get</span> wrapper &#123;</span><br><span class="line">    <span class="keyword">if</span> (_wrapper == <span class="literal">null</span>) &#123;</span><br><span class="line">      _wrapper = PointerWrapper();</span><br><span class="line">    &#125;</span><br><span class="line">    Pointer&lt;<span class="built_in">Void</span>&gt; result = addressOf.cast&lt;<span class="built_in">Void</span>&gt;();</span><br><span class="line">    _wrapper.value = result;</span><br><span class="line">    <span class="keyword">return</span> _wrapper;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  NativeStruct retain() &#123;</span><br><span class="line">    wrapper.retain();</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  release() =&gt; wrapper.release();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也就是 Dart 获取到的 <code>struct</code> 是个临时变量，不用就会自动销毁。如果需要长期持有，则需要手动 <code>retain</code> 和 <code>release</code>。而 Dart 获取到的 <code>char *</code> 则会被自动转为 <code>String</code> 类型，无需关心内存管理。</p>
+<h2 id="C-从-Dart-获取非对象类型"><a href="#C-从-Dart-获取非对象类型" class="headerlink" title="C++ 从 Dart 获取非对象类型"></a>C++ 从 Dart 获取非对象类型</h2><p>这里分两种情况：</p>
+<ol>
+<li>Dart 调用 C++ 函数或 Objective-C Block 时传入的参数。</li>
+<li>Objective-C 调用 Dart callback 时获取的返回值。</li>
+</ol>
+<p>Dart 侧的 <code>struct</code> 早已由 <code>PointerWrapper</code> 交给 ARC 来接管生命周期，<strong>在调用完成后自动释放</strong>。不过需要注意的一点是，Dart 的 <code>String</code> 自动转换为 C++ 的 <code>char *</code>（<code>Pointer&lt;Utf8&gt;</code>）时属于新创建 <code>char *</code>，<strong>需要交给 <code>PointerWrapper</code> 自动释放</strong>:</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">dynamic</span> <span class="title">storeCStringToPointer</span>(<span class="params"><span class="keyword">dynamic</span> <span class="keyword">object</span>, Pointer&lt;Pointer&lt;Void&gt;&gt; ptr</span>)</span> &#123;</span><br><span class="line">  Pointer&lt;Utf8&gt; charPtr = Utf8.toUtf8(<span class="keyword">object</span>);</span><br><span class="line">  PointerWrapper wrapper = PointerWrapper();</span><br><span class="line">  wrapper.<span class="keyword">value</span> = charPtr.cast&lt;Void&gt;();</span><br><span class="line">  ptr.cast&lt;Pointer&lt;Utf8&gt;&gt;().<span class="keyword">value</span> = charPtr;</span><br><span class="line">  <span class="keyword">return</span> wrapper;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Dart-向-C-传参"><a href="#Dart-向-C-传参" class="headerlink" title="Dart 向 C++ 传参"></a>Dart 向 C++ 传参</h3><ol>
+<li>由于字符串比较特殊，即便在函数调用结束后，字符串很多以常量的形式被继续使用。所以传递 <code>char *</code> 的时候，即便已经通过传递 <code>PointerWrapper</code> 来保证调用过程中不被释放，但还需要利用 <code>NSTaggedPointerString</code> 将其生命周期交给 Foundation 管理。</li>
+<li>原本传递结构体现在改成了传递结构体的指针。因为跨语言调用时，使用 Dart FFI 传递单个数据最大为 64bit，可以为整型、浮点型或指针等。所以可能无法容纳下比较大的结构体，需要传递指向结构体的指针。</li>
+<li>其余类型照常传递。</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span></span><br><span class="line">_fillArgsToInvocation(<span class="built_in">NSMethodSignature</span> *signature, <span class="keyword">void</span> **args, <span class="built_in">NSInvocation</span> *invocation, <span class="built_in">NSUInteger</span> offset) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">NSUInteger</span> i = offset; i &lt; signature.numberOfArguments; i++) &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *argType = [signature getArgumentTypeAtIndex:i];</span><br><span class="line">        <span class="built_in">NSUInteger</span> argsIndex = i - offset;</span><br><span class="line">        <span class="keyword">if</span> (argType[<span class="number">0</span>] == <span class="string">'*'</span>) &#123;</span><br><span class="line">            <span class="comment">// Copy CString to NSTaggedPointerString and transfer it's lifecycle to ARC. Orginal pointer will be freed after function returning.</span></span><br><span class="line">            <span class="keyword">const</span> <span class="keyword">char</span> *temp = [<span class="built_in">NSString</span> stringWithUTF8String:(<span class="keyword">const</span> <span class="keyword">char</span> *)args[argsIndex]].UTF8String;</span><br><span class="line">            <span class="keyword">if</span> (temp) &#123;</span><br><span class="line">                args[argsIndex] = (<span class="keyword">void</span> *)temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (argType[<span class="number">0</span>] == <span class="string">'&#123;'</span>) &#123;</span><br><span class="line">            <span class="comment">// Already put struct in pointer on Dart side.</span></span><br><span class="line">            [invocation setArgument:args[argsIndex] atIndex:i];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            [invocation setArgument:&amp;args[argsIndex] atIndex:i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Objective-C-调用-Dart-callback-时获取的返回值"><a href="#Objective-C-调用-Dart-callback-时获取的返回值" class="headerlink" title="Objective-C 调用 Dart callback 时获取的返回值"></a>Objective-C 调用 Dart callback 时获取的返回值</h3><p>由于 Dart callback 所对应的 C++ Function 由 libffi 动态创建，而基于动态创建的 C++ Function 又动态创建了 Objective-C Block 和方法。所以这一切都是我们创建的，尽在掌控之中。而这个动态创建的过程又有点复杂，可以再单独开一篇文章来讲了。</p>
+<p>Objective-C 中方法和 Block 的返回值如果是比较大的 <code>struct</code>，运行在 x86 架构上时，实际上调用更底层函数时的参数列表会有变化。此时第一个参数是指向返回结构体的指针，其余参数依次后移一位。这在 Objective-C 中缩写为 stret，也就是 struct return 的意思。</p>
+<p>如果没有触发 <code>stret</code> 条件，此时的策略是 Dart callback 返回非对象类型锁对应的 <code>PointerWrapper</code>，然后 Objective-C 侧再从 <code>wrapper</code> 中取出对非对象类型，并塞入到 libffi 提供的 <code>ret</code> 指针里：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (wrapper.hasStret) &#123;</span><br><span class="line">    <span class="comment">// synchronize stret value from first argument.</span></span><br><span class="line">    [invocation setReturnValue:*(<span class="keyword">void</span> **)args[<span class="number">0</span>]];</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> ([wrapper.typeString hasPrefix:<span class="string">@"&#123;"</span>]) &#123;</span><br><span class="line">    DOPointerWrapper *pointerWrapper = *(DOPointerWrapper *__<span class="keyword">strong</span> *)ret;</span><br><span class="line">    memcpy(ret, pointerWrapper.pointer, invocation.methodSignature.methodReturnLength);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> ([wrapper.typeString hasPrefix:<span class="string">@"*"</span>]) &#123;</span><br><span class="line">    DOPointerWrapper *pointerWrapper = *(DOPointerWrapper *__<span class="keyword">strong</span> *)ret;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *origCString = (<span class="keyword">const</span> <span class="keyword">char</span> *)pointerWrapper.pointer;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *temp = [<span class="built_in">NSString</span> stringWithUTF8String:origCString].UTF8String;</span><br><span class="line">    *(<span class="keyword">const</span> <span class="keyword">char</span> **)ret = temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>非对象类型的内存管理要比对象类型复杂得多，光是把 <code>struct</code> 在 Dart 中转换出来就已经有些麻烦了。好在大部分问题都已经克服过去了，最终实现了一套半自动化的内存管理系统，也实现了跨语言的类型自动转换。后续可能还会对 stret 的情况进行优化，甚至对方案进行大改。</p>
+<p>哎真是太难了，我还是继续骑着小摩托去找人马吧。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2020/01/31/DartNative-Memory-Management-Cpp-Non-Object/" data-title="DartNative Memory Management: C++ Non-Object | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/blog/2019/12/26/DartObjC-Memory-Management-Object/"  title="DartNative Memory Management: NSObject">
+ <strong>下一篇：</strong><br/> 
+ <span>DartNative Memory Management: NSObject
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题分析"><span class="toc-number">1.</span> <span class="toc-text">问题分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#何时销毁非对象类型"><span class="toc-number">2.</span> <span class="toc-text">何时销毁非对象类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dart-从-C-获取非对象类型"><span class="toc-number">3.</span> <span class="toc-text">Dart 从 C++ 获取非对象类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#C-从-Dart-获取非对象类型"><span class="toc-number">4.</span> <span class="toc-text">C++ 从 Dart 获取非对象类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Dart-向-C-传参"><span class="toc-number">4.1.</span> <span class="toc-text">Dart 向 C++ 传参</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Objective-C-调用-Dart-callback-时获取的返回值"><span class="toc-number">4.2.</span> <span class="toc-text">Objective-C 调用 Dart callback 时获取的返回值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">5.</span> <span class="toc-text">后记</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 12.73px;">Dart</a> <a href="/tags/Flutter/" style="font-size: 11.82px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

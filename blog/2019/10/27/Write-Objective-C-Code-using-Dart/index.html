@@ -11,18 +11,18 @@
     
 
     
-    <meta name="description" content="这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。 Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 dart_objc，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native 代">
+    <meta name="description" content="这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。 Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 dart_native，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native">
 <meta name="keywords" content="Objective-C,Runtime,Dart">
 <meta property="og:type" content="article">
 <meta property="og:title" content="用 Dart 来写 Objective-C 代码">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2019/10/27/Write-Objective-C-Code-using-Dart/index.html">
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
-<meta property="og:description" content="这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。 Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 dart_objc，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native 代">
+<meta property="og:description" content="这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。 Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 dart_native，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-10-28T08:09:39.559Z">
+<meta property="og:updated_time" content="2020-01-30T09:07:43.470Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="用 Dart 来写 Objective-C 代码">
-<meta name="twitter:description" content="这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。 Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 dart_objc，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native 代">
+<meta name="twitter:description" content="这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。 Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 dart_native，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -106,7 +106,7 @@
 		</div>
 		
 		<p>这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。</p>
-<p>Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 <a href="https://pub.dev/packages/dart_objc" target="_blank" rel="noopener">dart_objc</a>，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native 代码，从此告别在两个工程和 IDE 中切来切去。方法调用性能相比 Channel 也提升很多。</p>
+<p>Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 <a href="https://pub.dev/packages/dart_native" target="_blank" rel="noopener">dart_native</a>，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native 代码，从此告别在两个工程和 IDE 中切来切去。方法调用性能相比 Channel 也提升很多。</p>
 <p>尚在开发中，开源地址：<a href="https://github.com/yulingtianxia/dart_objc" target="_blank" rel="noopener">https://github.com/yulingtianxia/dart_objc</a></p>
 <a id="more"></a>
 
@@ -133,16 +133,16 @@
 <li>通过一个更高效的方式来调用 Native API，这里使用 dart:ffi 调用 C 函数，再通过 Runtime 机制调用 Native</li>
 </ol>
 <h2 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h2><p>提供一个 Flutter 库来提供 Dart 语言的 API，通过 dart:ffi 作为 Flutter 与 Native 之间的桥。对比 Dart 与 Native 的语法特性，对一些类型进行内存级别的底层转换。</p>
-<p><a href="https://pub.dev/packages/dart_objc" target="_blank" rel="noopener">dart_objc</a> 由于采用指针地址直接传递的方式，方法调用性能相比 channel 提升了<strong>几倍甚至一个数量级</strong>。（测试接口为获取系统版本，如涉及复杂参数的序列化可能差异更大）</p>
-<p>由于 <a href="https://pub.dev/packages/dart_objc" target="_blank" rel="noopener">dart_objc</a> 组件还在基于 dev 版本的 Dart 开发，可能后续还会有比较大的变动，甚至是 API 的变化。所以没有过多展开讲实现细节，感兴趣可以去自己看代码：<a href="https://github.com/yulingtianxia/dart_objc" target="_blank" rel="noopener">https://github.com/yulingtianxia/dart_objc</a></p>
+<p><a href="https://pub.dev/packages/dart_native" target="_blank" rel="noopener">dart_native</a> 由于采用指针地址直接传递的方式，方法调用性能相比 channel 提升了<strong>几倍甚至一个数量级</strong>。（测试接口为获取系统版本，如涉及复杂参数的序列化可能差异更大）</p>
+<p>由于 <a href="https://pub.dev/packages/dart_native" target="_blank" rel="noopener">dart_native</a> 组件还在基于 dev 版本的 Dart 开发，可能后续还会有比较大的变动，甚至是 API 的变化。所以没有过多展开讲实现细节，感兴趣可以去自己看代码：<a href="https://github.com/yulingtianxia/dart_objc" target="_blank" rel="noopener">https://github.com/yulingtianxia/dart_objc</a></p>
 <h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>假如你写了个 Objective-C 的类叫 <code>RuntimeStub</code>，并实现了个 <code>fooBlock:</code> 方法，参数和返回值都是个 block 对象。</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">RuntimeStub</span> ()</span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">RuntimeStub</span></span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span>(^BarBlock)(<span class="built_in">NSObject</span> *a);</span><br><span class="line">- (BarBlock)fooBlock:(BarBlock)block &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
 
-<p>利用 <a href="https://pub.dev/packages/dart_objc" target="_blank" rel="noopener">dart_objc</a> 写 Dart 代码调用过程如下：</p>
+<p>利用 <a href="https://pub.dev/packages/dart_native" target="_blank" rel="noopener">dart_native</a> 写 Dart 代码调用过程如下：</p>
 <p>初始化一个 <code>NSObject</code> 对象，传入类名就可以 <code>new</code> 任意类型的对象。<code>perform()</code> 方法可以调用任意对象的任何方法，跟 Objective-C 的用法基本一致。</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NSObject stub = NSObject(<span class="string">'RuntimeStub'</span>);</span><br><span class="line">Block block = stub.perform(Selector(<span class="string">'fooBlock:'</span>), args: [barFunc]);</span><br></pre></td></tr></table></figure>
 
-<p>Objective-C 中 Block 这种匿名函数或闭包的概念在 Dart 中其实就是 Function，所以当参数是 Block 对象的时候，可以直接传入一个与之函数签名一样的 Dart Function 对象。<a href="https://pub.dev/packages/dart_objc" target="_blank" rel="noopener">dart_objc</a> 会自动完成参数类型转换和调用等一系列底层细节。所以用 Dart 实现的 <code>barFunc</code> 与 Objective-C 接口 <code>BarBlock</code> 的签名需要一致：</p>
+<p>Objective-C 中 Block 这种匿名函数或闭包的概念在 Dart 中其实就是 Function，所以当参数是 Block 对象的时候，可以直接传入一个与之函数签名一样的 Dart Function 对象。<a href="https://pub.dev/packages/dart_native" target="_blank" rel="noopener">dart_native</a> 会自动完成参数类型转换和调用等一系列底层细节。所以用 Dart 实现的 <code>barFunc</code> 与 Objective-C 接口 <code>BarBlock</code> 的签名需要一致：</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Function</span> barFunc = (NSObject a) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">'hello block! <span class="subst">$&#123;a.toString()&#125;</span>'</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">101</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>Dart 调用 Block 也很简单，调用 <code>invoke</code> 方法就行：</p>
@@ -184,6 +184,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/blog/2019/11/28/DartObjC-Design/" title="谈谈 dart_native 混合编程引擎的设计">
+  <strong>上一篇：</strong><br/>
+  <span>
+  谈谈 dart_native 混合编程引擎的设计</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/blog/2019/09/01/App-Order-Files/"  title="App 二进制文件重排已经被玩坏了">
@@ -247,7 +255,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 10px;">Dart</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 12.73px;">Dart</a> <a href="/tags/Flutter/" style="font-size: 11.82px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
@@ -330,7 +338,7 @@
     
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
 		
 		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
 		
