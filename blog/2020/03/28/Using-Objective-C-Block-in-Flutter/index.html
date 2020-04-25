@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="dart_native 作为一条比 Channel 性能更高开发成本更低的超级通道，通过 C++ 调用 Native 的 API，深入底层且考虑全面。很多 Objective-C 接口的参数和返回值是 Block，所以这就需要支持用 Dart 语言创建和调用 Objective-C Block。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-28T08:04:05.623Z">
+<meta property="og:updated_time" content="2020-04-25T08:32:02.934Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="在 Flutter 中玩转 Objective-C Block">
 <meta name="twitter:description" content="dart_native 作为一条比 Channel 性能更高开发成本更低的超级通道，通过 C++ 调用 Native 的 API，深入底层且考虑全面。很多 Objective-C 接口的参数和返回值是 Block，所以这就需要支持用 Dart 语言创建和调用 Objective-C Block。">
@@ -113,7 +113,7 @@
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">stub.fooBlock((NSObject a) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">'hello block! <span class="subst">$&#123;a.toString()&#125;</span>'</span>);</span><br><span class="line">    <span class="keyword">return</span> a;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
 <p>而对应的 Objective-C 接口如下：</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">typedef</span> <span class="selector-tag">NSObject</span> *(^BarBlock)(NSObject *a);</span><br><span class="line"><span class="selector-tag">-</span> (void)<span class="selector-tag">fooBlock</span><span class="selector-pseudo">:(BarBlock)block</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="built_in">NSObject</span> *(^BarBlock)(<span class="built_in">NSObject</span> *a);</span><br><span class="line">- (<span class="keyword">void</span>)fooBlock:(BarBlock)block;</span><br></pre></td></tr></table></figure>
 
 <p>下面就讲下 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 是如何做到把 Dart Function 当做 Block 传给 Objective-C 的。</p>
 <h3 id="函数签名"><a href="#函数签名" class="headerlink" title="函数签名"></a>函数签名</h3><p>首先要确保的是 Dart Function 的签名跟 Objective-C Block 是一致的，这样二者才能转换。在 Dart 里一切皆为对象，Function 也不例外。那么拿到 Function 的 <code>runtimeType</code> 即可，然后解析其内容。不过 <code>runtimeType</code> 的内容都是 Dart 类名，如何能与 Objective-C 类型对应上呢？<a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 的策略是提供与 Native 同名的类，这样使用这些同名类定义 Dart Function，就可以把函数签名映射到 Native 上了。</p>
@@ -185,6 +185,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/blog/2020/04/25/Passing-Out-Parameter-in-DartNative/" title="Passing Out Parameter in DartNative">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Passing Out Parameter in DartNative</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/blog/2020/02/24/DartNative-Struct/"  title="DartNative Struct">
@@ -248,7 +256,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 14.55px;">Dart</a> <a href="/tags/Flutter/" style="font-size: 13.64px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.73px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.45px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.55px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 15.45px;">Dart</a> <a href="/tags/Flutter/" style="font-size: 14.55px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.64px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.82px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.91px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.82px;">Metal</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.91px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.91px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.27px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 16.36px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.18px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.64px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.09px;">iOS</a> <a href="/tags/macOS/" style="font-size: 16.36px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.82px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15.45px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.64px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
@@ -566,5 +574,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>
