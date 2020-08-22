@@ -19,13 +19,13 @@
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="在上一篇文章《告别 Flutter Channel，调用 Native API 仅需一行代码！》 发出后，收到了很多关注。仔细想想，其实不是仅仅只需一行代码的，还需要敲一行 codegen 命令来生成 Dart 代码。这回就简单讲下自动生成代码这块的设计和实现原理。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/DartObjC/codegen_workflow.png?raw=true">
-<meta property="og:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/DartObjC/codegen_theory.png?raw=true">
-<meta property="og:updated_time" content="2020-07-24T16:22:04.664Z">
+<meta property="og:image" content="http://yulingtianxia.com/resources/DartObjC/codegen_workflow.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/DartObjC/codegen_theory.png">
+<meta property="og:updated_time" content="2020-08-22T11:02:55.368Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何实现一行命令自动生成 Flutter 插件">
 <meta name="twitter:description" content="在上一篇文章《告别 Flutter Channel，调用 Native API 仅需一行代码！》 发出后，收到了很多关注。仔细想想，其实不是仅仅只需一行代码的，还需要敲一行 codegen 命令来生成 Dart 代码。这回就简单讲下自动生成代码这块的设计和实现原理。">
-<meta name="twitter:image" content="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/DartObjC/codegen_workflow.png?raw=true">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/DartObjC/codegen_workflow.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -113,7 +113,7 @@
 
 <h2 id="为何要做代码生成工具"><a href="#为何要做代码生成工具" class="headerlink" title="为何要做代码生成工具"></a>为何要做代码生成工具</h2><p>一开始技术架构的搭建自底向上的。当我做出 Flutter 与 Native 之间的<a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">高性能通道</a>后，自然而然地去想要提升易用性，降低开发者的使用门槛。当你从使用者角度去审视自己的产品时，就会自顶向下去设计一些 Feature 去满足目标用户的诉求。</p>
 <p>最终我决定开发一款命令行工具。它可以解析 Native 代码中的 API，生成对应的 Dart 代码，再进而支持生成 Flutter Plugin/Package 工程。生成的 Flutter 工程会通过 pub 依赖 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a>:</p>
-<p><img src="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/DartObjC/codegen_workflow.png?raw=true" alt></p>
+<p><img src="http://yulingtianxia.com/resources/DartObjC/codegen_workflow.png" alt></p>
 <p>工具需要满足以下需求：</p>
 <ol>
 <li>兼容性：能够支持 Native 多种语言代码的转换，如 Objective-C，Java，Swift，Kotlin 等</li>
@@ -129,7 +129,7 @@
 <li>将 Native AST 转换成 Dart 语言所需的 AST</li>
 <li>通过 Dart AST 生成 dart 代码</li>
 </ol>
-<p><img src="https://github.com/yulingtianxia/Blog-Hexo-Source/blob/master/source/resources/DartObjC/codegen_theory.png?raw=true" alt></p>
+<p><img src="http://yulingtianxia.com/resources/DartObjC/codegen_theory.png" alt></p>
 <h2 id="遇到的坑"><a href="#遇到的坑" class="headerlink" title="遇到的坑"></a>遇到的坑</h2><h3 id="词法分析失败"><a href="#词法分析失败" class="headerlink" title="词法分析失败"></a>词法分析失败</h3><p>官方提供的 Objective-C 的 <a href="https://github.com/antlr/grammars-v4" target="_blank" rel="noopener">grammer</a> 有很多问题，生成的 lexer 还是 parser 都会在词法分析阶段就抛异常。这里就比较坑了，需要修改 lexer 和 parser 的 g4 文件。可能是 grammer 太久没更新了，很多分词阶段就抛异常了，比如 <code>@import</code> 都不支持，真是一言难尽。而且这种只针对单个文件的词法分析程序，很难像 Clang 那样可以 link 其他文件做到的严谨性。经过一系列的修复工作，已经可以 parse iOS Foundation 库的所有头文件。</p>
 <h3 id="语法特性映射"><a href="#语法特性映射" class="headerlink" title="语法特性映射"></a>语法特性映射</h3><p>这一步发生在 AST 的 transform。虽说不同语言之间有很多语法设计都是想通的，但是依然会有一些难以映射的语法特性。比如 Java 的重载方法，OC 奇葩的方法名。转换成 Dart 的方法命名应该遵循哪方的语言规范？OC 的 <code>Protocol</code> 在 Dart 中如何表示？Dart 类的静态方法不会被继承，那么 <code>Protocol</code> 中的类方法怎么办？Dart 的 <code>enum</code> 不支持自定义 <code>int</code> 值，来自 OC 的 <code>enum</code> 如何转换成 Dart？区分何时生成 Dart 的 <code>import</code> 或 <code>export</code>？。。。</p>
 <p>类似这些操蛋的问题数不胜数。。。需要不断细化，思考，打磨。。。</p>
@@ -175,6 +175,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/blog/2020/08/22/DartNative-Automatic-Memory-Management/" title="DartNative 内存自动管理">
+  <strong>上一篇：</strong><br/>
+  <span>
+  DartNative 内存自动管理</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/blog/2020/06/25/Codegen-for-DartNative/"  title="告别 Flutter Channel，调用 Native API 仅需一行代码！">
@@ -238,7 +246,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.5px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.83px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.83px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 14.17px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.67px;">Dart</a> <a href="/tags/Flutter/" style="font-size: 15.83px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.33px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.67px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.83px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.67px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.83px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.83px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.83px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.5px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.83px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.33px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.33px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.17px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.83px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.67px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 15px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.33px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
