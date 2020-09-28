@@ -2,16 +2,79 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2020/08/22/DartNative-Automatic-Memory-Management/</loc>
+    <loc>http://yulingtianxia.com/blog/2020/09/26/Synchronous-Channel-for-Flutter/</loc>
     
-    <lastmod>2020-08-22T15:30:32.254Z</lastmod>
+    <lastmod>2020-09-28T09:21:51.855Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2019/10/27/Write-Objective-C-Code-using-Dart/</loc>
+    
+    <lastmod>2020-09-28T09:07:35.241Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2019/11/28/DartObjC-Design/</loc>
+    
+    <lastmod>2020-09-28T09:07:30.670Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2019/12/26/DartObjC-Memory-Management-Object/</loc>
+    
+    <lastmod>2020-09-28T09:07:26.374Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2020/01/31/DartNative-Memory-Management-Cpp-Non-Object/</loc>
+    
+    <lastmod>2020-09-28T09:07:22.913Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2020/02/24/DartNative-Struct/</loc>
+    
+    <lastmod>2020-09-28T09:07:17.192Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2020/03/28/Using-Objective-C-Block-in-Flutter/</loc>
+    
+    <lastmod>2020-09-28T09:07:13.393Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2020/04/25/Passing-Out-Parameter-in-DartNative/</loc>
+    
+    <lastmod>2020-09-28T09:07:08.065Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://yulingtianxia.com/blog/2020/06/25/Codegen-for-DartNative/</loc>
     
-    <lastmod>2020-08-22T11:06:41.631Z</lastmod>
+    <lastmod>2020-09-28T09:06:56.587Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2020/07/25/How-to-Implement-Codegen/</loc>
+    
+    <lastmod>2020-09-28T09:06:51.808Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2020/08/22/DartNative-Automatic-Memory-Management/</loc>
+    
+    <lastmod>2020-09-28T09:06:45.638Z</lastmod>
     
   </url>
   
@@ -51,65 +114,9 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2019/11/28/DartObjC-Design/</loc>
-    
-    <lastmod>2020-08-22T11:03:50.174Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2020/07/25/How-to-Implement-Codegen/</loc>
-    
-    <lastmod>2020-08-22T11:02:55.368Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2020/05/30/BlockHook-and-Memory-Safety/</loc>
     
     <lastmod>2020-05-30T11:07:28.964Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2020/04/25/Passing-Out-Parameter-in-DartNative/</loc>
-    
-    <lastmod>2020-04-25T10:25:10.170Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2020/03/28/Using-Objective-C-Block-in-Flutter/</loc>
-    
-    <lastmod>2020-04-25T08:32:02.934Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2020/02/24/DartNative-Struct/</loc>
-    
-    <lastmod>2020-02-23T16:19:49.864Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2020/01/31/DartNative-Memory-Management-Cpp-Non-Object/</loc>
-    
-    <lastmod>2020-01-31T15:13:44.191Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2019/12/26/DartObjC-Memory-Management-Object/</loc>
-    
-    <lastmod>2020-01-30T09:08:00.840Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2019/10/27/Write-Objective-C-Code-using-Dart/</loc>
-    
-    <lastmod>2020-01-30T09:07:43.470Z</lastmod>
     
   </url>
   
@@ -149,13 +156,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/06/xcodehe-objective-c-cheat-sheet/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/04/05/macosx10-dot-9shang-yong-octopresshe-githubda-jian-ge-ren-bo-ke/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -170,7 +170,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/07/iosdan-li-mo-shi-ornsuserdefaults/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/04/06/xcodehe-objective-c-cheat-sheet/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -198,27 +198,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/21/yong-dfssuan-fa-ji-suan-spritekitzhong-fu-he-ti-de-gou-cheng/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/17/shen-ru-li-jie-typedef/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/24/objective-cjiao-cha-yin-yong-jie-jue-fang-fa/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/04/17/han-shu-zhi-zhen-yu-zhi-zhen-han-shu/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -226,7 +205,21 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/27/zai-you-xi-de-skscenezhong-tian-jia-button/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/04/21/yong-dfssuan-fa-ji-suan-spritekitzhong-fu-he-ti-de-gou-cheng/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/04/07/iosdan-li-mo-shi-ornsuserdefaults/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/04/17/shen-ru-li-jie-typedef/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -241,6 +234,13 @@
   
   <url>
     <loc>http://yulingtianxia.com/blog/2014/04/22/spritekitjie-ping-bing-fen-xiang-zhi-she-jiao-wang-luo/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/04/24/objective-cjiao-cha-yin-yong-jie-jue-fang-fa/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -268,6 +268,13 @@
   </url>
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2014/04/27/zai-you-xi-de-skscenezhong-tian-jia-button/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2014/05/02/github-page-build-warning/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -282,14 +289,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/05/10/zhuang-shi-zhe-mo-shi/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/06/16/swiftzhong-zai-yun-suan-fu/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/06/17/optionals-and-optional-chaining-in-swift/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -310,7 +310,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/06/17/optionals-and-optional-chaining-in-swift/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/06/16/swiftzhong-zai-yun-suan-fu/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/05/10/zhuang-shi-zhe-mo-shi/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -331,6 +338,13 @@
   </url>
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2014/07/11/setup-your-own-vpn-with-pptp/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2014/07/11/bitwise-and-overflow-operators-in-swift/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -338,7 +352,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/07/11/setup-your-own-vpn-with-pptp/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/06/24/initialization-in-swift/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -366,13 +380,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/06/24/initialization-in-swift/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/08/05/coredatachu-li-hai-liang-shu-ju/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -387,13 +394,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/08/19/best-practices-for-building-spritekit-games/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/09/26/building-assert-in-swift-1/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -401,7 +401,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/09/07/zai-macshang-yong-wifigong-xiang-xiao-yuan-wang/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/08/19/best-practices-for-building-spritekit-games/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/08/17/New-in-Table-and-Collection-Views/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -415,7 +422,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/08/17/New-in-Table-and-Collection-Views/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/09/07/zai-macshang-yong-wifigong-xiang-xiao-yuan-wang/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -436,28 +443,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/02/10/When-CoreData-meets-iCloud/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2015/03/01/UIDynamics-in-Swift/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2015/03/08/Insight-of-Null/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2015/02/10/When-CoreData-meets-iCloud/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -471,7 +464,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/06/12/SpriteKit%E5%9C%A8iOS9%E5%92%8COSX10-11%E4%B8%AD%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7/</loc>
+    <loc>http://yulingtianxia.com/blog/2015/03/01/UIDynamics-in-Swift/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -492,14 +485,21 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/</loc>
+    <loc>http://yulingtianxia.com/blog/2015/10/20/Try-to-implement-picture-browser-mode-on-webview/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/10/20/Try-to-implement-picture-browser-mode-on-webview/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2015/06/12/SpriteKit%E5%9C%A8iOS9%E5%92%8COSX10-11%E4%B8%AD%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -513,6 +513,13 @@
   </url>
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -520,14 +527,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/11/13/Summary-of-the-first-month-in-the-internship-of-Tencent/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2016/02/27/TFSHelper/</loc>
+    <loc>http://yulingtianxia.com/blog/2016/01/17/search-for-similar-images/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -535,13 +535,6 @@
   
   <url>
     <loc>http://yulingtianxia.com/blog/2016/03/28/Add-UITest-Label-for-UIAutomation/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2016/01/17/search-for-similar-images/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -562,14 +555,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2016/08/29/Some-Experience-of-Gesture/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2016/07/18/TBActionSheet/</loc>
+    <loc>http://yulingtianxia.com/blog/2016/02/27/TFSHelper/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -583,7 +569,21 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2016/10/30/Optimizing-App-Startup-Time/</loc>
+    <loc>http://yulingtianxia.com/blog/2016/08/29/Some-Experience-of-Gesture/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2015/11/13/Summary-of-the-first-month-in-the-internship-of-Tencent/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2016/07/18/TBActionSheet/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -597,7 +597,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2016/11/28/pbxprojHelper/</loc>
+    <loc>http://yulingtianxia.com/blog/2016/10/30/Optimizing-App-Startup-Time/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -632,13 +632,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2017/05/30/Implementing-CNN-with-MPS/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -646,7 +639,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2017/06/19/Core-ML-and-Vision-Framework-on-iOS-11/</loc>
+    <loc>http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -660,7 +653,21 @@
   </url>
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2017/06/19/Core-ML-and-Vision-Framework-on-iOS-11/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2017/08/28/Threading-Programming-Guide-1/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2017/09/17/Threading-Programming-Guide-2/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -674,6 +681,13 @@
   </url>
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2017/12/15/Associated-Object-and-Dealloc/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -681,7 +695,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/</loc>
+    <loc>http://yulingtianxia.com/blog/2016/11/28/pbxprojHelper/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -702,7 +716,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2017/09/17/Threading-Programming-Guide-2/</loc>
+    <loc>http://yulingtianxia.com/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2018/08/13/TBUIAutoTest-Usage/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -723,20 +744,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2018/08/13/TBUIAutoTest-Usage/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2018/09/16/Fuck-Fake-GitHub-Stars/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -751,14 +758,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2018/12/30/Dirty-Words-for-Xcode/</loc>
+    <loc>http://yulingtianxia.com/blog/2019/01/27/MVVM-Rules-for-OCLint/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2019/01/27/MVVM-Rules-for-OCLint/</loc>
+    <loc>http://yulingtianxia.com/blog/2018/12/30/Dirty-Words-for-Xcode/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     

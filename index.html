@@ -85,6 +85,71 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2020/09/26/Synchronous-Channel-for-Flutter/" title="如何实现 Flutter 同步调用 Native API" itemprop="url">如何实现 Flutter 同步调用 Native API</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2020-09-26T09:53:16.000Z" itemprop="datePublished"> 发表于 2020-09-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Flutter Channel 是一个异步调用通道，如果想在 Dart 侧同步获取到 Native 返回的结果，调用的时候加上 <code>await</code> 就可以了：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="built_in">int</span> result = <span class="keyword">await</span> platform.invokeMethod(<span class="string">'hello channel'</span>);</span><br></pre></td></tr></table></figure>
+
+<p>所以这篇文章到此为止了？</p>
+<p>不！上面这行代码其实是个『假同步』，因为它只保证了 Dart 代码的同步执行，而 Native 代码与 Dart 并不在同一条线程执行。试想下，如果你通过 Flutter Channel 打日志，但由于打日志的消息是异步传递到 Native 的，最后日志顺序可能是错的。而通过日志来排查一些时序性相关的 Bug 时，日志的顺序很重要。</p>
+<p>因为 Flutter Channel 设计之初就是异步的，使用 <code>await</code> 来回切换线程所带来的开销不小。而且协程的 <code>await</code> 语法具有传递性，上层调用方也需要使用 <code>await</code>，层层传递。</p>
+<p>而 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 设计之初就是同步调用的，且也支持异步调用。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2020/09/26/Synchronous-Channel-for-Flutter/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2020/09/26/Synchronous-Channel-for-Flutter/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2020/08/22/DartNative-Automatic-Memory-Management/" title="DartNative 内存自动管理" itemprop="url">DartNative 内存自动管理</a>
   </h1>
   <p class="article-author">By
@@ -113,7 +178,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -172,7 +237,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/NodeJS/">NodeJS</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/NodeJS/">NodeJS</a>
   </div>
 
 </div>
@@ -237,7 +302,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/NodeJS/">NodeJS</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/NodeJS/">NodeJS</a>
   </div>
 
 </div>
@@ -360,7 +425,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a>
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -419,7 +484,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a>
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -478,7 +543,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -537,7 +602,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -596,7 +661,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -621,68 +686,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2019/11/28/DartObjC-Design/" title="谈谈 dart_native 混合编程引擎的设计" itemprop="url">谈谈 dart_native 混合编程引擎的设计</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2019-11-28T09:07:22.000Z" itemprop="datePublished"> 发表于 2019-11-28</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>我之前在 『<a href="http://yulingtianxia.com/blog/2019/10/27/Write-Objective-C-Code-using-Dart/">用 Dart 来写 Objective-C 代码</a>』 这篇文章讲了下我在解决 Flutter 三端开发问题的一个思路和方案，并给出了 Demo 和简单的对比。这次讲下 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 的设计，这包含了上层使用方式和底层技术方案的设计。由于涉及到的技术点很多，这次不会深入太多技术实现细节，不过后续可能会分篇讲下。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2019/11/28/DartObjC-Design/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2019/11/28/DartObjC-Design/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
   </nav>
 
 </div>
@@ -720,7 +726,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
