@@ -104,7 +104,8 @@
 <p>所以这篇文章到此为止了？</p>
 <p>不！上面这行代码其实是个『假同步』，因为它只保证了 Dart 代码的同步执行，而 Native 代码与 Dart 并不在同一条线程执行。试想下，如果你通过 Flutter Channel 打日志，但由于打日志的消息是异步传递到 Native 的，最后日志顺序可能是错的。而通过日志来排查一些时序性相关的 Bug 时，日志的顺序很重要。</p>
 <p>因为 Flutter Channel 设计之初就是异步的，使用 <code>await</code> 来回切换线程所带来的开销不小。而且协程的 <code>await</code> 语法具有传递性，上层调用方也需要使用 <code>await</code>，层层传递。</p>
-<p>而 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 设计之初就是同步调用的，且也支持异步调用。</p>
+<p>而 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 设计之初就是同步调用的，且也支持异步调用：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// new DNTest instance and call hello method.</span></span><br><span class="line">DNTest().hello(<span class="string">'DartNative'</span>);</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -119,7 +120,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -178,7 +179,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -237,7 +238,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/NodeJS/">NodeJS</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/NodeJS/">NodeJS</a>
   </div>
 
 </div>
@@ -302,7 +303,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/NodeJS/">NodeJS</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/NodeJS/">NodeJS</a>
   </div>
 
 </div>
@@ -425,7 +426,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -484,7 +485,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -543,7 +544,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -602,7 +603,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -661,7 +662,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
