@@ -198,20 +198,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/13/double-dispatchmo-shi-ji-qi-zai-ioskai-fa-zhong-shi-zhan/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/04/17/shen-ru-li-jie-typedef/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/04/21/yong-dfssuan-fa-ji-suan-spritekitzhong-fu-he-ti-de-gou-cheng/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -220,6 +206,20 @@
   
   <url>
     <loc>http://yulingtianxia.com/blog/2014/04/17/han-shu-zhi-zhen-yu-zhi-zhen-han-shu/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/04/13/double-dispatchmo-shi-ji-qi-zai-ioskai-fa-zhong-shi-zhan/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/04/17/shen-ru-li-jie-typedef/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -289,13 +289,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/05/12/objective-czhong-de-kvche-kvo/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/05/10/zhuang-shi-zhe-mo-shi/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -303,7 +296,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/05/26/publish-your-pods-on-cocoapods-with-trunk/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/05/12/objective-czhong-de-kvche-kvo/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -311,6 +304,13 @@
   
   <url>
     <loc>http://yulingtianxia.com/blog/2014/06/16/swiftzhong-zai-yun-suan-fu/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/05/26/publish-your-pods-on-cocoapods-with-trunk/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -331,21 +331,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/06/19/rang-ruan-jian-zhi-chi-retina/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/06/24/initialization-in-swift/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/07/03/chu-shi-core-data-3/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/06/19/rang-ruan-jian-zhi-chi-retina/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -360,6 +353,13 @@
   
   <url>
     <loc>http://yulingtianxia.com/blog/2014/07/11/setup-your-own-vpn-with-pptp/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/06/24/initialization-in-swift/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -401,13 +401,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/08/19/best-practices-for-building-spritekit-games/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2014/09/07/zai-macshang-yong-wifigong-xiang-xiao-yuan-wang/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -422,7 +415,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2014/09/26/building-assert-in-swift-2/</loc>
+    <loc>http://yulingtianxia.com/blog/2014/08/19/best-practices-for-building-spritekit-games/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -430,6 +423,13 @@
   
   <url>
     <loc>http://yulingtianxia.com/blog/2014/09/29/uialertcontroller-in-ios8/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2014/09/26/building-assert-in-swift-2/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -450,6 +450,13 @@
   </url>
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2015/03/01/UIDynamics-in-Swift/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -458,13 +465,6 @@
   
   <url>
     <loc>http://yulingtianxia.com/blog/2015/03/08/Insight-of-Null/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -499,14 +499,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/</loc>
+    <loc>http://yulingtianxia.com/blog/2015/10/20/Try-to-implement-picture-browser-mode-on-webview/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2015/10/20/Try-to-implement-picture-browser-mode-on-webview/</loc>
+    <loc>http://yulingtianxia.com/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -569,7 +569,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/</loc>
+    <loc>http://yulingtianxia.com/blog/2016/08/29/Some-Experience-of-Gesture/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -577,13 +577,6 @@
   
   <url>
     <loc>http://yulingtianxia.com/blog/2016/07/18/TBActionSheet/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yulingtianxia.com/blog/2016/08/29/Some-Experience-of-Gesture/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -604,6 +597,13 @@
   </url>
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2016/11/28/pbxprojHelper/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -611,7 +611,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2016/12/29/Multimedia-Edit-Module-Architecture-Design/</loc>
+    <loc>http://yulingtianxia.com/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -674,13 +674,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2017/09/17/Threading-Programming-Guide-2/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2017/10/08/Threading-Programming-Guide-3/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -695,13 +688,6 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2017/12/15/Associated-Object-and-Dealloc/</loc>
-    
-    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yulingtianxia.com/blog/2018/01/15/How-to-make-a-Pebble-watchface/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -709,7 +695,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/</loc>
+    <loc>http://yulingtianxia.com/blog/2017/09/17/Threading-Programming-Guide-2/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -723,7 +709,14 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2018/06/24/Objective-C-Block-Mangle-Name/</loc>
+    <loc>http://yulingtianxia.com/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yulingtianxia.com/blog/2017/12/15/Associated-Object-and-Dealloc/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -737,6 +730,13 @@
   </url>
   
   <url>
+    <loc>http://yulingtianxia.com/blog/2018/06/24/Objective-C-Block-Mangle-Name/</loc>
+    
+    <lastmod>2019-05-26T10:08:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yulingtianxia.com/blog/2018/08/13/TBUIAutoTest-Usage/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
@@ -744,7 +744,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2018/09/16/Fuck-Fake-GitHub-Stars/</loc>
+    <loc>http://yulingtianxia.com/blog/2019/03/30/Audio-Emotion-Recognition/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -758,7 +758,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2018/12/30/Dirty-Words-for-Xcode/</loc>
+    <loc>http://yulingtianxia.com/blog/2018/09/16/Fuck-Fake-GitHub-Stars/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
@@ -772,7 +772,7 @@
   </url>
   
   <url>
-    <loc>http://yulingtianxia.com/blog/2019/03/30/Audio-Emotion-Recognition/</loc>
+    <loc>http://yulingtianxia.com/blog/2018/12/30/Dirty-Words-for-Xcode/</loc>
     
     <lastmod>2019-05-26T10:08:45.000Z</lastmod>
     
