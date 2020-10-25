@@ -12,7 +12,7 @@
 
     
     <meta name="description" content="dart_native 基于 Dart FFI，通过 C++ 调用 Native 的 API。这种跨多语言的 bridge 就需要考虑到内存管理的问题。上一篇文章 介绍了 Objective-C 对象类型的管理，本篇算是它的续篇，讲下对 struct 和 char * 内存的管理。">
-<meta name="keywords" content="Dart,Flutter,DartNative">
+<meta name="keywords" content="Dart,DartNative,Flutter">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DartNative Memory Management: C++ Non-Object">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2020/01/31/DartNative-Memory-Management-Cpp-Non-Object/index.html">
@@ -163,7 +163,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -574,20 +574,5 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+  </body>
 </html>

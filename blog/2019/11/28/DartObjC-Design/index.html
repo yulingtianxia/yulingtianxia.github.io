@@ -12,7 +12,7 @@
 
     
     <meta name="description" content="我之前在 『用 Dart 来写 Objective-C 代码』 这篇文章讲了下我在解决 Flutter 三端开发问题的一个思路和方案，并给出了 Demo 和简单的对比。这次讲下 dart_native 的设计，这包含了上层使用方式和底层技术方案的设计。由于涉及到的技术点很多，这次不会深入太多技术实现细节，不过后续可能会分篇讲下。">
-<meta name="keywords" content="Dart,Flutter,DartNative">
+<meta name="keywords" content="Dart,DartNative,Flutter">
 <meta property="og:type" content="article">
 <meta property="og:title" content="谈谈 dart_native 混合编程引擎的设计">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2019/11/28/DartObjC-Design/index.html">
@@ -382,7 +382,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -793,20 +793,5 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+  </body>
 </html>

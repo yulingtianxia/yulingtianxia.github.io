@@ -12,7 +12,7 @@
 
     
     <meta name="description" content="Flutter Channel 是一个异步调用通道，如果想在 Dart 侧同步获取到 Native 返回的结果，调用的时候加上 await 就可以了： 1final int result = await platform.invokeMethod(&apos;hello channel&apos;);  所以这篇文章到此为止了？ 不！上面这行代码其实是个『假同步』，因为它只保证了 Dart 代码的同步执行，而 Nat">
-<meta name="keywords" content="Dart,Flutter,DartNative">
+<meta name="keywords" content="Dart,DartNative,Flutter">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何实现 Flutter 同步调用 Native API">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2020/09/28/Synchronous-Channel-for-Flutter/index.html">
@@ -153,7 +153,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
   </div>
 
 </div>
@@ -556,20 +556,5 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+  </body>
 </html>
