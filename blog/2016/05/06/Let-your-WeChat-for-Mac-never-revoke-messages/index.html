@@ -12,7 +12,7 @@
 
     
     <meta name="description" content="处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp;amp; iOS。">
-<meta name="keywords" content="macOS,iOS,Reverse Engineering">
+<meta name="keywords" content="iOS,macOS,Reverse Engineering">
 <meta property="og:type" content="article">
 <meta property="og:title" content="让你的微信不再被人撤回消息">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/index.html">
@@ -166,7 +166,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/iOS/">iOS</a><a href="/tags/Reverse-Engineering/">Reverse Engineering</a>
+  <span></span> <a href="/tags/iOS/">iOS</a><a href="/tags/macOS/">macOS</a><a href="/tags/Reverse-Engineering/">Reverse Engineering</a>
   </div>
 
 </div>
@@ -577,5 +577,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

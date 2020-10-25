@@ -12,7 +12,7 @@
 
     
     <meta name="description" content="在 DartNative 自研超级通道的性能已经数倍优于 Flutter Channel 之后，我将目光转向了开发成本的优化。于是 Codegen 应运而生，开发者可以用它很方便地将 Native API 转为 Dart 封装，直接拿来用就可以了！从而优化 Flutter 调用 Native API 的开发体验，实现『运行性能和开发效率的双提升』：   无需编写 Flutter Channel 的">
-<meta name="keywords" content="Dart,DartNative,Flutter,NodeJS">
+<meta name="keywords" content="Flutter,Dart,DartNative,NodeJS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="告别 Flutter Channel，调用 Native API 仅需一行代码！">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2020/06/25/Codegen-for-DartNative/index.html">
@@ -154,7 +154,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/NodeJS/">NodeJS</a>
+  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/NodeJS/">NodeJS</a>
   </div>
 
 </div>
@@ -565,5 +565,20 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End -->
 
-  </body>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>
