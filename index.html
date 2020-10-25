@@ -85,6 +85,71 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2020/10/25/Asynchronous-Callback-for-Flutter/" title="实现 Native 异步回调 Flutter" itemprop="url">实现 Native 异步回调 Flutter</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2020-10-25T05:15:24.000Z" itemprop="datePublished"> 发表于 2020-10-25</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>看到标题的你可能已经充满疑问：Channel 不是本来就支持 Native 调用 Flutter 的么？别着急，先往下看。<a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 要实现的是一个用 Channel 无法做到的回调场景：</p>
+<p><img src="http://yulingtianxia.com/resources/DartObjC/async_callback_block_code.png" alt></p>
+<p>为什么说 Flutter Channel 无法做到呢，有两点：</p>
+<ol>
+<li>使用 Channel 从 Native 调用 Dart 时，想获取返回值就只能通过在 Channel API 在主线程的异步回调 <code>FlutterResult</code>。上面的例子是在 Native 的主线程调用 Flutter 并可以<strong>同步</strong>获取到返回值，如果用 Channel 会直接导致死锁。</li>
+<li>Flutter Channel 需要写额外的胶水代码，而上面的例子简单清爽，跨语言调用无缝衔接。</li>
+</ol>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2020/10/25/Asynchronous-Callback-for-Flutter/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2020/10/25/Asynchronous-Callback-for-Flutter/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2020/09/28/Synchronous-Channel-for-Flutter/" title="如何实现 Flutter 同步调用 Native API" itemprop="url">如何实现 Flutter 同步调用 Native API</a>
   </h1>
   <p class="article-author">By
@@ -120,7 +185,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
   </div>
 
 </div>
@@ -179,7 +244,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
   </div>
 
 </div>
@@ -238,7 +303,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/NodeJS/">NodeJS</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/NodeJS/">NodeJS</a>
   </div>
 
 </div>
@@ -303,7 +368,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/NodeJS/">NodeJS</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/NodeJS/">NodeJS</a>
   </div>
 
 </div>
@@ -426,7 +491,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
   </div>
 
 </div>
@@ -485,7 +550,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
   </div>
 
 </div>
@@ -544,7 +609,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
   </div>
 
 </div>
@@ -603,7 +668,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
   </div>
 
 </div>
@@ -615,65 +680,6 @@
 	
 	  	<span></span>
 		<a href="/blog/2020/01/31/DartNative-Memory-Management-Cpp-Non-Object/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2019/12/26/DartObjC-Memory-Management-Object/" title="DartNative Memory Management: NSObject" itemprop="url">DartNative Memory Management: NSObject</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2019-12-26T04:49:13.000Z" itemprop="datePublished"> 发表于 2019-12-26</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 基于 Dart FFI，通过 C++ 调用 Native 的 API。这种跨多语言的 bridge 就需要考虑到内存管理的问题。由于篇幅有限，会分开来讲，本篇文章只涉及 Objective-C 对象类型的管理。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2019/12/26/DartObjC-Memory-Management-Object/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2019/12/26/DartObjC-Memory-Management-Object/#disqus_thread" class="comments-count-link">Comments</a>
 	
 </div>
 

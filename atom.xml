@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yulingtianxia.com/"/>
-  <updated>2020-09-30T14:17:54.750Z</updated>
+  <updated>2020-10-25T09:39:46.262Z</updated>
   <id>http://yulingtianxia.com/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>实现 Native 异步回调 Flutter</title>
+    <link href="http://yulingtianxia.com/blog/2020/10/25/Asynchronous-Callback-for-Flutter/"/>
+    <id>http://yulingtianxia.com/blog/2020/10/25/Asynchronous-Callback-for-Flutter/</id>
+    <published>2020-10-25T05:15:24.000Z</published>
+    <updated>2020-10-25T09:39:46.262Z</updated>
+    
+    <content type="html"><![CDATA[<p>看到标题的你可能已经充满疑问：Channel 不是本来就支持 Native 调用 Flutter 的么？别着急，先往下看。<a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 要实现的是一个用 Channel 无法做到的回调场景：</p><p><img src="http://yulingtianxia.com/resources/DartObjC/async_callback_block_code.png" alt></p><p>为什么说 Flutter Channel 无法做到呢，有两点：</p><ol><li>使用 Channel 从 Native 调用 Dart 时，想获取返回值就只能通过在 Channel API 在主线程的异步回调 <code>FlutterResult</code>。上面的例子是在 Native 的主线程调用 Flutter 并可以<strong>同步</strong>获取到返回值，如果用 Channel 会直接导致死锁。</li><li>Flutter Channel 需要写额外的胶水代码，而上面的例子简单清爽，跨语言调用无缝衔接。</li></ol><a id="more"></a><p>PS: 考虑到性能问题，在 Native 主线程调用 Flutter 并同步等待返回值这种场景，可能会引起卡顿。实事求是地说，这可能本身是个不该考虑到的场景，但不代表 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 就不去做。毕竟 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 在实现 Flutter Channel 没覆盖到的场景的同时，也在尝试不断替代它。</p><p>除了 Block 的回调场景，还有 iOS 里常见的 Delegate：</p><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">RuntimeStub</span></span></span><br><span class="line">- (<span class="keyword">void</span>)fooDelegate:(<span class="keyword">id</span>&lt;SampleDelegate&gt;)delegate &#123;</span><br><span class="line">    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(<span class="number">1</span> * <span class="built_in">NSEC_PER_SEC</span>)), dispatch_get_main_queue(), ^&#123;</span><br><span class="line">        <span class="built_in">NSObject</span> *result = [delegate callback];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure><p>使用 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 是这么玩的：</p><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DelegateStub delegate = DelegateStub();</span><br><span class="line">RuntimeSon stub = RuntimeSon();</span><br><span class="line">stub.fooDelegate(delegate);</span><br></pre></td></tr></table></figure><p>当 OC 的 <code>[delegate callback]</code> 被执行时，Dart 类 <code>DelegateStub</code> 实例的 <code>callback()</code> 方法会被调用：</p><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DelegateStub</span> <span class="keyword">extends</span> <span class="title">NSObject</span> <span class="title">with</span> <span class="title">SampleDelegate</span> </span>&#123;</span><br><span class="line">  DelegateStub() : <span class="keyword">super</span>(Class(<span class="string">'DelegateStub'</span>, type(of: NSObject))) &#123;</span><br><span class="line">    <span class="keyword">super</span>.registerSampleDelegate();</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  callback() &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">'callback succeed!'</span>);</span><br><span class="line">    <span class="keyword">return</span> NSObject();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>类似 Native 需要回调给 Dart 的场景还有很多，比如 <code>NSNotification</code>、<code>dealloc</code> 等渠道。这些回调需求无法直接用 Channel 来实现，<a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 基于 DartVM 提供的能力实现了一套回调机制，支持阻塞和非阻塞两种方式。</p><p>下面以 Block 回调为例来讲下具体实现，在这之前先熟悉下 Dart Function 是如何变成 Block 并传递给 OC 的。这部分原理在之前的<a href="http://yulingtianxia.com/blog/2020/03/28/Using-Objective-C-Block-in-Flutter/">《在 Flutter 中玩转 Objective-C Block》</a>也有讲过：</p><p><img src="http://yulingtianxia.com/resources/DartObjC/async_callback_block_workflow.png" alt></p><p>Block 能够回调到对应的 Dart Function 的前提是能建立起绑定关系，也就是上图右侧的『指针绑定』那里。这里是通过 DartFFI 提供的能力来将 Dart Function 转为函数指针 <code>callback</code>，更加具体的关联逻辑实现如下图所示：</p><p><img src="http://yulingtianxia.com/resources/DartObjC/async_callback_block_correlative.png" alt></p><p>绑定好 OC Block 和 Dart Function 后，重点来了：如何在 Native 调用 <code>callback</code> 函数指针指向的函数？要知道，这个函数肯定要在 Dart Function 传入时的线程来调用的（一般是 <code>flutter-ui</code> 线程），而且还不能位经由 <code>isolate</code> 直接切到对应线程去调用。</p><p>这里使用的 Port 相关 API，在 Dart isolate 库中可以找到。不过在 Native 侧 Flutter 框架并未暴露这些 API，但是可以在 Dart VM 源码中找到。Native 异步调用到 Flutter 的实现流程如下，具体函数实现可以查阅 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 源码：</p><p><img src="http://yulingtianxia.com/resources/DartObjC/async_callback_block_port.png" alt></p><p>上面讲完了 Block 执行后回调 Dart。Block <code>dealloc</code> 后回调 Dart 并释放资源的原理跟上面大同小异，只是异步回调的时候不会阻塞等待返回值罢了。更详细流程可以看之前我写的<a href="http://yulingtianxia.com/blog/2020/08/22/[DartNative](https://github.com/dart-native/dart_native)-Automatic-Memory-Management/">《<a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 内存自动管理》</a>对 Block 内存的处理。</p><p>而 Delegate 和 Notification 回调的调用原理都跟 Block 回调相同，只是在上层类型封装和参数列表上有少许差异，这里不再赘述。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;看到标题的你可能已经充满疑问：Channel 不是本来就支持 Native 调用 Flutter 的么？别着急，先往下看。&lt;a href=&quot;https://github.com/dart-native/dart_native&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;DartNative&lt;/a&gt; 要实现的是一个用 Channel 无法做到的回调场景：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://yulingtianxia.com/resources/DartObjC/async_callback_block_code.png&quot; alt&gt;&lt;/p&gt;
+&lt;p&gt;为什么说 Flutter Channel 无法做到呢，有两点：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;使用 Channel 从 Native 调用 Dart 时，想获取返回值就只能通过在 Channel API 在主线程的异步回调 &lt;code&gt;FlutterResult&lt;/code&gt;。上面的例子是在 Native 的主线程调用 Flutter 并可以&lt;strong&gt;同步&lt;/strong&gt;获取到返回值，如果用 Channel 会直接导致死锁。&lt;/li&gt;
+&lt;li&gt;Flutter Channel 需要写额外的胶水代码，而上面的例子简单清爽，跨语言调用无缝衔接。&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+    
+      <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
+    
+      <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+  </entry>
   
   <entry>
     <title>如何实现 Flutter 同步调用 Native API</title>
@@ -39,9 +69,9 @@
     </summary>
     
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
     
@@ -63,9 +93,9 @@
     </summary>
     
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
     
@@ -87,9 +117,9 @@
     </summary>
     
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
     
@@ -119,9 +149,9 @@
     </summary>
     
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
     
@@ -176,9 +206,9 @@
     
       <category term="Objective-C" scheme="http://yulingtianxia.com/tags/Objective-C/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
     
@@ -202,9 +232,9 @@
     
       <category term="Objective-C" scheme="http://yulingtianxia.com/tags/Objective-C/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
     
@@ -226,9 +256,9 @@
     </summary>
     
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
     
@@ -250,9 +280,9 @@
     </summary>
     
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
     
@@ -274,9 +304,9 @@
     </summary>
     
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
     
@@ -298,9 +328,9 @@
     </summary>
     
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
     
@@ -512,28 +542,6 @@
     
     
       <category term="Machine Leaning" scheme="http://yulingtianxia.com/tags/Machine-Leaning/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Parallel Computation using MPS</title>
-    <link href="http://yulingtianxia.com/blog/2019/02/28/Parallel-Computation-using-MPS/"/>
-    <id>http://yulingtianxia.com/blog/2019/02/28/Parallel-Computation-using-MPS/</id>
-    <published>2019-02-27T17:50:50.000Z</published>
-    <updated>2019-07-20T09:51:45.781Z</updated>
-    
-    <content type="html"><![CDATA[<p>在照片质量评分组件 <a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="noopener">PhotoAssessment</a> 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。</p><p>至此，几乎所有图像处理与计算任务都交由 GPU 完成。之前利用 Sobel 算子边缘检测是使用了苹果封装好的 MPS 类，剩余的色彩分布指纹向量和饱和度均值当然都是需要自己写 Shader 的，现在终于补齐了。Metal Shading Language 与 GLSL 使用习惯和理念很相似，只不过 Metal Shader 的语法是基于 C++ 14 的。</p><p>关于整个组件的实现思路，可以查阅<a href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/">『使用 Metal 和 Core ML 评价照片质量』</a>。本篇文章所涉及到的 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/PhotoAssessmentShaders.metal" target="_blank" rel="noopener">Shader 代码</a> 也在其中。</p><a id="more"></a><p>工程升级到 Swift 5 结果 CI 不支持，编不过哎。</p><h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>对一张 4032x3024 彩色图片在 iPhone 8 Plus 上进行测试的 Benchmark 如下（单位：秒）：</p><p>计算平均饱和度：（耗时降低 99.90%）<br>CPU meanSaturation cost: 27.276064038276672<br>GPU meanSaturation cost: 0.02604210376739502</p><p>计算指纹向量算法：（耗时降低 99.28%）<br>CPU fingerprint cost: 8.9078871011734<br>GPU fingerprint cost: 0.06412196159362793</p><p>优化后的耗时降低幅度也跟图片本身有关，色彩分布更广的图片优化效果会更好。图片尺寸越大，优化效果越好。</p><p>再来看看 500x500 尺寸下的数据：</p><p>500x500 降采样到 50x50（包含降采样耗时）<br>cpu total cost: 0.3883340358734131<br>gpu total cost: 0.0030889511108398438</p><p>直接处理 500x500 尺寸图片<br>gpu total cost: 0.008553862571716</p><p>可以看出，降采样有一定耗时。即便是降采样到 50x50 这种很小的尺寸，在 CPU 上运行算法也会有较多的耗时。<strong>相比之下，直接 GPU 处理 500x500 尺寸图片具有更大的优势：耗时远小于降采样后跑 CPU，略高于降采样后跑 GPU，但能够处理更大尺寸更多信息，相当于有更高的准确率。</strong></p><p>实现这两个功能的 Shader kernel 函数分别封装成 Swift 类： <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MPSSaturationKernel.swift" target="_blank" rel="noopener"><code>MPSSaturationKernel</code></a> 和 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/MSPFingerprintImageKernel.swift" target="_blank" rel="noopener"><code>MSPFingerprintImageKernel</code></a>。</p><h2 id="Shader-的实现"><a href="#Shader-的实现" class="headerlink" title="Shader 的实现"></a>Shader 的实现</h2><p>Command Encoder 会使用 Texture、Buffer、Sampler、Pipeline 等内容构建出 Command，并装载到 Command Buffer 上。</p><p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command%20structure0.png" alt="from Apple Doc"></p><p>从 CPU 各个线程创建的 Command Buffer 都将会传入 Command Queue。运行在 GPU 上的 Shader 代码会处理这些 Command。</p><p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command%20structure1.png" alt="from Apple Doc"></p><p>Command Encoder 有三种：Render、Compute 和 Blit。区别在于用途和用法，但创建的 Command 都可以放入同一个 Command Buffer 中。</p><p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/Cmd-Model-threads.png" alt="from Apple Doc"></p><p>为了在 GPU 上并行计算图片的饱和度和指纹向量，需要用到 Compute Command Encoder，并传入以下几个参数构建 Command：</p><ol><li>Texture：输入或输出用到的图像纹理</li><li>Buffer：可作为额外的入参或结果，可设定 CPU 和 GPU 间共享</li><li>Compute Pipeline State：用于配置 Shader 函数名，也可用于计算 threadgroup 相关信息。</li></ol><h3 id="Threadgroup"><a href="#Threadgroup" class="headerlink" title="Threadgroup"></a>Threadgroup</h3><p>GPU 并行计算时，每条线程处理一个像素。整个 Texture 看做一个 Grid，可以进一步划分成多个 threadgroup。</p><p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/threadgroups.png" alt="from Apple Doc"></p><p>threadgroup 还会按照 GPU 能同时执行的线程数 <code>threadExecutionWidth</code> 被划分为 SIMD group。</p><p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/SIMD%20group.png" alt="from Apple Doc"></p><p>为了达到更好的性能，需要将 threadgroup 包含的线程数量设定为 <code>threadExecutionWidth</code> 的整数倍。</p><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">let w</span> = computePipelineState.threadExecutionWidth;</span><br><span class="line"><span class="attribute">let h</span> = computePipelineState.maxTotalThreadsPerThreadgroup / w;</span><br><span class="line"><span class="attribute">threadGroupSize</span> = MTLSize(width: w, height: h, depth: 1);</span><br></pre></td></tr></table></figure><p>在编写 Shader 时，可以通过参数获取到当前处理的像素所处的相对位置。在 C++ 14 中是使用属性的方式来标记参数用途。比如 <code>thread_position_in_grid</code> 指的是当前线程处理的像素在 Grid 中的位置。类似的属性很多，比如 <code>threadgroup_position_in_grid</code>, <code>thread_position_in_threadgroup</code>,<code>threads_per_threadgroup</code>, <code>simdgroup_index_in_threadgroup</code>, <code>thread_index_in_simdgroup</code> …</p><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kernel void</span><br><span class="line">rgb2hsvKernelNonuniform(texture2d&lt;float, access::<span class="built_in">read</span>&gt; inTexture <span class="string">[[texture(0)]]</span>,</span><br><span class="line">              texture2d&lt;float, access::<span class="built_in">write</span>&gt; outTexture <span class="string">[[texture(1)]]</span>,</span><br><span class="line">              uint2 gid <span class="string">[[thread_position_in_grid]]</span>)</span><br><span class="line">&#123;</span><br><span class="line">    float4 pixel = inTexture.<span class="built_in">read</span>(gid);</span><br><span class="line">    // 省略部分代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>比如传入的 <code>gid</code> 为 (9, 10)，那么就可以从 <code>inTexture</code> 中读取到此位置像素的数据。因为 Grid 坐标系是基于这个 Texture 的。</p><p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/grid%20coordinates.png" alt="from Apple Doc"></p><h3 id="Non-uniform-Threadgroup-Size"><a href="#Non-uniform-Threadgroup-Size" class="headerlink" title="Non-uniform Threadgroup Size"></a>Non-uniform Threadgroup Size</h3><p>Command Encoder 需要知道要处理的 Grid 的分组情况，比如Grid 包含多少 threadgroup，每个 threadgroup 包含多少 thread。</p><figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> w = threadGroupSize.<span class="built_in">width</span>;</span><br><span class="line"><span class="built_in">let</span> h = threadGroupSize.<span class="built_in">height</span>;</span><br><span class="line"><span class="built_in">let</span> threadgroupsPerGrid = MTLSize(<span class="built_in">width</span>: (sourceTexture.<span class="built_in">width</span> + w - <span class="number">1</span>) / w, <span class="built_in">height</span>: (sourceTexture.<span class="built_in">height</span> + h - <span class="number">1</span>) / h, depth: <span class="number">1</span>);</span><br><span class="line">encoder?.dispatchThreadgroups(threadgroupsPerGrid, threadsPerThreadgroup: threadGroupSize)</span><br></pre></td></tr></table></figure><p>确定好这些信息后，GPU 就会开始按分组矩阵批量处理像素。但是因为 Grid 的尺寸是 Texture 的尺寸，长和宽不一定都能整除 threadgroup，所以处理到图片边缘的 threadgroup 时，会有一部分调用传入的 <code>gid</code> 超出了范围。此时要在 Shader 中做边界保护逻辑：</p><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kernel void</span><br><span class="line">rgb2hsvKernel(texture2d&lt;float, access::<span class="built_in">read</span>&gt; inTexture <span class="string">[[texture(0)]]</span>,</span><br><span class="line">              texture2d&lt;float, access::<span class="built_in">write</span>&gt; outTexture <span class="string">[[texture(1)]]</span>,</span><br><span class="line">              uint2 gid <span class="string">[[thread_position_in_grid]]</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>((gid.x &gt;= outTexture.get_width()) || (gid.y &gt;= outTexture.get_height()))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    rgb2hsv(inTexture, outTexture, gid);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>也就是超范围的调用都被 <code>return</code> 掉了，GPU 的一些线程没利用上，造成了浪费:</p><p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/underutilization%20of%20threads.png" alt="from Apple Doc"></p><p>为了提升性能，Metal 在部分 GPU 特性集上支持了 “Non-uniform Threadgroup Size”。可以允许存在不同 size 的 threadgroup：</p><p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/nonuniform%20threadgroups.png" alt="from Apple Doc"></p><p>这样只需要传入 Grid 的 size，以及 threadgroup 的 size，Metal 就会自动划分边缘部分的 threadgroup size，充分利用好 GPU 的运算效率。</p><figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> threadsPerGrid = MTLSize(<span class="built_in">width</span>: sourceTexture.<span class="built_in">width</span>, <span class="built_in">height</span>: sourceTexture.<span class="built_in">height</span>, depth: <span class="number">1</span>);</span><br><span class="line">encoder?.dispatchThreads(threadsPerGrid, threadsPerThreadgroup: threadGroupSize)</span><br></pre></td></tr></table></figure><p>这样一来 Shader 部分的代码就不需要加边界判断了：</p><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">kernel void</span><br><span class="line">rgb2hsvKernelNonuniform(texture2d&lt;float, access::<span class="built_in">read</span>&gt; inTexture <span class="string">[[texture(0)]]</span>,</span><br><span class="line">              texture2d&lt;float, access::<span class="built_in">write</span>&gt; outTexture <span class="string">[[texture(1)]]</span>,</span><br><span class="line">              uint2 gid <span class="string">[[thread_position_in_grid]]</span>)</span><br><span class="line">&#123;</span><br><span class="line">    rgb2hsv(inTexture, outTexture, gid);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>不过并不是所有系统和设备都支持这项特性。目前支持 Non-uniform Threadgroup Size 的 GPU Feature Set 如下：</p><ul><li>iOS11 GPUFamily4_v1</li><li>iOS12 GPUFamily4_v2</li><li>iOS12 GPUFamily5_v1</li><li>macOS13 GPUFamily1_v3</li><li>macOS14 GPUFamily1_v4</li><li>macOS14 GPUFamily2_v1</li></ul><p>所以目前我的策略是先判断是否支持 Non-uniform Threadgroup Size，然后决定使用的 Shader 函数版本、以及 Encoder 分发线程的方式。</p><h3 id="原子操作生成-Histogram"><a href="#原子操作生成-Histogram" class="headerlink" title="原子操作生成 Histogram"></a>原子操作生成 Histogram</h3><p>在计算指纹向量的时，并行将每个像素的内容处理完后，还需要统计成柱状图。比如处理完的像素种类一共有 <code>HistogramBufferSize</code> 种，需要统计每种类型的像素数量，可以声明一个 Buffer，包含长度为 <code>HistogramBufferSize</code> 的数组 <code>bucket</code>，将其传入 Shader 函数用于统计。</p><p>下面是用 Shader 实现的指纹向量生成代码，MPS 实现了部分 C++ 原子操作的接口，<code>atomic_fetch_add_explicit</code> 用于原子累加操作。</p><figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">typedef struct</span><br><span class="line">&#123;</span><br><span class="line">    atomic_int bucket[HistogramBufferSize];</span><br><span class="line">&#125; PAHistogramBuffer;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> fingerprint(texture2d&lt;<span class="type">uint</span>, access::read&gt; inTexture [[<span class="built_in">texture</span>(<span class="number">0</span>)]],</span><br><span class="line">                 device PAHistogramBuffer &amp;<span class="keyword">buffer</span> [[<span class="keyword">buffer</span>(<span class="number">0</span>)]],</span><br><span class="line">                 uint2 gid [[thread_position_in_grid]])</span><br><span class="line">&#123;</span><br><span class="line">    uint4 c = inTexture.read(gid);</span><br><span class="line">    <span class="type">uint</span> width = inTexture.get_width();</span><br><span class="line">    <span class="type">uint</span> height = inTexture.get_height();</span><br><span class="line">    <span class="type">uint</span> blockCount = <span class="number">2</span>;</span><br><span class="line">    <span class="type">uint</span> rowCount = <span class="built_in">min</span>(blockCount, height);</span><br><span class="line">    <span class="type">uint</span> countPerRow = <span class="built_in">min</span>(blockCount, width);</span><br><span class="line">    <span class="type">uint</span> hStep = width / countPerRow;</span><br><span class="line">    <span class="type">uint</span> vStep = height / rowCount;</span><br><span class="line">    <span class="type">uint</span> row = gid.y / vStep;</span><br><span class="line">    <span class="type">uint</span> col = gid.x / hStep;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// |-3bit-|-3bit-|-3bit-|-2bit-|</span></span><br><span class="line">    <span class="type">uint</span> result = (row * countPerRow + col) + ((c.y &gt;&gt; <span class="number">5</span>) &lt;&lt; <span class="number">2</span>) + ((c.z &gt;&gt; <span class="number">5</span>) &lt;&lt; <span class="number">5</span>) + ((c.w &gt;&gt; <span class="number">5</span>) &lt;&lt; <span class="number">8</span>);</span><br><span class="line">    atomic_fetch_add_explicit(&amp;<span class="keyword">buffer</span>.bucket[result], <span class="number">1</span>, memory_order_relaxed);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>MPS 支持的原子操作值类型很有限，无法选择占用内存更低的类型，只好忍受 <code>atomic_int</code> 带来的 4 Byte 吧。只要控制好 <code>HistogramBufferSize</code>，问题应该不大。</p><h3 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h3><p>MPS 中获取向量内容的方式可谓是方便，但是也是有坑在里面的。比如要注意无论是 <code>xyzw</code> 还是 <code>rgba</code> 分量获取的内容都是从低地址到高地址排列的。比如传入的像素格式是 RGBA，那么 <code>rgba</code> 获取的值正好是反过来的。</p><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RGBA</span><br><span class="line">wzyx  <span class="comment">// x低 w 高</span></span><br><span class="line">abgr  <span class="comment">// r低 a 高</span></span><br></pre></td></tr></table></figure><p>同样向 Texture 写数据的时候也要注意构造向量的时候，从左往右也是从低到高。</p><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 0x04030201</span></span><br><span class="line">outTexture.write(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>), gid);</span><br></pre></td></tr></table></figure><h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul><li><a href="https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf" target="_blank" rel="noopener">https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf</a></li><li><a href="https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf" target="_blank" rel="noopener">https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf</a></li><li><a href="https://stackoverflow.com/questions/47738441/passing-textures-with-uint8-component-type-to-metal-compute-shader" target="_blank" rel="noopener">https://stackoverflow.com/questions/47738441/passing-textures-with-uint8-component-type-to-metal-compute-shader</a></li><li><a href="https://stackoverflow.com/questions/15095909/from-rgb-to-hsv-in-opengl-glsl" target="_blank" rel="noopener">https://stackoverflow.com/questions/15095909/from-rgb-to-hsv-in-opengl-glsl</a></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;在照片质量评分组件 &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;PhotoAssessment&lt;/a&gt; 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。&lt;/p&gt;
-&lt;p&gt;至此，几乎所有图像处理与计算任务都交由 GPU 完成。之前利用 Sobel 算子边缘检测是使用了苹果封装好的 MPS 类，剩余的色彩分布指纹向量和饱和度均值当然都是需要自己写 Shader 的，现在终于补齐了。Metal Shading Language 与 GLSL 使用习惯和理念很相似，只不过 Metal Shader 的语法是基于 C++ 14 的。&lt;/p&gt;
-&lt;p&gt;关于整个组件的实现思路，可以查阅&lt;a href=&quot;http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/&quot;&gt;『使用 Metal 和 Core ML 评价照片质量』&lt;/a&gt;。本篇文章所涉及到的 &lt;a href=&quot;https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/PhotoAssessmentShaders.metal&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Shader 代码&lt;/a&gt; 也在其中。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Metal" scheme="http://yulingtianxia.com/tags/Metal/"/>
     
   </entry>
   

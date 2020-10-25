@@ -12,7 +12,7 @@
 
     
     <meta name="description" content="Flutter Channel 是一个异步调用通道，如果想在 Dart 侧同步获取到 Native 返回的结果，调用的时候加上 await 就可以了： 1final int result = await platform.invokeMethod(&apos;hello channel&apos;);  所以这篇文章到此为止了？ 不！上面这行代码其实是个『假同步』，因为它只保证了 Dart 代码的同步执行，而 Nat">
-<meta name="keywords" content="Flutter,Dart,DartNative">
+<meta name="keywords" content="Dart,Flutter,DartNative">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何实现 Flutter 同步调用 Native API">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2020/09/28/Synchronous-Channel-for-Flutter/index.html">
@@ -153,7 +153,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
   </div>
 
 </div>
@@ -175,6 +175,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/blog/2020/10/25/Asynchronous-Callback-for-Flutter/" title="实现 Native 异步回调 Flutter">
+  <strong>上一篇：</strong><br/>
+  <span>
+  实现 Native 异步回调 Flutter</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/blog/2020/08/22/DartNative-Automatic-Memory-Management/"  title="DartNative 内存自动管理">

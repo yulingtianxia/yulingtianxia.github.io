@@ -85,6 +85,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2019/12/26/DartObjC-Memory-Management-Object/" title="DartNative Memory Management: NSObject" itemprop="url">DartNative Memory Management: NSObject</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-12-26T04:49:13.000Z" itemprop="datePublished"> 发表于 2019-12-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 基于 Dart FFI，通过 C++ 调用 Native 的 API。这种跨多语言的 bridge 就需要考虑到内存管理的问题。由于篇幅有限，会分开来讲，本篇文章只涉及 Objective-C 对象类型的管理。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2019/12/26/DartObjC-Memory-Management-Object/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2019/12/26/DartObjC-Memory-Management-Object/#disqus_thread" class="comments-count-link">Comments</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2019/11/28/DartObjC-Design/" title="谈谈 dart_native 混合编程引擎的设计" itemprop="url">谈谈 dart_native 混合编程引擎的设计</a>
   </h1>
   <p class="article-author">By
@@ -113,7 +172,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Flutter/">Flutter</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
   </div>
 
 </div>
@@ -624,67 +683,6 @@
 	
 	  	<span></span>
 		<a href="/blog/2019/03/30/Audio-Emotion-Recognition/#disqus_thread" class="comments-count-link">Comments</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2019/02/28/Parallel-Computation-using-MPS/" title="Parallel Computation using MPS" itemprop="url">Parallel Computation using MPS</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
-		
-  <p class="article-time">
-    <time datetime="2019-02-27T17:50:50.000Z" itemprop="datePublished"> 发表于 2019-02-28</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>在照片质量评分组件 <a href="https://github.com/yulingtianxia/PhotoAssessment" target="_blank" rel="noopener">PhotoAssessment</a> 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。</p>
-<p>至此，几乎所有图像处理与计算任务都交由 GPU 完成。之前利用 Sobel 算子边缘检测是使用了苹果封装好的 MPS 类，剩余的色彩分布指纹向量和饱和度均值当然都是需要自己写 Shader 的，现在终于补齐了。Metal Shading Language 与 GLSL 使用习惯和理念很相似，只不过 Metal Shader 的语法是基于 C++ 14 的。</p>
-<p>关于整个组件的实现思路，可以查阅<a href="http://yulingtianxia.com/blog/2018/11/30/Photo-Assessment/">『使用 Metal 和 Core ML 评价照片质量』</a>。本篇文章所涉及到的 <a href="https://github.com/yulingtianxia/PhotoAssessment/blob/master/PhotoAssessment-Sample/Sources/PhotoAssessmentShaders.metal" target="_blank" rel="noopener">Shader 代码</a> 也在其中。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2019/02/28/Parallel-Computation-using-MPS/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Metal/">Metal</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2019/02/28/Parallel-Computation-using-MPS/#disqus_thread" class="comments-count-link">Comments</a>
 	
 </div>
 
