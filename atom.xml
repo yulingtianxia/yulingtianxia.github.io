@@ -40,9 +40,9 @@
     
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
   </entry>
   
@@ -71,9 +71,9 @@
     
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
   </entry>
   
@@ -95,9 +95,9 @@
     
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
   </entry>
   
@@ -119,9 +119,9 @@
     
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="NodeJS" scheme="http://yulingtianxia.com/tags/NodeJS/"/>
     
@@ -132,9 +132,9 @@
     <link href="http://yulingtianxia.com/blog/2020/06/25/Codegen-for-DartNative/"/>
     <id>http://yulingtianxia.com/blog/2020/06/25/Codegen-for-DartNative/</id>
     <published>2020-06-25T08:48:18.000Z</published>
-    <updated>2020-09-28T09:06:56.587Z</updated>
+    <updated>2020-11-07T02:42:06.449Z</updated>
     
-    <content type="html"><![CDATA[<p>在 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 自研超级通道的性能已经数倍优于 Flutter Channel 之后，我将目光转向了开发成本的优化。于是 <a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 应运而生，开发者可以用它很方便地将 Native API 转为 Dart 封装，直接拿来用就可以了！从而优化 Flutter 调用 Native API 的开发体验，实现『<strong>运行性能和开发效率的双提升</strong>』：</p><ul><li><input checked disabled type="checkbox"> 无需编写 Flutter Channel 的胶水代码</li><li><input checked disabled type="checkbox"> 无需跨 IDE 联调 Channel 两边的代码</li><li><input checked disabled type="checkbox"> Native API 也被赋予了热重载功能</li><li><input checked disabled type="checkbox"> 支持同步调用，打日志顺序不再错乱</li></ul><a id="more"></a><p>如果你还一脸懵逼，来看一段<a href="https://www.bilibili.com/video/BV1Bt4y197Jg" target="_blank" rel="noopener">实操视频</a>吧（第一次做 UP 主，跪求一键三连）：</p><iframe src="//player.bilibili.com/player.html?aid=626168423&bvid=BV1Bt4y197Jg&cid=205348003&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe><p>视频中为了演示方便，对 <a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 代码有些特殊处理：去掉了自动生成 <code>import</code> 的代码。</p><h2 id="DartNative-整体解决方案-amp-展望"><a href="#DartNative-整体解决方案-amp-展望" class="headerlink" title="DartNative 整体解决方案&amp;展望"></a>DartNative 整体解决方案&amp;展望</h2><ol><li><strong>DartNative Bridge</strong>: 自研超级通道，性能甩开官方 Flutter Channel 好几倍，支持 Native 绝大部分类型</li><li><strong>DartNative Codegen</strong>: 将 Native API 转为 Dart API，可在 Flutter 工程中直接调用</li><li><strong>DartNative Dispatch</strong>: 各平台 API 终究是有差异的，且只能靠开发者手动抹平。通过分发机制为开发者提供一个抹平平台差异代码的地方。</li><li><strong>DartNative Component Market</strong>：基于 DartNative 的开源组件市场，未来会有越来越多的 Native 组件通过 DartNative 转为 Flutter 组件。</li></ol><p><img src="http://yulingtianxia.com/resources/DartObjC/DartNative%20Future.png" alt></p><p>从 2019 年的九月份开始做 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 的第一个版本（那时候还叫 DartObjC），到如今初具规模并在线上小范围使用，可谓是有些漫长。漫长的原因有亮点：</p><ol><li>为了追求性能与效率双提升，技术方案上走了 Hard 模式。抛弃 Channel 是一条没人走过的路，虽说 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 开源后陆陆续续出现了一些相同 idea 的项目，但都没有走我这条最艰难的路。不仅技术有难度，设计方案也要反复推翻，打磨，优化。。。做新的解决方案就是很漫长，我最然做的很早，但是战线拉得太长。</li><li>这是一个利用打游戏剩下的业余时间搞出来的 side project，全凭自身兴趣和满腔热血。有时候也羡慕那些有 KPI 的开源项目，起码有排期的保证，能够快速推进项目进度。</li></ol><p>个人的力量终究是有限的，尤其是 Android 我一窍不通。还好后来也有更多感兴趣的小伙伴加入这个项目，补齐 Android 侧的超级通道能力，继续推进 <a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 的完成度。</p><h2 id="Codegen-的用法"><a href="#Codegen-的用法" class="headerlink" title="Codegen 的用法"></a>Codegen 的用法</h2><p><a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 是一个 CLI 工具，可以很方便地使用 npm 来安装：</p><figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">npm</span> install -g @dartnative/codegen</span><br></pre></td></tr></table></figure><p>跟其他标准的 CLI 工具一样，通过 <code>-h</code> 选项可以查看用法：</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Usage</span>: codegen [options] &lt;input&gt;</span><br><span class="line"></span><br><span class="line">Generate dart code from native API.</span><br><span class="line"></span><br><span class="line"><span class="attribute">Options:</span></span><br><span class="line">  -V, --version              output the version number</span><br><span class="line">  -l, --language &lt;language&gt;  [objc, java, auto(default)]</span><br><span class="line">  -o, --output &lt;output&gt;      Output directory</span><br><span class="line">  -p, --package &lt;package&gt;    Generate a shareable Flutter project containing modular Dart code.</span><br><span class="line">  -h, --help                 display help for command</span><br></pre></td></tr></table></figure><p><a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 默认会自动监测输入源代码的语言，目前还只支持 Objective-C 语言。默认的 Dart 文件输出目录是当前目录，也可以通过 <code>-o</code> 选项来指定输出目录。生成的 Dart 代码会通过 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 的超级通道(Bridge)来调用 Native API。</p><p><img src="https://github.com/dart-native/codegen/blob/master/images/introduction.png?raw=true" alt></p><p><a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 还支持将一个 Native SDK 转成 Flutter 组件，不过此功能尚在完善中，也就是 <code>-p</code> 选项。</p><p><img src="https://github.com/dart-native/codegen/blob/master/images/login_sample.png?raw=true" alt></p><h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>曾经有两位大佬看了 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 后问我有没有计划将它 Merge 到 Flutter 官方仓库里，我那时候觉得这个想法真的很大胆。现在看起来，如果完成了上述解决方案的大部分，好像也并不是不可以。</p>]]></content>
+    <content type="html"><![CDATA[<p>在 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 自研超级通道的性能已经数倍优于 Flutter Channel 之后，我将目光转向了开发成本的优化。于是 <a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 应运而生，开发者可以用它很方便地将 Native API 转为 Dart 封装，直接拿来用就可以了！从而优化 Flutter 调用 Native API 的开发体验，实现『<strong>运行性能和开发效率的双提升</strong>』：</p><ul><li><input checked disabled type="checkbox"> 无需编写 Flutter Channel 的胶水代码</li><li><input checked disabled type="checkbox"> 无需跨 IDE 联调 Channel 两边的代码</li><li><input checked disabled type="checkbox"> Native API 也被赋予了热重载功能</li><li><input checked disabled type="checkbox"> 支持同步调用，打日志顺序不再错乱</li></ul><a id="more"></a><p>如果你还一脸懵逼，来看一段<a href="https://www.bilibili.com/video/BV1Bt4y197Jg" target="_blank" rel="noopener">实操视频</a>吧（第一次做 UP 主，跪求一键三连）：</p><iframe src="//player.bilibili.com/player.html?aid=626168423&bvid=BV1Bt4y197Jg&cid=205348003&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe><p>视频中为了演示方便，对 <a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 代码有些特殊处理：去掉了自动生成 <code>import</code> 的代码。</p><h2 id="DartNative-整体解决方案-amp-展望"><a href="#DartNative-整体解决方案-amp-展望" class="headerlink" title="DartNative 整体解决方案&amp;展望"></a>DartNative 整体解决方案&amp;展望</h2><ol><li><strong>DartNative Bridge</strong>: 自研超级通道，性能甩开官方 Flutter Channel 好几倍，支持 Native 绝大部分类型</li><li><strong>DartNative Codegen</strong>: 将 Native API 转为 Dart API，可在 Flutter 工程中直接调用</li><li><strong>DartNative Dispatch</strong>: 各平台 API 终究是有差异的，且只能靠开发者手动抹平。通过分发机制为开发者提供一个抹平平台差异代码的地方。</li><li><strong>DartNative Component Market</strong>：基于 DartNative 的开源组件市场，未来会有越来越多的 Native 组件通过 DartNative 转为 Flutter 组件。</li></ol><p><img src="http://yulingtianxia.com/resources/DartObjC/DartNative%20Future.png" alt></p><p>从 2019 年的九月份开始做 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 的第一个版本（那时候还叫 DartObjC），到如今初具规模并在线上小范围使用，可谓是有些漫长。漫长的原因有两点：</p><ol><li>为了追求性能与效率双提升，技术方案上走了 Hard 模式。抛弃 Channel 是一条没人走过的路，虽说 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 开源后陆陆续续出现了一些相同 idea 的项目，但都没有走我这条最艰难的路。不仅技术有难度，设计方案也要反复推翻，打磨，优化。。。做新的解决方案就是很漫长，我最然做的很早，但是战线拉得太长。</li><li>这是一个利用打游戏剩下的业余时间搞出来的 side project，全凭自身兴趣和满腔热血。有时候也羡慕那些有 KPI 的开源项目，起码有排期的保证，能够快速推进项目进度。</li></ol><p>个人的力量终究是有限的，尤其是 Android 我一窍不通。还好后来也有更多感兴趣的小伙伴加入这个项目，补齐 Android 侧的超级通道能力，继续推进 <a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 的完成度。</p><h2 id="Codegen-的用法"><a href="#Codegen-的用法" class="headerlink" title="Codegen 的用法"></a>Codegen 的用法</h2><p><a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 是一个 CLI 工具，可以很方便地使用 npm 来安装：</p><figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">npm</span> install -g @dartnative/codegen</span><br></pre></td></tr></table></figure><p>跟其他标准的 CLI 工具一样，通过 <code>-h</code> 选项可以查看用法：</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Usage</span>: codegen [options] &lt;input&gt;</span><br><span class="line"></span><br><span class="line">Generate dart code from native API.</span><br><span class="line"></span><br><span class="line"><span class="attribute">Options:</span></span><br><span class="line">  -V, --version              output the version number</span><br><span class="line">  -l, --language &lt;language&gt;  [objc, java, auto(default)]</span><br><span class="line">  -o, --output &lt;output&gt;      Output directory</span><br><span class="line">  -p, --package &lt;package&gt;    Generate a shareable Flutter project containing modular Dart code.</span><br><span class="line">  -h, --help                 display help for command</span><br></pre></td></tr></table></figure><p><a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 默认会自动监测输入源代码的语言，目前还只支持 Objective-C 语言。默认的 Dart 文件输出目录是当前目录，也可以通过 <code>-o</code> 选项来指定输出目录。生成的 Dart 代码会通过 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 的超级通道(Bridge)来调用 Native API。</p><p><img src="https://github.com/dart-native/codegen/blob/master/images/introduction.png?raw=true" alt></p><p><a href="https://github.com/dart-native/codegen" target="_blank" rel="noopener">Codegen</a> 还支持将一个 Native SDK 转成 Flutter 组件，不过此功能尚在完善中，也就是 <code>-p</code> 选项。</p><p><img src="https://github.com/dart-native/codegen/blob/master/images/login_sample.png?raw=true" alt></p><h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>曾经有两位大佬看了 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 后问我有没有计划将它 Merge 到 Flutter 官方仓库里，我那时候觉得这个想法真的很大胆。现在看起来，如果完成了上述解决方案的大部分，好像也并不是不可以。</p>]]></content>
     
     <summary type="html">
     
@@ -151,9 +151,9 @@
     
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
       <category term="NodeJS" scheme="http://yulingtianxia.com/tags/NodeJS/"/>
     
@@ -208,9 +208,9 @@
     
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
   </entry>
   
@@ -234,9 +234,9 @@
     
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
   </entry>
   
@@ -258,9 +258,9 @@
     
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
   </entry>
   
@@ -282,9 +282,9 @@
     
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
   </entry>
   
@@ -306,9 +306,9 @@
     
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
   </entry>
   
@@ -330,9 +330,9 @@
     
       <category term="Dart" scheme="http://yulingtianxia.com/tags/Dart/"/>
     
-      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
-    
       <category term="DartNative" scheme="http://yulingtianxia.com/tags/DartNative/"/>
+    
+      <category term="Flutter" scheme="http://yulingtianxia.com/tags/Flutter/"/>
     
   </entry>
   
