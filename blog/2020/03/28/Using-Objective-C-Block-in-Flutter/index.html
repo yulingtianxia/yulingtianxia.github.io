@@ -1,0 +1,593 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>在 Flutter 中玩转 Objective-C Block | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="dart_native 作为一条比 Channel 性能更高开发成本更低的超级通道，通过 C++ 调用 Native 的 API，深入底层且考虑全面。很多 Objective-C 接口的参数和返回值是 Block，所以这就需要支持用 Dart 语言创建和调用 Objective-C Block。">
+<meta name="keywords" content="Objective-C,Dart,DartNative,Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 Flutter 中玩转 Objective-C Block">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2020/03/28/Using-Objective-C-Block-in-Flutter/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="dart_native 作为一条比 Channel 性能更高开发成本更低的超级通道，通过 C++ 调用 Native 的 API，深入底层且考虑全面。很多 Objective-C 接口的参数和返回值是 Block，所以这就需要支持用 Dart 语言创建和调用 Objective-C Block。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-09-28T09:07:13.393Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在 Flutter 中玩转 Objective-C Block">
+<meta name="twitter:description" content="dart_native 作为一条比 Channel 性能更高开发成本更低的超级通道，通过 C++ 调用 Native 的 API，深入底层且考虑全面。很多 Objective-C 接口的参数和返回值是 Block，所以这就需要支持用 Dart 语言创建和调用 Objective-C Block。">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2020/03/28/Using-Objective-C-Block-in-Flutter/" title="在 Flutter 中玩转 Objective-C Block" itemprop="url">在 Flutter 中玩转 Objective-C Block</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2020-03-28T07:57:55.000Z" itemprop="datePublished"> 发表于 2020-03-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dart-调用-Objective-C-带-Block-的-API"><span class="toc-number">1.</span> <span class="toc-text">Dart 调用 Objective-C 带 Block 的 API</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#函数签名"><span class="toc-number">1.1.</span> <span class="toc-text">函数签名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#动态创建-Block"><span class="toc-number">1.2.</span> <span class="toc-text">动态创建 Block</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#映射-Block-和-Dart-Function"><span class="toc-number">1.3.</span> <span class="toc-text">映射 Block 和 Dart Function</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dart-调用-Objective-C-返回的-Block"><span class="toc-number">2.</span> <span class="toc-text">Dart 调用 Objective-C 返回的 Block</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后续"><span class="toc-number">3.</span> <span class="toc-text">后续</span></a></li></ol>
+		
+		</div>
+		
+		<p><a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 作为一条比 Channel 性能更高开发成本更低的超级通道，通过 C++ 调用 Native 的 API，深入底层且考虑全面。很多 Objective-C 接口的参数和返回值是 Block，所以这就需要支持用 Dart 语言创建和调用 Objective-C Block。</p>
+<a id="more"></a>
+
+<h2 id="Dart-调用-Objective-C-带-Block-的-API"><a href="#Dart-调用-Objective-C-带-Block-的-API" class="headerlink" title="Dart 调用 Objective-C 带 Block 的 API"></a>Dart 调用 Objective-C 带 Block 的 API</h2><p>Dart 语言支持协程，这样就无需传递闭包来作为异步调用的回调。而 Objective-C 大量 API 都使用 Block 作为回调，当 Dart 调用这类异步 API 的时候，就需要 Dart 侧创建 Block 并传递给 Objective-C。</p>
+<p>Dart 语言中的 Function 可以当做闭包，可以实现下面这样的效果：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">stub.fooBlock((NSObject a) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">'hello block! <span class="subst">$&#123;a.toString()&#125;</span>'</span>);</span><br><span class="line">    <span class="keyword">return</span> a;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>而对应的 Objective-C 接口如下：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="built_in">NSObject</span> *(^BarBlock)(<span class="built_in">NSObject</span> *a);</span><br><span class="line">- (<span class="keyword">void</span>)fooBlock:(BarBlock)block;</span><br></pre></td></tr></table></figure>
+
+<p>下面就讲下 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 是如何做到把 Dart Function 当做 Block 传给 Objective-C 的。</p>
+<h3 id="函数签名"><a href="#函数签名" class="headerlink" title="函数签名"></a>函数签名</h3><p>首先要确保的是 Dart Function 的签名跟 Objective-C Block 是一致的，这样二者才能转换。在 Dart 里一切皆为对象，Function 也不例外。那么拿到 Function 的 <code>runtimeType</code> 即可，然后解析其内容。不过 <code>runtimeType</code> 的内容都是 Dart 类名，如何能与 Objective-C 类型对应上呢？<a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 的策略是提供与 Native 同名的类，这样使用这些同名类定义 Dart Function，就可以把函数签名映射到 Native 上了。</p>
+<p>列举一些 Dart 声明的基础类型：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">unsigned_char</span> = <span class="title">char</span> <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">short</span> = <span class="title">NativeBox</span>&lt;<span class="title">int</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">unsigned_short</span> = <span class="title">NativeBox</span>&lt;<span class="title">int</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">unsigned_int</span> = <span class="title">NativeBox</span>&lt;<span class="title">int</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">long</span> = <span class="title">NativeBox</span>&lt;<span class="title">int</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">unsigned_long</span> = <span class="title">NativeBox</span>&lt;<span class="title">int</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">long_long</span> = <span class="title">NativeBox</span>&lt;<span class="title">int</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">unsigned_long_long</span> = <span class="title">NativeBox</span>&lt;<span class="title">int</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">size_t</span> = <span class="title">NativeBox</span>&lt;<span class="title">int</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">NSInteger</span> = <span class="title">NativeBox</span>&lt;<span class="title">int</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">NSUInteger</span> = <span class="title">NativeBox</span>&lt;<span class="title">int</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">float</span> = <span class="title">NativeBox</span>&lt;<span class="title">double</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">CGFloat</span> = <span class="title">NativeBox</span>&lt;<span class="title">double</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">CString</span> = <span class="title">NativeBox</span>&lt;<span class="title">String</span>&gt; <span class="title">with</span> <span class="title">_ToAlias</span>;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="动态创建-Block"><a href="#动态创建-Block" class="headerlink" title="动态创建 Block"></a>动态创建 Block</h3><p>有了函数签名，如何构造对应的 Block 对象呢？首先要知道 Block 是什么，而这是就又个老生常谈的话题了。我十分建议你先了解下 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 及其相关文章，这样会对理解这部分内容有很大帮助。</p>
+<p>废话不多说，上硬核：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)initBlock &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *typeString = <span class="keyword">self</span>.typeString.UTF8String;</span><br><span class="line">    int32_t flags = (BLOCK_HAS_COPY_DISPOSE | BLOCK_HAS_SIGNATURE);</span><br><span class="line">    <span class="comment">// Struct return value on x86(32&amp;64) MUST be put into pointer.(On heap)</span></span><br><span class="line">    <span class="keyword">if</span> (typeString[<span class="number">0</span>] == <span class="string">'&#123;'</span> &amp;&amp; (TARGET_CPU_X86 || TARGET_CPU_X86_64)) &#123;</span><br><span class="line">        flags |= BLOCK_HAS_STRET;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Check block encoding types valid.</span></span><br><span class="line">    <span class="built_in">NSUInteger</span> numberOfArguments = [<span class="keyword">self</span> _prepCIF:&amp;_cif withEncodeString:typeString flags:flags];</span><br><span class="line">    <span class="keyword">if</span> (numberOfArguments == <span class="number">-1</span>) &#123; <span class="comment">// Unknown encode.</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">self</span>.numberOfArguments = numberOfArguments;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.hasStret) &#123;</span><br><span class="line">        <span class="keyword">self</span>.numberOfArguments--;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    _closure = ffi_closure_alloc(<span class="keyword">sizeof</span>(ffi_closure), (<span class="keyword">void</span> **)&amp;_blockIMP);</span><br><span class="line">    </span><br><span class="line">    ffi_status status = ffi_prep_closure_loc(_closure, &amp;_cif, DNFFIBlockClosureFunc, (__bridge <span class="keyword">void</span> *)(<span class="keyword">self</span>), _blockIMP);</span><br><span class="line">    <span class="keyword">if</span> (status != FFI_OK) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"ffi_prep_closure returned %d"</span>, (<span class="keyword">int</span>)status);</span><br><span class="line">        abort();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> _DNBlockDescriptor descriptor = &#123;</span><br><span class="line">        <span class="number">0</span>,</span><br><span class="line">        <span class="keyword">sizeof</span>(<span class="keyword">struct</span> _DNBlock),</span><br><span class="line">        (<span class="keyword">void</span> (*)(<span class="keyword">void</span> *dst, <span class="keyword">const</span> <span class="keyword">void</span> *src))copy_helper,</span><br><span class="line">        (<span class="keyword">void</span> (*)(<span class="keyword">const</span> <span class="keyword">void</span> *src))dispose_helper,</span><br><span class="line">        typeString</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    _descriptor = malloc(<span class="keyword">sizeof</span>(<span class="keyword">struct</span> _DNBlockDescriptor));</span><br><span class="line">    memcpy(_descriptor, &amp;descriptor, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> _DNBlockDescriptor));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> _DNBlock simulateBlock = &#123;</span><br><span class="line">        &amp;_NSConcreteStackBlock,</span><br><span class="line">        flags,</span><br><span class="line">        <span class="number">0</span>,</span><br><span class="line">        _blockIMP,</span><br><span class="line">        _descriptor,</span><br><span class="line">        (__bridge <span class="keyword">void</span>*)<span class="keyword">self</span></span><br><span class="line">    &#125;;</span><br><span class="line">    _signature = [<span class="built_in">NSMethodSignature</span> signatureWithObjCTypes:typeString];</span><br><span class="line">    _block = (__bridge <span class="keyword">id</span>)Block_copy(&amp;simulateBlock);</span><br><span class="line">    SEL selector = <span class="built_in">NSSelectorFromString</span>(<span class="string">@"autorelease"</span>);</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">pragma</span> clang diagnostic push</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">pragma</span> clang diagnostic ignored <span class="meta-string">"-Warc-performSelector-leaks"</span></span></span><br><span class="line">    _block = [_block performSelector:selector];</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">pragma</span> clang diagnostic pop</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简单来说，动态创建 Block 的流程封装在了一个 Wrapper 类中，步骤如下：</p>
+<ol>
+<li>用 libffi 动态创建相同签名的函数，</li>
+<li>准备好创建 Block 需要的 <code>flag</code>、<code>description</code>、<code>signature</code> 和 <code>wrapper</code> 对象等</li>
+<li>根据 Block 的内存模型创建对应的结构体（栈上）</li>
+<li>把 Block 对象 <code>copy</code> 到堆上，并发送 <code>autorelease</code> 消息</li>
+</ol>
+<p>这上面每一步其实都不简单，单独拆出来都能写一段。但因为 <a href="http://blog.cnbang.net/tech/3332/" target="_blank" rel="noopener">bang 大佬已经写过文章</a>介绍过了，我这里就不再赘述了。我只是站在巨人的肩膀上，增加了一些改进和对 Dart 的适配（如支持结构体、<code>x86</code> 兼容等）。很惭愧，就做了一点微小的工作。</p>
+<h3 id="映射-Block-和-Dart-Function"><a href="#映射-Block-和-Dart-Function" class="headerlink" title="映射 Block 和 Dart Function"></a>映射 Block 和 Dart Function</h3><p>Block 对象创建好了，需要跟 Dart Function 映射起来，然后当 Block 被执行的时候才会调用到对应的 Dart 逻辑。</p>
+<p>关于回调这块，我在 Dart 侧维护一个 <code>Map</code> 来管理 Native 到 Dart 的回调映射。基本思路是，Key 为 Native 对象的地址，Value 为 Dart 侧的 Block 类。</p>
+<p>Dart 版的 <code>Block</code> 类构造方法里会将映射建立起来：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">factory</span> Block(<span class="built_in">Function</span> function) &#123;</span><br><span class="line">    <span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; dartTypes = _dartTypeStringForFunction(function);</span><br><span class="line">    <span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; nativeTypes = _nativeTypeStringForDart(dartTypes);</span><br><span class="line">    Pointer&lt;Utf8&gt; typeStringPtr = Utf8.toUtf8(nativeTypes.join(<span class="string">', '</span>));</span><br><span class="line">    NSObject blockWrapper =</span><br><span class="line">        NSObject.fromPointer(blockCreate(typeStringPtr, _callbackPtr));</span><br><span class="line">    <span class="built_in">int</span> blockAddr = blockWrapper.perform(SEL(<span class="string">'blockAddress'</span>));</span><br><span class="line">    Block result = Block._internal(Pointer.fromAddress(blockAddr));</span><br><span class="line">    free(typeStringPtr);</span><br><span class="line">    result.types = dartTypes;</span><br><span class="line">    result._wrapper = blockWrapper;</span><br><span class="line">    result.function = function;</span><br><span class="line">    _blockForAddress[result.pointer.address] = result;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>Block</code> 类的 <code>dealloc</code> 方法里会移除映射，防止造成 Dart 版的『野指针』。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dealloc() &#123;</span><br><span class="line">    _wrapper = <span class="keyword">null</span>;</span><br><span class="line">    _blockForAddress.remove(pointer.address);</span><br><span class="line">    <span class="keyword">super</span>.dealloc();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Dart-调用-Objective-C-返回的-Block"><a href="#Dart-调用-Objective-C-返回的-Block" class="headerlink" title="Dart 调用 Objective-C 返回的 Block"></a>Dart 调用 Objective-C 返回的 Block</h2><p>结合对 Block 的理解以及实践过 Dart 调用 OC 方法的经验，很容易在 Dart 版的 <code>Block</code> 中实现个 <code>invoke</code> 方法：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dynamic</span> invoke([<span class="built_in">List</span> args]) &#123;</span><br><span class="line">    <span class="keyword">if</span> (pointer == nullptr) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    Pointer&lt;Utf8&gt; typesEncodingsPtr = _blockTypeEncodeString(pointer);</span><br><span class="line">    Pointer&lt;Int32&gt; countPtr = allocate&lt;Int32&gt;();</span><br><span class="line">    Pointer&lt;Pointer&lt;Utf8&gt;&gt; typesPtrPtr =</span><br><span class="line">        nativeTypesEncoding(typesEncodingsPtr, countPtr, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">int</span> count = countPtr.value;</span><br><span class="line">    free(countPtr);</span><br><span class="line">    <span class="comment">// typesPtrPtr contains return type and block itself.</span></span><br><span class="line">    <span class="keyword">if</span> (count != (args?.length ?? <span class="number">0</span>) + <span class="number">2</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="string">'Args Count NOT match'</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Pointer&lt;Pointer&lt;Void&gt;&gt; argsPtrPtr = nullptr.cast();</span><br><span class="line">    <span class="keyword">if</span> (args != <span class="keyword">null</span>) &#123;</span><br><span class="line">      argsPtrPtr = allocate&lt;Pointer&lt;Void&gt;&gt;(count: args.length);</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; args.length; i++) &#123;</span><br><span class="line">        <span class="keyword">var</span> arg = args[i];</span><br><span class="line">        <span class="keyword">if</span> (arg == <span class="keyword">null</span>) &#123;</span><br><span class="line">          arg = nil;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">String</span> encoding = Utf8.fromUtf8(typesPtrPtr.elementAt(i + <span class="number">2</span>).value);</span><br><span class="line">        storeValueToPointer(arg, argsPtrPtr.elementAt(i), encoding);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    Pointer&lt;Void&gt; resultPtr = blockInvoke(pointer, argsPtrPtr);</span><br><span class="line">    <span class="keyword">if</span> (argsPtrPtr != nullptr.cast()) &#123;</span><br><span class="line">      free(argsPtrPtr);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">String</span> encoding = Utf8.fromUtf8(typesPtrPtr.elementAt(<span class="number">0</span>).value);</span><br><span class="line">    <span class="built_in">dynamic</span> result = loadValueFromPointer(resultPtr, encoding);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简单来说上面的实现做了如下几步：</p>
+<ol>
+<li>获取 Block 的函数签名</li>
+<li>校验 Dart 测传入的参数列表是否符合函数签名</li>
+<li>将 Dart 参数转为 Native 对应的类型，写入堆中</li>
+<li>调用 C 函数 <code>blockInvoke</code>，将 Block 指针和参数列表二级指针传过去</li>
+<li>释放二级指针（其指向的对象类型和堆上的结构体会自动释放）</li>
+<li>将 <code>blockInvoke</code> 返回的指针内容转为 Dart 对象</li>
+</ol>
+<h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><p>关于 Block 这块其实还有很多技术细节没有叙述完整，包括 <code>copy</code> 方法的实现，回调映射的细节，类型自动转换的细节等。因为篇幅原因，感兴趣的可以直接看源码：<a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">https://github.com/dart-native/dart_native</a></p>
+<p>其实我期望的是使用 Dart 的协程来完成处理异步回调，这样更现代更优雅。日后会基于此方案再次封装上层接口，支持协程。</p>
+<p><a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">dart_native</a> 作为一条深入底层且考虑全面的 Dart 到 Native 超级通道，未来还要做的事情还有很多。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2020/03/28/Using-Objective-C-Block-in-Flutter/" data-title="在 Flutter 中玩转 Objective-C Block | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2020/04/25/Passing-Out-Parameter-in-DartNative/" title="Passing Out Parameter in DartNative">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Passing Out Parameter in DartNative</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2020/02/24/DartNative-Struct/"  title="DartNative Struct">
+ <strong>下一篇：</strong><br/> 
+ <span>DartNative Struct
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dart-调用-Objective-C-带-Block-的-API"><span class="toc-number">1.</span> <span class="toc-text">Dart 调用 Objective-C 带 Block 的 API</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#函数签名"><span class="toc-number">1.1.</span> <span class="toc-text">函数签名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#动态创建-Block"><span class="toc-number">1.2.</span> <span class="toc-text">动态创建 Block</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#映射-Block-和-Dart-Function"><span class="toc-number">1.3.</span> <span class="toc-text">映射 Block 和 Dart Function</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dart-调用-Objective-C-返回的-Block"><span class="toc-number">2.</span> <span class="toc-text">Dart 调用 Objective-C 返回的 Block</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后续"><span class="toc-number">3.</span> <span class="toc-text">后续</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

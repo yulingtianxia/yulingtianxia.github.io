@@ -1,0 +1,675 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>SpriteKit在iOS8和OSX10.10中的新特性 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="在iOS8和OSX10.10中SpriteKit迎来了重大升级。在物理表现方面增加了着色器，光照和阴影；在物理模拟方面增加了像素物理体、力场和宇宙动力学和约束等；在Xcode中集成了场景编辑器，你不需要写代码就能完成一些复杂的工作；此外它还集成了SceneKit以及其他的改进。">
+<meta name="keywords" content="SpriteKit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpriteKit在iOS8和OSX10.10中的新特性">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="在iOS8和OSX10.10中SpriteKit迎来了重大升级。在物理表现方面增加了着色器，光照和阴影；在物理模拟方面增加了像素物理体、力场和宇宙动力学和约束等；在Xcode中集成了场景编辑器，你不需要写代码就能完成一些复杂的工作；此外它还集成了SceneKit以及其他的改进。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140738700571.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140738949518.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140739494085.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140739540301.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140740041011.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140740040721.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140740456021.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140741648388.gif">
+<meta property="og:image" content="http://yulingtianxia.com/resources/update_loop_2x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/14074923846.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140749497219.png">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpriteKit在iOS8和OSX10.10中的新特性">
+<meta name="twitter:description" content="在iOS8和OSX10.10中SpriteKit迎来了重大升级。在物理表现方面增加了着色器，光照和阴影；在物理模拟方面增加了像素物理体、力场和宇宙动力学和约束等；在Xcode中集成了场景编辑器，你不需要写代码就能完成一些复杂的工作；此外它还集成了SceneKit以及其他的改进。">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/140738700571.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/" title="SpriteKit在iOS8和OSX10.10中的新特性" itemprop="url">SpriteKit在iOS8和OSX10.10中的新特性</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2014-08-08T11:11:14.000Z" itemprop="datePublished"> 发表于 2014-08-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader"><span class="toc-number">1.</span> <span class="toc-text">Shader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lighting-and-Shadows"><span class="toc-number">2.</span> <span class="toc-text">Lighting and Shadows</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#New-Physics"><span class="toc-number">3.</span> <span class="toc-text">New Physics</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Per-Pixel-Physics"><span class="toc-number">3.1.</span> <span class="toc-text">Per-Pixel Physics</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Constrains"><span class="toc-number">3.2.</span> <span class="toc-text">Constrains</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Inverse-Kinematics"><span class="toc-number">3.3.</span> <span class="toc-text">Inverse Kinematics</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Physics-Fields"><span class="toc-number">3.4.</span> <span class="toc-text">Physics Fields</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Integration-with-SceneKit"><span class="toc-number">4.</span> <span class="toc-text">Integration with SceneKit</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tools"><span class="toc-number">5.</span> <span class="toc-text">Tools</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Improvements"><span class="toc-number">6.</span> <span class="toc-text">Improvements</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SKScene"><span class="toc-number">6.1.</span> <span class="toc-text">SKScene</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SKTexture"><span class="toc-number">6.2.</span> <span class="toc-text">SKTexture</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SKShapeNode"><span class="toc-number">6.3.</span> <span class="toc-text">SKShapeNode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Physics-Updates"><span class="toc-number">6.4.</span> <span class="toc-text">Physics Updates</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SKTexture-Atlas"><span class="toc-number">6.5.</span> <span class="toc-text">SKTexture Atlas</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>在iOS8和OSX10.10中SpriteKit迎来了重大升级。在物理表现方面增加了着色器，光照和阴影；在物理模拟方面增加了像素物理体、力场和宇宙动力学和约束等；在Xcode中集成了场景编辑器，你不需要写代码就能完成一些复杂的工作；此外它还集成了SceneKit以及其他的改进。  </p>
+<a id="more"></a>
+<h2 id="Shader"><a href="#Shader" class="headerlink" title="Shader"></a>Shader</h2><p>有时候为了表现一些形变和模糊效果，比如透过热气和火焰看一些物体，或者是飞船被攻击而产生弯曲。SpriteKit新加入了<code>SKShader</code>类来帮助我们更简单的实现这个效果。它通过使用自定义的OpenGL ES碎片着色来完成绘制一些<code>SKNode</code>的自定义行为。现在支持以下几种类型的绘制：  </p>
+<ul>
+<li><code>SKSpriteNode</code></li>
+<li><code>SKShapeNode</code></li>
+<li><code>SKEmitterNode</code></li>
+<li><code>SKEffectNode</code></li>
+<li><code>SKScene</code></li>
+</ul>
+<p>放一张官方演示的效果图：  </p>
+<p><img src="http://yulingtianxia.com/resources/140738700571.png" alt>  </p>
+<p><code>SKShader</code>内建了一些<code>uniforms</code>，用<code>SKUniform</code>来描述，当你创建一个<code>SKShader</code>时，需要通过一个<code>fsh</code>文件或者一个字符串代码来创建，也可选择性的传入<code>uniforms</code>来定义游戏中一些额外的参数。下面是创建Shader方法的集合：  </p>
+<p>（下面的只是伪代码，不是OC也不是Swift语法，只是为了更简洁的标记方法名，后面类似情形都会标记为“伪代码”）  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+ <span class="string">shaderWithFileNamed:</span></span><br><span class="line">+ <span class="string">shaderWithSource:</span><span class="string">uniforms:</span></span><br><span class="line">+ <span class="string">shaderWithSource:</span></span><br><span class="line">+ shader</span><br><span class="line">- <span class="string">initWithSource:</span><span class="string">uniforms:</span></span><br><span class="line">- <span class="string">initWithSource:</span></span><br></pre></td></tr></table></figure>
+
+<p>这些方法很相似，都是传入<code>source</code>或<code>source</code>与<code>uniforms</code>来创建shader。官方建议我们用<code>fsh</code>文件作为<code>source</code>而不是字符串代码；并且避免更改<code>source</code>或添加删除<code>uniforms</code>（修改<code>uniforms</code>是可以的），因为这样会导致后台花时间重新编译shader；尽量在加载时初始化shader。这些注意事项都可以总结为尽量使用内建的<code>uniforms</code>和共享shader对象。</p>
+<p>我们可以将创建好的<code>SKShader</code>对象赋值给支持Shader渲染对象的<code>shader</code>属性。  </p>
+<p>下面列举一下Shader中的预定义符号：  </p>
+<p><img src="http://yulingtianxia.com/resources/140738949518.png" alt></p>
+<h2 id="Lighting-and-Shadows"><a href="#Lighting-and-Shadows" class="headerlink" title="Lighting and Shadows"></a>Lighting and Shadows</h2><p>灯光和阴影效果可以给游戏增加真实感，SpriteKit这次增加了<code>SKLightNode</code>来作为光源节点。我们可以定义光源的颜色，阴影和衰弱程度。  </p>
+<p><code>SKLightNode</code>继承于<code>SKNode</code>，也就是说你可以把它加在其他<code>SKNode</code>上，并能够动起来，它是一个会发光的<code>SKNode</code>，cool！NOTE：它的光照以及阴影效果只对<code>SKSpriteNode</code>起作用。  </p>
+<p>下面我们看看<code>SKLightNode</code>的一些属性：  </p>
+<ul>
+<li><strong><code>enabled</code></strong> 光源的开关  </li>
+<li><strong><code>ambientColor</code></strong> 环境色，默认是黑色，也就是没有环境色。它无视自身的alpha以及<code>SKLightNode</code>的<code>falloff</code>属性和<code>SKSpriteNode</code>的<code>normalTexture</code>属性，分分钟照亮全场。  </li>
+<li><strong><code>lightColor</code></strong> 顾名思义就是光的颜色，默认是白色。  </li>
+<li><strong><code>shadowColor</code></strong> 被精灵物体遮挡产生的阴影颜色。  </li>
+<li><strong><code>falloff</code></strong> 光源强度的衰减比率</li>
+<li><strong><code>categoryBitMask</code></strong> 光的种类，32位整型数。<code>SKSpriteNode</code>的<code>lightingBitMask</code>、<code>shadowedBitMask</code>和<code>shadowCastBitMask</code>存储着光的种类，分别意味着：被何种光照亮、被何种光产生的阴影覆盖和遮挡何种光线并产生阴影。  </li>
+</ul>
+<p>为了在<code>SKSpriteNode</code>上实现更加逼真的光照效果（如阴影和反射光），<code>SKSpriteNode</code>新增了<code>normalTexture</code>属性来储存原帖图的法线贴图（Normal Map）：   </p>
+<p><img src="http://yulingtianxia.com/resources/140739494085.png" alt>  </p>
+<p>上图中左侧的是原贴图，加上中间的法线贴图就合成出最右侧带有质感的光照纹理。当然提供这样一张发现纹理图片会增加开发者的工作量，苹果还提供了另一种更加简单的方案-“automatic normal map”：  </p>
+<p><img src="http://yulingtianxia.com/resources/140739540301.png" alt>  </p>
+<p>SpriteKit能够根据给出的纹理图片，用一系列算法分析原贴图，然后生成一个最佳的法线贴图，又是苹果的黑魔法！</p>
+<p>毕竟众口难调，所以SpriteKit让你也可以在生成法线贴图的时候给出平滑度(smoothness)和对比度(contrast)来调节你想要的效果：（伪代码）  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- <span class="string">textureByGeneratingNormalMapWithSmoothness:</span><span class="string">contrast:</span></span><br></pre></td></tr></table></figure>
+
+<p>PS：法线贴图将具有高细节的模型通过映射烘焙出法线贴图，贴在低端模型的法线贴图通道上，使之拥有法线贴图的渲染效果。可以大大降低渲染时需要的面数和计算内容，从而达到优化动画渲染和游戏渲染的效果。</p>
+<p>在一个场景中可以添加多个光源，程序会运行的很快；但是如果用两个或以上的光源照亮同一个精灵，在某些iOS设备上可能保证不了60帧的刷新频率。  </p>
+<h2 id="New-Physics"><a href="#New-Physics" class="headerlink" title="New Physics"></a>New Physics</h2><h3 id="Per-Pixel-Physics"><a href="#Per-Pixel-Physics" class="headerlink" title="Per-Pixel Physics"></a>Per-Pixel Physics</h3><p>在定义一些复杂轮廓的物理体时，我们经常用简单图形代替，否则就用<code>CGPath</code>一点点描绘多边形或者把多个物理体组合在一起（这也是新加入的API，后面会提到），比如下面这把斧头，大多数程序员直接用矩形当做它的物理体：  </p>
+<p><img src="http://yulingtianxia.com/resources/140740041011.png" alt>  </p>
+<p>而Per-Pixel Physics根据纹理图片的alpha通道遮罩来生成一个粗略的形状，然后再用粗略的形状生成精确的形状，它让以前复杂的<code>CGPath</code>创建工作转变成一行代码：  </p>
+<p><img src="http://yulingtianxia.com/resources/140740040721.png" alt>  </p>
+<p>毕竟众口难调，所以SpriteKit给出了一个可以自由调节alpha阈值的物理体生成方法，所有alpha值大于<code>alphaThreshold</code>的像素点都将被认为是不透明的，并纳入物理体范围内：（伪代码）  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ <span class="string">bodyWithTexture:</span><span class="string">alphaThreshold:</span><span class="string">size:</span></span><br></pre></td></tr></table></figure>
+
+<p>因为SpriteKit是逐个像素计算才得出精确的物理体轮廓，所以我们应该尽量给出合适大小的图片，不要将分辨率过高的图片用在很小的<code>SKSpriteNode</code>上。  </p>
+<h3 id="Constrains"><a href="#Constrains" class="headerlink" title="Constrains"></a>Constrains</h3><p>试想如果你要做一款塔防游戏，你需要让你的大炮一直瞄准某个怪物，大炮会随着怪物的行走来转动炮台。我们需要不停地根据怪物和大炮的位置来计算需要旋转的角度，甚至当怪物跑的快的时候还要考虑怪物的速度来调整大炮旋转的速度，这是一个很麻烦的事情。现在SpriteKit帮你把这些都做好了，你只需要建立一个<code>SKConstrains</code>对象，并约束大炮的角度跟怪物一致就行。  </p>
+<p>约束的计算工作发生在模拟物理之后，SpriteKit提供了一个回调函数<code>didApplyConstraints</code>，我们可以在约束完成后在里面做一些善后工作：  </p>
+<p><img src="http://yulingtianxia.com/resources/140740456021.png" alt>  </p>
+<p>在SpriteKit中我们可以向SKNode添加三种约束：（工厂方法的伪代码）   </p>
+<ul>
+<li>位置约束：  </li>
+</ul>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//约束节点的X坐标范围</span></span><br><span class="line">+ <span class="string">positionX:</span></span><br><span class="line"><span class="comment">//约束节点的Y坐标范围</span></span><br><span class="line">+ <span class="string">positionY:</span></span><br><span class="line"><span class="comment">//约束节点的X和Y坐标范围</span></span><br><span class="line">+ <span class="string">positionX:</span><span class="string">Y:</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>方向约束：  </li>
+</ul>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//约束节点基于另一个SKNode旋转</span></span><br><span class="line">+ <span class="string">orientToNode:</span><span class="string">offset:</span></span><br><span class="line"><span class="comment">//约束节点基于一个固定点旋转</span></span><br><span class="line">+ <span class="string">orientToPoint:</span><span class="string">offset:</span></span><br><span class="line"><span class="comment">//约束节点基于另一个SKNode坐标系中的一个固定点旋转</span></span><br><span class="line">+ <span class="string">orientToPoint:</span><span class="string">inNode:</span><span class="string">offset:</span></span><br><span class="line"><span class="comment">//约束节点的方向范围</span></span><br><span class="line">+ <span class="string">zRotation:</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>距离约束：  </li>
+</ul>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//约束节点与另一节点保持一定距离</span></span><br><span class="line">+ <span class="string">distance:</span><span class="string">toNode:</span></span><br><span class="line"><span class="comment">//约束节点与一个固定点保持一定距离</span></span><br><span class="line">+ <span class="string">distance:</span><span class="string">toPoint:</span></span><br><span class="line"><span class="comment">//约束节点与另一个SKNode坐标系中的一个固定点保持一定距离</span></span><br><span class="line">+ <span class="string">distance:</span><span class="string">toPoint:</span><span class="string">inNode:</span></span><br></pre></td></tr></table></figure>
+
+<p>向<code>SKNode</code>添加约束很简单，只需要将一个<code>SKConstrains</code>数组赋值给<code>SKNode.constraints</code>属性即可。约束执行的顺序取决于它们在数组中的顺序。  </p>
+<h3 id="Inverse-Kinematics"><a href="#Inverse-Kinematics" class="headerlink" title="Inverse Kinematics"></a>Inverse Kinematics</h3><p>反向运动学，没有机械工程学位或没写过动画引擎的人干脆不知道这是个啥。它其实是解决连接体运动的，比如现在有一个机器人的手臂，我们想让它动起来去用手抓某个东西。我们会想到每个关节转多少度才能准确让机器手抓到物体，计算的时候还应该考虑连接体的层级关系：肩膀连接上臂，上臂连接小臂，小臂连接手。哦天啊这真蛋疼，不过SpriteKit的反向动力学解决了这一点，我们只需要指定每个<code>SKNode</code>的活动约束还有需要抓取物体的位置，那么这一切只需要几行代码就能搞定。  </p>
+<p><img src="http://yulingtianxia.com/resources/140741648388.gif" alt>  </p>
+<p>机器人手臂转动约束是靠<code>SKReachConstraints</code>类来定义的，它只有一个初始化方法：（伪代码）  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- <span class="string">initWithLowerAngleLimit:</span><span class="string">upperAngleLimit:</span></span><br></pre></td></tr></table></figure>
+
+<p>这个方法给<code>lowerAngleLimit</code>和<code>upperAngleLimit</code>属性赋值，约束了reach事件使其发生旋转角度的下限和上限。  </p>
+<p>当一个<code>SKReachConstraints</code>创建好后，将其赋值给<code>SKNode</code>的<code>reachConstraints</code>属性，然后用<code>SKPhysicsJoint</code>将这些<code>SKNode</code>连接起来。使用<code>SKAction</code>的一套工厂方法创建来让连接体reach到活动目标或固定点的动作：（伪代码）    </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">+ <span class="string">reachTo:</span><span class="string">rootNode:</span><span class="string">duration:</span></span><br><span class="line">+ <span class="string">reachTo:</span><span class="string">rootNode:</span><span class="string">velocity:</span></span><br><span class="line">+ <span class="string">reachToNode:</span><span class="string">rootNode:</span><span class="string">duration:</span></span><br><span class="line">+ <span class="string">reachToNode:</span><span class="string">rootNode:</span><span class="string">velocity:</span></span><br></pre></td></tr></table></figure>
+
+<p>让机器人的手部节点运行创建好的<code>SKAction</code>对象即可达到最初描述的动画效果。如果机器人的手触碰不到指定的位置或节点（gif中就是这样），<code>SKAction</code>会执行动画让其尽可能接近目的地。</p>
+<p>PS：IK（Inverse Kinematics）也能在SceneKit上运行。  </p>
+<h3 id="Physics-Fields"><a href="#Physics-Fields" class="headerlink" title="Physics Fields"></a>Physics Fields</h3><p>在一个模拟宇宙空间的游戏中，星球对其他物体的引力是不可忽视的，这就涉及到物理场。SpriteKit为我们提供了一个专门描述物理场的类<code>SKFieldNode</code>，它继承于<code>SKNode</code>，也就是说它可以被添加到其他节点中。它能够描述多种场：电场、磁场、矢量重力场、辐射重力场、噪声场等十余种场。<code>SKFieldNode</code>的<code>strength</code>和<code>falloff</code>属性决定了场的强度和衰减比率。  </p>
+<p><code>SKFieldNode</code>还有一些属性决定了游戏中哪些物理体会被场影响：  </p>
+<ul>
+<li><strong><code>region</code></strong> 描述了场的影响区域，类型是<code>SKRegion</code>。<code>SKRegion</code>可以是无限区域，矩形、圆形、<code>CGPath</code>多边形区域，还可以用两个<code>SKRegion</code>做逻辑运算得出新的<code>SKRegion</code>，比如交集，并集，差集，还可对一个<code>SKRegion</code>取反得到剩下的区域。  </li>
+<li><strong><code>minimumRadius</code></strong> 一些场对物体的影响程度跟距离有关，当物体与场的距离小于<code>minimumRadius</code>属性的值时，仍被当做<code>minimumRadius</code>的值进行处理计算。<code>minimumRadius</code>的默认值很小很小，但不是0</li>
+<li><strong><code>categoryBitMask</code></strong> 场的类别。当一个节点进入了场的影响区域，会根据节点的物理体属性的<code>fieldBitMask</code>属性来判断此节点是否收到场的影响。此外<code>SKPhysicsBody</code>的<code>charge</code>属性还会标记物理体所带的电荷量，这在跟电磁有关的场中会影响到物理体的运动。默认为 0xFFFFFFFF</li>
+<li><strong><code>enabled</code></strong> 场的“开关”</li>
+<li><strong><code>exclusive</code></strong> 唯我独尊，这个场的地盘内，别的场的影响被无视。别让两个唯我独尊的场影响区域重叠，那样会出乱子的。默认为<code>NO</code>。</li>
+</ul>
+<p>我用SpriteKit的力场中的噪声场和辐射重力场做了一个小游戏<a href="http://coloratom.yulingtianxia.com" target="_blank" rel="noopener">ColorAtom</a>，有兴趣的可以去看看。应用了很多粒子系统和碰撞检测知识，把SpriteKit之前的内容能加的都加进去了，欢迎指正。    </p>
+<h2 id="Integration-with-SceneKit"><a href="#Integration-with-SceneKit" class="headerlink" title="Integration with SceneKit"></a>Integration with SceneKit</h2><p>在SpriteKit这样的2D游戏引擎中也可以引入3D的内容，可以将SceneKit中的3D物体当做SpriteKit中的<code>SKNode</code>来操作，为了达到这一目的SpriteKit这次增加了<code>SK3DNode</code>类作为3D物体到SpriteKit中的桥接。  </p>
+<p>通过<code>SK3DNode</code>的<code>scnScene</code>属性可以获取到<code>SCNScene</code>，因为<code>SK3DNode</code>把3D场景渲染成2D贴图，所以创建<code>SK3DNode</code>对象的时候需要传入一个渲染后贴图的尺寸<code>viewportSize</code>。<code>pointOfView</code>属性存储了游戏视角的位置，你可以尝试实现个上帝视角。  </p>
+<p>由于我也不太了解“新”出的SceneKit，所以这部分不过多介绍了。  </p>
+<h2 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h2><p>Xcode6增加了SpriteKit编辑器，一行代码都不用写就能创建出个游戏场景。这样你就将游戏内容从游戏逻辑冲分离出来。我们只需要将控件拖拽到游戏场景你想要的位置上，而不必每次调整一个飞船的位置，编译运行看看结果，然后再改代码微调位置再次编译运行。。。  </p>
+<p>SpriteKit编辑器不仅有编辑功能，也可用来debug。你可以再运行过程中将当前状态存储在一个sks文件中。  </p>
+<p>SpriteKit编辑器强大到你可以直接拖拽出一个SKSpriteNode并定义它的物理体，甚至使用Per-Pixel Physics。还可以编辑光照和阴影，编辑Shader并调整Uniforms，建立一个Inverse Kinematics并预览其效果，强大极了。  </p>
+<p>其实说白了SpriteKit编辑器就像IB一样可以可视化编辑属性，并课即时预览效果，整个过程不需一行代码。  </p>
+<p>Xcode能编辑fsh文件，与SpriteKit场景编辑器对照编辑，并做语法检查和编译。</p>
+<h2 id="Improvements"><a href="#Improvements" class="headerlink" title="Improvements"></a>Improvements</h2><h3 id="SKScene"><a href="#SKScene" class="headerlink" title="SKScene"></a>SKScene</h3><p>SpriteKit每一帧场景的执行过程：  </p>
+<p><img src="http://yulingtianxia.com/resources/update_loop_2x.png" alt>  </p>
+<p>除了之前提到新加的Constrains，SpriteKit这次还加入了一个回调函数<code>didFinishUpdate</code>。这绝对是SpriteKit将每帧所有东西打包好交给GPU渲染之前调用的最后一个函数。  </p>
+<h3 id="SKTexture"><a href="#SKTexture" class="headerlink" title="SKTexture"></a>SKTexture</h3><ul>
+<li><code>SKMutableTexture</code>是<code>SKTexture</code>新加的子类，它的内容可以通过<code>modifyPixelDataWithBlock:</code>方法动态地修改。  </li>
+<li><code>SKTexture</code>现在可以生成“noise textures”，参见<code>textureVectorNoiseWithSmoothness:size:</code>和<code>textureNoiseWithSmoothness:size:grayscale:</code><br><img src="http://yulingtianxia.com/resources/14074923846.png" alt>  </li>
+</ul>
+<h3 id="SKShapeNode"><a href="#SKShapeNode" class="headerlink" title="SKShapeNode"></a>SKShapeNode</h3><ul>
+<li>增加了一些常见图形便捷的构造方法，比如矩形，圆形，椭圆和曲线。  </li>
+<li>可以用贴图和Shader来美化形状的描边和填充</li>
+</ul>
+<h3 id="Physics-Updates"><a href="#Physics-Updates" class="headerlink" title="Physics Updates"></a>Physics Updates</h3><ul>
+<li><code>SKPhysicsBody</code>新加了<code>pinned</code>属性来标志此物理体对应的节点是否被钉在它的父节点上。如果父节点也有物理体，那么这两个物理体被认为被一个pin连接。如果将<code>allowsRotation</code>设为NO并且<code>pinned</code>设为YES，那么它相当于被焊在父节点上了，因为它不能转动了。  </li>
+<li><code>SKPhysicsBody</code>允许用<code>bodyWithBodies:</code>把多个物理体组合在一起来创建一个新的物理体，还记得前面提到过的斧头么：<br>  <img src="http://yulingtianxia.com/resources/140749497219.png" alt>   </li>
+</ul>
+<h3 id="SKTexture-Atlas"><a href="#SKTexture-Atlas" class="headerlink" title="SKTexture Atlas"></a>SKTexture Atlas</h3><ul>
+<li>同时支持SpriteKit和SceneKit</li>
+<li>同时支持Retina和非Retina</li>
+<li>同时支持16位和32位格式</li>
+<li>支持4k x 4k 分辨率</li>
+<li>支持运行时纹理图集的生成。比如从网上下载资源，SpriteKit会自动将透明的像素裁剪下去  </li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/SpriteKit/">SpriteKit</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2014/08/08/spritekitzai-ios8he-osx10-dot-10zhong-de-xin-te-xing/" data-title="SpriteKit在iOS8和OSX10.10中的新特性 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2014/08/17/New-in-Table-and-Collection-Views/" title="iOS8自动调整UITableView和UICollectionView布局">
+  <strong>上一篇：</strong><br/>
+  <span>
+  iOS8自动调整UITableView和UICollectionView布局</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2014/08/05/coredatachu-li-hai-liang-shu-ju/"  title="CoreData处理海量数据">
+ <strong>下一篇：</strong><br/> 
+ <span>CoreData处理海量数据
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader"><span class="toc-number">1.</span> <span class="toc-text">Shader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lighting-and-Shadows"><span class="toc-number">2.</span> <span class="toc-text">Lighting and Shadows</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#New-Physics"><span class="toc-number">3.</span> <span class="toc-text">New Physics</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Per-Pixel-Physics"><span class="toc-number">3.1.</span> <span class="toc-text">Per-Pixel Physics</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Constrains"><span class="toc-number">3.2.</span> <span class="toc-text">Constrains</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Inverse-Kinematics"><span class="toc-number">3.3.</span> <span class="toc-text">Inverse Kinematics</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Physics-Fields"><span class="toc-number">3.4.</span> <span class="toc-text">Physics Fields</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Integration-with-SceneKit"><span class="toc-number">4.</span> <span class="toc-text">Integration with SceneKit</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tools"><span class="toc-number">5.</span> <span class="toc-text">Tools</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Improvements"><span class="toc-number">6.</span> <span class="toc-text">Improvements</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SKScene"><span class="toc-number">6.1.</span> <span class="toc-text">SKScene</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SKTexture"><span class="toc-number">6.2.</span> <span class="toc-text">SKTexture</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SKShapeNode"><span class="toc-number">6.3.</span> <span class="toc-text">SKShapeNode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Physics-Updates"><span class="toc-number">6.4.</span> <span class="toc-text">Physics Updates</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SKTexture-Atlas"><span class="toc-number">6.5.</span> <span class="toc-text">SKTexture Atlas</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

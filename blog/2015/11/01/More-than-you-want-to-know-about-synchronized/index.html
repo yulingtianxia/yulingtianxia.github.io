@@ -1,0 +1,625 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>关于 @synchronized，这儿比你想知道的还要多 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="本文翻译自 Ryan Kaplan 的 More than you want to know about @synchronized   因为原文一些内容写的不太准确，我按照我的理解做出了批注和补充。">
+<meta name="keywords" content="Objective-C,翻译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于 @synchronized，这儿比你想知道的还要多">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="本文翻译自 Ryan Kaplan 的 More than you want to know about @synchronized   因为原文一些内容写的不太准确，我按照我的理解做出了批注和补充。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于 @synchronized，这儿比你想知道的还要多">
+<meta name="twitter:description" content="本文翻译自 Ryan Kaplan 的 More than you want to know about @synchronized   因为原文一些内容写的不太准确，我按照我的理解做出了批注和补充。">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/" title="关于 @synchronized，这儿比你想知道的还要多" itemprop="url">关于 @synchronized，这儿比你想知道的还要多</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-01T03:58:23.000Z" itemprop="datePublished"> 发表于 2015-11-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#用到-synchronized-的例子"><span class="toc-number">1.</span> <span class="toc-text">用到 @synchronized 的例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回到研究上来"><span class="toc-number">2.</span> <span class="toc-text">回到研究上来</span></a></li></ol>
+		
+		</div>
+		
+		<p>本文翻译自 <a href="http://rykap.com/about/" target="_blank" rel="noopener">Ryan Kaplan</a> 的 <a href="http://rykap.com/objective-c/2015/05/09/synchronized.html" target="_blank" rel="noopener">More than you want to know about @synchronized</a>  </p>
+<p>因为原文一些内容写的不太准确，我按照我的理解做出了批注和补充。</p>
+<a id="more"></a>
+
+<p>如果你已经使用 Objective-C 编写过任何并发程序，那么想必是见过 <code>@synchronized</code> 这货了。<code>@synchronized</code> 结构所做的事情跟锁（lock）类似：它防止不同的线程同时执行同一段代码。但在某些情况下，相比于使用 <code>NSLock</code> 创建锁对象、加锁和解锁来说，<code>@synchronized</code> 用着更方便，可读性更高。</p>
+<blockquote>
+<p>译者注：这与苹果官方文档对 <code>@synchronized</code> 的介绍有少许出入，但意思差不多。苹果官方文档更强调它“防止不同的线程同时获取相同的锁”，因为文档在集中介绍多线程编程各种锁的作用，所以更强调“相同的锁”而不是“同一段代码”。</p>
+</blockquote>
+<p>如果你之前没用过 <code>@synchronized</code>，接下来有个使用它的例子。这篇文章实质上是谈谈有关我对 <code>@synchronized</code> 实现原理的一个简短研究。</p>
+<h2 id="用到-synchronized-的例子"><a href="#用到-synchronized-的例子" class="headerlink" title="用到 @synchronized 的例子"></a>用到 @synchronized 的例子</h2><p>假设我们正在用 Objective-C 实现一个线程安全的队列，我们一开始可能会这么干：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ThreadSafeQueue</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSMutableArray</span> *_elements;</span><br><span class="line">    <span class="built_in">NSLock</span> *_lock;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)init</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        _elements = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">        _lock = [[<span class="built_in">NSLock</span> alloc] init];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)push:(<span class="keyword">id</span>)element</span><br><span class="line">&#123;</span><br><span class="line">    [_lock lock];</span><br><span class="line">    [_elements addObject:element];</span><br><span class="line">    [_lock unlock];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的 <code>ThreadSafeQueue</code> 类有个 <code>init</code> 方法，它初始化了一个 <code>_elements</code> 数组和一个 <code>NSLock</code> 实例。这个类还有个 <code>push:</code> 方法，它先获取锁、然后向数组中插入元素、最终释放锁。可能会有许多线程同时调用 <code>push:</code> 方法，但是 <code>[_elements addObject:element]</code> 这行代码在任何时候将只会在一个线程上运行。步骤如下：</p>
+<ol>
+<li>线程 A 调用 <code>push:</code> 方法</li>
+<li>线程 B 调用 <code>push:</code> 方法</li>
+<li>线程 B 调用 <code>[_lock lock]</code> - 因为当前没有其他线程持有锁，线程 B 获得了锁</li>
+<li>线程 A 调用 <code>[_lock lock]</code>，但是锁已经被线程 B 占了所以方法调用并没有返回-这会暂停线程 A 的执行</li>
+<li>线程 B 向 <code>_elements</code> 添加元素后调用 <code>[_lock unlock]</code>。当这些发生时，线程 A 的 <code>[_lock lock]</code> 方法返回，并继续将自己的元素插入 <code>_elements</code>。</li>
+</ol>
+<p>我们可以用 <code>@synchronized</code> 结构更简要地实现这些：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ThreadSafeQueue</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSMutableArray</span> *_elements;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)init</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        _elements = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)increment</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">@synchronized</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        [_elements addObject:element];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>在前面的例子中，”synchronized block” 与 <code>[_lock lock]</code> 和 <code>[_lock unlock]</code> 效果相同。你可以把它当成是锁住 <code>self</code>，仿佛 <code>self</code> 就是个 <code>NSLock</code>。锁在左括号 <code>{</code> 后面的任何代码运行之前被获取到，在右括号 <code>}</code> 后面的任何代码运行之前被释放掉。这爽就爽在妈妈再也不用担心我忘记调用 <code>unlock</code> 了！</p>
+<p>你可以给任何 Objective-C 对象上加个 <code>@synchronized</code>。那么我们也可以在上面的例子中用 <code>@synchronized(_elements)</code> 来替代 <code>@synchronized(self)</code>，效果是相同的。</p>
+<h2 id="回到研究上来"><a href="#回到研究上来" class="headerlink" title="回到研究上来"></a>回到研究上来</h2><p>我对 <code>@synchronized</code> 的实现十分好奇并搜了一些它的细节。我<a href="http://stackoverflow.com/questions/1215330/how-does-synchronized-lock-unlock-in-objective-c" target="_blank" rel="noopener">找到了</a><a href="http://stackoverflow.com/questions/1215765/changing-the-locking-object-insde-synchronized-section" target="_blank" rel="noopener">一些</a><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW3" target="_blank" rel="noopener">答案</a>，但这些解释都没有达到我想要的深度。锁是如何与你传入 <code>@synchronized</code> 的对象关联上的？<code>@synchronized</code>会保持（retain，增加引用计数）被锁住的对象么？假如你传入 <code>@synchronized</code> 的对象在 <code>@synchronized</code> 的 block 里面被释放或者被赋值为 <code>nil</code> 将会怎么样？这些全都是我想回答的问题。而我这次的收获，会要你好看😏。</p>
+<p><code>@synchronized</code> 的<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW3" target="_blank" rel="noopener">文档</a>告诉我们 <code>@synchronized</code> block 在被保护的代码上暗中添加了一个异常处理。为的是同步某对象时如若抛出异常，锁会被释放掉。</p>
+<p><a href="http://stackoverflow.com/questions/1215330/how-does-synchronized-lock-unlock-in-objective-c/6047218#6047218" target="_blank" rel="noopener">SO 上的这篇帖子</a> 说 <code>@synchronized</code> block 会变成 <code>objc_sync_enter</code> 和 <code>objc_sync_exit</code> 的成对儿调用。我们不知道这些函数是干啥的，但基于这些事实我们可以认为编译器将这样的代码：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@synchronized</span>(obj) &#123;</span><br><span class="line">    /<span class="regexp">/ do work</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>转化成这样的东东：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@try</span> &#123;</span><br><span class="line">    objc_sync_enter(obj);</span><br><span class="line">    <span class="comment">// do work</span></span><br><span class="line">&#125; <span class="keyword">@finally</span> &#123;</span><br><span class="line">    objc_sync_exit(obj);    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>objc_sync_enter</code> 和 <code>objc_sync_exit</code> 是什么鬼？它们是如何实现的？在 Xcode 中按住 Command 键单击它们，然后进到了 <code>&lt;objc/objc-sync.h&gt;</code>，里面有我们感兴趣的这两个函数：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">/** </span><br><span class="line"> * Begin synchronizing <span class="keyword">on</span> 'obj'.  </span><br><span class="line"> * Allocates recursive pthread_mutex associated <span class="keyword">with</span> 'obj' <span class="keyword">if</span> needed.</span><br><span class="line"> * </span><br><span class="line"> * @param obj The object <span class="keyword">to</span> begin synchronizing <span class="keyword">on</span>.</span><br><span class="line"> * </span><br><span class="line"> * @<span class="literal">return</span> OBJC_SYNC_SUCCESS once lock <span class="keyword">is</span> acquired.  </span><br><span class="line"> */</span><br><span class="line">OBJC_EXPORT  int objc_sync_enter(<span class="built_in">id</span> obj)</span><br><span class="line">    __OSX_AVAILABLE_STARTING(__MAC_10_3, __IPHONE_2_0);</span><br><span class="line"></span><br><span class="line">/** </span><br><span class="line"> * End synchronizing <span class="keyword">on</span> 'obj'. </span><br><span class="line"> * </span><br><span class="line"> * @param obj The objet <span class="keyword">to</span> <span class="keyword">end</span> synchronizing <span class="keyword">on</span>.</span><br><span class="line"> * </span><br><span class="line"> * @<span class="literal">return</span> OBJC_SYNC_SUCCESS <span class="keyword">or</span> OBJC_SYNC_NOT_OWNING_THREAD_ERROR</span><br><span class="line"> */</span><br><span class="line">OBJC_EXPORT  int objc_sync_exit(<span class="built_in">id</span> obj)</span><br><span class="line">    __OSX_AVAILABLE_STARTING(__MAC_10_3, __IPHONE_2_0);</span><br></pre></td></tr></table></figure>
+
+<p>文件底部的一句话提醒着我们：苹果工程师也是人啊哈哈</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The wait/notify functions have never worked correctly and no longer exist.</span></span><br><span class="line"><span class="function">OBJC_EXPORT  <span class="keyword">int</span> <span class="title">objc_sync_wait</span><span class="params">(id obj, <span class="keyword">long</span> <span class="keyword">long</span> milliSecondsMaxWait)</span> </span></span><br><span class="line"><span class="function">    UNAVAILABLE_ATTRIBUTE</span>;</span><br><span class="line"><span class="function">OBJC_EXPORT  <span class="keyword">int</span> <span class="title">objc_sync_notify</span><span class="params">(id obj)</span> </span></span><br><span class="line"><span class="function">    UNAVAILABLE_ATTRIBUTE</span>;</span><br><span class="line"><span class="function">OBJC_EXPORT  <span class="keyword">int</span> <span class="title">objc_sync_notifyAll</span><span class="params">(id obj)</span> </span></span><br><span class="line"><span class="function">    UNAVAILABLE_ATTRIBUTE</span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>译者注: 此处原文摘抄的源码较旧，所以我替换上了最新的头文件源码。</p>
+</blockquote>
+<p>不过，<code>objc_sync_enter</code> 的文档告诉我们一些新东西： <code>@synchronized</code> 结构在工作时为传入的对象分配了一个递归锁。分配工作何时发生，如何发生呢？它怎样处理 <code>nil</code>？幸运的是 Objective-C runtime 是开源的，所以我们可以马上阅读源码并找到答案！</p>
+<p>注：递归锁在被同一线程重复获取时不会产生死锁。你可以在<a href="https://en.wikipedia.org/wiki/Reentrant_mutex#Example" target="_blank" rel="noopener">这</a>找到一个它工作原理的精巧案例。有个叫做 <code>NSRecursiveLock</code> 的现成的类也是这样的，你可以试试。</p>
+<p>你可以在<a href="http://www.opensource.apple.com/source/objc4/objc4-646/runtime/objc-sync.mm" target="_blank" rel="noopener">这里</a>找到 <code>objc-sync</code> 的全部源码，但我要带着你看源码，让你屌的飞起。我们先从文件顶部的数据结构开始看。在代码块的下方我将立刻做出解释，所以尝试理解代码时别花太长时间哦。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">SyncData</span> &#123;</span></span><br><span class="line">    id object;</span><br><span class="line">    <span class="keyword">recursive_mutex_t</span> mutex;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">SyncData</span>* <span class="title">nextData</span>;</span></span><br><span class="line">    <span class="keyword">int</span> threadCount;</span><br><span class="line">&#125; SyncData;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">SyncList</span> &#123;</span></span><br><span class="line">    SyncData *data;</span><br><span class="line">    <span class="keyword">spinlock_t</span> lock;</span><br><span class="line">&#125; SyncList;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Use multiple parallel lists to decrease contention among unrelated objects.</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> COUNT 16</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HASH(obj) ((((uintptr_t)(obj)) &gt;&gt; 5) &amp; (COUNT - 1))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LOCK_FOR_OBJ(obj) sDataLists[HASH(obj)].lock</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LIST_FOR_OBJ(obj) sDataLists[HASH(obj)].data</span></span><br><span class="line"><span class="keyword">static</span> SyncList sDataLists[COUNT];</span><br></pre></td></tr></table></figure>
+
+<p>一开始，我们有一个 <code>struct SyncData</code> 的定义。这个结构体包含一个 <code>object</code>（嗯就是我们给 <code>@synchronized</code> 传入的那个对象）和一个有关联的 <code>recursive_mutex_t</code>，它就是那个跟 <code>object</code> 关联在一起的锁。每个 <code>SyncData</code> 也包含一个指向另一个 <code>SyncData</code> 对象的指针，叫做 <code>nextData</code>，所以你可以把每个 <code>SyncData</code> 结构体看做是链表中的一个元素。最后，每个 <code>SyncData</code> 包含一个 <code>threadCount</code>，这个 <code>SyncData</code> 对象中的锁会被一些线程使用或等待，<code>threadCount</code> 就是此时这些线程的数量。它很有用处，因为 <code>SyncData</code> 结构体会被缓存，<code>threadCount==0</code> 就暗示了这个 <code>SyncData</code> 实例可以被复用。</p>
+<p>下面是 <code>struct SyncList</code> 的定义。正如我在上面提过，你可以把 <code>SyncData</code> 当做是链表中的节点。每个 <code>SyncList</code> 结构体都有个指向 <code>SyncData</code> 节点链表头部的指针，也有一个用于防止多个线程对此列表做并发修改的锁。</p>
+<p>上面代码块的最后一行是 <code>sDataLists</code> 的声明 - 一个 <code>SyncList</code> 结构体数组，大小为16。通过定义的一个哈希算法将传入对象映射到数组上的一个下标。值得注意的是这个哈希算法设计的很巧妙，是将对象指针在内存的地址转化为无符号整型并右移五位，再跟 <code>0xF</code> 做按位与运算，这样结果不会超出数组大小。 <code>LOCK_FOR_OBJ(obj)</code> 和 <code>LIST_FOR_OBJ(obj)</code> 这俩宏就更好理解了，先是哈希出对象的数组下标，然后取出数组对应元素的 <code>lock</code> 或 <code>data</code>。一切都是这么顺理成章哈。</p>
+<p>当你调用 <code>objc_sync_enter(obj)</code> 时，它用 <code>obj</code> 内存地址的哈希值查找合适的 <code>SyncData</code>，然后将其上锁。当你调用 <code>objc_sync_exit(obj)</code> 时，它查找合适的 <code>SyncData</code> 并将其解锁。</p>
+<blockquote>
+<p>译者注：上面的源码和几段解释有些原文解释不清和疏漏的地方，我看了源码后按照自己的理解进行了补充和修正。</p>
+</blockquote>
+<p>噢耶！现在我们知道了 <code>@synchronized</code> 如何将一个锁和你正在同步的对象关联起来，我希望聊聊当一个对象在 <code>@synchronized</code> block 当中被释放或设为 <code>nil</code> 时会发生什么。</p>
+<p>如果你看了源码，你会注意到 <code>objc_sync_enter</code> 里面没有 <code>retain</code> 和 <code>release</code>。所以它要么没有保持传递给它的对象，要么或是在 ARC 下被编译。我们可以用下面的代码来做个测试：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSDate</span> *test = [<span class="built_in">NSDate</span> date];</span><br><span class="line"><span class="comment">// This should always be `1`</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, @([test retainCount]));</span><br><span class="line"></span><br><span class="line"><span class="keyword">@synchronized</span> (test) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// This will be `2` if `@synchronized` somehow</span></span><br><span class="line">    <span class="comment">// retains `test`</span></span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, @([test retainCount]));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两次输出结果都是 <code>1</code>。那么 <code>objc_sync_enter</code> 貌似是没保持被传入的对象啊。这就有趣了。如果你正在同步的对象被释放了，然后有可能另一个新的对象在此处（被释放对象的内存地址）被分配内存。有可能某个其他的线程试着去同步那个新的对象（就是那个在被释放的旧对象的内存地址上刚刚新创建的对象）。在这种情况下，另一个线程将会阻塞，直到当前线程结束它的同步 block。这看起来并不是很糟。这听起来像是这种事情实现者早就知道并予以接受。我没有遇到过任何好的替代方案。</p>
+<p>假如对象在 “synchronized block” 中被设成 <code>nil</code> 呢？我们回顾下我们“拿衣服（naive）”的实现吧：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSString</span> *test = <span class="string">@"test"</span>;</span><br><span class="line"><span class="keyword">@try</span> &#123;</span><br><span class="line">    <span class="comment">// Allocates a lock for test and locks it</span></span><br><span class="line">    objc_sync_enter(test);</span><br><span class="line">    test = <span class="literal">nil</span>;</span><br><span class="line">&#125; <span class="keyword">@finally</span> &#123;</span><br><span class="line">    <span class="comment">// Passed `nil`, so the lock allocated in `objc_sync_enter`</span></span><br><span class="line">    <span class="comment">// above is never unlocked or deallocated</span></span><br><span class="line">    objc_sync_exit(test);   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>objc_sync_enter</code> 被调用时传入的是 <code>test</code> 而 <code>objc_sync_exit</code> 被调用时传入的是 <code>nil</code>。而传入 <code>nil</code> 的时候 <code>objc_sync_exit</code> 是个空操作，所以将不会有人释放锁。这真操蛋！</p>
+<p>如果 <code>Objective-C</code> 容易受这种情况的影响，我们知道么？下面的代码调用 <code>@synchronized</code> 并在 <code>@synchronized</code> block 中将一个指针设为 <code>nil</code>。然后在后台线程对指向同一个对象的指针调用 <code>@synchronized</code>。如果在 <code>@synchronized</code> block 中设置一个对象为 <code>nil</code> 会让锁死锁，那么在第二个 <code>@synchronized</code> 中的代码将永远不会执行。我们将不会在控制台中看见任何东西打印出来。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">NSNumber *number = @(<span class="number">1</span>);</span><br><span class="line">NSNumber *thisPtrWillGoToNil = number;</span><br><span class="line"></span><br><span class="line"><span class="meta">@synchronized</span> (thisPtrWillGoToNil) &#123;</span><br><span class="line">    <span class="comment"><span class="markdown">/**</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>Here we set </span>the<span class="markdown"> thing that we're synchronizing on to <span class="code">`nil`</span>. If</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>implemented naively, </span>the<span class="markdown"> object would be passed to <span class="code">`objc_sync_enter`</span></span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>and <span class="code">`nil`</span> would be passed to <span class="code">`objc_sync_exit`</span>, causing </span>a<span class="markdown"> lock to</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>never be released.</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     */</span></span></span></span><br><span class="line">    thisPtrWillGoToNil = nil;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, <span class="number">0</span>), ^ &#123;</span><br><span class="line"></span><br><span class="line">    NSCAssert(![NSThread isMainThread], @<span class="string">"Must be run on background thread"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="markdown">/**</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>If, as mentioned in </span>the<span class="markdown"> comment above, </span>the<span class="markdown"> synchronized lock is never</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>released, then we expect to wait forever below as we try to acquire</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span></span>the<span class="markdown"> lock associated with <span class="code">`number`</span>.</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     *</span></span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>This </span>doesn't<span class="markdown"> happen, </span>so<span class="markdown"> we conclude that <span class="code">`@synchronized`</span> must deal</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet">     * </span>with this correctly.</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="code">     */</span></span></span></span><br><span class="line">    <span class="meta">@synchronized</span> (number) &#123;</span><br><span class="line">        NSLog(@<span class="string">"This line does indeed get printed to stdout"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p> 当我们执行上面的代码时，那行代码<strong>确实</strong>打印到控制台了！所以 Objective-C 很好地处理了这种情形。我打赌是编译器做了类似下面的事情来解决这事儿的。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSString</span> *test = <span class="string">@"test"</span>;</span><br><span class="line"><span class="keyword">id</span> synchronizeTarget = (<span class="keyword">id</span>)test;</span><br><span class="line"><span class="keyword">@try</span> &#123;</span><br><span class="line">    objc_sync_enter(synchronizeTarget);</span><br><span class="line">    test = <span class="literal">nil</span>;</span><br><span class="line">&#125; <span class="keyword">@finally</span> &#123;</span><br><span class="line">    objc_sync_exit(synchronizeTarget);   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用这种方式实现的话，传递给 <code>objc_sync_enter</code> 和 <code>objc_sync_exit</code> 总是相同的对象。他们在传入 <code>nil</code> 时都是空操作。这带来了个棘手的 debug 场景：如果你向 <code>@synchronized</code> 传递 <code>nil</code>，那么你就不会得到任何锁而且你的代码将不会是线程安全的！如果你想知道为什么你正收到出乎意料的竞态（race），确保你没向你的 <code>@synchronized</code> 传入 <code>nil</code>。你可以在 <code>objc_sync_nil</code> 上设置一个符号断点来达到此目的。<code>objc_sync_nil</code> 是一个空方法，当 <code>objc_sync_enter</code> 函数被传入 <code>nil</code> 时会被调用，折让 debug 更容易些。</p>
+<blockquote>
+<p>译者注：下面是 <code>objc_sync_enter</code> 的源码，主要逻辑很容易看懂，加深理解 <code>objc_sync_nil</code>：</p>
+</blockquote>
+<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">int</span> objc_sync_enter(id obj)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">int</span> <span class="literal">result</span> = <span class="type">OBJC_SYNC_SUCCESS</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (obj) &#123;</span><br><span class="line">        <span class="type">SyncData</span>* data = id2data(obj, <span class="type">ACQUIRE</span>);</span><br><span class="line">        require_action_string(data != <span class="type">NULL</span>, done, <span class="literal">result</span> = <span class="type">OBJC_SYNC_NOT_INITIALIZED</span>, <span class="string">"id2data failed"</span>);</span><br><span class="line">	</span><br><span class="line">        <span class="literal">result</span> = recursive_mutex_lock(&amp;data-&gt;mutex);</span><br><span class="line">        require_noerr_string(<span class="literal">result</span>, done, <span class="string">"mutex_lock failed"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        // @synchronized(<span class="keyword">nil</span>) does nothing</span><br><span class="line">        <span class="keyword">if</span> (<span class="type">DebugNilSync</span>) &#123;</span><br><span class="line">            _objc_inform(<span class="string">"NIL SYNC DEBUG: @synchronized(nil); set a breakpoint on objc_sync_nil to debug"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        objc_sync_nil();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">done: </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这回答了我眼下的问题。</p>
+<ol>
+<li>你调用 <code>sychronized</code> 的每个对象，Objective-C runtime 都会为其分配一个递归锁并存储在哈希表中。</li>
+<li>如果在 <code>sychronized</code> 内部对象被释放或被设为 <code>nil</code> 看起来都 OK。不过这没在文档中说明，所以我不会再生产代码中依赖这条。</li>
+<li>注意不要向你的 <code>sychronized</code> block 传入 <code>nil</code>！这将会从代码中移走线程安全。你可以通过在 <code>objc_sync_nil</code> 上加断点来查看是否发生了这样的事情。</li>
+</ol>
+<p>研究的下一步将是研究下 “synchronized block” 输出的汇编，看看它是否跟我上面的例子相似。我打赌 <code>@synchronized</code> block 的汇编输出不会跟任何我们设计的 Objective-C 代码相同，上面的代码充其量是 <code>@synchronized</code> 的工作模型。你能想到更好的模型么？我的模型在哪些情形下会有瑕疵么？告诉我吧！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/翻译/">翻译</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/" data-title="关于 @synchronized，这儿比你想知道的还要多 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2015/11/13/Summary-of-the-first-month-in-the-internship-of-Tencent/" title="腾讯实习第一个月工作总结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  腾讯实习第一个月工作总结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2015/10/20/Try-to-implement-picture-browser-mode-on-webview/"  title="尝试实现 Web 上的看图模式">
+ <strong>下一篇：</strong><br/> 
+ <span>尝试实现 Web 上的看图模式
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#用到-synchronized-的例子"><span class="toc-number">1.</span> <span class="toc-text">用到 @synchronized 的例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回到研究上来"><span class="toc-number">2.</span> <span class="toc-text">回到研究上来</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

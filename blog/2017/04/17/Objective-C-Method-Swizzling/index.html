@@ -1,0 +1,738 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>Objective-C Method Swizzling | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 + load 方法中，这是利用它调用时机较提前等性质。 有时候需要 Hook 子类和父类的同一个方法，但是它们的 + load 方法调用顺序不同。一个常见的顺序可能是：父类-&amp;gt;子类-&amp;gt;子类类别-&amp;gt;父类类别。所">
+<meta name="keywords" content="Objective-C,Runtime">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Objective-C Method Swizzling">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 + load 方法中，这是利用它调用时机较提前等性质。 有时候需要 Hook 子类和父类的同一个方法，但是它们的 + load 方法调用顺序不同。一个常见的顺序可能是：父类-&amp;gt;子类-&amp;gt;子类类别-&amp;gt;父类类别。所">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/%E6%A8%A1%E6%9D%BF.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/CS_Perfect.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperA.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperB.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_Perfect.png">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Objective-C Method Swizzling">
+<meta name="twitter:description" content="Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 + load 方法中，这是利用它调用时机较提前等性质。 有时候需要 Hook 子类和父类的同一个方法，但是它们的 + load 方法调用顺序不同。一个常见的顺序可能是：父类-&amp;gt;子类-&amp;gt;子类类别-&amp;gt;父类类别。所">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/MethodSwizzling/%E6%A8%A1%E6%9D%BF.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2017/04/17/Objective-C-Method-Swizzling/" title="Objective-C Method Swizzling" itemprop="url">Objective-C Method Swizzling</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-16T16:11:48.000Z" itemprop="datePublished"> 发表于 2017-04-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Method-Swizzling-常用实现方案"><span class="toc-number">1.</span> <span class="toc-text">Method Swizzling 常用实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-A"><span class="toc-number">1.1.</span> <span class="toc-text">方案 A</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-B"><span class="toc-number">1.2.</span> <span class="toc-text">方案 B</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#研究背景"><span class="toc-number">2.</span> <span class="toc-text">研究背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Child-后-Super"><span class="toc-number">3.</span> <span class="toc-text">Hook 顺序：先 Child 后 Super</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法"><span class="toc-number">3.1.</span> <span class="toc-text">Super 未实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-A"><span class="toc-number">3.1.1.</span> <span class="toc-text">Super:Plan A,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-A"><span class="toc-number">3.1.2.</span> <span class="toc-text">Super:Plan B,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-B"><span class="toc-number">3.1.3.</span> <span class="toc-text">Super:Plan A,Child Plan B</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-B"><span class="toc-number">3.1.4.</span> <span class="toc-text">Super:Plan B,Child Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法"><span class="toc-number">3.2.</span> <span class="toc-text">Super 实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-A"><span class="toc-number">3.2.1.</span> <span class="toc-text">Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-B"><span class="toc-number">3.2.2.</span> <span class="toc-text">Child:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法"><span class="toc-number">3.3.</span> <span class="toc-text">Super 未实现方法,Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A"><span class="toc-number">3.3.1.</span> <span class="toc-text">Super:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B"><span class="toc-number">3.3.2.</span> <span class="toc-text">Super:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法"><span class="toc-number">3.4.</span> <span class="toc-text">Super 实现方法,Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Super-后-Child"><span class="toc-number">4.</span> <span class="toc-text">Hook 顺序：先 Super 后 Child</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法-1"><span class="toc-number">4.1.</span> <span class="toc-text">Super 未实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-A-1"><span class="toc-number">4.1.1.</span> <span class="toc-text">Super:Plan A,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-A-1"><span class="toc-number">4.1.2.</span> <span class="toc-text">Super:Plan B,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-B-1"><span class="toc-number">4.1.3.</span> <span class="toc-text">Super:Plan A,Child Plan B</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-B-1"><span class="toc-number">4.1.4.</span> <span class="toc-text">Super:Plan B,Child Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法-1"><span class="toc-number">4.2.</span> <span class="toc-text">Super 实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-A-1"><span class="toc-number">4.2.1.</span> <span class="toc-text">Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-B-1"><span class="toc-number">4.2.2.</span> <span class="toc-text">Child:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法-1"><span class="toc-number">4.3.</span> <span class="toc-text">Super 未实现方法,Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-1"><span class="toc-number">4.3.1.</span> <span class="toc-text">Super:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-1"><span class="toc-number">4.3.2.</span> <span class="toc-text">Super:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法-1"><span class="toc-number">4.4.</span> <span class="toc-text">Super 实现方法,Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Child-类后-Super-类"><span class="toc-number">5.1.</span> <span class="toc-text">Hook 顺序：先 Child 类后 Super 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Super-类后-Child-类"><span class="toc-number">5.2.</span> <span class="toc-text">Hook 顺序：先 Super 类后 Child 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Objective-C-Method-Swizzling-最佳实践"><span class="toc-number">5.3.</span> <span class="toc-text">Objective-C Method Swizzling 最佳实践</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">6.</span> <span class="toc-text">Reference</span></a></li></ol>
+		
+		</div>
+		
+		<p>Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 <code>+ load</code> 方法中，这是利用它调用时机较提前等性质。</p>
+<p>有时候需要 Hook 子类和父类的同一个方法，但是它们的 <code>+ load</code> 方法调用顺序不同。一个常见的顺序可能是：父类-&gt;子类-&gt;子类类别-&gt;父类类别。所以 Hook 的顺序并不能保证，就不能保证 Hook 后方法调用的顺序是对的。而且使用不同方法 Method Swizzling 也会带来不同的结果。本文将会对这些情况下的 Hook 结果进行分析和总结。</p>
+<a id="more"></a>
+
+<h2 id="Method-Swizzling-常用实现方案"><a href="#Method-Swizzling-常用实现方案" class="headerlink" title="Method Swizzling 常用实现方案"></a>Method Swizzling 常用实现方案</h2><p>目前有两类常用的 Method Swizzling 实现方案，诸如 <a href="https://github.com/rabovik/RSSwizzle" target="_blank" rel="noopener">RSSwizzle</a> 和 <a href="https://github.com/rentzsch/jrswizzle" target="_blank" rel="noopener">jrswizzle</a> 这种较为复杂且周全的一些实现方案这里暂且不提。</p>
+<h3 id="方案-A"><a href="#方案-A" class="headerlink" title="方案 A"></a>方案 A</h3><p>如果类中没有实现 Original <code>selector</code> 对应的方法，那就先添加 <code>Method</code>，并将其 <code>IMP</code> 映射为 Swizzle 的实现。然后替换 Swizzle <code>selector</code> 的 <code>IMP</code> 为 Original 的实现；否则交换二者 <code>IMP</code>。</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">+ (void)load</span><br><span class="line">&#123;</span><br><span class="line">    static <span class="keyword">dispatch_once_t </span>onceToken;</span><br><span class="line">    <span class="keyword">dispatch_once(&amp;onceToken, </span>^&#123;</span><br><span class="line">        Class aClass = [self class];</span><br><span class="line">        </span><br><span class="line">        SEL <span class="keyword">originalSelector </span>= @selector(method_original:);</span><br><span class="line">        SEL <span class="keyword">swizzledSelector </span>= @selector(method_swizzle:);</span><br><span class="line">        </span><br><span class="line">        Method <span class="keyword">originalMethod </span>= class_getInstanceMethod(aClass, <span class="keyword">originalSelector);</span></span><br><span class="line"><span class="keyword"> </span>       Method <span class="keyword">swizzledMethod </span>= class_getInstanceMethod(aClass, <span class="keyword">swizzledSelector);</span></span><br><span class="line"><span class="keyword"> </span>       <span class="keyword">BOOL </span><span class="keyword">didAddMethod </span>=</span><br><span class="line">        class_addMethod(aClass,</span><br><span class="line">                        <span class="keyword">originalSelector,</span></span><br><span class="line"><span class="keyword"> </span>                       method_getImplementation(<span class="keyword">swizzledMethod),</span></span><br><span class="line"><span class="keyword"> </span>                       method_getTypeEncoding(<span class="keyword">swizzledMethod));</span></span><br><span class="line"><span class="keyword"> </span>       </span><br><span class="line">        if (<span class="keyword">didAddMethod) </span>&#123;</span><br><span class="line">            class_replaceMethod(aClass,</span><br><span class="line">                                               <span class="keyword">swizzledSelector,</span></span><br><span class="line"><span class="keyword"> </span>                                              method_getImplementation(<span class="keyword">originalMethod),</span></span><br><span class="line"><span class="keyword"> </span>                                              method_getTypeEncoding(<span class="keyword">originalMethod));</span></span><br><span class="line"><span class="keyword"> </span>       &#125; else &#123;</span><br><span class="line">            method_exchangeImplementations(<span class="keyword">originalMethod, </span><span class="keyword">swizzledMethod);</span></span><br><span class="line"><span class="keyword"> </span>       &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有时为了避免方法命名冲突和参数 <code>_cmd</code> 被篡改，也会使用下面这种『静态方法版本』的 Method Swizzle。CaptainHook 中的宏定义也是采用这种方式，比较推荐：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> IMP *IMPPointer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> MethodSwizzle(<span class="keyword">id</span> <span class="keyword">self</span>, SEL _cmd, <span class="keyword">id</span> arg1);</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> (*MethodOriginal)(<span class="keyword">id</span> <span class="keyword">self</span>, SEL _cmd, <span class="keyword">id</span> arg1);</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> MethodSwizzle(<span class="keyword">id</span> <span class="keyword">self</span>, SEL _cmd, <span class="keyword">id</span> arg1) &#123;</span><br><span class="line">    <span class="comment">// do custom work</span></span><br><span class="line">    MethodOriginal(<span class="keyword">self</span>, _cmd, arg1);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">BOOL</span> class_swizzleMethodAndStore(Class <span class="keyword">class</span>, SEL original, IMP replacement, IMPPointer store) &#123;</span><br><span class="line">    IMP imp = <span class="literal">NULL</span>;</span><br><span class="line">    Method method = class_getInstanceMethod(<span class="keyword">class</span>, original);</span><br><span class="line">    <span class="keyword">if</span> (method) &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *type = method_getTypeEncoding(method);</span><br><span class="line">        imp = class_replaceMethod(<span class="keyword">class</span>, original, replacement, type);</span><br><span class="line">        <span class="keyword">if</span> (!imp) &#123;</span><br><span class="line">            imp = method_getImplementation(method);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (imp &amp;&amp; store) &#123; *store = imp; &#125;</span><br><span class="line">    <span class="keyword">return</span> (imp != <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (<span class="built_in">BOOL</span>)swizzle:(SEL)original with:(IMP)replacement store:(IMPPointer)store &#123;</span><br><span class="line">    <span class="keyword">return</span> class_swizzleMethodAndStore(<span class="keyword">self</span>, original, replacement, store);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">void</span>)load &#123;</span><br><span class="line">    [<span class="keyword">self</span> swizzle:<span class="keyword">@selector</span>(originalMethod:) with:(IMP)MethodSwizzle store:(IMP *)&amp;MethodOriginal];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然而上面的代码依然不是 Method Swizzling 的最佳实现。</p>
+<h3 id="方案-B"><a href="#方案-B" class="headerlink" title="方案 B"></a>方案 B</h3><p>其实就是方案 A 的阉割版：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">+ (void)load</span><br><span class="line">&#123;</span><br><span class="line">    static <span class="keyword">dispatch_once_t </span>onceToken;</span><br><span class="line">    <span class="keyword">dispatch_once(&amp;onceToken, </span>^&#123;</span><br><span class="line">        Class aClass = [self class];</span><br><span class="line">        </span><br><span class="line">        SEL <span class="keyword">originalSelector </span>= @selector(method_original:);</span><br><span class="line">        SEL <span class="keyword">swizzledSelector </span>= @selector(method_swizzle:);</span><br><span class="line">        </span><br><span class="line">        Method <span class="keyword">originalMethod </span>= class_getInstanceMethod(aClass, <span class="keyword">originalSelector);</span></span><br><span class="line"><span class="keyword"> </span>       Method <span class="keyword">swizzledMethod </span>= class_getInstanceMethod(aClass, <span class="keyword">swizzledSelector);</span></span><br><span class="line"><span class="keyword"> </span>      method_exchangeImplementations(<span class="keyword">originalMethod, </span><span class="keyword">swizzledMethod);</span></span><br><span class="line"><span class="keyword"> </span>   &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>直接交换 <code>IMP</code> 是很危险的。因为如果这个类中没有实现这个方法，<code>class_getInstanceMethod()</code> 返回的是某个父类的 <code>Method</code> 对象，这样 <code>method_exchangeImplementations()</code> 就把父类的原始实现（<code>IMP</code>）跟这个类的 Swizzle 实现交换了。这样其他父类及其其他子类的方法调用就会出问题，最严重的就是 Crash。</p>
+<p><strong>但如果这个类中实现了此方法，那么方案 A 等价于方案 B</strong>。</p>
+<h2 id="研究背景"><a href="#研究背景" class="headerlink" title="研究背景"></a>研究背景</h2><p>这里对本文的研究背景进行一些假设和约定：</p>
+<ol>
+<li>有三个类，Child 类继承 Super 类，Super 类继承 Base 类。</li>
+<li>我们 Hook 了 Child 和 Super 的某个方法（而且是同一个方法）。</li>
+<li>为了方便表示，Child 的原始方法被称作 <code>Child_Original</code>，Hook 后的方法被称作 <code>Child_Swizzle</code>。Super 以此类推。</li>
+<li>为了让 Swizzle 的实现调用 Original 实现，<code>Child_Swizzle</code> 的  IMP 中会调用 <code>Child_Swizzle</code> 的 <code>selector</code>。Super 以此类推。</li>
+<li>我们期望执行 Child 对象的 <code>Child_Original</code> 方法时的 IMP 执行顺序是：<code>Child_Swizzle</code>-&gt;<code>Child_Original</code>-&gt;<code>Super_Swizzle</code>-&gt;<code>Super_Original</code>-&gt;<code>Base</code>。我们只需关注其中 Swizzle 的部分，所以约定简写为：Child-&gt;Super-&gt;Base。</li>
+<li>本文会按 Hook 顺序、类是否实现方法、Hook 方案(A/B) 来细分不同情况下的结果。一共细分为 18 种情况。</li>
+<li>本文会使用图例表示每种情况下的方法调用和映射关系，分为三个维度（Super/Child;Original/Swizzle;<code>Selector</code>/<code>Method</code>/<code>IMP</code>）</li>
+</ol>
+<p><img src="http://yulingtianxia.com/resources/MethodSwizzling/%E6%A8%A1%E6%9D%BF.png" alt="模板"></p>
+<p><strong>下文中的图例均为 Hook 后的结果(Hook 前的太简单了懒得画)。如果不理解 <code>Selector</code>,<code>Method</code> 与 <code>IMP</code> 三者的关系，甚至不理解 Method Swizzling 原理，请先阅读 <a href="http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/">Objective-C Runtime</a>！如果还是看不懂，那就再看一遍吧！</strong></p>
+<h2 id="Hook-顺序：先-Child-后-Super"><a href="#Hook-顺序：先-Child-后-Super" class="headerlink" title="Hook 顺序：先 Child 后 Super"></a>Hook 顺序：先 Child 后 Super</h2><p>这个顺序本身就不被大众认可却又不得不广泛被使用，因为很多想 Hook 系统 API 只能从 Category 下手。当子类同样的方法也被 Hook 后，奇怪的事情便发生了。</p>
+<h3 id="Super-未实现方法-Child-未实现方法"><a href="#Super-未实现方法-Child-未实现方法" class="headerlink" title="Super 未实现方法,Child 未实现方法"></a>Super 未实现方法,Child 未实现方法</h3><h4 id="Super-Plan-A-Child-Plan-A"><a href="#Super-Plan-A-Child-Plan-A" class="headerlink" title="Super:Plan A,Child:Plan A"></a>Super:Plan A,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildA.png" alt="CS_SuperAChildA"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
+<li>Super 和 Base 对象均正常</li>
+</ol>
+<h4 id="Super-Plan-B-Child-Plan-A"><a href="#Super-Plan-B-Child-Plan-A" class="headerlink" title="Super:Plan B,Child:Plan A"></a>Super:Plan B,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildA.png" alt="CS_SuperBChildA"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
+<li>Super 对象正常</li>
+<li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
+</ol>
+<h4 id="Super-Plan-A-Child-Plan-B"><a href="#Super-Plan-A-Child-Plan-B" class="headerlink" title="Super:Plan A,Child Plan B"></a>Super:Plan A,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildB.png" alt="CS_SuperAChildB"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
+<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则会一直调用 Child_Swizzle 进入死循环</li>
+<li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦间接等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
+</ol>
+<h4 id="Super-Plan-B-Child-Plan-B"><a href="#Super-Plan-B-Child-Plan-B" class="headerlink" title="Super:Plan B,Child Plan B"></a>Super:Plan B,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildB.png" alt="CS_SuperBChildB"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象：Super-&gt;Child-&gt;Base</li>
+<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则会一直调用 Child_Swizzle 进入死循环</li>
+<li>Base 对象产生 <code>unrecognized selector</code> 异常</li>
+</ol>
+<h3 id="Super-实现方法-Child-未实现方法"><a href="#Super-实现方法-Child-未实现方法" class="headerlink" title="Super 实现方法,Child 未实现方法"></a>Super 实现方法,Child 未实现方法</h3><p>由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。</p>
+<h4 id="Child-Plan-A"><a href="#Child-Plan-A" class="headerlink" title="Child:Plan A"></a>Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildA.png" alt="CS_ChildA"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
+<li>Super 和 Base 对象均正常</li>
+</ol>
+<h4 id="Child-Plan-B"><a href="#Child-Plan-B" class="headerlink" title="Child:Plan B"></a>Child:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildB.png" alt="CS_ChildB"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象：Super-&gt;Child-&gt;Base</li>
+<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则会一直调用 Child_Swizzle 进入死循环</li>
+<li>Base 对象正常</li>
+</ol>
+<h3 id="Super-未实现方法-Child-实现方法"><a href="#Super-未实现方法-Child-实现方法" class="headerlink" title="Super 未实现方法,Child 实现方法"></a>Super 未实现方法,Child 实现方法</h3><p>由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。</p>
+<h4 id="Super-Plan-A"><a href="#Super-Plan-A" class="headerlink" title="Super:Plan A"></a>Super:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperA.png" alt="CS_SuperA"></p>
+<p>方法执行结果（一切正常）：</p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 和 Base 对象均正常</li>
+</ol>
+<h4 id="Super-Plan-B"><a href="#Super-Plan-B" class="headerlink" title="Super:Plan B"></a>Super:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperB.png" alt="CS_SuperB"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 对象正常：Super-&gt;Base</li>
+<li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
+</ol>
+<h3 id="Super-实现方法-Child-实现方法"><a href="#Super-实现方法-Child-实现方法" class="headerlink" title="Super 实现方法,Child 实现方法"></a>Super 实现方法,Child 实现方法</h3><p>相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。</p>
+<p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_Perfect.png" alt="CS_Perfect"></p>
+<p>方法执行结果（一切正常）：</p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 和 Base 对象均正常</li>
+</ol>
+<h2 id="Hook-顺序：先-Super-后-Child"><a href="#Hook-顺序：先-Super-后-Child" class="headerlink" title="Hook 顺序：先 Super 后 Child"></a>Hook 顺序：先 Super 后 Child</h2><p>并不是 Hook 顺序对了就能保平安，姿势也同样重要。</p>
+<h3 id="Super-未实现方法-Child-未实现方法-1"><a href="#Super-未实现方法-Child-未实现方法-1" class="headerlink" title="Super 未实现方法,Child 未实现方法"></a>Super 未实现方法,Child 未实现方法</h3><h4 id="Super-Plan-A-Child-Plan-A-1"><a href="#Super-Plan-A-Child-Plan-A-1" class="headerlink" title="Super:Plan A,Child:Plan A"></a>Super:Plan A,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildA.png" alt="SC_SuperAChildA"></p>
+<p>方法执行结果（一切正常）：</p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 和 Base 对象均正常</li>
+</ol>
+<h4 id="Super-Plan-B-Child-Plan-A-1"><a href="#Super-Plan-B-Child-Plan-A-1" class="headerlink" title="Super:Plan B,Child:Plan A"></a>Super:Plan B,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildA.png" alt="SC_SuperBChildA"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 对象正常：Super-&gt;Base</li>
+<li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
+</ol>
+<h4 id="Super-Plan-A-Child-Plan-B-1"><a href="#Super-Plan-A-Child-Plan-B-1" class="headerlink" title="Super:Plan A,Child Plan B"></a>Super:Plan A,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildB.png" alt="SC_SuperAChildB"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则 Child-&gt;Base (Super 被忽略)</li>
+<li>Base 对象正常</li>
+</ol>
+<h4 id="Super-Plan-B-Child-Plan-B-1"><a href="#Super-Plan-B-Child-Plan-B-1" class="headerlink" title="Super:Plan B,Child Plan B"></a>Super:Plan B,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildB.png" alt="SC_SuperBChildB"></p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则 Child-&gt;Base (Super 被忽略)</li>
+<li>Base 对象产生 <code>unrecognized selector</code> 异常</li>
+</ol>
+<h3 id="Super-实现方法-Child-未实现方法-1"><a href="#Super-实现方法-Child-未实现方法-1" class="headerlink" title="Super 实现方法,Child 未实现方法"></a>Super 实现方法,Child 未实现方法</h3><p>由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。</p>
+<h4 id="Child-Plan-A-1"><a href="#Child-Plan-A-1" class="headerlink" title="Child:Plan A"></a>Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildA.png" alt="SC_ChildA"></p>
+<p>方法执行结果（一切正常）：</p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 和 Base 对象均正常</li>
+</ol>
+<h4 id="Child-Plan-B-1"><a href="#Child-Plan-B-1" class="headerlink" title="Child:Plan B"></a>Child:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildB.png" alt="SC_ChildB"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则 Child-&gt;Base (Super 被忽略)</li>
+<li>Base 对象正常</li>
+</ol>
+<h3 id="Super-未实现方法-Child-实现方法-1"><a href="#Super-未实现方法-Child-实现方法-1" class="headerlink" title="Super 未实现方法,Child 实现方法"></a>Super 未实现方法,Child 实现方法</h3><p>由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。</p>
+<h4 id="Super-Plan-A-1"><a href="#Super-Plan-A-1" class="headerlink" title="Super:Plan A"></a>Super:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperA.png" alt="SC_SuperA"></p>
+<p>方法执行结果（一切正常）：</p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 和 Base 对象均正常</li>
+</ol>
+<h4 id="Super-Plan-B-1"><a href="#Super-Plan-B-1" class="headerlink" title="Super:Plan B"></a>Super:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperB.png" alt="SC_SuperB"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 对象正常：Super-&gt;Base</li>
+<li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
+</ol>
+<h3 id="Super-实现方法-Child-实现方法-1"><a href="#Super-实现方法-Child-实现方法-1" class="headerlink" title="Super 实现方法,Child 实现方法"></a>Super 实现方法,Child 实现方法</h3><p>相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。</p>
+<p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_Perfect.png" alt="SC_Perfect"></p>
+<p>方法执行结果（一切正常）：</p>
+<ol>
+<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Super 和 Base 对象均正常</li>
+</ol>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><h3 id="Hook-顺序：先-Child-类后-Super-类"><a href="#Hook-顺序：先-Child-类后-Super-类" class="headerlink" title="Hook 顺序：先 Child 类后 Super 类"></a>Hook 顺序：先 Child 类后 Super 类</h3><p>为了保证 Hook 后方法调用顺序是对的，需要同时满足以下两个条件：</p>
+<ol>
+<li>Child 类实现被 Hook 的方法</li>
+<li>Super 类实现被 Hook 的方法或使用 A 方案 Hook</li>
+</ol>
+<h3 id="Hook-顺序：先-Super-类后-Child-类"><a href="#Hook-顺序：先-Super-类后-Child-类" class="headerlink" title="Hook 顺序：先 Super 类后 Child 类"></a>Hook 顺序：先 Super 类后 Child 类</h3><p>因为 Hook 的顺序是正确的，所以只需满足以下任意一个条件即可：</p>
+<ol>
+<li>实现被 Hook 的方法</li>
+<li>使用方案 A 进行 Hook</li>
+</ol>
+<h3 id="Objective-C-Method-Swizzling-最佳实践"><a href="#Objective-C-Method-Swizzling-最佳实践" class="headerlink" title="Objective-C Method Swizzling 最佳实践"></a>Objective-C Method Swizzling 最佳实践</h3><ol>
+<li>Hook 顺序并不能保证结果一定正确，但先 Super 后 Child 效果更佳</li>
+<li>方案 A 明显优于方案 B</li>
+<li>方案 A 中的『静态方法版本』固然更缜密，但操作复杂。为了提升开发效率，建议参考 CaptainHook 的宏定义实现。</li>
+<li><a href="https://github.com/rabovik/RSSwizzle" target="_blank" rel="noopener">RSSwizzle</a> 被很多人推荐，它用很复杂的方式解决了 <a href="http://stackoverflow.com/questions/5339276/what-are-the-dangers-of-method-swizzling-in-objective-c" target="_blank" rel="noopener">What are the Dangers of Method Swizzling in Objective C?</a> 中提到的一系列问题。不过引入它还是有一些成本的，建议在本文列举的那些极端特殊情况下才使用它，毕竟方案 A 已经能 Cover 到大部分情况了。</li>
+<li><a href="https://github.com/rentzsch/jrswizzle" target="_blank" rel="noopener">jrswizzle</a> 尝试解决在不同平台和系统版本上的 Method Swizzling 与类继承关系的冲突。对各平台低版本系统兼容性较强。</li>
+</ol>
+<p>我觉得最适合项目的方案才是最佳实践。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="http://stackoverflow.com/questions/5339276/what-are-the-dangers-of-method-swizzling-in-objective-c" target="_blank" rel="noopener">What are the Dangers of Method Swizzling in Objective C?</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Runtime/">Runtime</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/" data-title="Objective-C Method Swizzling | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2017/05/30/Implementing-CNN-with-MPS/" title="Implementing CNN with MPS">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Implementing CNN with MPS</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2017/03/06/How-to-hook-the-correct-method-in-reverse-engineering/"  title="如何在逆向工程中 Hook 得更准 - 微信屏蔽好友&amp;群消息实战">
+ <strong>下一篇：</strong><br/> 
+ <span>如何在逆向工程中 Hook 得更准 - 微信屏蔽好友&amp;群消息实战
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Method-Swizzling-常用实现方案"><span class="toc-number">1.</span> <span class="toc-text">Method Swizzling 常用实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-A"><span class="toc-number">1.1.</span> <span class="toc-text">方案 A</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-B"><span class="toc-number">1.2.</span> <span class="toc-text">方案 B</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#研究背景"><span class="toc-number">2.</span> <span class="toc-text">研究背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Child-后-Super"><span class="toc-number">3.</span> <span class="toc-text">Hook 顺序：先 Child 后 Super</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法"><span class="toc-number">3.1.</span> <span class="toc-text">Super 未实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-A"><span class="toc-number">3.1.1.</span> <span class="toc-text">Super:Plan A,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-A"><span class="toc-number">3.1.2.</span> <span class="toc-text">Super:Plan B,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-B"><span class="toc-number">3.1.3.</span> <span class="toc-text">Super:Plan A,Child Plan B</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-B"><span class="toc-number">3.1.4.</span> <span class="toc-text">Super:Plan B,Child Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法"><span class="toc-number">3.2.</span> <span class="toc-text">Super 实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-A"><span class="toc-number">3.2.1.</span> <span class="toc-text">Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-B"><span class="toc-number">3.2.2.</span> <span class="toc-text">Child:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法"><span class="toc-number">3.3.</span> <span class="toc-text">Super 未实现方法,Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A"><span class="toc-number">3.3.1.</span> <span class="toc-text">Super:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B"><span class="toc-number">3.3.2.</span> <span class="toc-text">Super:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法"><span class="toc-number">3.4.</span> <span class="toc-text">Super 实现方法,Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Super-后-Child"><span class="toc-number">4.</span> <span class="toc-text">Hook 顺序：先 Super 后 Child</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法-1"><span class="toc-number">4.1.</span> <span class="toc-text">Super 未实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-A-1"><span class="toc-number">4.1.1.</span> <span class="toc-text">Super:Plan A,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-A-1"><span class="toc-number">4.1.2.</span> <span class="toc-text">Super:Plan B,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-B-1"><span class="toc-number">4.1.3.</span> <span class="toc-text">Super:Plan A,Child Plan B</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-B-1"><span class="toc-number">4.1.4.</span> <span class="toc-text">Super:Plan B,Child Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法-1"><span class="toc-number">4.2.</span> <span class="toc-text">Super 实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-A-1"><span class="toc-number">4.2.1.</span> <span class="toc-text">Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-B-1"><span class="toc-number">4.2.2.</span> <span class="toc-text">Child:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法-1"><span class="toc-number">4.3.</span> <span class="toc-text">Super 未实现方法,Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-1"><span class="toc-number">4.3.1.</span> <span class="toc-text">Super:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-1"><span class="toc-number">4.3.2.</span> <span class="toc-text">Super:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法-1"><span class="toc-number">4.4.</span> <span class="toc-text">Super 实现方法,Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Child-类后-Super-类"><span class="toc-number">5.1.</span> <span class="toc-text">Hook 顺序：先 Child 类后 Super 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Super-类后-Child-类"><span class="toc-number">5.2.</span> <span class="toc-text">Hook 顺序：先 Super 类后 Child 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Objective-C-Method-Swizzling-最佳实践"><span class="toc-number">5.3.</span> <span class="toc-text">Objective-C Method Swizzling 最佳实践</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">6.</span> <span class="toc-text">Reference</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

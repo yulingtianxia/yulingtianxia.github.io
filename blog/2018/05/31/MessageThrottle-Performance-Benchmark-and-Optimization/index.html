@@ -1,0 +1,638 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>MessageThrottle Performance Benchmark and Optimization | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，所以相比直接调用方法，会有一些性能上的损耗。本篇文章记录了对其性能进行测试的结果，并通过使用 NSMapTable 改进存储结构和缓存来对性能进行大幅度的优化。 这是你从未体验过的船新版本。">
+<meta name="keywords" content="Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MessageThrottle Performance Benchmark and Optimization">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，所以相比直接调用方法，会有一些性能上的损耗。本篇文章记录了对其性能进行测试的结果，并通过使用 NSMapTable 改进存储结构和缓存来对性能进行大幅度的优化。 这是你从未体验过的船新版本。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MessageThrottle Performance Benchmark and Optimization">
+<meta name="twitter:description" content="MessageThrottle 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，所以相比直接调用方法，会有一些性能上的损耗。本篇文章记录了对其性能进行测试的结果，并通过使用 NSMapTable 改进存储结构和缓存来对性能进行大幅度的优化。 这是你从未体验过的船新版本。">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/" title="MessageThrottle Performance Benchmark and Optimization" itemprop="url">MessageThrottle Performance Benchmark and Optimization</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2018-05-30T18:01:50.000Z" itemprop="datePublished"> 发表于 2018-05-31</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Benchmark"><span class="toc-number">1.</span> <span class="toc-text">Benchmark</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Optimization"><span class="toc-number">2.</span> <span class="toc-text">Optimization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p><a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="noopener">MessageThrottle</a> 是我开发的Objective-C 节流限频组件，其原理基于 Hook 消息转发流程，所以相比直接调用方法，会有一些性能上的损耗。本篇文章记录了对其性能进行测试的结果，并通过使用 <code>NSMapTable</code> 改进存储结构和缓存来对性能进行大幅度的优化。</p>
+<p>这是你从未体验过的船新版本。</p>
+<a id="more"></a>
+
+<p>关于 <a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="noopener">MessageThrottle</a> 最初的实现原理可以参考 <a href="http://yulingtianxia.com/blog/2017/11/05/Objective-C-Message-Throttle-and-Debounce/">Objective-C Message Throttle and Debounce</a>。</p>
+<h2 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h2><p>Xcode 自带的单元测试框架可以很方便的测量一个方法的执行效率，<code>measureBlock</code> 里的代码会被执行十次，测试结束后会得到每次执行耗时，以及平均数和方差。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)testPerformanceExample &#123;</span><br><span class="line">    <span class="comment">// This is an example of a performance test case.</span></span><br><span class="line">    <span class="built_in">NSDate</span> *date = [<span class="built_in">NSDate</span> date];</span><br><span class="line">    [<span class="keyword">self</span> measureBlock:^&#123;</span><br><span class="line">        <span class="comment">// Put the code you want to measure the time of here.</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i ++) &#123;</span><br><span class="line">            <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">                [<span class="keyword">self</span>.sstub foo:date];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>性能损耗大多发生在消息转发流程上的处理，为了能够校准基线，需要让每次消息发送都执行。MessageThrottle 1.2.0 刚刚支持了让某些条件下消息永远执行的特性：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setUp &#123;</span><br><span class="line">    [<span class="keyword">super</span> setUp];</span><br><span class="line">    <span class="comment">// Put setup code here. This method is called before the invocation of each test method in the class.</span></span><br><span class="line">    self.sstub = [SuperStub <span class="keyword">new</span>];</span><br><span class="line">    MTRule *rule = [self.sstub <span class="string">mt_limitSelector:</span><span class="meta">@selector</span>(<span class="string">foo:</span>) <span class="string">oncePerDuration:</span><span class="number">0.01</span> <span class="string">usingMode:</span>MTPerformModeDebounce];</span><br><span class="line">    rule.alwaysInvokeBlock =  ^(MTRule *rule, NSDate *date) &#123;</span><br><span class="line">        <span class="keyword">return</span> YES; <span class="comment">// 让消息永远都执行</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过调整 <code>foo:</code> 方法的耗时来得到调用不同耗时函数的测试结果。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)<span class="string">foo:</span>(NSDate *)arg &#123;</span><br><span class="line">    [NSThread <span class="string">sleepForTimeInterval:</span><span class="number">0.0001</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终得到一组数据，测试机器为 iPhone 8 plus。</p>
+<table>
+<thead>
+<tr>
+<th>执行模式\被调用方法耗时</th>
+<th>0.0001</th>
+<th>0.001</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>不使用 MT</td>
+<td>0.118(baseline)</td>
+<td>1.17(baseline)</td>
+</tr>
+<tr>
+<td>MT 立即执行</td>
+<td>0.135(14.4%worse)</td>
+<td>1.33(13.8%worse)</td>
+</tr>
+<tr>
+<td>MT debounce 0.01s</td>
+<td>0.0281(76.2%better)</td>
+<td>0.0279(97.6%better)</td>
+</tr>
+</tbody></table>
+<ol>
+<li>测试的基准数据为不使用 MessageThottle，直接调用方法。</li>
+<li>使用 MessageThottle 后，消息转发流程会带来多余的耗时会导致性能下降，而且被调用方法耗时越少，性能下降得越明显（比较两列数据）。</li>
+<li>如果加了消息限频，会忽略掉一部分调用，这样当出现大量频繁调用时，方法真正执行的次数很少，性能反而大大提升了（第三行数据）</li>
+</ol>
+<h2 id="Optimization"><a href="#Optimization" class="headerlink" title="Optimization"></a>Optimization</h2><p>通过性能优化，将消息转发流程产生的耗时降低了将近 50%。并加强了线程安全。</p>
+<table>
+<thead>
+<tr>
+<th>执行模式\被调用方法耗时</th>
+<th>0.0001</th>
+<th>0.001</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>不使用 MT</td>
+<td>0.118(baseline)</td>
+<td>1.17(baseline)</td>
+</tr>
+<tr>
+<td>MT 立即执行</td>
+<td>0.135(14.4%worse)</td>
+<td>1.33(13.8%worse)</td>
+</tr>
+<tr>
+<td>性能优化后</td>
+<td>0.126(6.88%worse)</td>
+<td>1.25(6.93%worse)</td>
+</tr>
+</tbody></table>
+<p>为了方便管理和查看所有的 <code>MTRule</code>，使用了 <code>MTEngine</code> 单例进行中心化的管理。获取一个 <code>MTRule</code> 之前，需要先用 <code>target</code> 和 <code>selector</code> 生成一个描述字符串，然后用这个字符串作为 Key 在 <code>MTEngine</code> 的字典里查询对应的 <code>MTRule</code> 对象。每次应用和废除规则、消息发送时都要频繁从 <code>MTEngine</code> 获取 <code>MTRule</code> 对象，由此也产生了大量开销。这里的性能瓶颈主要有两点：</p>
+<ol>
+<li>生成描述字符串造成的开销。</li>
+<li>从 <code>MTEngine</code> 加锁的字典获取 <code>MTRule</code> 的等待开销。</li>
+</ol>
+<p>应用和废除规则的时候，这两点开销并不明显。但当所有应用规则的消息发送都要经过这两步的时候，这俨然成了拥堵的重灾区。当然治理方案也是相对的：</p>
+<ol>
+<li><p>改进 <code>MTEngine</code> 中字典的存储结构，使用 <code>NSMapTable</code> 替换 <code>NSMutableDictionary</code>。因为 <code>NSMapTable</code> 支持将任意指针作为 Key 且无需持有，可以将 <code>target</code> 作为 Key，Value 为这个 <code>target</code> 对应的 <code>selector</code> 集合。<code>MTEngine</code> 不再持有 <code>MTRule</code> 对象，而只是存储了所有应用规则的 <code>target</code> 及其 <code>selector</code>。而 <code>MTRule</code> 对象改为由其 <code>target</code> 通过 AssociatedObject 的方式持有，可以很方便通过 <code>selector</code> 存取。当 <code>target</code> 销毁后，它关联的 <code>MTRule</code> 对象也会被销毁，<code>NSMapTable</code> 也会自动移除那些键或值为 <code>nil</code> 的数据。下面是 <code>MTEngine</code> 封装了 <code>NSMapTable</code> 字典对应的便捷方法。</p>
+ <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化</span></span><br><span class="line">_targetSELs = [<span class="built_in">NSMapTable</span> weakToStrongObjectsMapTable];</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">//添加 target-selector 记录</span></span><br><span class="line">- (<span class="keyword">void</span>)addSelector:(SEL)selector onTarget:(<span class="keyword">id</span>)target</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!target) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">NSMutableSet</span> *selectors = [<span class="keyword">self</span>.targetSELs objectForKey:target];</span><br><span class="line">    <span class="keyword">if</span> (!selectors) &#123;</span><br><span class="line">        selectors = [<span class="built_in">NSMutableSet</span> set];</span><br><span class="line">    &#125;</span><br><span class="line">    [selectors addObject:<span class="built_in">NSStringFromSelector</span>(selector)];</span><br><span class="line">    [<span class="keyword">self</span>.targetSELs setObject:selectors forKey:target];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//移除 target-selector 记录</span></span><br><span class="line">- (<span class="keyword">void</span>)removeSelector:(SEL)selector onTarget:(<span class="keyword">id</span>)target</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!target) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">NSMutableSet</span> *selectors = [<span class="keyword">self</span>.targetSELs objectForKey:target];</span><br><span class="line">    <span class="keyword">if</span> (!selectors) &#123;</span><br><span class="line">        selectors = [<span class="built_in">NSMutableSet</span> set];</span><br><span class="line">    &#125;</span><br><span class="line">    [selectors removeObject:<span class="built_in">NSStringFromSelector</span>(selector)];</span><br><span class="line">    [<span class="keyword">self</span>.targetSELs setObject:selectors forKey:target];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//是否存在 target-selector 记录</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)containsSelector:(SEL)selector onTarget:(<span class="keyword">id</span>)target</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> [[<span class="keyword">self</span>.targetSELs objectForKey:target] containsObject:<span class="built_in">NSStringFromSelector</span>(selector)];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//是否存在 target-selector 记录，未指定具体 target，但 target 的类型为 cls 即可</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)containsSelector:(SEL)selector onTargetsOfClass:(Class)cls</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">id</span> target <span class="keyword">in</span> [[<span class="keyword">self</span>.targetSELs keyEnumerator] allObjects]) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!mt_object_isClass(target) &amp;&amp;</span><br><span class="line">            [target isMemberOfClass:cls] &amp;&amp;</span><br><span class="line">            [[<span class="keyword">self</span>.targetSELs objectForKey:target] containsObject:<span class="built_in">NSStringFromSelector</span>(selector)]) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>每个 <code>MTRule</code> 有自己独立的递归锁，这样避免了在 <code>forwardInvocation</code> 里千军万马过独木桥的拥堵，且不妨碍递归调用的场景。存取 <code>MTEngine</code> 的字典依然使用普通的互斥锁。这两个锁都使用性能较好的 <code>pthread_mutex_t</code> 实现。</p>
+ <figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"> // 初始化递归锁</span><br><span class="line"> pthread_mutexattr_t <span class="meta">attr</span><span class="comment">;</span></span><br><span class="line"> pthread_mutexattr_init(&amp;<span class="meta">attr</span>)<span class="comment">;</span></span><br><span class="line"> pthread_mutexattr_settype(&amp;<span class="meta">attr</span>, PTHREAD_MUTEX_RECURSIVE)<span class="comment">;</span></span><br><span class="line"> pthread_mutex_t mutex = mtDealloc.invokeLock<span class="comment">;</span></span><br><span class="line"> pthread_mutex_init(&amp;mutex, &amp;<span class="meta">attr</span>)<span class="comment">;</span></span><br><span class="line"> objc_setAssociatedObject(rule.target, rule.<span class="keyword">selector, </span>mtDealloc, OBJC_ASSOCIATION_RETAIN)<span class="comment">;</span></span><br><span class="line">     </span><br><span class="line"><span class="symbol">...</span></span><br><span class="line"></span><br><span class="line"> // 消息转发时保证线程安全</span><br><span class="line"> static void mt_forwardInvocation(__unsafe_unretained id assignSlf, <span class="keyword">SEL </span><span class="keyword">selector, </span>NSInvocation *invocation)</span><br><span class="line"> &#123;</span><br><span class="line">     <span class="keyword">SEL </span>originalSelector = invocation.<span class="keyword">selector;</span></span><br><span class="line"><span class="keyword"> </span>    <span class="keyword">SEL </span>fixedOriginalSelector = mt_aliasForSelector(originalSelector)<span class="comment">;</span></span><br><span class="line">     <span class="meta">if</span> (![assignSlf respondsToSelector:fixedOriginalSelector]) &#123;</span><br><span class="line">         mt_executeOrigForwardInvocation(assignSlf, <span class="keyword">selector, </span>invocation)<span class="comment">;</span></span><br><span class="line">         return<span class="comment">;</span></span><br><span class="line">     &#125;</span><br><span class="line">     MTDealloc *mtDealloc = objc_getAssociatedObject(invocation.target, <span class="keyword">selector);</span></span><br><span class="line"><span class="keyword"> </span>    pthread_mutex_t mutex = mtDealloc.invokeLock<span class="comment">;</span></span><br><span class="line">     pthread_mutex_lock(&amp;mutex)<span class="comment">;</span></span><br><span class="line">     mt_handleInvocation(invocation, fixedOriginalSelector)<span class="comment">;</span></span><br><span class="line">     pthread_mutex_unlock(&amp;mutex)<span class="comment">;</span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p><code>MTEngine</code> 中字典的存储结构的改进不仅提高了性能，还让设计思路更清晰。在添加或废除规则的时候，旧方案需要遍历所有的 <code>MTRule</code> 对象，然后通过检查 <code>target</code> 和 <code>selector</code> 来判断规则是否相互干扰；新方案直接存储了 <code>target</code> 和对应的 <code>selector</code> 数组，声明如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSMapTable</span>&lt;<span class="keyword">id</span>, <span class="built_in">NSMutableSet</span>&lt;<span class="built_in">NSString</span> *&gt; *&gt; *targetSELs;</span><br></pre></td></tr></table></figure>
+
+<p>这样的存储方式可以更高效地找到某个对象或类的某个方法是否被限频了，增删规则也更快。</p>
+<p>在 Hook 某个方法的时候，会给它生成一个新的方法名，这就又涉及到字符串拼接的开销。解决方案是使用缓存来映射两个 <code>SEL</code> 指针，又要用到 <code>NSMapTable</code> 大显神威了。这又将节省 6% 左右的 CPU 耗时！需要注意的是创建 <code>NSMapTable</code> 时的选项，以及存取时的类型强转：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化 NSMapTable 缓存</span></span><br><span class="line">_aliasSelectorCache = [<span class="built_in">NSMapTable</span> mapTableWithKeyOptions:<span class="built_in">NSPointerFunctionsOpaqueMemory</span> | <span class="built_in">NSMapTableObjectPointerPersonality</span> valueOptions:<span class="built_in">NSPointerFunctionsOpaqueMemory</span> | <span class="built_in">NSMapTableObjectPointerPersonality</span>];</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在方法内部使用缓存优化性能</span></span><br><span class="line"><span class="keyword">static</span> SEL mt_aliasForSelector(SEL selector)</span><br><span class="line">&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;alias_selector_mutex);</span><br><span class="line">    SEL aliasSelector = (__bridge <span class="keyword">void</span> *)[MTEngine.defaultEngine.aliasSelectorCache objectForKey:(__bridge <span class="keyword">id</span>)(<span class="keyword">void</span> *)selector];</span><br><span class="line">    <span class="keyword">if</span> (!aliasSelector) &#123;</span><br><span class="line">        <span class="built_in">NSString</span> *selectorName = <span class="built_in">NSStringFromSelector</span>(selector);</span><br><span class="line">        aliasSelector = <span class="built_in">NSSelectorFromString</span>([<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"__mt_%@"</span>, selectorName]);</span><br><span class="line">        [MTEngine.defaultEngine.aliasSelectorCache setObject:(__bridge <span class="keyword">id</span>)(<span class="keyword">void</span> *)aliasSelector forKey:(__bridge <span class="keyword">id</span>)(<span class="keyword">void</span> *)selector];</span><br><span class="line">    &#125;</span><br><span class="line">    pthread_mutex_unlock(&amp;alias_selector_mutex);</span><br><span class="line">    <span class="keyword">return</span> aliasSelector;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可能有人会担心直接缓存 <code>SEL</code> 指针会不会命中率很低。因为所有名字相同的方法都拥有同一个唯一的 <code>SEL</code>，所以可以很快速地用直接指针地址判等。可以参考<a href="https://stackoverflow.com/questions/11051528/understanding-uniqueness-of-selectors-in-objective-c?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa" target="_blank" rel="noopener">这里</a>。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>更新 <a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="noopener">MessageThrottle</a> 到最新版即可获取到更快更强更安全的 Objective 消息节流限频功能，一行代码搞定频繁调用的问题。</p>
+<p>新版本在废除消息的时候，也增强了对合法性和安全性的检查。（说白了就是改 bug）</p>
+<p>理论上我的另一个组件 <a href="https://github.com/yulingtianxia/BlockTracker" target="_blank" rel="noopener">BlockTracker</a> 也可以按照本文的方案优化性能了，嘿嘿，有时间搞下。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2018/05/31/MessageThrottle-Performance-Benchmark-and-Optimization/" data-title="MessageThrottle Performance Benchmark and Optimization | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2018/06/24/Objective-C-Block-Mangle-Name/" title="追踪 Objective-C Block 代码定义的位置">
+  <strong>上一篇：</strong><br/>
+  <span>
+  追踪 Objective-C Block 代码定义的位置</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2018/04/30/Colorful-Rounded-Rect-Dash-Border/"  title="Colorful Rounded Rect Dash Border">
+ <strong>下一篇：</strong><br/> 
+ <span>Colorful Rounded Rect Dash Border
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Benchmark"><span class="toc-number">1.</span> <span class="toc-text">Benchmark</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Optimization"><span class="toc-number">2.</span> <span class="toc-text">Optimization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

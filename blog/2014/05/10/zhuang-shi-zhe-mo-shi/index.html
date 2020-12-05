@@ -1,0 +1,641 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>装饰者模式 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="装饰者模式动态地将责任附加到对象上。若要扩展功能，装饰者提供了比继承更有弹性的替代方案。">
+<meta name="keywords" content="Objective-C,设计模式,Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="装饰者模式">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2014/05/10/zhuang-shi-zhe-mo-shi/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="装饰者模式动态地将责任附加到对象上。若要扩展功能，装饰者提供了比继承更有弹性的替代方案。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140353405846.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140353406269.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140353407109.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140353407345.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140353408228.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140353408237.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/140353408757.png">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="装饰者模式">
+<meta name="twitter:description" content="装饰者模式动态地将责任附加到对象上。若要扩展功能，装饰者提供了比继承更有弹性的替代方案。">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/140353405846.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2014/05/10/zhuang-shi-zhe-mo-shi/" title="装饰者模式" itemprop="url">装饰者模式</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2014-05-10T01:47:05.000Z" itemprop="datePublished"> 发表于 2014-05-10</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#用配置咖啡饮料做例子"><span class="toc-number">1.</span> <span class="toc-text">用配置咖啡饮料做例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java中的装饰者"><span class="toc-number">2.</span> <span class="toc-text">Java中的装饰者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Objective-C类别与装饰模式"><span class="toc-number">3.</span> <span class="toc-text">Objective-C类别与装饰模式</span></a></li></ol>
+		
+		</div>
+		
+		<p>装饰者模式动态地将责任附加到对象上。若要扩展功能，装饰者提供了比继承更有弹性的替代方案。  </p>
+<p><img src="http://yulingtianxia.com/resources/140353405846.png" alt>  </p>
+<a id="more"></a>
+
+<ul>
+<li>装饰者和被装饰对象有相同的超类型。</li>
+<li>你可以用一个或多个装饰者包装一个对象。</li>
+<li>既然装饰者和被装饰对象有相同的超类型，所以在任何需要原始对象（被包装的）的场合 ,可以用装饰过的对象代替它。</li>
+<li><strong>装饰者可以在所委托被装饰者的行为之前与/或之后，加上自己的行为，以达到特定的目的。</strong></li>
+<li>对象可以在任何时候被装饰，所以可以在运行时动态地、不限量地用你喜欢的装饰者来装饰<br>对象。  </li>
+</ul>
+<p><strong>类应该对扩展开放，对修改关闭。</strong>  </p>
+<h2 id="用配置咖啡饮料做例子"><a href="#用配置咖啡饮料做例子" class="headerlink" title="用配置咖啡饮料做例子"></a>用配置咖啡饮料做例子</h2><p>比如，现在有一个饮料类（Beverage），向饮料中添加不同的配料（蒸奶（Steamed Milk）、豆浆（Soy）、<br>摩卡（Mocha，也就是巧克力风味）或覆盖奶泡），就会配制出很多种不同的种类的饮料，其价格也随着添加的配料而变化，饮料店需要计算价格，如果用具体子类继承饮料类并考虑到所有组合的话，将是一个“类爆炸”：  </p>
+<p><img src="http://yulingtianxia.com/resources/140353406269.png" alt>  </p>
+<p>更恶心的是，如果某种配料的价格有变化，就必须含有此配料相应的更改一些饮料子类的实现，记住：<strong>类应该对扩展开放，对修改关闭。</strong>   </p>
+<p>应用装饰者模式，就像给对象穿衣服一样一层一层将拓展动态的添加上去，灵活多变有弹性  </p>
+<p><img src="http://yulingtianxia.com/resources/140353407109.png" alt>  </p>
+<p>下面用Java实现这个例子  </p>
+<p>Beverage是一个抽象类，有两个方法：getDescrip-tion()及cost（）  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Beverage</span> </span>&#123;</span><br><span class="line">String description = <span class="string">"Unknown Beverage"</span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getDescription</span><span class="params">()</span> </span>&#123;</span><br><span class="line"><span class="keyword">return</span> description;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">double</span> <span class="title">cost</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Beverage很简单。让我们也来实现Condiment（配料）抽象类，也就是装饰者类吧：  </p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">CondimentDecorator</span> <span class="keyword">extends</span> <span class="title">Beverage</span> </span>&#123;</span><br><span class="line">public <span class="keyword">abstract</span> <span class="type">String</span> getDescription();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>必须让Condiment Decorator能够取代Beverage，所以将CondimentDecorator扩展自 Beverage 类  </p>
+<p>现在，已经有了基类，让我们开始开始实现一些饮料吧！先从浓缩咖啡（Espresso）开始。别忘了，我们需要为具体的饮料设置描述，而且还必须实现cost()方法    </p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Espresso</span> <span class="keyword">extends</span> <span class="title">Beverage</span> </span>&#123;</span><br><span class="line">public <span class="type">Espresso</span>() &#123;</span><br><span class="line">description = <span class="string">"Espresso"</span>;</span><br><span class="line">&#125;</span><br><span class="line">public double cost() &#123;</span><br><span class="line"><span class="keyword">return</span> <span class="number">1.99</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其他几种具体的饮料就不写了  </p>
+<p>如果你回头去看看装饰者模式的类图，将发现我们已经完成了抽象组件（Beverage），有了具体组件（HouseBlend），也有了抽象装饰者（CondimentDecorator）。现在，我们就来实现具体装饰者。先从摩卡下手：  </p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Mocha</span> <span class="keyword">extends</span> <span class="title">CondimentDecorator</span> </span>&#123;</span><br><span class="line"><span class="type">Beverage</span> beverage;</span><br><span class="line">public <span class="type">Mocha</span>(<span class="type">Beverage</span> beverage) &#123;</span><br><span class="line"><span class="keyword">this</span>.beverage = beverage;</span><br><span class="line">&#125;</span><br><span class="line">public <span class="type">String</span> getDescription() &#123;</span><br><span class="line"><span class="keyword">return</span> beverage.getDescription() + <span class="string">", Mocha"</span>;</span><br><span class="line">&#125;</span><br><span class="line">public double cost() &#123;</span><br><span class="line"><span class="keyword">return</span> <span class="number">.20</span> + beverage.cost();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你会发现在装饰者类中，完成了描述和价格的效果添加，也就是完成了拓展  </p>
+<p>其他几种配料代码就不写了  </p>
+<p>下面进行测试：  </p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">public</span> class StarbuzzCoffee &#123;</span><br><span class="line"><span class="symbol">public</span> static void main(<span class="keyword">String </span>args[]) &#123;</span><br><span class="line"><span class="keyword">Beverage </span><span class="keyword">beverage </span>= new Espresso()<span class="comment">;</span></span><br><span class="line"><span class="symbol">System.out.println</span>(<span class="keyword">beverage.getDescription()</span></span><br><span class="line"><span class="keyword">+ </span><span class="string">" $"</span> + <span class="keyword">beverage.cost());</span></span><br><span class="line"><span class="keyword">Beverage </span><span class="keyword">beverage2 </span>= new DarkRoast()<span class="comment">;</span></span><br><span class="line"><span class="keyword">beverage2 </span>= new Mocha(<span class="keyword">beverage2);</span></span><br><span class="line"><span class="keyword">beverage2 </span>= new Mocha(<span class="keyword">beverage2);</span></span><br><span class="line"><span class="keyword">beverage2 </span>= new Whip(<span class="keyword">beverage2);</span></span><br><span class="line"><span class="keyword">System.out.println(beverage2.getDescription()</span></span><br><span class="line"><span class="keyword">+ </span><span class="string">" $"</span> + <span class="keyword">beverage2.cost());</span></span><br><span class="line"><span class="keyword">Beverage </span><span class="keyword">beverage3 </span>= new HouseBlend()<span class="comment">;</span></span><br><span class="line"><span class="keyword">beverage3 </span>= new Soy(<span class="keyword">beverage3);</span></span><br><span class="line"><span class="keyword">beverage3 </span>= new Mocha(<span class="keyword">beverage3);</span></span><br><span class="line"><span class="keyword">beverage3 </span>= new Whip(<span class="keyword">beverage3);</span></span><br><span class="line"><span class="keyword">System.out.println(beverage3.getDescription()</span></span><br><span class="line"><span class="keyword">+ </span><span class="string">" $"</span> + <span class="keyword">beverage3.cost());</span></span><br><span class="line"><span class="keyword">&#125;</span></span><br><span class="line"><span class="keyword">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>输出结果： </p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">% java StarbuzzCoffee  </span><br><span class="line">Espresso $1<span class="number">.99</span>  </span><br><span class="line">Dark Roast Coffee, Mocha, Mocha, Whip $1<span class="number">.49</span>  </span><br><span class="line">House Blend Coffee, Soy, Mocha, Whip $1<span class="number">.34</span>  </span><br><span class="line">%</span><br></pre></td></tr></table></figure>
+
+<p>果然是一层套一层吧：  </p>
+<p><img src="http://yulingtianxia.com/resources/140353407345.png" alt>  </p>
+<h2 id="Java中的装饰者"><a href="#Java中的装饰者" class="headerlink" title="Java中的装饰者"></a>Java中的装饰者</h2><p>java.io包内的类太多了，简直是……“排山倒海”。你第一次（还有第二次和第三次）看到这些API发出“哇”的惊叹时，放心，你不是唯一受到惊吓的人。现在，你已经知道装饰者模式，这些I/O的相关类对你来说应该更有意义了，因为其中许多类都是装饰者。下面是一个典型的对象集合，用装饰者来将功能结合起来，以读取文件数据：  </p>
+<p><img src="http://yulingtianxia.com/resources/140353408228.png" alt>  </p>
+<p><code>BufferedInputStream</code>及<code>LineNumberInputStream</code>都扩展自<code>FilterInputStream</code>，而<code>FilterInputStream</code>是一个抽象的装饰类。  </p>
+<p><img src="http://yulingtianxia.com/resources/140353408237.png" alt>  </p>
+<p>你会发现“输出”流的设计方式也是一样的。你可能还会发现Reader/Writer流（作为基于字符数据的输入输出）和输入流/输出流的类相当类似（虽然有一些小差异和不一致之处，但是相当雷同，所以你应该可以了解这些类）。  </p>
+<p>但是JavaAI/O也引出装饰者模式的一个“缺点”：利用装饰者模式，常常造成设计中有大量的小类，数量实在太多，可能会造成使用此API程序员的困扰。但是，现在你已经了解了装饰者的工作原理，以后当使用别人的大量装饰的API时，就可以很容易地辨别出他们的装饰者类是如何组织的，以方便用包装方式取得想要的行为。  </p>
+<h2 id="Objective-C类别与装饰模式"><a href="#Objective-C类别与装饰模式" class="headerlink" title="Objective-C类别与装饰模式"></a>Objective-C类别与装饰模式</h2><p>Objective-C中也可以实现基于继承和接口的装饰者模式，但这里介绍的是另一种实现方法：类别  </p>
+<p>类别是一个Objective-C的语言功能，通过它可以向类添加行为（方法的接口与实现），而不必进行子类化。通过类别添加的方法对类原有的方法没有不良影响。类别中的方法成为了类的一部分，并可由其子类继承。  </p>
+<p>我们可以用类别来实现装饰模式，然而这不是一种严格的实现，它实现了模式的意图，但却是一种变体。由装饰器类别添加的行为是编译时绑定的，虽然Objective-C原本支持动态绑定（应该用方法的哪个实现）。而且装饰器类别实际上没有封装被扩展的类的实例。  </p>
+<p>尽管使用类别来实现这个模式跟原始风格有些偏离，但是实现少量的装饰器的时候，它比真正子类的方式更为轻量、更为容易。</p>
+<p>这次我们来装饰一张照片，装饰的方法有很多，比如旋转位移变换，阴影。。。  </p>
+<p><img src="http://yulingtianxia.com/resources/140353408757.png" alt>  </p>
+<p>工程代码可以在<a href="https://github.com/yulingtianxia/Decorator" target="_blank" rel="noopener">这里</a>下载  </p>
+<p>这一方式中有三个类别：UIImage(BaseFilter),UIImage(Transform)和UIImage(Shadow)。从现在起，我把它们分别简称为BaseFilter、Transform和Shadow。BaseFilter定义了几个基本的二维绘图操作，使用当前绘图上下文绘制自己，其他滤镜类别可以使用同样的方法来绘制图像。Transform和Shadow没有继承BaseFilter，但他们属于同一类，因为他们都是UIImage的类别。BaseFilter中定义的方法也能在Transform和Shadow类别中使用，而不必像子类化那样进行继承。  </p>
+<p>UIImage(BaseFilter)中的方法定义，用户绘制图像，相当于装饰者抽象类，而UIImage则是被装饰的组件:  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"UIImage+BaseFilter.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UIImage</span> (<span class="title">BaseFilter</span>)</span></span><br><span class="line">- (<span class="built_in">CGContextRef</span>) beginContext</span><br><span class="line">&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CGSize</span> size = [<span class="keyword">self</span> size];</span><br><span class="line">    <span class="built_in">UIGraphicsBeginImageContextWithOptions</span>(size, <span class="literal">NO</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">CGContextRef</span> context = <span class="built_in">UIGraphicsGetCurrentContext</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> context;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">UIImage</span> *) getImageFromCurrentImageContext</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span> drawAtPoint:<span class="built_in">CGPointZero</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Retrieve the UIImage from the current context</span></span><br><span class="line">    <span class="built_in">UIImage</span> *imageOut = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> imageOut;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>) endContext</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">UIGraphicsEndImageContext</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>Transform类别定义了一个<code>imageWithTransform:transform</code>方法，接受一个转换引用，然后把应用于内部的图像引用，并让它把自己画出来，然后返回变换后的图像:  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"UIImage+Transform.h"</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">"UIImage+BaseFilter.h"</span></span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UIImage</span> (<span class="title">Transform</span>)</span></span><br><span class="line">- (<span class="built_in">UIImage</span> *) imageWithTransform:(<span class="built_in">CGAffineTransform</span>)transform</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">CGContextRef</span> context = [<span class="keyword">self</span> beginContext];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// setup transformation</span></span><br><span class="line">    <span class="built_in">CGContextConcatCTM</span>(context, transform);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Draw the original image to the context</span></span><br><span class="line">    <span class="built_in">UIImage</span> *imageOut = [<span class="keyword">self</span> getImageFromCurrentImageContext];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> endContext];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> imageOut;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>Shadow类别定义了一个<code>imageWithDropShadow</code>方法，向图像的内部引用添加阴影效果，并返回应用效果之后的最终图像。  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"UIImage+Shadow.h"</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">"UIImage+BaseFilter.h"</span></span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UIImage</span> (<span class="title">Shadow</span>)</span></span><br><span class="line">- (<span class="built_in">UIImage</span> *) imageWithDropShadow</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">CGContextRef</span> context = [<span class="keyword">self</span> beginContext];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// set up shadow</span></span><br><span class="line">    <span class="built_in">CGSize</span> offset = <span class="built_in">CGSizeMake</span> (<span class="number">-25</span>,  <span class="number">15</span>);</span><br><span class="line">    <span class="built_in">CGContextSetShadow</span>(context, offset, <span class="number">20.0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Draw the original image to the context</span></span><br><span class="line">    <span class="built_in">UIImage</span> * imageOut = [<span class="keyword">self</span> getImageFromCurrentImageContext];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> endContext];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> imageOut;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>最后在ViewController中加载图像：  </p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">	<span class="comment">// Do any additional setup after loading the view, typically from a nib.</span></span><br><span class="line">    UIImage *<span class="built_in">image</span> = imageView.<span class="built_in">image</span>;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// create a transformation</span></span><br><span class="line">    CGAffineTransform rotateTransform = CGAffineTransformMakeRotation(-M_PI / <span class="number">4.0</span>);</span><br><span class="line">    CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(-<span class="built_in">image</span>.<span class="built_in">size</span>.<span class="built_in">width</span> / <span class="number">2.0</span>,</span><br><span class="line">                                                                            <span class="built_in">image</span>.<span class="built_in">size</span>.<span class="built_in">height</span> / <span class="number">8.0</span>);</span><br><span class="line">    CGAffineTransform finalTransform = CGAffineTransformConcat(rotateTransform, translateTransform);</span><br><span class="line">    UIImage* finalImage = [[<span class="built_in">image</span> imageWithTransform:finalTransform] imageWithDropShadow];</span><br><span class="line">    [imageView setImage:finalImage];</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为类别只能拓展方法，不能在原有类的基础上添加属性，但是我们依然可以通过下面的方式向类中动态添加属性，来弥补类别的不足：  </p>
+<p>给UIImage添加一个新的title属性<br>具体代码如下：<br><code>UIImage+Title.h</code>:  </p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@interface</span> UIImage(Title)</span><br><span class="line"><span class="variable">@property</span>(nonatomic, copy) NSString *title;</span><br><span class="line"><span class="variable">@end</span></span><br></pre></td></tr></table></figure>
+
+<p><code>UIImage+Title.m</code>:  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"UIImage+Title.h"</span></span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> titleKey;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UIImage</span>(<span class="title">Title</span>)</span></span><br><span class="line">- (<span class="built_in">NSString</span> *)title</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> objc_getAssociatedObject(<span class="keyword">self</span>, &amp;titleKey);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setTitle:(<span class="built_in">NSString</span> *)title</span><br><span class="line">&#123;</span><br><span class="line">    objc_setAssociatedObject(<span class="keyword">self</span>, &amp;titleKey, title, OBJC_ASSOCIATION_COPY);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到关键是用到了runtime的两个函数：  </p>
+<ol>
+<li><code>id objc_getAssociatedObject(id object, void *key)</code>  </li>
+<li><code>void objc_setAssociatedObject(id object, void *key, id value, objc_AssociationPolicy policy)</code>  </li>
+</ol>
+<p>该函数中第一个参数表示目标对象，第三个参数表示要添加的属性，第四个参数设置objc_AssociationPolicy,它有以下几个选项：<br><code>OBJC_ASSOCIATION_ASSIGN</code>，<code>OBJC_ASSOCIATION_RETAIN</code>，<code>OBJC_ASSOCIATION_COPY</code>，分别对应我们在声明属性时的<code>assign</code>,<code>retain</code>,<code>copy</code>。  
+关于第二个参数，key。因为一个对象可以关联多个新的对像，我们需要一个标志来区分他们。所以这个key就起这样的作用。这里的需要的key的地址，不关心它指向谁。  </p>
+<p>当我们第二次以新的value调用objc_setAssociatedObject时，如果policy是OBJC_ASSOCIATION_ASSIGN，新的value被关联，对原来旧的value没有任何影响。如果policy是OBJC_ASSOCIATION_RETAIN和OBJC_ASSOCIATION_COPY，新的value被关联，旧的value被release。如果想release原来的value又不关联新的value，，可以用objc_setAssociatedObject直接传一个nil做为value的值。  </p>
+<p>注意不要使用<code>objc_removeAssociatedObjects</code>，因为它用去掉所有的关联的对象。</p>
+<p>参考资料：  </p>
+<ol>
+<li>《iOS设计模式解析》  </li>
+<li>《HeadFirst设计模式》  </li>
+<li><a href="http://fanliugen.com/?p=460" target="_blank" rel="noopener">http://fanliugen.com/?p=460</a>  </li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/设计模式/">设计模式</a><a href="/tags/Java/">Java</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2014/05/10/zhuang-shi-zhe-mo-shi/" data-title="装饰者模式 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2014/05/12/objective-czhong-de-kvche-kvo/" title="Objective-C中的KVC和KVO">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Objective-C中的KVC和KVO</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2014/05/04/spritekitzuo-biao-xi/"  title="SpriteKit坐标系">
+ <strong>下一篇：</strong><br/> 
+ <span>SpriteKit坐标系
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#用配置咖啡饮料做例子"><span class="toc-number">1.</span> <span class="toc-text">用配置咖啡饮料做例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java中的装饰者"><span class="toc-number">2.</span> <span class="toc-text">Java中的装饰者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Objective-C类别与装饰模式"><span class="toc-number">3.</span> <span class="toc-text">Objective-C类别与装饰模式</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

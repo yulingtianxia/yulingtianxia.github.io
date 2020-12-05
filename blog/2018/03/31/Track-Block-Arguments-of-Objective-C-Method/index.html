@@ -1,0 +1,589 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>追踪 Objective-C 方法中的 Block 参数对象 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="很多方法最后一个参数是类似于 completionBlock 这种回调，然而有些 API 实现一些异常逻辑时会忘记调用传入的 Block 参数（当然这肯定是 bug 啦），或者存在多次调用。在调试的时候可能会碰到这种大坑，需要追踪下 Block 参数何时调用了，甚至是否调用过。如果不方便直接在 Block 实现中加代码，或者没有源码的情况下，就需要无侵入式地追踪 Block 参数对象。 Block">
+<meta name="keywords" content="Objective-C,Runtime,BlockHook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="追踪 Objective-C 方法中的 Block 参数对象">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="很多方法最后一个参数是类似于 completionBlock 这种回调，然而有些 API 实现一些异常逻辑时会忘记调用传入的 Block 参数（当然这肯定是 bug 啦），或者存在多次调用。在调试的时候可能会碰到这种大坑，需要追踪下 Block 参数何时调用了，甚至是否调用过。如果不方便直接在 Block 实现中加代码，或者没有源码的情况下，就需要无侵入式地追踪 Block 参数对象。 Block">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-11T14:22:22.513Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="追踪 Objective-C 方法中的 Block 参数对象">
+<meta name="twitter:description" content="很多方法最后一个参数是类似于 completionBlock 这种回调，然而有些 API 实现一些异常逻辑时会忘记调用传入的 Block 参数（当然这肯定是 bug 啦），或者存在多次调用。在调试的时候可能会碰到这种大坑，需要追踪下 Block 参数何时调用了，甚至是否调用过。如果不方便直接在 Block 实现中加代码，或者没有源码的情况下，就需要无侵入式地追踪 Block 参数对象。 Block">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/" title="追踪 Objective-C 方法中的 Block 参数对象" itemprop="url">追踪 Objective-C 方法中的 Block 参数对象</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2018-03-31T15:44:39.000Z" itemprop="datePublished"> 发表于 2018-03-31</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">1.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#过滤方法的-Block-参数"><span class="toc-number">2.1.</span> <span class="toc-text">过滤方法的 Block 参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行-Callback"><span class="toc-number">2.2.</span> <span class="toc-text">执行 Callback</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对-NSInvocation-的一点探索"><span class="toc-number">2.3.</span> <span class="toc-text">对 NSInvocation 的一点探索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>很多方法最后一个参数是类似于 <code>completionBlock</code> 这种回调，然而有些 API 实现一些异常逻辑时会忘记调用传入的 Block 参数（当然这肯定是 bug 啦），或者存在多次调用。在调试的时候可能会碰到这种大坑，需要追踪下 Block 参数何时调用了，甚至是否调用过。如果不方便直接在 Block 实现中加代码，或者没有源码的情况下，就需要无侵入式地追踪 Block 参数对象。</p>
+<p><a href="https://github.com/yulingtianxia/BlockTracker" target="_blank" rel="noopener">BlockTracker</a> 可以追踪方法调用时传入的 Block 类型的参数的执行和销毁。基于 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 实现。本文讲述了它的使用方法和实现原理。</p>
+<a id="more"></a>
+
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>只需要调用 <code>bt_trackBlockArgOfSelector:callback:</code> 方法，就能在对应方法执行传入的 block 参数被调用和销毁的时候得到回调。回调中的内容包含了 <code>block</code> 对象，回调类型，<code>block</code> 已经执行的次数，执行 <code>block</code> 的参数、返回值，堆栈信息。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">BTTracker *tracker = [<span class="keyword">self</span> bt_trackBlockArgOfSelector:<span class="keyword">@selector</span>(performBlock:) callback:^(<span class="keyword">id</span>  _Nullable block, BlockTrackerCallbackType type, <span class="built_in">NSInteger</span> invokeCount, <span class="keyword">void</span> * _Nullable * _Null_unspecified args, <span class="keyword">void</span> * _Nullable result, <span class="built_in">NSArray</span>&lt;<span class="built_in">NSString</span> *&gt; * _Nonnull callStackSymbols) &#123;</span><br><span class="line">   <span class="built_in">NSLog</span>(<span class="string">@"%@ invoke count = %ld"</span>, BlockTrackerCallbackTypeInvoke == type ? <span class="string">@"BlockTrackerCallBackTypeInvoke"</span> : <span class="string">@"BlockTrackerCallBackTypeDead"</span>, (<span class="keyword">long</span>)invokeCount);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>当你不想追踪这个方法执行时传入的 block 参数时，也可以停止追踪：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[tracker stop]</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p>举个栗子，现在有个方法叫 <code>performBlock:</code>，只是简单地调用了 <code>block</code> 参数：</p>
+<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">void</span>)performBlock:(<span class="built_in">void</span>(^)(<span class="built_in">void</span>))<span class="keyword">block</span> &#123;</span><br><span class="line">    <span class="keyword">block</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用两次这个方法，每次都传入不同的 block 实现：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">__block <span class="built_in">NSString</span> *word = <span class="string">@"I'm a block"</span>;</span><br><span class="line">[<span class="keyword">self</span> performBlock:^&#123;</span><br><span class="line">   <span class="built_in">NSLog</span>(<span class="string">@"add '!!!' to word"</span>);</span><br><span class="line">   word = [word stringByAppendingString:<span class="string">@"!!!"</span>];</span><br><span class="line">&#125;];</span><br><span class="line">[<span class="keyword">self</span> performBlock:^&#123;</span><br><span class="line">   <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, word);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>因为执行两次方法传入的是两个不同的 block 对象，所以会追踪两个 block 对象的执行和销毁，打印的 log 如下：</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">add '!!!' to word</span><br><span class="line">BlockTrackerCallBackTypeInvoke<span class="built_in"> invoke </span>count = 1</span><br><span class="line">I'm a block!!!</span><br><span class="line">BlockTrackerCallBackTypeInvoke<span class="built_in"> invoke </span>count = 1</span><br><span class="line">BlockTrackerCallBackTypeDead<span class="built_in"> invoke </span>count = 1</span><br><span class="line">BlockTrackerCallBackTypeDead<span class="built_in"> invoke </span>count = 1</span><br></pre></td></tr></table></figure>
+
+<p>在 block 对象销毁的时候<br>你可以尝试着把 <code>performBlock:</code> 的实现改成这样试试：</p>
+<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">void</span>)performBlock:(<span class="built_in">void</span>(^)(<span class="built_in">void</span>))<span class="keyword">block</span> &#123;</span><br><span class="line">    <span class="keyword">block</span>();</span><br><span class="line">    <span class="keyword">block</span>();</span><br><span class="line">    <span class="keyword">block</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><p>原理很简单，就是 Hook 方法后再 Hook 下 Block，流程大致如下：</p>
+<ol>
+<li>利用 Objective-C Runtime 机制 Hook 某个方法，参考 <a href="https://github.com/yulingtianxia/MessageThrottle" target="_blank" rel="noopener">MessageThrottle</a> 的实现原理。</li>
+<li>在方法真正执行前，使用 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 先 Hook 所有 Block 类型的参数。Hook 模式为 <code>BlockHookModeAfter</code> 和 <code>BlockHookModeDead</code>。</li>
+<li>在 Block 执行后更新执行次数，并将相关信息回调给 Tracker。销毁后也会回调给 Tracker。</li>
+</ol>
+<p>流程大概很简单，复用以前代码。这里主要讲下 Track 的逻辑。</p>
+<h3 id="过滤方法的-Block-参数"><a href="#过滤方法的-Block-参数" class="headerlink" title="过滤方法的 Block 参数"></a>过滤方法的 Block 参数</h3><p>在 <code>bt_trackBlockArgOfSelector:callback:</code> 里获取方法的 Type Encoding 后判断是否含有 Block 类型的参数，并将 Block 参数的 Index 保存到 <code>BTTracker</code> 的 <code>blockArgIndex</code> 属性。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">nullable</span> BTTracker *)bt_trackBlockArgOfSelector:(SEL)selector callback:(BlockTrackerCallbackBlock)callback</span><br><span class="line">&#123;</span><br><span class="line">    Class cls = bt_classOfTarget(<span class="keyword">self</span>);</span><br><span class="line">    </span><br><span class="line">    Method originMethod = class_getInstanceMethod(cls, selector);</span><br><span class="line">    <span class="keyword">if</span> (!originMethod) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *originType = (<span class="keyword">char</span> *)method_getTypeEncoding(originMethod);</span><br><span class="line">    <span class="keyword">if</span> (![[<span class="built_in">NSString</span> stringWithUTF8String:originType] containsString:<span class="string">@"@?"</span>]) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">NSMutableArray</span> *blockArgIndex = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">    <span class="keyword">int</span> argIndex = <span class="number">0</span>; <span class="comment">// return type is the first one</span></span><br><span class="line">    <span class="keyword">while</span>(originType &amp;&amp; *originType)</span><br><span class="line">    &#123;</span><br><span class="line">        originType = BHSizeAndAlignment(originType, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">        <span class="keyword">if</span> ([[<span class="built_in">NSString</span> stringWithUTF8String:originType] hasPrefix:<span class="string">@"@?"</span>]) &#123;</span><br><span class="line">            [blockArgIndex addObject:@(argIndex)];</span><br><span class="line">        &#125;</span><br><span class="line">        argIndex++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    BTTracker *tracker = BTEngine.defaultEngine.trackers[bt_methodDescription(<span class="keyword">self</span>, selector)];</span><br><span class="line">    <span class="keyword">if</span> (!tracker) &#123;</span><br><span class="line">        tracker = [[BTTracker alloc] initWithTarget:<span class="keyword">self</span> selector:selector];</span><br><span class="line">        tracker.callback = callback;</span><br><span class="line">        tracker.blockArgIndex = [blockArgIndex <span class="keyword">copy</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> [tracker apply] ? tracker : <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>bt_trackBlockArgOfSelector:callback:</code> 方法返回的 <code>BTTracker</code> 对象也保存了 <code>callback</code> 回调。</p>
+<h3 id="执行-Callback"><a href="#执行-Callback" class="headerlink" title="执行 Callback"></a>执行 Callback</h3><p>遍历之前保存的 Block 参数 Index 列表 <code>blockArgIndex</code>，从 <code>NSInvocation</code> 中取到 Block 参数后，就可以 Hook 了。Block 的执行次数保存到了 <code>BHToken</code> 上，每次执行都会累加。在 Block 执行或销毁后都会调用 <code>callback</code>，只是传的参数稍有不同。</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">for (<span class="name">NSNumber</span> *index in tracker.blockArgIndex) &#123;</span><br><span class="line">   if (index.integerValue &lt; invocation.methodSignature.numberOfArguments) &#123;</span><br><span class="line">       __unsafe_unretained id block;</span><br><span class="line">       [invocation getArgument:&amp;block atIndex:index.integerValue];</span><br><span class="line">       __weak typeof(block) weakBlock = block;</span><br><span class="line">       __weak typeof(tracker) weakTracker = tracker;</span><br><span class="line">       BHToken *tokenAfter = [block block_hookWithMode<span class="symbol">:BlockHookModeAfter</span> usingBlock:^(<span class="name">BHToken</span> *token) &#123;</span><br><span class="line">           __strong typeof(weakBlock) strongBlock = weakBlock;</span><br><span class="line">           __strong typeof(weakTracker) strongTracker = weakTracker;</span><br><span class="line">           NSNumber *invokeCount = objc_getAssociatedObject(<span class="name">token</span>, NSSelectorFromString(@<span class="string">"invokeCount"</span>))<span class="comment">;</span></span><br><span class="line">           if (!invokeCount) &#123;</span><br><span class="line">               invokeCount = @(<span class="number">1</span>)<span class="comment">;</span></span><br><span class="line">           &#125;</span><br><span class="line">           else &#123;</span><br><span class="line">               invokeCount = [NSNumber numberWithInt<span class="symbol">:invokeCount</span>.intValue + <span class="number">1</span>]<span class="comment">;</span></span><br><span class="line">           &#125;</span><br><span class="line">           objc_setAssociatedObject(<span class="name">token</span>, NSSelectorFromString(@<span class="string">"invokeCount"</span>), invokeCount, OBJC_ASSOCIATION_RETAIN)<span class="comment">;</span></span><br><span class="line">           if (<span class="name">strongTracker</span>.callback) &#123;</span><br><span class="line">               strongTracker.callback(<span class="name">strongBlock</span>, BlockTrackerCallbackTypeInvoke, invokeCount.intValue, token.args, token.retValue, [NSThread callStackSymbols])<span class="comment">;</span></span><br><span class="line">           &#125;</span><br><span class="line">       &#125;]<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">       [block block_hookWithMode<span class="symbol">:BlockHookModeDead</span> usingBlock:^(<span class="name">BHToken</span> *token) &#123;</span><br><span class="line">           __strong typeof(weakTracker) strongTracker = weakTracker;</span><br><span class="line">           NSNumber *invokeCount = objc_getAssociatedObject(<span class="name">tokenAfter</span>, NSSelectorFromString(@<span class="string">"invokeCount"</span>))<span class="comment">;</span></span><br><span class="line">           if (<span class="name">strongTracker</span>.callback) &#123;</span><br><span class="line">               strongTracker.callback(<span class="name">nil</span>, BlockTrackerCallbackTypeDead, invokeCount.intValue, <span class="literal">nil</span>, <span class="literal">nil</span>, [NSThread callStackSymbols])<span class="comment">;</span></span><br><span class="line">           &#125;</span><br><span class="line">       &#125;]<span class="comment">;</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="对-NSInvocation-的一点探索"><a href="#对-NSInvocation-的一点探索" class="headerlink" title="对 NSInvocation 的一点探索"></a>对 NSInvocation 的一点探索</h3><p>在从 <code>NSInvocation</code> 对象获取参数时，需要先调用 <code>retainArguments</code> 方法让 <code>NSInvocation</code> 将 Block 参数 <code>copy</code>。因为有些 Block 参数类型是 <code>__NSStackBlock__</code>，需要拷贝到堆上，否则从 <code>NSInvocation</code> 获取的 Block 不会销毁。</p>
+<p><code>getArgument:atIndex:</code> 方法只是将第 <code>index</code> 个参数指针的值拷贝到 <code>buffer</code> 中，而 <code>retainArguments</code> 才是真的对 C 字符串和 Block 拷贝。</p>
+<p>我还为此做了个小实验。一个类外部声明并调用了 <code>test:</code> 方法，但其实内部实现的是 <code>foo:</code> 方法。通过实现 <code>methodSignatureForSelector:</code> 让消息转发流程走到 <code>forwardInvocation:</code> 方法中。然后向 Block 参数关联 <code>BTDealloc</code> 对象，在 <code>test:</code> 方法执行后，<code>BTDealloc</code> 类的 <code>dealloc</code> 方法并没有执行。也就是说通过 <code>NSInvocation</code> 获取的 Block 参数没销毁；如果先调用了 <code>retainArguments</code> 就会销毁。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)<span class="string">test:</span>(<span class="keyword">void</span>(^)(<span class="keyword">void</span>))block;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)<span class="string">foo:</span> (<span class="keyword">void</span>(^)(<span class="keyword">void</span>)) block &#123;</span><br><span class="line">    block();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (NSMethodSignature *)<span class="string">methodSignatureForSelector:</span>(SEL)aSelector</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> [NSMethodSignature <span class="string">signatureWithObjCTypes:</span><span class="string">"v@:@?"</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)<span class="string">forwardInvocation:</span>(NSInvocation *)anInvocation</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">//    [anInvocation retainArguments];</span></span><br><span class="line">    <span class="keyword">void</span> **invocationFrame = ((__bridge struct BTInvocaton *)anInvocation)-&gt;frame;</span><br><span class="line">    <span class="keyword">void</span> *blockFromFrame = invocationFrame[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">void</span> *block;</span><br><span class="line">    [anInvocation <span class="string">getArgument:</span>&amp;block <span class="string">atIndex:</span><span class="number">2</span>];</span><br><span class="line">    BTDealloc *btDealloc = [BTDealloc <span class="keyword">new</span>];</span><br><span class="line">    objc_setAssociatedObject((__bridge id)block, <span class="meta">@selector</span>(<span class="string">foo:</span>), btDealloc, OBJC_ASSOCIATION_RETAIN);</span><br><span class="line">    anInvocation.selector = <span class="meta">@selector</span>(<span class="string">foo:</span>);</span><br><span class="line">    [anInvocation invoke];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过对 <code>NSInvocation</code> 对象的解析，我发现 <code>NSInvocation</code> 的参数存储于一个私有成员变量 <code>_frame</code> 中，试着将其强转为二级指针，也就是指针数组。拿到对应 index 的值 <code>blockFromFrame</code> 跟 <code>block</code> 作比较，发现是一样的。这里获取 <code>_frame</code> 需要强转下，<code>NSInvocation</code> 的内存模型如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">BTInvocaton</span> &#123;</span></span><br><span class="line">    <span class="keyword">void</span> *isa;</span><br><span class="line">    <span class="keyword">void</span> *frame;</span><br><span class="line">    <span class="keyword">void</span> *retdata;</span><br><span class="line">    <span class="keyword">void</span> *signature;</span><br><span class="line">    <span class="keyword">void</span> *container;</span><br><span class="line">    <span class="keyword">uint8_t</span> retainedArgs;</span><br><span class="line">    <span class="keyword">uint8_t</span> reserved[<span class="number">15</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>由于 Hook Method 的逻辑是在消息转发流程搞事情，所以跟 Aspects 一样不能同时 Hook 父类和子类类相同方法。因为如果子类调用父类的实现，就会死循环。如果 Hook 方法这部分使用 <a href="http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/">Method Swizzling</a> 等交换 IMP 的方式实现，也会有着严重依赖 Hook 顺序导致调用错乱的问题。还是基于桥的 Hook 牛逼，汇编跳板，我这辈子是看不懂了。</p>
+<p>老子终于在这个月最后一天快结束的时候憋出来一篇大水文！搬砖累死了没时间研究技术，你们尽管喷！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Runtime/">Runtime</a><a href="/tags/BlockHook/">BlockHook</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2018/03/31/Track-Block-Arguments-of-Objective-C-Method/" data-title="追踪 Objective-C 方法中的 Block 参数对象 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2018/04/30/Colorful-Rounded-Rect-Dash-Border/" title="Colorful Rounded Rect Dash Border">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Colorful Rounded Rect Dash Border</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/"  title="Hook Objective-C Block with Libffi">
+ <strong>下一篇：</strong><br/> 
+ <span>Hook Objective-C Block with Libffi
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">1.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#过滤方法的-Block-参数"><span class="toc-number">2.1.</span> <span class="toc-text">过滤方法的 Block 参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行-Callback"><span class="toc-number">2.2.</span> <span class="toc-text">执行 Callback</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对-NSInvocation-的一点探索"><span class="toc-number">2.3.</span> <span class="toc-text">对 NSInvocation 的一点探索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

@@ -1,0 +1,592 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>使用 OCLint 自定义 MVVM 规则 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。 然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：https://github.com/yulingtianxia/oclint/t">
+<meta name="keywords" content="Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 OCLint 自定义 MVVM 规则">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2019/01/27/MVVM-Rules-for-OCLint/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。 然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：https://github.com/yulingtianxia/oclint/t">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20190127-175054@2x.png">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 OCLint 自定义 MVVM 规则">
+<meta name="twitter:description" content="最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。 然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：https://github.com/yulingtianxia/oclint/t">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/QQ20190127-175054@2x.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/01/27/MVVM-Rules-for-OCLint/" title="使用 OCLint 自定义 MVVM 规则" itemprop="url">使用 OCLint 自定义 MVVM 规则</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-01-27T11:00:51.000Z" itemprop="datePublished"> 发表于 2019-01-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#编译-OCLint"><span class="toc-number">1.</span> <span class="toc-text">编译 OCLint</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义规则"><span class="toc-number">2.</span> <span class="toc-text">自定义规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建规则"><span class="toc-number">2.1.</span> <span class="toc-text">创建规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生成调试工程"><span class="toc-number">2.2.</span> <span class="toc-text">生成调试工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现规则"><span class="toc-number">2.3.</span> <span class="toc-text">实现规则</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成到-Xcode"><span class="toc-number">3.</span> <span class="toc-text">集成到 Xcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">5.</span> <span class="toc-text">Reference</span></a></li></ol>
+		
+		</div>
+		
+		<p>最近在搞 iOS MVVM 框架，虽说是 N 年前就老生常谈的知识了，但设计模式毕竟是只一种规范，无法约束项目中所有程序员都去遵循。我做了个 OCLint 的自定义规则，对 ViewModel 运行静态检查。</p>
+<p>然而过程中踩了不少坑，OCLint 的官方 Repo 早已失效，可以使用我修改后基于 LLVM 7 的版本：<a href="https://github.com/yulingtianxia/oclint/tree/llvm-7.0" target="_blank" rel="noopener">https://github.com/yulingtianxia/oclint/tree/llvm-7.0</a></p>
+<p>伸手党也可以使用我写的<a href="https://github.com/yulingtianxia/oclint/releases/download/0.18.10/install-0.18.10" target="_blank" rel="noopener">脚本</a>直接安装，已包含 MVVM 规则。</p>
+<a id="more"></a>
+
+<h2 id="编译-OCLint"><a href="#编译-OCLint" class="headerlink" title="编译 OCLint"></a>编译 OCLint</h2><p>编译 OCLint 时，会先下载 LLVM 等项目。由于 LLVM 源码废弃了在 SVN 上的版本管理，将其迁移到了 Git 上，所以目前各种版本的 OCLint 都无法编译了。而且最新版本的 OCLint 还是基于 LLVM 5 的！我从作者的 Repo 那发现有 LLVM 7 的 branch，依然无法编译，只好自己动手改了。</p>
+<p>虽然 Git 上的提交与历史 SVN 提交记录有映射，但是经过实践发现并不精准可信。编译时需要用到 llvm-project 下的 llvm，cfe 和 compile-rt，而且三个 repo 的 release 版本一定要一致。然而  LLVM 在 Git 上同一个 release 的代码却无法编译通过。更离谱的是即便 LLVM 在 GitHub 上把整个 llvm-project 作为一个 repo，依然无法将其 release 版本编译通过。</p>
+<p>算了，Git 不靠谱，还是改下 OCLint 的代码，从官网直接下以前打包好的吧。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">llvm</span> = <span class="string">'http://releases.llvm.org/7.0.0/llvm'</span></span><br><span class="line"><span class="attr">clang</span> = <span class="string">'http://releases.llvm.org/7.0.0/cfe'</span></span><br><span class="line"><span class="attr">clang_rt</span> = <span class="string">'http://releases.llvm.org/7.0.0/compiler-rt'</span></span><br></pre></td></tr></table></figure>
+
+<p>我把最终可以正常编译的 0.18.10 版本发了个非官方的 release 包，macOS 亲测 ok：<a href="https://github.com/yulingtianxia/oclint/releases/tag/0.18.10" target="_blank" rel="noopener">https://github.com/yulingtianxia/oclint/releases/tag/0.18.10</a></p>
+<p>嫌麻烦不想编译的，可以直接跑我提供的脚本来安装已经编译好的 0.18.10 版本。以前安装过 OCLint 旧版本的可以先备份下，因为会被覆盖安装。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget --no-check-certificate -O install-oclint https:<span class="regexp">//gi</span>thub.com<span class="regexp">/yulingtianxia/</span>oclint<span class="regexp">/releases/</span>download<span class="regexp">/0.18.10/i</span>nstall-<span class="number">0.18</span>.<span class="number">10</span></span><br><span class="line">chmod +x install-oclint</span><br><span class="line">.<span class="regexp">/install-oclint</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="自定义规则"><a href="#自定义规则" class="headerlink" title="自定义规则"></a>自定义规则</h2><p>网上有很多介绍如何编写自定义规则的文章，这里假设已经成功编译好 OCLint，总体流程如下。</p>
+<h3 id="创建规则"><a href="#创建规则" class="headerlink" title="创建规则"></a>创建规则</h3><p>使用 oclint-scripts 文件夹下的 scaffoldRule 脚本创建一个新规则，并指定模板。注意规则名不需要带 “Rule”:</p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">oclint-scripts/scaffoldRule MVVM -<span class="built_in">t</span> ASTVisitor</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成调试工程"><a href="#生成调试工程" class="headerlink" title="生成调试工程"></a>生成调试工程</h3><p>创建一个文件夹用于生成调试 Rule 的工程。我已经创建好了：<a href="https://github.com/yulingtianxia/oclint/tree/llvm-7.0/oclint-xcodeproject" target="_blank" rel="noopener">https://github.com/yulingtianxia/oclint/tree/llvm-7.0/oclint-xcodeproject</a></p>
+<p>运行 xcode-debug.sh 脚本即可使用 oclint-rules 文件夹的内容创建一个 Xcode 工程。因为这里是想调试刚刚创建的 MVVM 规则，所以选择 oclint-rules。理论上可以修改脚本参数使用其他文件夹创建 Xcode 工程。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#! /bin/sh -e</span></span><br><span class="line"></span><br><span class="line">cmake -G Xcode -D <span class="attribute">CMAKE_CXX_COMPILER</span>=../build/llvm-install/bin/clang++  -D <span class="attribute">CMAKE_C_COMPILER</span>=../build/llvm-install/bin/clang -D <span class="attribute">OCLINT_BUILD_DIR</span>=../build/oclint-core -D <span class="attribute">OCLINT_SOURCE_DIR</span>=../oclint-core -D <span class="attribute">OCLINT_METRICS_SOURCE_DIR</span>=../oclint-metrics -D <span class="attribute">OCLINT_METRICS_BUILD_DIR</span>=../build/oclint-metrics -D <span class="attribute">LLVM_ROOT</span>=../build/llvm-install/ <span class="built_in">..</span>/oclint-rules</span><br></pre></td></tr></table></figure>
+
+<p>每个规则都有对应的 Scheme，选择我们自定义的 MVVMRule，添加启动参数。<code>-R</code> 传入自定义的规则名，这里使用调试工程生成的 Debug 目录。接着传入一个随便写的测试用文件 <code>TestViewModel.m</code>，此文件所依赖的 Framework 等环境参数也需要传入。别忘了需要把我贴的绝对路径修改成你电脑上的路径。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-R <span class="regexp">/Users/</span>yangxiaoyu<span class="regexp">/Code/</span>oclint<span class="regexp">/oclint-xcodeproject/</span>rules.dl<span class="regexp">/Debug /</span>Users<span class="regexp">/yangxiaoyu/</span>Code<span class="regexp">/oclint/</span>oclint-rules-test<span class="regexp">/OCLintTest/</span>OCLintTest/TestViewModel.m  -- -x objective-c </span><br><span class="line">-isystem <span class="regexp">/Users/</span>yangxiaoyu<span class="regexp">/Code/</span>oclint<span class="regexp">/build/</span>oclint-release<span class="regexp">/lib/</span>clang<span class="regexp">/7.0.0/</span>include</span><br><span class="line">-iframework <span class="regexp">/Applications/</span>Xcode.app<span class="regexp">/Contents/</span>Developer<span class="regexp">/Platforms/</span>iPhoneSimulator.platform<span class="regexp">/Developer/</span>SDKs<span class="regexp">/iPhoneSimulator.sdk/</span>System<span class="regexp">/Library/</span>Frameworks</span><br><span class="line">-isystem <span class="regexp">/Applications/</span>Xcode.app<span class="regexp">/Contents/</span>Developer<span class="regexp">/Platforms/</span>iPhoneSimulator.platform<span class="regexp">/Developer/</span>SDKs<span class="regexp">/iPhoneSimulator.sdk/</span>usr/include</span><br></pre></td></tr></table></figure>
+
+<p>为了能够调试运行，还需要在 Scheme 的 Info 下选择 Executable 为编译好的 oclint 的可执行文件。oclint-0.18.10 文件由于后缀名问题不允许被选择为 Executable，删掉后缀名的数字就可以了。这样就可以无需重新编译 OCLint 直接运行调试了！</p>
+<h3 id="实现规则"><a href="#实现规则" class="headerlink" title="实现规则"></a>实现规则</h3><p>在 MVVM 设计模式下，我想让 ViewModel 的属性都是只读的。因为我只想通过与 Model 的数据绑定来更新 ViewModel 的值，或是在其内部更新状态。现在我需要实现一个规则来找出那些非只读属性。</p>
+<p>先找几个自带的规则例子看看，结合 <a href="https://clang.llvm.org/doxygen/" target="_blank" rel="noopener">Clang AST 文档</a>学习下各种数据结构的定义。如果不知道自己的测试代码如何下手，可以用 <code>clang</code> 命令将测试代码转化为 <a href="http://clang.llvm.org/docs/IntroductionToTheClangAST.html" target="_blank" rel="noopener">Clang AST</a>：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">clang</span> <span class="selector-tag">-Xclang</span> <span class="selector-tag">-ast-dump</span> <span class="selector-tag">-fsyntax-only</span> <span class="selector-tag">TestViewModel</span><span class="selector-class">.m</span></span><br></pre></td></tr></table></figure>
+
+<p>思路是遍历每个后缀名为 <code>ViewModel</code> 类的 Interface 中的所有 Property，判断每个 Property 的 Attribute，如果包含 <code>readwrite</code> 就触发 warning。提高优先级可以产生 error。</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">/* Visit ObjCImplementationDecl */</span><br><span class="line">bool VisitObjCImplementationDecl(ObjCImplementationDecl *<span class="keyword">node</span><span class="title">)</span></span><br><span class="line"><span class="title">&#123;</span></span><br><span class="line"><span class="title">    ObjCInterfaceDecl</span> *interface = <span class="keyword">node</span><span class="title">-&gt;getClassInterface</span>();</span><br><span class="line">    </span><br><span class="line">    bool isViewModel = interface-&gt;getName().endswith(<span class="string">"ViewModel"</span>);</span><br><span class="line">    if (!isViewModel) &#123;</span><br><span class="line">        return <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    for (auto <span class="keyword">property</span><span class="title"> </span>= interface-&gt;instprop_begin(),</span><br><span class="line">         propertyEnd = interface-&gt;instprop_end(); <span class="keyword">property</span><span class="title"> </span>!= propertyEnd; <span class="keyword">property</span><span class="title"></span>++)</span><br><span class="line">    &#123;</span><br><span class="line">        clang::ObjCPropertyDecl *propertyDecl = (clang::ObjCPropertyDecl *)*<span class="keyword">property</span><span class="title"></span>;</span><br><span class="line">        if (propertyDecl-&gt;getName().startswith(<span class="string">"UI"</span>)) &#123;</span><br><span class="line">            addViolation(propertyDecl, this);</span><br><span class="line">        &#125;</span><br><span class="line">        auto attrs = propertyDecl-&gt;getPropertyAttributes();</span><br><span class="line">        bool isReadwrite = (attrs &amp; ObjCPropertyDecl::PropertyAttributeKind::OBJC_PR_readwrite) &gt; <span class="number">0</span>;</span><br><span class="line">        if (isReadwrite &amp;&amp; isViewModel) &#123;</span><br><span class="line">            addViolation(propertyDecl, this);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="集成到-Xcode"><a href="#集成到-Xcode" class="headerlink" title="集成到 Xcode"></a>集成到 Xcode</h2><p>先放一张集成后的效果：</p>
+<p><img src="http://yulingtianxia.com/resources/QQ20190127-175054@2x.png" alt></p>
+<p>在 CI 运行静态检查可以减少一部分人工 Code Review 的成本，缺点是发现问题滞后，解决问题有一定成本。而如果在本地 Xcode 运行静态检查，则可把问题扼杀在摇篮之中，缺点是占用开发机资源。</p>
+<p>如何在 Xcode 中集成 OCLint 静态检查，官方有很详细的文档，图文并茂: <a href="https://oclint-docs.readthedocs.io/en/stable/guide/xcode.html" target="_blank" rel="noopener">https://oclint-docs.readthedocs.io/en/stable/guide/xcode.html</a></p>
+<p>美中不足的是 Xcode Run Script 欠一点火候，可以参考下下面我提供的脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">which</span> oclint 2&gt;/dev/null; <span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">'oclint exist'</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">wget --no-check-certificate -O install-oclint https://github.com/yulingtianxia/oclint/releases/download/0.18.10/install-0.18.10</span><br><span class="line">chmod +x install-oclint</span><br><span class="line">./install-oclint</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">which</span> xcpretty 2&gt;/dev/null; <span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">'xcpretty exist'</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">sudo gem install xcpretty</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">source</span> ~/.bash_profile</span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;SRCROOT&#125;</span></span><br><span class="line">xcodebuild clean</span><br><span class="line">xcodebuild | xcpretty -r json-compilation-database --output compile_commands.json</span><br><span class="line">oclint-json-compilation-database -- -report-type xcode</span><br></pre></td></tr></table></figure>
+
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>我只是简单的写了一个 ViewModel 的规则来跑通和验证整个流程，其实 MVVM 设计模式里还有更多的规则需要实现，比如 ViewModel 中不能引入 <code>UIKit</code> 等。欢迎有兴趣的同学提 PR！</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="http://oclint.org" target="_blank" rel="noopener">OCLint</a></li>
+<li><a href="http://releases.llvm.org/download.html#7.0.0" target="_blank" rel="noopener">LLVM Download Page</a></li>
+<li><a href="https://github.com/llvm/llvm-project" target="_blank" rel="noopener">llvm-project</a></li>
+<li><a href="http://clang.llvm.org/docs/IntroductionToTheClangAST.html" target="_blank" rel="noopener">Introduction to the Clang AST</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2019/01/27/MVVM-Rules-for-OCLint/" data-title="使用 OCLint 自定义 MVVM 规则 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2019/02/28/Parallel-Computation-using-MPS/" title="Parallel Computation using MPS">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Parallel Computation using MPS</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2018/12/30/Dirty-Words-for-Xcode/"  title="DirtyWords for Xcode - 做个文明的程序员">
+ <strong>下一篇：</strong><br/> 
+ <span>DirtyWords for Xcode - 做个文明的程序员
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#编译-OCLint"><span class="toc-number">1.</span> <span class="toc-text">编译 OCLint</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义规则"><span class="toc-number">2.</span> <span class="toc-text">自定义规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建规则"><span class="toc-number">2.1.</span> <span class="toc-text">创建规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生成调试工程"><span class="toc-number">2.2.</span> <span class="toc-text">生成调试工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现规则"><span class="toc-number">2.3.</span> <span class="toc-text">实现规则</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成到-Xcode"><span class="toc-number">3.</span> <span class="toc-text">集成到 Xcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">5.</span> <span class="toc-text">Reference</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

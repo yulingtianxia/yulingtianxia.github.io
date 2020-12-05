@@ -1,0 +1,583 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>如何实现 Flutter 同步调用 Native API | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="Flutter Channel 是一个异步调用通道，如果想在 Dart 侧同步获取到 Native 返回的结果，调用的时候加上 await 就可以了： 1final int result = await platform.invokeMethod(&apos;hello channel&apos;);  所以这篇文章到此为止了？ 不！上面这行代码其实是个『假同步』，因为它只保证了 Dart 代码的同步执行，而 Nat">
+<meta name="keywords" content="Dart,DartNative,Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何实现 Flutter 同步调用 Native API">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2020/09/28/Synchronous-Channel-for-Flutter/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="Flutter Channel 是一个异步调用通道，如果想在 Dart 侧同步获取到 Native 返回的结果，调用的时候加上 await 就可以了： 1final int result = await platform.invokeMethod(&apos;hello channel&apos;);  所以这篇文章到此为止了？ 不！上面这行代码其实是个『假同步』，因为它只保证了 Dart 代码的同步执行，而 Nat">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yulingtianxia.com/resources/DartObjC/sync_call_whole.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/DartObjC/sync_call_optimize.png">
+<meta property="og:updated_time" content="2020-09-30T14:17:54.750Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何实现 Flutter 同步调用 Native API">
+<meta name="twitter:description" content="Flutter Channel 是一个异步调用通道，如果想在 Dart 侧同步获取到 Native 返回的结果，调用的时候加上 await 就可以了： 1final int result = await platform.invokeMethod(&apos;hello channel&apos;);  所以这篇文章到此为止了？ 不！上面这行代码其实是个『假同步』，因为它只保证了 Dart 代码的同步执行，而 Nat">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/DartObjC/sync_call_whole.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2020/09/28/Synchronous-Channel-for-Flutter/" title="如何实现 Flutter 同步调用 Native API" itemprop="url">如何实现 Flutter 同步调用 Native API</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2020-09-28T09:53:16.000Z" itemprop="datePublished"> 发表于 2020-09-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-DartNative"><span class="toc-number">1.</span> <span class="toc-text">Why DartNative?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法签名的优化"><span class="toc-number">3.</span> <span class="toc-text">方法签名的优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#字符串转换的优化"><span class="toc-number">4.</span> <span class="toc-text">字符串转换的优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#转换-Dart-String-为-Objective-C-NSString"><span class="toc-number">4.1.</span> <span class="toc-text">转换 Dart String 为 Objective-C NSString:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#转换-Objective-C-NSString-为-Dart-String"><span class="toc-number">4.2.</span> <span class="toc-text">转换 Objective-C NSString 为 Dart String:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">5.</span> <span class="toc-text">后记</span></a></li></ol>
+		
+		</div>
+		
+		<p>Flutter Channel 是一个异步调用通道，如果想在 Dart 侧同步获取到 Native 返回的结果，调用的时候加上 <code>await</code> 就可以了：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="built_in">int</span> result = <span class="keyword">await</span> platform.invokeMethod(<span class="string">'hello channel'</span>);</span><br></pre></td></tr></table></figure>
+
+<p>所以这篇文章到此为止了？</p>
+<p>不！上面这行代码其实是个『假同步』，因为它只保证了 Dart 代码的同步执行，而 Native 代码与 Dart 并不在同一条线程执行。试想下，如果你通过 Flutter Channel 打日志，但由于打日志的消息是异步传递到 Native 的，最后日志顺序可能是错的。而通过日志来排查一些时序性相关的 Bug 时，日志的顺序很重要。</p>
+<p>因为 Flutter Channel 设计之初就是异步的，使用 <code>await</code> 来回切换线程所带来的开销不小。而且协程的 <code>await</code> 语法具有传递性，上层调用方也需要使用 <code>await</code>，层层传递。</p>
+<p>而 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 设计之初就是同步调用的，且也支持异步调用：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// new DNTest instance and call hello method.</span></span><br><span class="line">DNTest().hello(<span class="string">'DartNative'</span>);</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<h2 id="Why-DartNative"><a href="#Why-DartNative" class="headerlink" title="Why DartNative?"></a>Why DartNative?</h2><ol>
+<li><a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 是『真同步』，保证了执行顺序。同时也支持异步调用。</li>
+<li>一行代码实现同步调用，告别 Flutter Channel 胶水代码带来的开发成本。</li>
+<li>同步调用性能是 Flutter Channel 的数倍。分别使用 Flutter Channel 和 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 调用 <code>fooNSString:</code> 方法，<strong>耗时相差三到四倍</strong>。性能数据可能在不同场景下有波动，可以通过执行 <a href="https://github.com/dart-native/dart_native/blob/3af52f7d3cfa0d93fd9fc04a10a05d4a2e0d5398/dart_native/example/lib/ios/ios_main.dart" target="_blank" rel="noopener">Benchmark 代码</a> 来对比结果。</li>
+</ol>
+<h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><p>下图以 Dart 同步调用 iOS Objective-C API 为例，描述了 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 同步调用的原理。以一个字符串参数为例，讲述了从 Dart <code>String</code> 自动转为 Objective-C <code>NSString</code> 并传递给 <code>hello:</code> 方法的过程。返回值也是自动转换类型的，由于篇幅原因没在图片中描述。</p>
+<p><img src="http://yulingtianxia.com/resources/DartObjC/sync_call_whole.png" alt></p>
+<p>在实现了基本的同步调用后，开发重点也转向了性能优化。</p>
+<h2 id="方法签名的优化"><a href="#方法签名的优化" class="headerlink" title="方法签名的优化"></a>方法签名的优化</h2><p>在 Dart 同步调用 Native 时，为了实现跨语言调用时参数和返回值类型的自动转换，需要先获取到 Native 的方法签名。这里做了两方面的性能优化：</p>
+<ol>
+<li>通过 DartFFI 调用 OC Runtime 获取方法签名占据了一定耗时。可以在 Dart 侧加一层 Cache 来减少通信和反射次数。</li>
+<li>方法签名字符串的构成是 “TypeEncoding+offset” 的组合，跨语言之间传递字符串的编解码的耗时较多，而只有 TypeEncoding 那部分才是类型自动转换所需要的。绝大部分类型对应的 TypeEncoding 都是固定的，于是只需要传递 TypeEncoding 的指针即可。</li>
+</ol>
+<p><img src="http://yulingtianxia.com/resources/DartObjC/sync_call_optimize.png" alt></p>
+<h2 id="字符串转换的优化"><a href="#字符串转换的优化" class="headerlink" title="字符串转换的优化"></a>字符串转换的优化</h2><p>Dart <code>String</code> 在与 Objective-C <code>NSString</code> 相互转换的过程中，数据传输的格式的选择至关重要。因为 Dart <code>String</code> 是使用 UTF16 编码的，所以 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 使用 <code>Uint16List</code> 作为数据传输的格式。通过性能测试，使用 UTF16 来回传输字符串的总耗时（包含 Native 方法自身耗时）相比 UTF8 <a href="https://github.com/dart-native/dart_native/issues/22" target="_blank" rel="noopener">减少了 35% 左右</a>，如果只计算通道自动类型转换耗时减少的比例会更多。</p>
+<h3 id="转换-Dart-String-为-Objective-C-NSString"><a href="#转换-Dart-String-为-Objective-C-NSString" class="headerlink" title="转换 Dart String 为 Objective-C NSString:"></a>转换 Dart <code>String</code> 为 Objective-C <code>NSString</code>:</h3><p>使用 DartFFI 在堆上创建 <code>uint16_t</code> 数组，将 Dart <code>String</code> 转为 UTF16 格式后装载进去。最终通过 <code>perform</code> 方法反射调用 <code>stringWithCharacters:length:</code> 方法来创建 <code>NSString</code> 对象。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> units = value.codeUnits;</span><br><span class="line"><span class="keyword">final</span> Pointer&lt;Uint16&gt; charPtr = allocate&lt;Uint16&gt;(count: units.length + <span class="number">1</span>);</span><br><span class="line"><span class="keyword">final</span> Uint16List nativeString = charPtr.asTypedList(units.length + <span class="number">1</span>);</span><br><span class="line">nativeString.setAll(<span class="number">0</span>, units);</span><br><span class="line">nativeString[units.length] = <span class="number">0</span>;</span><br><span class="line">NSObject result = Class(<span class="string">'NSString'</span>).perform(</span><br><span class="line">    SEL(<span class="string">'stringWithCharacters:length:'</span>),</span><br><span class="line">    args: [charPtr, units.length]);</span><br><span class="line">free(charPtr);</span><br></pre></td></tr></table></figure>
+
+<h3 id="转换-Objective-C-NSString-为-Dart-String"><a href="#转换-Objective-C-NSString-为-Dart-String" class="headerlink" title="转换 Objective-C NSString 为 Dart String:"></a>转换 Objective-C <code>NSString</code> 为 Dart <code>String</code>:</h3><p><code>NSString</code> 转为 UTF16 稍微麻烦一点。这里的方案是先转为 UTF16 的 <code>NSData</code>，然后将 <code>uint16_t</code> 数组的地址和字符长度（不是字节长度）返回给 Dart 侧。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">void</span> *</span><br><span class="line">native_convert_nsstring_to_utf16(<span class="built_in">NSString</span> *string, <span class="built_in">NSUInteger</span> *length) &#123;</span><br><span class="line">    <span class="built_in">NSData</span> *data = [string dataUsingEncoding:<span class="built_in">NSUTF16StringEncoding</span>];</span><br><span class="line">    <span class="comment">// UTF16, 2-byte per unit</span></span><br><span class="line">    *length = data.length / <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> data.bytes;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Dart 拿到 <code>uint16_t</code> 数组后会转为 <code>Uint16List</code> 类型，并用它初始化一个 <code>String</code> 对象。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Pointer&lt;Uint64&gt; length = allocate&lt;Uint64&gt;();</span><br><span class="line">Pointer&lt;Void&gt; result = convertNSStringToUTF16(ptr, length);</span><br><span class="line">Uint16List list = result.cast&lt;Uint16&gt;().asTypedList(length.value);</span><br><span class="line">free(length);</span><br><span class="line"><span class="built_in">String</span> str = <span class="built_in">String</span>.fromCharCodes(list);</span><br></pre></td></tr></table></figure>
+
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>写了这么多 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 的相关文章，终于轮到了介绍最基础最核心的同步调用功能。其实异步调用也是支持的，看来用 <a href="https://github.com/dart-native/dart_native" target="_blank" rel="noopener">DartNative</a> 来替换 Flutter Channel 的理由又多了。</p>
+<p>这篇文章主要讲的是 iOS 的同步调用实现以及性能优化，Android 也已经实现同步调用中基本类型的自动转换。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2020/09/28/Synchronous-Channel-for-Flutter/" data-title="如何实现 Flutter 同步调用 Native API | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2020/10/25/Asynchronous-Callback-for-Flutter/" title="实现 Native 异步回调 Flutter">
+  <strong>上一篇：</strong><br/>
+  <span>
+  实现 Native 异步回调 Flutter</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2020/08/22/DartNative-Automatic-Memory-Management/"  title="DartNative 内存自动管理">
+ <strong>下一篇：</strong><br/> 
+ <span>DartNative 内存自动管理
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-DartNative"><span class="toc-number">1.</span> <span class="toc-text">Why DartNative?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法签名的优化"><span class="toc-number">3.</span> <span class="toc-text">方法签名的优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#字符串转换的优化"><span class="toc-number">4.</span> <span class="toc-text">字符串转换的优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#转换-Dart-String-为-Objective-C-NSString"><span class="toc-number">4.1.</span> <span class="toc-text">转换 Dart String 为 Objective-C NSString:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#转换-Objective-C-NSString-为-Dart-String"><span class="toc-number">4.2.</span> <span class="toc-text">转换 Objective-C NSString 为 Dart String:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">5.</span> <span class="toc-text">后记</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

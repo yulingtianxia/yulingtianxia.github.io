@@ -1,0 +1,801 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>自制一款强大的 ActionSheet | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="iOS 系统自带的 UIActionSheet 无法满足开发中高度个性化的 UI 风格和代码风格，所以我决定自己动手丰衣足食，于是 TBActionSheet 诞生了：   Github：https://github.com/yulingtianxia/TBActionSheet TBActionSheet 不仅还原了 UIActionSheet 的几乎所有功能和 API，还在此基础上支持如下功能">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自制一款强大的 ActionSheet">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2016/07/18/TBActionSheet/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="iOS 系统自带的 UIActionSheet 无法满足开发中高度个性化的 UI 风格和代码风格，所以我决定自己动手丰衣足食，于是 TBActionSheet 诞生了：   Github：https://github.com/yulingtianxia/TBActionSheet TBActionSheet 不仅还原了 UIActionSheet 的几乎所有功能和 API，还在此基础上支持如下功能">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://github.com/yulingtianxia/TBActionSheet/blob/master/images/demo.gif?raw=true">
+<meta property="og:image" content="http://yulingtianxia.com/resources/TBActionSheet/overview.jpg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/TBActionSheet/ambientColor.png">
+<meta property="og:image" content="https://github.com/yulingtianxia/TBActionSheet/blob/master/images/addButton.gif?raw=true">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自制一款强大的 ActionSheet">
+<meta name="twitter:description" content="iOS 系统自带的 UIActionSheet 无法满足开发中高度个性化的 UI 风格和代码风格，所以我决定自己动手丰衣足食，于是 TBActionSheet 诞生了：   Github：https://github.com/yulingtianxia/TBActionSheet TBActionSheet 不仅还原了 UIActionSheet 的几乎所有功能和 API，还在此基础上支持如下功能">
+<meta name="twitter:image" content="https://github.com/yulingtianxia/TBActionSheet/blob/master/images/demo.gif?raw=true">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2016/07/18/TBActionSheet/" title="自制一款强大的 ActionSheet" itemprop="url">自制一款强大的 ActionSheet</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2016-07-18T04:36:15.000Z" itemprop="datePublished"> 发表于 2016-07-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#为何要造这个轮子"><span class="toc-number">1.</span> <span class="toc-text">为何要造这个轮子</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#界面组成"><span class="toc-number">2.</span> <span class="toc-text">界面组成</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景"><span class="toc-number">2.1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#容器"><span class="toc-number">2.2.</span> <span class="toc-text">容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#标题-amp-消息"><span class="toc-number">2.3.</span> <span class="toc-text">标题&amp;消息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义视图"><span class="toc-number">2.4.</span> <span class="toc-text">自定义视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按钮"><span class="toc-number">2.5.</span> <span class="toc-text">按钮</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#接口实现"><span class="toc-number">3.</span> <span class="toc-text">接口实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化"><span class="toc-number">3.1.</span> <span class="toc-text">初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加按钮"><span class="toc-number">3.2.</span> <span class="toc-text">添加按钮</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#show"><span class="toc-number">3.3.</span> <span class="toc-text">show</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#setupNewWindow"><span class="toc-number">3.3.1.</span> <span class="toc-text">setupNewWindow</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Autorotation"><span class="toc-number">3.3.1.1.</span> <span class="toc-text">Autorotation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#interruptGesture"><span class="toc-number">3.3.1.2.</span> <span class="toc-text">interruptGesture</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TBActionSheetController"><span class="toc-number">3.3.1.3.</span> <span class="toc-text">TBActionSheetController</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#setupLayout"><span class="toc-number">3.3.2.</span> <span class="toc-text">setupLayout</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#setupStyle"><span class="toc-number">3.3.3.</span> <span class="toc-text">setupStyle</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#BlurEffect-amp-Separator"><span class="toc-number">3.3.3.1.</span> <span class="toc-text">BlurEffect &amp; Separator</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#截屏"><span class="toc-number">3.3.3.1.1.</span> <span class="toc-text">截屏</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ambientColor"><span class="toc-number">3.3.3.1.2.</span> <span class="toc-text">ambientColor</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Separator"><span class="toc-number">3.3.3.1.3.</span> <span class="toc-text">Separator</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RectCorner"><span class="toc-number">3.3.3.2.</span> <span class="toc-text">RectCorner</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#setupContainerFrame"><span class="toc-number">3.3.3.3.</span> <span class="toc-text">setupContainerFrame</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#动画"><span class="toc-number">3.3.4.</span> <span class="toc-text">动画</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#close-amp-buttonTapped"><span class="toc-number">3.4.</span> <span class="toc-text">close &amp; buttonTapped</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#一些细节"><span class="toc-number">4.</span> <span class="toc-text">一些细节</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Marco"><span class="toc-number">4.1.</span> <span class="toc-text">Marco</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#UI-APPEARANCE-SELECTOR"><span class="toc-number">4.1.1.</span> <span class="toc-text">UI_APPEARANCE_SELECTOR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NS-UNAVAILABLE"><span class="toc-number">4.1.2.</span> <span class="toc-text">NS_UNAVAILABLE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NS-ASSUME-NONNULL-BEGIN（-END）"><span class="toc-number">4.1.3.</span> <span class="toc-text">NS_ASSUME_NONNULL_BEGIN（_END）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态配置"><span class="toc-number">4.2.</span> <span class="toc-text">动态配置</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#属性"><span class="toc-number">5.</span> <span class="toc-text">属性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#尺寸"><span class="toc-number">5.1.</span> <span class="toc-text">尺寸</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#样式"><span class="toc-number">5.2.</span> <span class="toc-text">样式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#状态"><span class="toc-number">5.3.</span> <span class="toc-text">状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内容"><span class="toc-number">5.4.</span> <span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#标记"><span class="toc-number">5.5.</span> <span class="toc-text">标记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动画-amp-朝向"><span class="toc-number">5.6.</span> <span class="toc-text">动画&amp;朝向</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#属性存取器"><span class="toc-number">5.7.</span> <span class="toc-text">属性存取器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后记"><span class="toc-number">6.</span> <span class="toc-text">后记</span></a></li></ol>
+		
+		</div>
+		
+		<p>iOS 系统自带的 <code>UIActionSheet</code> 无法满足开发中高度个性化的 UI 风格和代码风格，所以我决定自己动手丰衣足食，于是 <a href="https://github.com/yulingtianxia/TBActionSheet" target="_blank" rel="noopener"><code>TBActionSheet</code></a> 诞生了：</p>
+<img src="https://github.com/yulingtianxia/TBActionSheet/blob/master/images/demo.gif?raw=true" width="50%" height="50%">
+
+<p>Github：<a href="https://github.com/yulingtianxia/TBActionSheet" target="_blank" rel="noopener">https://github.com/yulingtianxia/TBActionSheet</a></p>
+<p><a href="https://github.com/yulingtianxia/TBActionSheet" target="_blank" rel="noopener"><code>TBActionSheet</code></a> 不仅还原了 <code>UIActionSheet</code> 的几乎所有功能和 API，还在此基础上支持如下功能：</p>
+<ol>
+<li>block 语法</li>
+<li>插入自定义的 Header 视图</li>
+<li>自定义字体、颜色、尺寸、圆角等</li>
+<li>将毛玻璃效果支持到了 iOS7，且可以定义颜色</li>
+<li>支持 Cocoapods 和 Carthage</li>
+<li>支持在 Title 下面设置 Message</li>
+<li>支持点击背景关闭</li>
+<li>可以在显示后动态更新 UI</li>
+</ol>
+<a id="more"></a>
+
+<h1 id="为何要造这个轮子"><a href="#为何要造这个轮子" class="headerlink" title="为何要造这个轮子"></a>为何要造这个轮子</h1><p>可能上午视觉同学要求所有系统版本的 ActionSheet 都要做成 iOS9 的圆角样式，下午就推翻做成跟微信一模一样，晚上又觉得微信的好丑风格不搭。。。如何以不变应万变？自己造个万能轮子！</p>
+<p>其实有一些开源的 ActionSheet，但都不满足我的要求：<strong>高度个性化，私人定制</strong>，而且<strong>几乎其他开源的 ActionSheet 都不支持自动旋转，只支持竖屏不能横屏</strong>。而系统的 <code>UIActionSheet</code> 是支持这个功能的。<a href="https://github.com/yulingtianxia/TBActionSheet" target="_blank" rel="noopener"><code>TBActionSheet</code></a> 做到在 iOS8+ 上的旋转屏幕适配，之所以不兼容 iOS7+ 是因为 iOS7 和 iOS8+ 的旋转机制和坐标体系有较大差别，总结为一个字：<strong>懒</strong>！</p>
+<p>其实造这个轮子的原因还真就是因为<strong>懒</strong>！因为视觉同学经常会调整风格，改来改去真的会产生大量废弃的冗余代码，因为怕未来某个时间点又被改回去，所以不敢删代码只好注释掉。<strong>我就是要做个高度个性化的组件，每次修改 UI 只需要修改几个属性就可以</strong>。</p>
+<p>针对上面功能列表列出的第 1 条和第 6 条，系统的 <code>UIAlertController</code> 也可以办得到，但缺点是只能在 iOS8+ 使用。而 <code>UIActionSheet</code> 和 <code>UIAlertView</code> 却在 iOS8.3 被废弃，这是个青黄不接的年代，为此我曾经开发了 <code>TBAlertController</code> 来兼容高低各种版本的系统，实现原理在 <a href="http://yulingtianxia.com/blog/2015/11/13/Summary-of-the-first-month-in-the-internship-of-Tencent/">腾讯实习第一个月工作总结</a> 有详细讲解。<code>TBAlertController</code> 使用的都是系统控件，不可定制，但也被我集成到了 <a href="https://github.com/yulingtianxia/TBActionSheet" target="_blank" rel="noopener"><code>TBActionSheet</code></a> 项目中。</p>
+<p>在做到功能强大高度个性化的同时也要注重对系统控件原有 API 的最大还原，在绝大多数情况下只需要将代码中的 <code>UI</code> 替换成 <code>TB</code> 即可，降低改动成本。</p>
+<h1 id="界面组成"><a href="#界面组成" class="headerlink" title="界面组成"></a>界面组成</h1><p>从 UI 上大致划分成几个区域，它们都在 <code>TBActionSheet</code> 的视图层级树中：</p>
+<ol>
+<li><code>TBActionBackground</code> 为半透明背景</li>
+<li><code>TBActionContainer</code> 是容纳 Sheet 视图的容器</li>
+<li><code>titleLabel</code> 和 <code>messageLabel</code> 属性是标题和消息，类型为 <code>UILabel</code></li>
+<li><code>customView</code> 属性是个普通的 <code>UIView</code>，供使用者传入自定义视图</li>
+<li><code>TBActionButton</code> 是对应着每个 Action 的按钮</li>
+</ol>
+<p><img src="http://yulingtianxia.com/resources/TBActionSheet/overview.jpg" alt="视图层级"></p>
+<p>所有的坐标和尺寸都是代码计算出来的，没有用自动布局，容器的大小是根据其子视图的 frame 决定的，这其中包含很多计算。</p>
+<p>在实际使用时只需使用 <code>TBActionSheet</code> 就可以了，所以上面提到的类都是幕后工作者。我将会讲述每部分具体实现和一些功能点的实现。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>背景是 <code>TBActionSheet</code> 的子视图中最底层的视图。</p>
+<p><code>TBActionBackground</code> 继承于 <code>UIImageView</code>，虽然目前只是个拥有半透明黑色的可相应点击事件的视图，但是考虑到拓展性，允许使用者在背景上设置图片。</p>
+<p>点击背景后会调用父视图 <code>TBActionSheet</code> 的 <code>close</code> 方法关闭，后续会有详述。</p>
+<h2 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h2><p>我在实现的时候没有使用自动布局，而是自己计算 frame。容器的作用是把一系列内容包装起来，方便计算 frame。<code>TBActionContainer</code> 容纳了整个 ActionSheet 的主体功能视图，系统的毛玻璃效果也是在这添加的。</p>
+<p><code>TBActionSheet</code> 中好多属性其实并不是作为 <code>TBActionSheet</code> 的子视图，而是 <code>TBActionContainer</code> 的子视图，比如：<code>titleLabel</code>、<code>messageLabel</code>、<code>customView</code> 以及<code>buttons</code> 数组中的 <code>TBActionButton</code> 对象。既然这些视图都是容器的子视图，为何不在容器中声明对应的属性呢？目的是尽量将视图暴露给 <code>TBActionSheet</code> 上集中处理，也方便对外集中提供属性和接口。</p>
+<p><code>TBActionContainer</code> 中有对 <code>TBActionSheet</code> 的弱引用，目的是便于获取一些属性值。</p>
+<p>容器从上到下依次为 <code>header</code>，<code>custom</code>，<code>footer</code> 以及 <code>buttons</code> 和 <code>separators</code> 数组。Separator 指的是按钮之间的空隙，可以设置背景颜色。也就是说容器下面还有几个小容器，比如 <code>header</code> 容纳标题和消息，<code>custom</code> 容纳自定义视图，而 <code>footer</code> 目前是空的，仅作为拓展。</p>
+<p><code>TBActionContainer</code> 继承于 <code>UIImageView</code>，<code>header</code>，<code>custom</code>，<code>footer</code> 类型也都是 <code>UIImageView</code>。这是为了实现毛玻璃效果，后续会有详述。</p>
+<h2 id="标题-amp-消息"><a href="#标题-amp-消息" class="headerlink" title="标题&amp;消息"></a>标题&amp;消息</h2><p>系统的 <code>UIActionSheet</code> 只支持标题没有消息，但可以通过换行的方式伪装下标题和消息。我这里当然是用两个 <code>UILabel</code> 来实现标题和消息的啦，字体颜色也尽量还原 <code>UIAlertController</code> 的样式。</p>
+<p><code>TBActionSheet</code> 的 <code>titleLabel</code> 和 <code>messageLabel</code> 属性是 <code>readonly</code> 的，它们都是 <code>TBActionContainer</code> 的 <code>header</code> 属性的子视图。</p>
+<h2 id="自定义视图"><a href="#自定义视图" class="headerlink" title="自定义视图"></a>自定义视图</h2><p><code>TBActionSheet</code> 的 <code>customView</code> 属性可供使用者传入一个 <code>UIView</code> 对象，它是 <code>TBActionContainer</code> 的 <code>custom</code> 属性的子视图。自定义视图能够接收到触摸事件。</p>
+<h2 id="按钮"><a href="#按钮" class="headerlink" title="按钮"></a>按钮</h2><p>所有的按钮都存储于 <code>TBActionSheet</code> 的 <code>buttons</code> 数组中，类型为 <code>TBActionButton</code>。</p>
+<p><code>TBActionButton</code> 继承于 <code>UIButton</code>，有三种 <code>style</code>：</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">typedef <span class="type">NS_ENUM</span>(<span class="type">NSInteger</span>, <span class="type">TBActionButtonStyle</span>) &#123;</span><br><span class="line">    <span class="type">TBActionButtonStyleDefault</span> = 0,</span><br><span class="line">    <span class="type">TBActionButtonStyleCancel</span>,</span><br><span class="line">    <span class="type">TBActionButtonStyleDestructive</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>TBActionButton</code> 还提供了 <code>normalColor</code> 和 <code>highlightedColor</code> 属性，用于设置按钮不同状态下的颜色。如果开启了毛玻璃效果且让 Container 的背景透明，那就需要为容器中每个单独的视图添加毛玻璃效果，所以每个按钮背后都需要分别放置一个同等大小的视图用于毛玻璃效果和变换颜色。<code>behindColorView</code> 属性就是设置颜色的视图。在按钮高亮时它的 <code>alpha</code> 会被设成 0.5。有关毛玻璃效果具体实现细节后续会详述。</p>
+<p>为了支持 block 语法，<code>TBActionButton</code> 内部保留了一个只读的 block 属性 <code>handler</code>，而设置 block 只能通过它的工厂方法，实现如下：</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+ (instancetype)<span class="keyword">buttonWithTitle:(NSString </span>*)title style:(TBActionButtonStyle)style handler:(void (^ __nullable)( TBActionButton * _Nonnull <span class="keyword">button))handler</span></span><br><span class="line"><span class="keyword">&#123;</span></span><br><span class="line"><span class="keyword"> </span>   TBActionButton *<span class="keyword">button </span>= [TBActionButton <span class="keyword">buttonWithType:UIButtonTypeCustom];</span></span><br><span class="line"><span class="keyword"> </span>   <span class="keyword">button.style </span>= style<span class="comment">;</span></span><br><span class="line">    <span class="keyword">button.handler </span>= handler<span class="comment">;</span></span><br><span class="line">    <span class="keyword">button.clipsToBounds </span>= YES<span class="comment">;</span></span><br><span class="line">    [<span class="keyword">button </span>setTitle:title forState:UIControlStateNormal]<span class="comment">;</span></span><br><span class="line">    [<span class="keyword">button </span>setBackgroundColor:[UIColor clearColor]]<span class="comment">;</span></span><br><span class="line">    [<span class="keyword">button.titleLabel </span>setFont:[UIFont systemFontOfSize:<span class="number">20</span>]]<span class="comment">;</span></span><br><span class="line">    return <span class="keyword">button;</span></span><br><span class="line"><span class="keyword">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>除了这个版本的工厂方法，还有个不提供 <code>handler</code> 参数的版本：</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ (instance<span class="keyword">type</span>)buttonWithTitle:(<span class="type">NSString</span> *)title style:(<span class="type">TBActionButtonStyle</span>)style;</span><br></pre></td></tr></table></figure>
+
+<p>至于 block 的属性内存管理语义是用 <code>strong</code> 还是 <code>copy</code>，其实这是个历史问题，在 MRC 时代是需要用 <code>copy</code> 的，因为 ARC 会自动帮我们进行 <code>copy</code>，所以这里用 <code>strong</code> 也可以。苹果官方的态度比较换旧，建议仍然使用 <code>copy</code>，虽然这并没什么乱用。</p>
+<p>因为按钮的数量毕竟有限，对于按钮圆角的实现就不需要考虑性能问题了。有关圆角的这部分后续会有专门一节叙述。</p>
+<h1 id="接口实现"><a href="#接口实现" class="headerlink" title="接口实现"></a>接口实现</h1><p><code>TBActionSheet</code> 具有 <code>UIActionSheet</code> 的<strong>几乎</strong>所有接口和属性，可以说前者是后者的超集。之所以说『几乎』，是因为我在 <code>UIWindow</code> 上模态显示 ActionSheet，相当于 <code>UIAlertController</code> 的做法，于是以下 <code>UIActionSheet</code> 的接口我目前并没有实现：</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- <span class="params">(void)</span>showFromToolbar:<span class="params">(UIToolbar *)</span>view;</span><br><span class="line">- <span class="params">(void)</span>showFromTabBar:<span class="params">(UITabBar *)</span>view;</span><br><span class="line">- <span class="params">(void)</span>showFromBarButtonItem:<span class="params">(UIBarButtonItem *)</span>item animated:<span class="params">(BOOL)</span>animated ;</span><br><span class="line">- <span class="params">(void)</span>showFromRect:<span class="params">(CGRect)</span>rect inView:<span class="params">(UIView *)</span>view animated:<span class="params">(BOOL)</span>animated;</span><br><span class="line">- <span class="params">(void)</span>showInView:<span class="params">(UIView *)</span>view;</span><br></pre></td></tr></table></figure>
+
+<p>除此之外 <code>UIActionSheet</code> 的属性和接口在 <code>TBActionSheet</code> 都有山寨，只是把 <code>UI</code> 换成了 <code>TB</code>，比如 <code>delegate</code></p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span>(<span class="keyword">nullable</span>,<span class="keyword">nonatomic</span>,<span class="keyword">weak</span>) <span class="keyword">id</span>&lt;TBActionSheetDelegate&gt; delegate;</span><br></pre></td></tr></table></figure>
+
+<p><code>TBActionSheetDelegate</code> 中的方法跟 <code>UIActionSheetDelegate</code> 中的方法 selector 完全一样。</p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>初始化方法的设计延续了 <code>UIActionSheet</code> 的接口，在此基础上还加了个带有 <code>message</code> 参数的方法。<strong>为了减少冗余代码，实现高内聚低耦合的设计模式，一般会写一个参数最多功能最全的方法，其他参数少的方法去调用前者</strong>。这种层层 Forward 参数的方式在 API 设计中很常见。由于这两个方法都带有可变参数，且<strong>不能在一个带有可变参数的方法中直接调用另一个带有可变参数的方法</strong>。因为函数参数入栈或者存入寄存器的方式都是有规可循的，我也曾尝试过在 x86-64 下找出指针固定的偏移量，遵循 x86-64 calling convention 下的可变参数调用从而修正 <code>va_list</code> 结构体的值。x86 下 <code>va_list</code> 是个 <code>char *</code>，而 x86-64 架构下 <code>va_list</code> 是个结构体：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">int</span> gp_offset;</span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">int</span> fp_offset;</span><br><span class="line">   <span class="keyword">void</span> *overflow_arg_area;</span><br><span class="line">   <span class="keyword">void</span> *reg_save_area;</span><br><span class="line">&#125; va_list[<span class="number">1</span>];</span><br></pre></td></tr></table></figure>
+
+<p>我当时正是给结构体中的数据加上一段位移，使其在可变参数函数之间调用时不 crash，但这样意义不大。关于 <code>va_list</code> 与 calling convention 的细节可以参考 <a href="http://blog.csdn.net/videosender/article/details/6425671" target="_blank" rel="noopener">c/c++ 里面的变长参数的实现</a> 和 <a href="http://stackoverflow.com/questions/4958384/what-is-the-format-of-the-x86-64-va-list-structure" target="_blank" rel="noopener">System V Application Binary Interface</a> 第52页，这里不再做延伸。</p>
+<p>简单的做法是写一个方法接受参数类型为 <code>va_list</code>，将大部分公共逻辑写在里面。这些公共逻辑包括调用 <code>init</code>，给 <code>title</code>、<code>message</code> 和 <code>delegate</code>属性赋值，添加 Cancel 和 Destructive 按钮，遍历 <code>va_list</code> 添加按钮：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">instancetype</span>)initWithTitle:(<span class="built_in">NSString</span> *)title message:(<span class="keyword">nullable</span> <span class="built_in">NSString</span> *)message delegate:(<span class="keyword">id</span>&lt;TBActionSheetDelegate&gt;)delegate cancelButtonTitle:(<span class="keyword">nullable</span> <span class="built_in">NSString</span> *)cancelButtonTitle destructiveButtonTitle:(<span class="keyword">nullable</span> <span class="built_in">NSString</span> *)destructiveButtonTitle firstOtherButtonTitle:(<span class="built_in">NSString</span> *)firstOtherButtonTitle titleList:(va_list)argList</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">self</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        _title = title;</span><br><span class="line">        _message = message;</span><br><span class="line">        _delegate = delegate;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (destructiveButtonTitle) &#123;</span><br><span class="line">            _destructiveButtonIndex = [<span class="keyword">self</span> addButtonWithTitle:destructiveButtonTitle style:TBActionButtonStyleDestructive];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (firstOtherButtonTitle) &#123;<span class="comment">// 第一个参数 firstOtherButtonTitle 是不属于参数列表的,</span></span><br><span class="line">            [<span class="keyword">self</span> addButtonWithTitle:firstOtherButtonTitle style:TBActionButtonStyleDefault];</span><br><span class="line">            <span class="built_in">NSString</span>* eachArg;</span><br><span class="line">            <span class="keyword">while</span> ((eachArg = va_arg(argList, <span class="built_in">NSString</span>*))) &#123;<span class="comment">// 从 args 中遍历出参数，NSString* 指明类型</span></span><br><span class="line">                [<span class="keyword">self</span> addButtonWithTitle:eachArg style:TBActionButtonStyleDefault];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (cancelButtonTitle) &#123;</span><br><span class="line">            _cancelButtonIndex = [<span class="keyword">self</span> addButtonWithTitle:cancelButtonTitle style:TBActionButtonStyleCancel];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为第一个参数不包含在 <code>va_list</code> 中，所以也需要把第一个参数传入。<code>va_arg (va_list ap, type)</code> 像个迭代器一样每次根据 <code>type</code> 计算位移获取参数并更新 <code>va_list</code>。 <code>va_list</code> 的初始化是用 <code>va_start</code> 宏初始化的，并以 <code>va_end</code> 宏结束。有关这些宏的定义，详见 <a href="http://www.cplusplus.com/reference/cstdarg/" target="_blank" rel="noopener">stdarg.h</a> 和 <a href="http://blog.csdn.net/edonlii/article/details/8497704" target="_blank" rel="noopener">这篇文章</a>。</p>
+<p>于是那两个可变参数的初始化方法代码大大减少，调用上面的方法就可以。这样先将可变参数内容初始化到 <code>va_list</code> 中再传参调动的方式避免了 calling convention 的问题：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">instancetype</span>)initWithTitle:(<span class="built_in">NSString</span> *)title delegate:(<span class="keyword">id</span>&lt;TBActionSheetDelegate&gt;)delegate cancelButtonTitle:(<span class="keyword">nullable</span> <span class="built_in">NSString</span> *)cancelButtonTitle destructiveButtonTitle:(<span class="keyword">nullable</span> <span class="built_in">NSString</span> *)destructiveButtonTitle otherButtonTitles:(<span class="keyword">nullable</span> <span class="built_in">NSString</span> *)otherButtonTitles, ... <span class="built_in">NS_REQUIRES_NIL_TERMINATION</span></span><br><span class="line">&#123;</span><br><span class="line">    va_list argList;</span><br><span class="line">    <span class="comment">// 从 otherButtonTitles 开始遍历参数，不包括 otherButtonTitles 本身.</span></span><br><span class="line">    va_start(argList, otherButtonTitles);</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">self</span> initWithTitle:title message:<span class="literal">nil</span> delegate:delegate cancelButtonTitle:cancelButtonTitle destructiveButtonTitle:destructiveButtonTitle firstOtherButtonTitle:otherButtonTitles titleList:argList];</span><br><span class="line">    va_end(argList);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithTitle:(<span class="built_in">NSString</span> *)title message:(<span class="keyword">nullable</span> <span class="built_in">NSString</span> *)message delegate:(<span class="keyword">id</span>&lt;TBActionSheetDelegate&gt;)delegate cancelButtonTitle:(<span class="keyword">nullable</span> <span class="built_in">NSString</span> *)cancelButtonTitle destructiveButtonTitle:(<span class="keyword">nullable</span> <span class="built_in">NSString</span> *)destructiveButtonTitle otherButtonTitles:(<span class="keyword">nullable</span> <span class="built_in">NSString</span> *)otherButtonTitles, ... <span class="built_in">NS_REQUIRES_NIL_TERMINATION</span></span><br><span class="line">&#123;</span><br><span class="line">    va_list argList;</span><br><span class="line">    <span class="comment">// 从 otherButtonTitles 开始遍历参数，不包括 otherButtonTitles 本身.</span></span><br><span class="line">    va_start(argList, otherButtonTitles);</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">self</span> initWithTitle:title message:message delegate:delegate cancelButtonTitle:cancelButtonTitle destructiveButtonTitle:destructiveButtonTitle firstOtherButtonTitle:otherButtonTitles titleList:argList];</span><br><span class="line">    va_end(argList);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了减少冗余代码我也是拼了。。。下面继续说 <code>init</code> 方法。主要工作是对一些属性的初始化工作，并将背景和容器依次添加为子视图，还有监听状态栏朝向变化的通知：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">instancetype</span>)init</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> initWithFrame:[<span class="built_in">UIScreen</span> mainScreen].bounds];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.backgroundColor = [<span class="built_in">UIColor</span> clearColor];</span><br><span class="line">        _background = [[TBActionBackground alloc] initWithFrame:<span class="keyword">self</span>.bounds];</span><br><span class="line">        [<span class="keyword">self</span> addSubview:_background];</span><br><span class="line">        _actionContainer = [[TBActionContainer alloc] initWithSheet:<span class="keyword">self</span>];</span><br><span class="line">        [<span class="keyword">self</span> addSubview:_actionContainer];</span><br><span class="line">        _buttons = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">        _separators = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">        <span class="comment">//set default values</span></span><br><span class="line">        _cancelButtonIndex = <span class="number">-1</span>;</span><br><span class="line">        _destructiveButtonIndex = <span class="number">-1</span>;</span><br><span class="line">        </span><br><span class="line">        [[<span class="built_in">NSNotificationCenter</span> defaultCenter] addObserver:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(statusBarDidChangeOrientation:) name:<span class="built_in">UIApplicationDidChangeStatusBarOrientationNotification</span> object:<span class="literal">nil</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加按钮"><a href="#添加按钮" class="headerlink" title="添加按钮"></a>添加按钮</h2><p>添加按钮的实现就是调用 <code>TBActionButton</code> 的工厂方法新建一个按钮，然后将其设置好点击事件处理的方法后，将按钮实例添加到 <code>buttons</code> 数组中。针对按钮不同的风格，会更新 <code>cancelButtonIndex</code> 和 <code>destructiveButtonIndex</code>，这里做了个兼容性的妥协：<code>UIActionSheet</code> 提供的接口只能至多有一个 <code>cancelButtonTitle</code> 或 <code>destructiveButtonTitle</code>，而 <code>UIAlertController</code> 的接口却支持多个。<code>TBActionSheet</code> 支持多个 <code>cancelButtonTitle</code> 或 <code>destructiveButtonTitle</code>，但 <code>cancelButtonIndex</code> 和 <code>destructiveButtonIndex</code> 总是被更新为最后一个添加的对应风格按钮的 Index：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">- (NSInteger)<span class="string">addButtonWithTitle:</span>(nullable NSString *)title <span class="string">style:</span>(TBActionButtonStyle)style <span class="string">handler:</span>(<span class="keyword">void</span> (^ __nullable)( TBActionButton * _Nonnull button))handler</span><br><span class="line">&#123;</span><br><span class="line">    TBActionButton *button = [TBActionButton <span class="string">buttonWithTitle:</span>title <span class="string">style:</span>style <span class="string">handler:</span>handler];</span><br><span class="line">    [button <span class="string">addTarget:</span>self <span class="string">action:</span><span class="meta">@selector</span>(<span class="string">buttonTapped:</span>) <span class="string">forControlEvents:</span>UIControlEventTouchUpInside];</span><br><span class="line">    [self.buttons <span class="string">addObject:</span>button];</span><br><span class="line">    NSInteger index = self.buttons.count - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">switch</span> (style) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">TBActionButtonStyleDefault:</span> &#123;</span><br><span class="line">            ;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">TBActionButtonStyleCancel:</span> &#123;</span><br><span class="line">            self.cancelButtonIndex = index;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">TBActionButtonStyleDestructive:</span> &#123;</span><br><span class="line">            self.destructiveButtonIndex = index;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="symbol">        default:</span> &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加按钮时把传入的 <code>style</code> 和 <code>handler</code> 再次传给了 <code>TBActionButton</code> 的工厂方法。此外还有两个参数更简洁的方法可供选择，实现如下：</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- (NSInteger)addButtonWithTitle:(NSString *)<span class="built_in">title</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">return</span> [self addButtonWithTitle:<span class="built_in">title</span> <span class="built_in">style</span>:TBActionButtonStyleDefault];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (NSInteger)addButtonWithTitle:(NSString *)<span class="built_in">title</span> <span class="built_in">style</span>:(TBActionButtonStyle)<span class="built_in">style</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">return</span> [self addButtonWithTitle:<span class="built_in">title</span> <span class="built_in">style</span>:<span class="built_in">style</span> handler:nil];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这也是顺应了之前的设计，减少冗余代码。</p>
+<h2 id="show"><a href="#show" class="headerlink" title="show"></a>show</h2><p>在调用 <code>show</code> 方法之前，使用者可能会修改一些属性的值，所以大量的绘制和计算都是在 <code>show</code> 方法调用时执行的。在显示 ActionSheet 的时候需要有一组动画效果：将背景颜色由透明设成半透明黑色，并将容器从屏幕外由下至上平移至屏幕底部。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)show</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> ([<span class="keyword">self</span>.delegate respondsToSelector:<span class="keyword">@selector</span>(willPresentAlertView:)]) &#123;</span><br><span class="line">        [<span class="keyword">self</span>.delegate willPresentActionSheet:<span class="keyword">self</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> setupNewWindow];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> setupLayout];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> setupStyle];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//弹出 ActionSheet 动画</span></span><br><span class="line">    <span class="keyword">void</span>(^animations)(<span class="keyword">void</span>) = ^() &#123;</span><br><span class="line">        <span class="keyword">self</span>.background.backgroundColor = [<span class="built_in">UIColor</span> colorWithWhite:<span class="number">0</span> alpha:<span class="number">0.5</span>];</span><br><span class="line">        [<span class="keyword">self</span> setupContainerFrame];</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">void</span>(^completion)(<span class="built_in">BOOL</span> finished) = ^(<span class="built_in">BOOL</span> finished) &#123;</span><br><span class="line">        <span class="keyword">if</span> ([<span class="keyword">self</span>.delegate respondsToSelector:<span class="keyword">@selector</span>(didPresentActionSheet:)]) &#123;</span><br><span class="line">            [<span class="keyword">self</span>.delegate didPresentActionSheet:<span class="keyword">self</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">self</span>.visible = <span class="literal">YES</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">if</span> (kiOS7Later) &#123;</span><br><span class="line">        [<span class="built_in">UIView</span> animateWithDuration:<span class="keyword">self</span>.animationDuration delay:<span class="number">0</span> usingSpringWithDamping:<span class="keyword">self</span>.animationDampingRatio initialSpringVelocity:<span class="keyword">self</span>.animationVelocity options:<span class="built_in">UIViewAnimationOptionCurveEaseInOut</span> animations:animations completion:completion];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        [<span class="built_in">UIView</span> animateWithDuration:<span class="keyword">self</span>.animationDuration delay:<span class="number">0</span> options:<span class="built_in">UIViewAnimationOptionCurveEaseInOut</span> animations:animations completion:completion];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在动画开始之前最关键的三个步骤是：</p>
+<ol>
+<li>设置新的 <code>UIWindow</code>：<code>setupNewWindow</code></li>
+<li>设置布局：<code>setupLayout</code></li>
+<li>设置毛玻璃效果、圆角、背景颜色等风格：<code>setupStyle</code></li>
+</ol>
+<h3 id="setupNewWindow"><a href="#setupNewWindow" class="headerlink" title="setupNewWindow"></a>setupNewWindow</h3><p><code>setupNewWindow</code> 的具体实现如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setupNewWindow</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> ([<span class="keyword">self</span> isVisible]) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">self</span>.previousKeyWindow = [<span class="built_in">UIApplication</span> sharedApplication].keyWindow;</span><br><span class="line">    [<span class="keyword">self</span>.previousKeyWindow interruptGesture];</span><br><span class="line">    TBActionSheetController *actionSheetVC = [[TBActionSheetController alloc] initWithNibName:<span class="literal">nil</span> bundle:<span class="literal">nil</span>];</span><br><span class="line">    actionSheetVC.actionSheet = <span class="keyword">self</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">self</span>.window = [[<span class="built_in">UIWindow</span> alloc] initWithFrame:[<span class="built_in">UIScreen</span> mainScreen].bounds];</span><br><span class="line">    <span class="keyword">self</span>.window.autoresizingMask = <span class="built_in">UIViewAutoresizingFlexibleWidth</span> | <span class="built_in">UIViewAutoresizingFlexibleHeight</span>;</span><br><span class="line">    <span class="keyword">self</span>.window.opaque = <span class="literal">NO</span>;</span><br><span class="line">    <span class="keyword">self</span>.window.rootViewController = actionSheetVC;</span><br><span class="line">    [<span class="keyword">self</span>.window makeKeyAndVisible];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在把新的 <code>UIWindow</code> 搬到屏幕上之前先用 <code>previousKeyWindow</code> 属性记录下当前的 <code>keyWindow</code>，因为以后会经常用到它。下面会详细展开讲述 <code>setupNewWindow</code> 方法都干了啥。</p>
+<h4 id="Autorotation"><a href="#Autorotation" class="headerlink" title="Autorotation"></a>Autorotation</h4><p>之前说过 <code>TBActionSheet</code> 是在 <code>UIWindow</code> 上模态展示，其实这么做的另一个原因是为了更方便地实现自动旋转。旋转事件的传递路径为：<code>UIApplication</code> -&gt; <code>UIWindow</code> -&gt; <code>rootViewController</code> -&gt; <code>rootViewController.view</code>。所以需要将 <code>TBActionSheet</code> 作为 <code>rootViewController.view</code> 的子视图，这样让其跟着屏幕一起旋转。而在 iOS7 时代，<code>UIWindow</code> 是不会跟着一起旋转的，其 <code>bounds</code> 是不变的，坐标系计算跟 iOS8 之后的不同，所以 <code>TBActionSheet</code> 自动旋转目前仅支持 iOS8+。为了方便在控制器中处理旋转事件，我写了个 <code>TBActionSheetController</code>，它对 <code>TBActionSheet</code> 有一个弱引用，只是为了方便一些操作。</p>
+<p>实现自动旋转的主要流程是：</p>
+<ol>
+<li>新建一个 <code>TBActionSheetController</code> 实例 <code>actionSheetVC</code></li>
+<li>新建一个 <code>UIWindow</code> 实例 <code>window</code> 并赋值给 <code>window</code> 属性</li>
+<li><code>window.rootViewController = actionSheetVC</code></li>
+<li><code>[actionSheetVC.view addSubview: YOUR_VIEW]</code></li>
+</ol>
+<p><code>YOUR_VIEW</code> 就是想要自动旋转的视图，在这里就是 <code>TBActionSheet</code> 实例啦。</p>
+<p>完成了以上流程后，还需要在 <code>TBActionSheet</code> 接受到朝向变化的通知后手动更新 <code>frame</code> 和 <code>bounds</code>。PS：因为我们没使用自动布局，而是手动调整 <code>frame</code>。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)statusBarDidChangeOrientation:(<span class="built_in">NSNotification</span> *)notification &#123;</span><br><span class="line">    <span class="keyword">self</span>.bounds = [<span class="built_in">UIScreen</span> mainScreen].bounds;</span><br><span class="line">    <span class="keyword">self</span>.background.frame = <span class="keyword">self</span>.bounds;</span><br><span class="line">    [<span class="keyword">self</span> setupContainerFrame];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>setupContainerFrame</code> 方法在后面会讲到。</p>
+<h4 id="interruptGesture"><a href="#interruptGesture" class="headerlink" title="interruptGesture"></a>interruptGesture</h4><p>如果作用于 <code>previousKeyWindow</code> 上的手势触发了 ActionSheet 的显示，但此时这个手势没有终止（比如 Pan 手势一直在捕获），这时就会引发一系列问题（测试的同学功不可没），必须中断其他窗口正在捕获的手势。思路是递归遍历子视图树中的所有手势对象，针对 Tap 和 Pan 这两种手势做中断处理。中断的方法就是将 <code>enabled</code> 设为 <code>NO</code> 再设为 <code>YES</code>：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)interruptGesture</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">UIGestureRecognizer</span> *gesture <span class="keyword">in</span> <span class="keyword">self</span>.gestureRecognizers) &#123;</span><br><span class="line">        <span class="keyword">if</span> (([gesture isKindOfClass:[<span class="built_in">UITapGestureRecognizer</span> <span class="keyword">class</span>]] || [gesture isKindOfClass:[<span class="built_in">UIPanGestureRecognizer</span> <span class="keyword">class</span>]]) &amp;&amp; gesture.enabled == <span class="literal">YES</span>) &#123;</span><br><span class="line">            gesture.enabled = <span class="literal">NO</span>;</span><br><span class="line">            gesture.enabled = <span class="literal">YES</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">UIView</span> *subview <span class="keyword">in</span> <span class="keyword">self</span>.subviews) &#123;</span><br><span class="line">        [subview interruptGesture];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="TBActionSheetController"><a href="#TBActionSheetController" class="headerlink" title="TBActionSheetController"></a>TBActionSheetController</h4><p>为了让 ActionSheet 自动旋转，还需要覆写 <code>TBActionSheetController</code> 的 <code>shouldAutorotate</code> 方法并返回 <code>YES</code>，以及在 <code>supportedInterfaceOrientations</code> 方法中返回想要旋转的朝向 Mask。为了让 <code>TBActionSheetController</code> 的状态栏风格和 Hidden 状态与 ActionSheet 展现之前相同，还需要覆写 <code>preferredStatusBarStyle</code> 和 <code>prefersStatusBarHidden</code> 这两个方法。通过 <code>previousKeyWindow</code> 可以递归找到最顶层的控制器，并递归调用 <code>childViewControllerForStatusBarXXX</code> 方法向其获取可以代表状态栏风格或 Hidden 的控制器。这里用到了一些关于 <code>UIWindow</code> 的辅助方法，具体实现在 <code>UIWindow (TBAdditions)</code> 类别中。</p>
+<h3 id="setupLayout"><a href="#setupLayout" class="headerlink" title="setupLayout"></a>setupLayout</h3><p>因为没有用自动布局，所以需要在容器中从上到下依次排列视图，宽度由 <code>sheetWidth</code> 属性得知，只需计算好当前的纵坐标。纵坐标是根据各组件高度累加计算的，所以本质上还是对高度的计算。<code>titleLabel</code> 和 <code>messageLabel</code> 的高度可根据字体和文字内容计算出来。<code>customView</code> 是由调用方提供，高度也可以获得。按钮的高度由 <code>buttonHeight</code> 属性决定。除此之外还有视图之间的空隙，大部分都是小的空隙，Cancel 按钮上下都是大空隙。我将大小空隙的高度分别『钦定』为 8point 和 0.5point，并没提供属性用于个性化。其实这里叫『空隙』不准确，应该是『隔板（Separator）』，因为我在控件之间加了透明的 <code>UIView</code>，它可以根据需求变换背景颜色。</p>
+<p><code>setupLayout</code> 方法的主要流程如下（忽略创建和添加 Separator）：</p>
+<ol>
+<li>根据 <code>title</code> 和 <code>message</code> 属性依次为 <code>titleLabel</code> 和 <code>messageLabel</code> 创建实例，并添加到容器中（<code>actionContainer.header</code>），计算 <code>frame</code>。</li>
+<li>处理调用者传入的 <code>customView</code>，添加到容器中（<code>actionContainer.custom</code>），计算 <code>customView</code> 的 <code>frame</code>。 </li>
+<li>遍历 <code>buttons</code> 数组向容器中（<code>actionContainer</code>）添加按钮，计算按钮的 <code>frame</code>，并根据按钮样式调整文字颜色和 Separator 高度。</li>
+<li>根据 <code>offsetY</code> 属性计算容器下方需要『空』出来的高度。<code>offsetY</code> 为 ActionSheet 下方的 y 轴位移，向下为正，非负值无效，默认值为 -8。最后计算容器的 <code>frame</code>。</li>
+</ol>
+<p>这部分的计算略复杂，只是阐述下思想。但这还不是最复杂的部分。</p>
+<h3 id="setupStyle"><a href="#setupStyle" class="headerlink" title="setupStyle"></a>setupStyle</h3><p>此方法主要是设置风格，比如毛玻璃效果、圆角和颜色等，依赖于 <code>setupLayout</code> 的结果。</p>
+<p>微信的样式是整个容器背景全带毛玻璃效果，且没有圆角；系统样式中 iOS9 和 iOS8 只有按钮和标题部分带毛玻璃效果，其余地方镂空透明的，且 iOS9 的圆角更大些。iOS7 没有毛玻璃效果。<code>TBActionSheet</code> 有几个属性用来调节这些参数：</p>
+<ul>
+<li><code>backgroundTransparentEnabled</code> 是否让 ActionSheet 背景透明（镂空）</li>
+<li><code>blurEffectEnabled</code> 是否启用毛玻璃效果</li>
+<li><code>rectCornerRadius</code> 矩形圆角半径</li>
+<li><code>ambientColor</code> ActionSheet 的环境色</li>
+</ul>
+<h4 id="BlurEffect-amp-Separator"><a href="#BlurEffect-amp-Separator" class="headerlink" title="BlurEffect &amp; Separator"></a>BlurEffect &amp; Separator</h4><p><code>UIVisualEffectView</code> 只支持 iOS8+，为了兼容 iOS7 及更低版本，我的策略是将屏幕上容器区域矩形进行截图，并做三次 Box 模糊处理，并将图片设置为容器的图片（但愿你还记得它们都是 <code>UIImageView</code>），模拟毛玻璃效果。苹果在 WWDC2013 给出了开源实现，使用的是 CI 框架的 Box 模糊函数，效率比高斯模糊要高：<a href="https://developer.apple.com/downloads/download.action?path=wwdc_2013/wwdc_2013_sample_code/ios_uiimageeffects.zip" target="_blank" rel="noopener">ios_uiimageeffects.zip</a>。针对容器镂空的情况，不能将容器矩形整体截图，需要将非镂空控件的每一部分单独截图并做模糊处理，然后将处理好的图片设置为控件的图片（因为容器中的控件都是 <code>UIImageView</code> 或 <code>UIButton</code>，不包含 Separator）。而使用 <code>UIVisualEffectView</code> 的时候也同样遵循这个道理。 <code>UIVisualEffectView</code> 的优点是针对变化的背景可以实时渲染出毛玻璃效果，而截图手动 Box 模糊就做不到这点；缺点是除非使用 <code>UIVisualEffectView</code> 的私有接口否则不能调节模糊半径，而 CI 框架提供的函数可以做到。</p>
+<p>也就是说这里需要做两个判断：</p>
+<ol>
+<li>毛玻璃效果策略：iOS8+ 用 <code>UIVisualEffectView</code>；否则用截图和 Box 模糊；如果不开启毛玻璃效果则使用半透明（alpha=0.5）的背景色（<code>ambientColor</code>）</li>
+<li>ActionSheet 背景是否镂空：不镂空则对容器矩形整体截图，镂空则只对容器内的控件（<code>header</code>,<code>custom</code> 和按钮）矩形截图。</li>
+</ol>
+<p>因为 iOS7 下的毛玻璃效果使用的是截图，所以需要在设备屏幕旋转时刷新下 UI，再次调用 <code>setupStyle</code> 方法。需要覆写 <code>TBActionSheetController</code> 中下面的方法：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">-</span> (void)<span class="selector-tag">didRotateFromInterfaceOrientation</span><span class="selector-pseudo">:(UIInterfaceOrientation)fromInterfaceOrientation</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="selector-tag">if</span> (self.actionSheet.blurEffectEnabled &amp;&amp; !kiOS8Later) &#123;</span><br><span class="line">        <span class="selector-attr">[self.actionSheet setupStyle]</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="截屏"><a href="#截屏" class="headerlink" title="截屏"></a>截屏</h5><p>截屏就是在屏幕上的进行截图，表面上看上去很简单，但实践的时候也会碰到坑。首先我要截取的肯定是 ActionSheet 出现之前的屏幕，所以之前提到过的 <code>previousKeyWindow</code> 属性就又派上用场了，它是 ActionSheet 展现前的窗口，通过它可以获取到最顶层的控制器，然后获取控制器管理的 <code>view</code>，接着就是用 UIKit 那套函数截图。这里需要区分下 iOS6 和 iOS7+ 渲染视图层级要调用不同的接口，并注意一个仅仅发生在 iOS7 上的 crash：<strong>如果截屏区域的长或宽过小时将会引发 crash，这是 iOS7 系统的 bug</strong>。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  从区域截屏</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *  @param aRect 区域</span></span><br><span class="line"><span class="comment"> *  @param view  截取的 view</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *  @return  截取的图片</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">- (<span class="built_in">UIImage</span> *)screenShotRect:(<span class="built_in">CGRect</span>)aRect</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 获取最上层的 UIViewController</span></span><br><span class="line">    <span class="built_in">UIViewController</span> *topController = [<span class="keyword">self</span>.previousKeyWindow currentViewController];</span><br><span class="line">    <span class="built_in">UIView</span> *view = topController.view;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">UIGraphicsBeginImageContext</span>(view.bounds.size);</span><br><span class="line">    <span class="keyword">if</span> ([view respondsToSelector:<span class="keyword">@selector</span>(drawViewHierarchyInRect:afterScreenUpdates:)]) &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="built_in">CGFloat</span> crashMagicNumber = <span class="number">0.3</span>;<span class="comment">// size 小于0.3 在 iOS7 上会导致 crash</span></span><br><span class="line">        <span class="keyword">if</span> (view.frame.size.width &gt;= crashMagicNumber &amp;&amp; view.frame.size.height &gt;= crashMagicNumber ) &#123; <span class="comment">// resolve iOS7 size crash</span></span><br><span class="line">            [view drawViewHierarchyInRect:<span class="keyword">self</span>.bounds afterScreenUpdates:<span class="literal">YES</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;<span class="comment">/* iOS 6 */</span></span><br><span class="line">        [view.layer renderInContext:<span class="built_in">UIGraphicsGetCurrentContext</span>()];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">UIImage</span> *screenshotimage = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>();</span><br><span class="line">    <span class="built_in">UIGraphicsEndImageContext</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> cutFromImage:screenshotimage inRect:aRect];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在图片中截取图片时需要注意 Retina 屏幕的 <code>scale</code> 问题，区分『坐标点』与『像素点』就好。还有要注意如果截图矩形 <code>rect</code> 如果超出了图片 <code>image</code> 范围，超出的那部分会是透明的。</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  从图片中切图</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *  @param image 要被切的图片</span></span><br><span class="line"><span class="comment"> *  @param rect  这里可以设置想要截图的区域</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *  @return 截图</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">- (UIImage *)cutFromImage:(UIImage *)<span class="built_in">image</span> inRect:(CGRect) <span class="built_in">rect</span></span><br><span class="line">&#123;</span><br><span class="line">    CGImageRef imageRef = <span class="built_in">image</span>.CGImage;</span><br><span class="line">    CGRect transRect = CGRectMake(<span class="built_in">rect</span>.origin.x*<span class="built_in">image</span>.<span class="built_in">scale</span>, <span class="built_in">rect</span>.origin.y*<span class="built_in">image</span>.<span class="built_in">scale</span>, <span class="built_in">rect</span>.<span class="built_in">size</span>.<span class="built_in">width</span>*<span class="built_in">image</span>.<span class="built_in">scale</span>, <span class="built_in">rect</span>.<span class="built_in">size</span>.<span class="built_in">height</span>*<span class="built_in">image</span>.<span class="built_in">scale</span>);</span><br><span class="line">    CGImageRef imageRefRect =CGImageCreateWithImageInRect(imageRef, transRect);</span><br><span class="line">    UIImage *sendImage = [[UIImage alloc] initWithCGImage:imageRefRect <span class="built_in">scale</span>:<span class="built_in">image</span>.<span class="built_in">scale</span> orientation:UIImageOrientationUp];</span><br><span class="line">    NSData *imageViewData = UIImagePNGRepresentation(sendImage);</span><br><span class="line">    CGImageRelease(imageRefRect);</span><br><span class="line">    <span class="keyword">return</span> [UIImage imageWithData:imageViewData];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="ambientColor"><a href="#ambientColor" class="headerlink" title="ambientColor"></a>ambientColor</h5><p>环境色其实就是容器的背景颜色，但不能叫 <code>backgroundColor</code>，因为 <code>UIView</code> 中已经有个 <code>backgroundColor</code> 属性了，如果我们自己强制声明重名的属性会导致奇怪的问题。比如设置好的背景色在程序运行中自动被设成其他颜色（一般是黑色），而且是随机出现的，而且一旦出现就会一直复现，除非杀进程。PS：别问我为啥知道这么多，都是泪啊！用在公司项目中被测试同学提过好多次 bug！</p>
+<p>回归正题！如何将环境色加入到容器中呢？毕竟有多种情况，但其思想跟毛玻璃模糊的思路差不多：</p>
+<p><img src="http://yulingtianxia.com/resources/TBActionSheet/ambientColor.png" alt="环境色设置策略"></p>
+<p>值得一提的是在倒数第二个分支『在 <code>UIVisualEffectView</code> 后插入环境色视图』。是在控件的后面插入<br><code>UIVisualEffectView</code> 后再插入一层背景颜色为 <code>ambientColor</code> 的 <code>UIView</code>。如果控件类型为 <code>TBActionButton</code>，那么需要将其 <code>behindColorView</code> 属性设为背景色为 <code>ambientColor</code> 的 <code>UIView</code> 对象。原因是按钮此时无背景色，高亮状态需要调节 <code>behindColorView</code> 的 <code>alpha</code>。</p>
+<p>这部分的代码逻辑其实略复杂，但还不是最烧脑的。</p>
+<h5 id="Separator"><a href="#Separator" class="headerlink" title="Separator"></a>Separator</h5><p>在 <code>setupLayout</code> 中创建的 Separator 都会添加到 <code>separators</code> 数组中，并作为容器的子视图参与 UI 绘制：</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (void)<span class="keyword">addSeparatorLineAt:(CGPoint) </span>point <span class="keyword">isBigFragment:(BOOL) </span><span class="keyword">isBigFragment</span></span><br><span class="line"><span class="keyword">&#123;</span></span><br><span class="line"><span class="keyword"> </span>   UIView *separatorLine = [[UIView alloc] initWithFrame:CGRectMake(point.x, point.y, <span class="keyword">self.sheetWidth, </span><span class="keyword">isBigFragment?bigFragment:smallFragment)];</span></span><br><span class="line"><span class="keyword"> </span>   separatorLine.<span class="keyword">backgroundColor </span>= <span class="keyword">self.separatorColor;</span></span><br><span class="line"><span class="keyword"> </span>   [<span class="keyword">self.actionContainer </span><span class="keyword">addSubview:separatorLine];</span></span><br><span class="line"><span class="keyword"> </span>   [<span class="keyword">self.separators </span><span class="keyword">addObject:separatorLine];</span></span><br><span class="line"><span class="keyword">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>Separator 只是个普通的 <code>UIView</code>，可以透明也可以有颜色，这取决于调用者的口味。微信样式中按钮之间是有些深色的，可以通过 <code>separatorColor</code> 属性来设置这个颜色。Separator 的两种尺寸之前提到过，BigFragment 为 8point，位于 Cancel 按钮上下，即使 Cancel 按钮在中间，也可以应付自如。</p>
+<h4 id="RectCorner"><a href="#RectCorner" class="headerlink" title="RectCorner"></a>RectCorner</h4><p>圆角的实现不复杂，但是判断哪里需要处理成圆角很复杂：<strong>哪个 <code>UIView</code> 的哪个角需要处理成圆角</strong></p>
+<p>我写了个 <code>UIView (TBRectCorner)</code> 类别方便加圆角，原理是用贝塞尔曲线的 <code>bezierPathWithRoundedRect:byRoundingCorners:cornerRadii:</code> 方法绘制圆角矩形路径 <code>maskPath</code>，然后将其 <code>CGPath</code> 作为 <code>layer.mask</code> 的路径。用贝塞尔曲线的优点就是可以针对矩形某个单独的角做圆角，而这正是我需要的。我在 <code>UIView (TBRectCorner)</code> 中以<a href="http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/#Objective-C-Associated-Objects">关联对象</a>的方式加了个 <code>tbRectCorner</code> 属性，用于标记圆角类型（<code>TBRectCorner</code>）。ActionSheet 中的控件一共有四种圆角类型：顶部圆角、底部圆角、全圆角和无圆角。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="built_in">NS_OPTIONS</span>(<span class="built_in">NSUInteger</span>, TBRectCorner) &#123;</span><br><span class="line">    TBRectCornerTop = <span class="number">1</span> &lt;&lt; <span class="number">0</span>,</span><br><span class="line">    TBRectCornerBottom = <span class="number">1</span> &lt;&lt; <span class="number">1</span>,</span><br><span class="line">    TBRectCornerNone = <span class="number">0</span>,</span><br><span class="line">    TBRectCornerAll = TBRectCornerTop|TBRectCornerBottom,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">UIView</span> (<span class="title">TBRectCorner</span>)</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) TBRectCorner tbRectCorner;</span><br><span class="line">- (<span class="keyword">void</span>)setCornerRadius:(<span class="built_in">CGFloat</span>) radius;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>而判断哪里需要圆角的过程就复杂了，用到了大量的 if-else 判断来修改 <code>tbRectCorner</code> 属性。这项工作复杂的原因就在于其布局不确定性，加圆角的规则如下：</p>
+<ol>
+<li>整个容器的边缘都有圆角。容器内部 Separator 为 BigFragment 的上下边缘都有圆角。（Cancel 按钮上下的 Separator 都为 BigFragment）</li>
+<li><code>title</code> 和 <code>message</code> 如果都为 <code>nil</code>，也就是容器的 <code>header</code> 无内容，则容器顶部圆角加在 <code>custom</code> 顶部。</li>
+<li>如果传入的 <code>customView</code> 为 <code>nil</code>，则容器的 <code>custom</code> 无内容，则容器顶部圆角加在第一个按钮顶部。</li>
+<li>容器底部圆角加在最后一个按钮底部。</li>
+</ol>
+<p>具体实现代码就不贴了，分散在 <code>setupStyle</code> 方法的多个位置。</p>
+<h4 id="setupContainerFrame"><a href="#setupContainerFrame" class="headerlink" title="setupContainerFrame"></a>setupContainerFrame</h4><p><code>show</code> 方法中的动画会将整个容器从屏幕外右下至上滑动至屏幕底部，动画的终点就是容器最终的 <code>frame</code>。在计算纵坐标时需要考虑到 iOS7 的状态栏的高度：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setupContainerFrame</span><br><span class="line">&#123;</span><br><span class="line">    self.actionContainer.frame = CGRectMake(kContainerLeft, kScreenHeight - self.actionContainer.frame.<span class="built_in">size</span>.<span class="built_in">height</span> - (!kiOS7Later? <span class="number">20</span>: <span class="number">0</span>), self.actionContainer.frame.<span class="built_in">size</span>.<span class="built_in">width</span>, self.actionContainer.frame.<span class="built_in">size</span>.<span class="built_in">height</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>除此之外还用到了几个自定义的宏，都是为了简化代码的：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">#def</span>ine kScreenWidth [UIScreen mainScreen]<span class="selector-class">.bounds</span><span class="selector-class">.size</span>.<span class="attribute">width</span></span><br><span class="line"><span class="number">#def</span>ine kScreenHeight [UIScreen mainScreen]<span class="selector-class">.bounds</span><span class="selector-class">.size</span>.<span class="attribute">height</span></span><br><span class="line"><span class="number">#def</span>ine kContainerLeft ((kScreenWidth - self.sheetWidth)/<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h3><p>从 iOS7 开始 UIKit 支持了 Spring 动画，有趣的是 SpriteKit 和 UIDynamic 也是在 iOS7 新加入的。我猜其底层实现应该是公用的。</p>
+<p>我只是简单的支持了弹簧动画，添加了几个属性作为动画参数而已。可能今后会丰富下动画种类，或是提供接口，让调用者传入自定义的动画。</p>
+<p>目前调节动画的参数有三个属性：<code>animationDuration</code>，<code>animationDampingRatio</code> 和 <code>animationVelocity</code>。</p>
+<h2 id="close-amp-buttonTapped"><a href="#close-amp-buttonTapped" class="headerlink" title="close &amp; buttonTapped"></a>close &amp; buttonTapped</h2><p>用户点击背景或者按钮时，ActionSheet 会执行消失动画，并伴随着 <code>delegate</code> 的一些回调或是执行 block。这两个方法的实现差不多，仅以 <code>buttonTapped</code> 为例讲解一下。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)buttonTapped:(TBActionButton *)sender</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (![<span class="keyword">self</span> isVisible]) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSUInteger</span> index = [<span class="keyword">self</span>.buttons indexOfObject:sender];</span><br><span class="line">    </span><br><span class="line">    [<span class="built_in">UIView</span> animateWithDuration:<span class="keyword">self</span>.animationDuration delay:<span class="number">0</span> options:<span class="built_in">UIViewAnimationOptionCurveEaseInOut</span> animations:^&#123;</span><br><span class="line">        <span class="keyword">self</span>.background.backgroundColor = [<span class="built_in">UIColor</span> colorWithWhite:<span class="number">0</span> alpha:<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">self</span>.actionContainer.frame = <span class="built_in">CGRectMake</span>(kContainerLeft, kScreenHeight, <span class="keyword">self</span>.actionContainer.frame.size.width, <span class="keyword">self</span>.actionContainer.frame.size.height);</span><br><span class="line">    &#125; completion:^(<span class="built_in">BOOL</span> finished) &#123;</span><br><span class="line">        <span class="comment">//这里之所以把各种 delegate 调用都放在动画完成后是有原因的：为了支持在回调方法中 show 另一个 actionsheet，系统的 UIActionSheet 的调用时机也是如此。</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> ([<span class="keyword">self</span>.delegate respondsToSelector:<span class="keyword">@selector</span>(actionSheet:willDismissWithButtonIndex:)]) &#123;</span><br><span class="line">            [<span class="keyword">self</span>.delegate actionSheet:<span class="keyword">self</span> willDismissWithButtonIndex:index];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">self</span>.window.rootViewController = <span class="literal">nil</span>;</span><br><span class="line">        [<span class="keyword">self</span>.previousKeyWindow makeKeyAndVisible];</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> ([<span class="keyword">self</span>.delegate respondsToSelector:<span class="keyword">@selector</span>(actionSheet:clickedButtonAtIndex:)]) &#123;</span><br><span class="line">            [<span class="keyword">self</span>.delegate actionSheet:<span class="keyword">self</span> clickedButtonAtIndex:index];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (sender.handler) &#123;</span><br><span class="line">            __<span class="keyword">weak</span> __<span class="keyword">typeof</span>(TBActionButton *)weakSender = sender;</span><br><span class="line">            sender.handler(weakSender);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> ([<span class="keyword">self</span>.delegate respondsToSelector:<span class="keyword">@selector</span>(actionSheet:didDismissWithButtonIndex:)]) &#123;</span><br><span class="line">            [<span class="keyword">self</span>.delegate actionSheet:<span class="keyword">self</span> didDismissWithButtonIndex:index];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">self</span>.visible = <span class="literal">NO</span>;</span><br><span class="line">    &#125;]; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>动画就不多说了，基本就是 <code>show</code> 方法中动画的逆动画。其余还有很多 <code>delegate</code> 回调，注意调用的顺序需要还原 <code>UIActionSheet</code> 的调用顺序，也不必多说。针对带有 block 的按钮，执行 block 时要避免内存泄露：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">__weak __typeof(TBActionButton *)weakSender = sender<span class="comment">;</span></span><br><span class="line">sender.handler(weakSender)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p>还有就是处理 <code>UIWindow</code> 的切换和释放 <code>rootViewController</code>：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">self.window.rootViewController</span> = nil<span class="comment">;</span></span><br><span class="line"><span class="section">[self.previousKeyWindow makeKeyAndVisible]</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p>只要调用方不再对 ActionSheet 有强引用，<code>window</code> 就会被释放，不会造成内存泄露。</p>
+<h1 id="一些细节"><a href="#一些细节" class="headerlink" title="一些细节"></a>一些细节</h1><h2 id="Marco"><a href="#Marco" class="headerlink" title="Marco"></a>Marco</h2><p>项目中用到了一些 UIKit 自带的宏，其实它们好多都是使用 <code>__attribute__</code> 的偷懒方式，目的是告诉编译器一些事情。</p>
+<h3 id="UI-APPEARANCE-SELECTOR"><a href="#UI-APPEARANCE-SELECTOR" class="headerlink" title="UI_APPEARANCE_SELECTOR"></a>UI_APPEARANCE_SELECTOR</h3><p>在声明属性的时候，考虑到方便一个应用内控件的统一风格，使用到了 <code>UI_APPEARANCE_SELECTOR</code> 宏。在 iOS8 之前 <code>UIAppearance</code> 不支持 <code>BOOL</code> 类型，需要用 <code>NSInteger</code> 替代。所有声明带有 <code>UI_APPEARANCE_SELECTOR</code> 的属性都在 <code>initialize</code> 初始化：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">+ (void)initialize</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (self != [TBActionSheet class]) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    TBActionSheet *<span class="attr">appearance</span> = [self appearance];</span><br><span class="line">    appearance.<span class="attr">buttonHeight</span> = <span class="number">56</span>;</span><br><span class="line">    appearance.<span class="attr">offsetY</span> = - bigFragment;</span><br><span class="line">    appearance.<span class="attr">tintColor</span> = [UIColor blackColor];</span><br><span class="line">    appearance.<span class="attr">destructiveButtonColor</span> = [UIColor redColor];</span><br><span class="line">    appearance.<span class="attr">cancelButtonColor</span> = [UIColor blackColor];</span><br><span class="line">    appearance.<span class="attr">sheetWidth</span> = MIN(kScreenWidth, kScreenHeight) - <span class="number">20</span>;</span><br><span class="line">    appearance.<span class="attr">backgroundTransparentEnabled</span> = YES;</span><br><span class="line">    appearance.<span class="attr">backgroundTouchClosureEnabled</span> = YES;</span><br><span class="line">    appearance.<span class="attr">blurEffectEnabled</span> = YES;</span><br><span class="line">    appearance.<span class="attr">rectCornerRadius</span> = <span class="number">10</span>;</span><br><span class="line">    appearance.<span class="attr">ambientColor</span> = [UIColor colorWithWhite:<span class="number">1</span> alpha:<span class="number">0.65</span>];</span><br><span class="line">    appearance.<span class="attr">separatorColor</span> = [UIColor clearColor];</span><br><span class="line">    appearance.<span class="attr">animationDuration</span> = <span class="number">0.2</span>;</span><br><span class="line">    appearance.<span class="attr">animationDampingRatio</span> = <span class="number">1</span>;</span><br><span class="line">    appearance.<span class="attr">animationVelocity</span> = <span class="number">1</span>;</span><br><span class="line">    appearance.<span class="attr">supportedInterfaceOrientations</span> = UIInterfaceOrientationMaskAll;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然我是不建议调用者直接在这里改源码来配置个性化的 ActionSheet ，而是应该使用 <code>UIAppearance</code> 在外部进行配置，或是针对某个实例的属性做修改。</p>
+<p><code>UI_APPEARANCE_SELECTOR</code> 的定义如下：</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__attribute__((<span class="name">annotate</span>(<span class="string">"ui_appearance_selector"</span>)))</span><br></pre></td></tr></table></figure>
+
+<h3 id="NS-UNAVAILABLE"><a href="#NS-UNAVAILABLE" class="headerlink" title="NS_UNAVAILABLE"></a>NS_UNAVAILABLE</h3><p>有时候自己创建了一个类，但是想禁用一些从父类继承来的方法，就可以使用 <code>NS_UNAVAILABLE</code> 宏。比如在 <code>TBActionSheet</code> 类中我禁用了这个初始化方法：</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (instance<span class="keyword">type</span>)initWithFrame:(<span class="type">CGRect</span>)frame <span class="type">NS_UNAVAILABLE</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>NS_UNAVAILABLE</code> 其实有一些替代者，从下面的宏定义可以看出：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NS_UNAVAILABLE UNAVAILABLE_ATTRIBUTE</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UNAVAILABLE_ATTRIBUTE __attribute__((unavailable))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __unavailable	__attribute__((unavailable))</span></span><br></pre></td></tr></table></figure>
+
+<p>然而上面的这些宏都是不含提示信息的，想要带提示信息还是老老实实写 <code>__attribute__</code> 吧。下面是 <code>TBActionContainer</code> 的初始化方法声明：</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- <span class="params">(instancetype)</span>initWithSheet:<span class="params">(TBActionSheet *)</span>actionSheet;</span><br><span class="line">- <span class="params">(instancetype)</span>initWithFrame:<span class="params">(CGRect)</span>frame __attribute__<span class="params">((unavailable(<span class="string">"initWithFrame: not available, please use initWithSheet:"</span>))</span>);</span><br><span class="line">- <span class="params">(instancetype)</span>init __attribute__<span class="params">((unavailable(<span class="string">"init not available, please use initWithSheet:"</span>))</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="NS-ASSUME-NONNULL-BEGIN（-END）"><a href="#NS-ASSUME-NONNULL-BEGIN（-END）" class="headerlink" title="NS_ASSUME_NONNULL_BEGIN（_END）"></a>NS_ASSUME_NONNULL_BEGIN（_END）</h3><p>llvm 6.1 为 Objective-C 加入了 Nullability 的新特性后，头文件们一个个都更啰嗦了。可以默认一段代码的属性或参数为非空，针对可能为空的则用 <code>nullable</code> 修饰。但我们声明的大部分属性或者方法参数都是非空的，大量的 <code>nonnull</code> 会降低可读性，所以苹果提供了 Audited Regions 宏，也就是 <code>NS_ASSUME_NONNULL_BEGIN</code> 和 <code>NS_ASSUME_NONNULL_END</code>。在头文件中这对儿宏之间区域的代码都会被审查，指针都会被默认为是 <code>nonnull</code>。<code>TBActionSheet</code> 适配了 Nullability 特性，更多内容可以参考官方的<a href="https://developer.apple.com/swift/blog/?id=25" target="_blank" rel="noopener">Nullability and Objective-C</a>。</p>
+<h2 id="动态配置"><a href="#动态配置" class="headerlink" title="动态配置"></a>动态配置</h2><p>iOS 系统的 <code>UIActionSheet</code> 在展现后就不能做修改了，而我的 <code>TBActionSheet</code> 可以做到实时动态更新，比如动态添加按钮：</p>
+<p><img src="https://github.com/yulingtianxia/TBActionSheet/blob/master/images/addButton.gif?raw=true" alt></p>
+<p>在动态配置 <code>TBActionSheet</code> 的属性后<strong>必须</strong>调用以下方法刷新 UI：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[self.actionSheet setupLayout]</span><span class="comment">;</span></span><br><span class="line"><span class="section">[self.actionSheet setupStyle]</span><span class="comment">;</span></span><br><span class="line"><span class="section">[self.actionSheet setupContainerFrame]</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p>为了实现动态配置，需要有一个还原机制来清理之前的状态。比如容器内有很多子视图，诸如那些 Separator 和 <code>UIVisualEffectView</code> 对象都是一次性使用的，在布局发生变化后必须清理掉它们，并重新生成一遍。容器内这些没有存储数据的视图都是没必要重用的，只需要清理掉重新创建一遍即可。这样虽然可能会带来性能问题，不过考虑到按钮的数量毕竟有限，所以这些一次性的视图数量并不多。而且重用它们需要修改它们的 frame，需要单独花精力管理它们，带来的成本更大。有时简单粗暴点更好，毕竟动态配置这种场景不多。</p>
+<p>还有就是一些视图背景颜色的还原，每次设置前先将其设为 <code>nil</code>。</p>
+<h1 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h1><p><code>UIActionSheet</code> 中除了 <code>UIActionSheetStyle actionSheetStyle</code> 属性，其余属性都已实现。因为 <code>TBActionSheet</code> 的样式可高度个性化定制，所以不再需要 <code>UIActionSheetStyle</code> 这种枚举了。可以说 <code>TBActionSheet</code> 在属性上依然『几乎』是 <code>UIActionSheet</code> 的超集。</p>
+<p><code>TBActionSheet</code> 的属性实在是太多了，因为它完全是手撸的，太灵活了。但总结起来无非就是『尺寸』、『样式』、『状态』、『内容』、『标记』和『动画&amp;朝向』这几大类。</p>
+<h2 id="尺寸"><a href="#尺寸" class="headerlink" title="尺寸"></a>尺寸</h2><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  按钮高度</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>) <span class="built_in">CGFloat</span> buttonHeight <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  actionsheet下方的 y 轴位移，向下为正，非负值无效，默认值为 -8</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>) <span class="built_in">CGFloat</span> offsetY <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  sheet 的宽度，也就是按钮宽度</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>) <span class="built_in">CGFloat</span> sheetWidth <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  矩形圆角半径</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="built_in">CGFloat</span> rectCornerRadius <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="样式"><a href="#样式" class="headerlink" title="样式"></a>样式</h2><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  文字颜色</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>) <span class="built_in">UIColor</span> *tintColor <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  Destructive 按钮文字颜色</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>) <span class="built_in">UIColor</span> *destructiveButtonColor <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  Cancel 按钮文字颜色</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>) <span class="built_in">UIColor</span> *cancelButtonColor <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  分割线颜色</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>) <span class="built_in">UIColor</span> *separatorColor <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  按钮字体</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>) <span class="built_in">UIFont</span> *buttonFont <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  ActionSheet 的环境色</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>) <span class="built_in">UIColor</span> *ambientColor <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="状态"><a href="#状态" class="headerlink" title="状态"></a>状态</h2><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  是否可见</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">readonly</span>,<span class="keyword">getter</span>=isVisible) <span class="built_in">BOOL</span> visible;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  是否让 ActionSheet 背景透明</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>, <span class="keyword">getter</span>=isBackgroundTransparentEnabled) <span class="built_in">NSInteger</span> backgroundTransparentEnabled <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  是否点击背景后关闭 ActionSheet</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>, <span class="keyword">getter</span>=isBackgroundTouchClosureEnabled) <span class="built_in">NSInteger</span> backgroundTouchClosureEnabled <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  是否启用毛玻璃效果</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>, <span class="keyword">getter</span>=isBlurEffectEnabled) <span class="built_in">NSInteger</span> blurEffectEnabled <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h2><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">copy</span>)  <span class="built_in">NSString</span> * _Nullable  title;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">copy</span>)  <span class="built_in">NSString</span> * _Nullable  message;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  标题 UILabel</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>,<span class="keyword">nullable</span>,<span class="keyword">readonly</span>) <span class="built_in">UILabel</span> *titleLabel;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  Message UILabel</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>,<span class="keyword">nullable</span>,<span class="keyword">readonly</span>) <span class="built_in">UILabel</span> *messageLabel;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  自定义视图</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>,<span class="keyword">nullable</span>) <span class="built_in">UIView</span> *customView;</span><br></pre></td></tr></table></figure>
+
+<h2 id="标记"><a href="#标记" class="headerlink" title="标记"></a>标记</h2><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *   标记藏于 ActionSheet 下面的 UIWindow</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">weak</span>, <span class="keyword">nonatomic</span>, <span class="keyword">readonly</span>) <span class="built_in">UIWindow</span> *previousKeyWindow;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>) <span class="built_in">NSInteger</span> cancelButtonIndex;      <span class="comment">// if the delegate does not implement -actionSheetCancel:, we pretend this button was clicked on. default is -1</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>) <span class="built_in">NSInteger</span> destructiveButtonIndex; <span class="comment">// sets destructive (red) button. -1 means none set. default is -1. ignored if only one button</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">readonly</span>) <span class="built_in">NSInteger</span> firstOtherButtonIndex;	<span class="comment">// -1 if no otherButtonTitles or initWithTitle:... not used</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="动画-amp-朝向"><a href="#动画-amp-朝向" class="headerlink" title="动画&amp;朝向"></a>动画&amp;朝向</h2><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">readonly</span>) <span class="built_in">NSInteger</span> numberOfButtons;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  动画持续时长</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="built_in">NSTimeInterval</span> animationDuration <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  动画弹簧效果衰弱比例，值为 1 时无摆动，值越接近 0 摆动越大</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="built_in">CGFloat</span> animationDampingRatio <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  动画弹簧效果初速度。如果动画总距离为 200 点，想让初速度为每秒 100 点，那么将值设为 0.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="built_in">CGFloat</span> animationVelocity <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  支持的朝向</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="built_in">UIInterfaceOrientationMask</span> supportedInterfaceOrientations <span class="built_in">UI_APPEARANCE_SELECTOR</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="属性存取器"><a href="#属性存取器" class="headerlink" title="属性存取器"></a>属性存取器</h2><p>其实属性存取器并不都是必要的，很多 set 方法可以不写，毕竟所有的布局和样式都在最后的 <code>show</code> 方法中决定。但一些改动不大的轻量级属性修改还是可以接受的，这些属性的 set 方法实现也比较简单。动态配置需要再次调用 <code>setupLayout</code>、<code>setupStyle</code> 以及 <code>setupContainerFrame</code>，而这些轻量级的属性修改则可立即生效，无需再调用那三个方法。</p>
+<p>按钮字体的存取器建立在对 <code>buttons</code> 数组的遍历上：</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (void)setButtonFont:(UIFont *)<span class="keyword">buttonFont</span></span><br><span class="line"><span class="keyword">&#123;</span></span><br><span class="line"><span class="keyword"> </span>   <span class="meta">if</span> (<span class="keyword">buttonFont </span>&amp;&amp; [<span class="keyword">self </span><span class="keyword">buttonFont] </span>!= <span class="keyword">buttonFont) </span>&#123;</span><br><span class="line">        for (TBActionButton *<span class="keyword">btn </span>in <span class="keyword">self.buttons) </span>&#123;</span><br><span class="line">            <span class="keyword">btn.titleLabel.font </span>= <span class="keyword">buttonFont;</span></span><br><span class="line"><span class="keyword"> </span>       &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">- (UIFont *)<span class="keyword">buttonFont</span></span><br><span class="line"><span class="keyword">&#123;</span></span><br><span class="line"><span class="keyword"> </span>   return <span class="keyword">self.buttons.lastObject.titleLabel.font;</span></span><br><span class="line"><span class="keyword">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>firstOtherButtonIndex</code> 是只读属性，它也是遍历 <code>buttons</code> 数组，知道找到第一个 Default 风格的按钮：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- (NSInteger)firstOtherButtonIndex</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (int <span class="built_in">i</span>=<span class="number">0</span>; <span class="built_in">i</span>&lt;self.buttons.count; <span class="built_in">i</span>++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (self.buttons[<span class="built_in">i</span>].style==TBActionButtonStyleDefault) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">i</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Separator 的颜色修改需要更新 <code>separators</code> 数组所有的元素：</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- <span class="params">(void)</span>setSeparatorColor:<span class="params">(UIColor *)</span>separatorColor</span><br><span class="line">&#123;</span><br><span class="line">    if <span class="params">(separatorColor &amp;&amp; separatorColor != _separatorColor)</span> &#123;</span><br><span class="line">        _separatorColor = separatorColor;</span><br><span class="line">        for <span class="params">(UIView *separator in self.separators)</span> &#123;</span><br><span class="line">            separator.backgroundColor = separatorColor;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ActionSheet 是否可见，取决于窗口及控制器是否存在：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)isVisible</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// action sheet is visible iff it's associated with a window</span></span><br><span class="line">    <span class="keyword">return</span> !!<span class="keyword">self</span>.window &amp;&amp; <span class="keyword">self</span>.window.rootViewController;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>backgroundTouchClosureEnabled</code> 的更新需要同步到背景 <code>userInteractionEnabled</code> 属性：</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- (void)setBackgroundTouchClosureEnabled:(NSInteger)<span class="keyword">backgroundTouchClosureEnabled</span></span><br><span class="line"><span class="keyword">&#123;</span></span><br><span class="line"><span class="keyword"> </span>   _backgroundTouchClosureEnabled = <span class="keyword">backgroundTouchClosureEnabled;</span></span><br><span class="line"><span class="keyword"> </span>   <span class="keyword">self.background.userInteractionEnabled </span>= <span class="keyword">backgroundTouchClosureEnabled;</span></span><br><span class="line"><span class="keyword">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>我也没想到一个简简单单的 ActionSheet 也会写的这么复杂，早知道会这样我真的不敢下手。以至于写完后还没测试就用在了公司的项目中，各种爆 Bug 然后 Debug。同事们各种提意见然后我再去完善。第一次线上版本全部替换成 <code>TBActionSheet</code> 后出了 Bug，这真的是实习生干的 23333 这锅我背了！</p>
+<p>其实写这个轮子是留下了很多遗憾和不足的：</p>
+<ol>
+<li>一开始觉得布局很简单，无非就是几个 Button 啊 Label 啊，所以没用自动布局。后面功能越来越多布局开始变得复杂，需要大量计算，想想真是后悔。但再往后动态配置和个性化程度大大提升，发现已经复杂到不适合用自动布局，不知是否有些心安</li>
+<li>系统控件的实现是用 <code>UITableView</code> 或 <code>UICollectionView</code> 来实现的，在长按按钮滑动选择的时候，<code>TBActionSheet</code> 就做不到系统控件那样了。如果重写的话一定要用 Table 啊</li>
+<li>属性名几经修改，接口也有小幅度修改，功能强大但也已经臃肿</li>
+<li>没能做到全功能适配 iOS7，或许是自己太懒了。其实有写过二维变换模拟系统的旋转动画，并进行了复杂的数学坐标推导出变换公式，最后觉得还是效果不满意，并投入太多精力，遂放弃</li>
+<li>当时因为业务忙，写的代码真是乱，现在还在一点点整理。。。说啥都是借口！</li>
+</ol>
+<p>其实一开始我也想当把标题党，把文章标题写成『这可能是东半球最牛逼的 ActionSheet』，想想还是算了。我从不求 star 从不求转发，踏实点好😄。</p>
+<p>因为写得比较匆忙，逻辑比较复杂的地方可能描述不清，还请大神们多多提建议和指正。更希望能看到有建设性的 PR，一起将其完善。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/iOS/">iOS</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2016/07/18/TBActionSheet/" data-title="自制一款强大的 ActionSheet | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2016/08/29/Some-Experience-of-Gesture/" title="处理手势冲突和错乱的一点经验">
+  <strong>上一篇：</strong><br/>
+  <span>
+  处理手势冲突和错乱的一点经验</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/"  title="Objective-C 消息发送与转发机制原理">
+ <strong>下一篇：</strong><br/> 
+ <span>Objective-C 消息发送与转发机制原理
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#为何要造这个轮子"><span class="toc-number">1.</span> <span class="toc-text">为何要造这个轮子</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#界面组成"><span class="toc-number">2.</span> <span class="toc-text">界面组成</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景"><span class="toc-number">2.1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#容器"><span class="toc-number">2.2.</span> <span class="toc-text">容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#标题-amp-消息"><span class="toc-number">2.3.</span> <span class="toc-text">标题&amp;消息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义视图"><span class="toc-number">2.4.</span> <span class="toc-text">自定义视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按钮"><span class="toc-number">2.5.</span> <span class="toc-text">按钮</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#接口实现"><span class="toc-number">3.</span> <span class="toc-text">接口实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化"><span class="toc-number">3.1.</span> <span class="toc-text">初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加按钮"><span class="toc-number">3.2.</span> <span class="toc-text">添加按钮</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#show"><span class="toc-number">3.3.</span> <span class="toc-text">show</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#setupNewWindow"><span class="toc-number">3.3.1.</span> <span class="toc-text">setupNewWindow</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Autorotation"><span class="toc-number">3.3.1.1.</span> <span class="toc-text">Autorotation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#interruptGesture"><span class="toc-number">3.3.1.2.</span> <span class="toc-text">interruptGesture</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TBActionSheetController"><span class="toc-number">3.3.1.3.</span> <span class="toc-text">TBActionSheetController</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#setupLayout"><span class="toc-number">3.3.2.</span> <span class="toc-text">setupLayout</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#setupStyle"><span class="toc-number">3.3.3.</span> <span class="toc-text">setupStyle</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#BlurEffect-amp-Separator"><span class="toc-number">3.3.3.1.</span> <span class="toc-text">BlurEffect &amp; Separator</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#截屏"><span class="toc-number">3.3.3.1.1.</span> <span class="toc-text">截屏</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ambientColor"><span class="toc-number">3.3.3.1.2.</span> <span class="toc-text">ambientColor</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Separator"><span class="toc-number">3.3.3.1.3.</span> <span class="toc-text">Separator</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RectCorner"><span class="toc-number">3.3.3.2.</span> <span class="toc-text">RectCorner</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#setupContainerFrame"><span class="toc-number">3.3.3.3.</span> <span class="toc-text">setupContainerFrame</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#动画"><span class="toc-number">3.3.4.</span> <span class="toc-text">动画</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#close-amp-buttonTapped"><span class="toc-number">3.4.</span> <span class="toc-text">close &amp; buttonTapped</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#一些细节"><span class="toc-number">4.</span> <span class="toc-text">一些细节</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Marco"><span class="toc-number">4.1.</span> <span class="toc-text">Marco</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#UI-APPEARANCE-SELECTOR"><span class="toc-number">4.1.1.</span> <span class="toc-text">UI_APPEARANCE_SELECTOR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NS-UNAVAILABLE"><span class="toc-number">4.1.2.</span> <span class="toc-text">NS_UNAVAILABLE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NS-ASSUME-NONNULL-BEGIN（-END）"><span class="toc-number">4.1.3.</span> <span class="toc-text">NS_ASSUME_NONNULL_BEGIN（_END）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态配置"><span class="toc-number">4.2.</span> <span class="toc-text">动态配置</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#属性"><span class="toc-number">5.</span> <span class="toc-text">属性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#尺寸"><span class="toc-number">5.1.</span> <span class="toc-text">尺寸</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#样式"><span class="toc-number">5.2.</span> <span class="toc-text">样式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#状态"><span class="toc-number">5.3.</span> <span class="toc-text">状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内容"><span class="toc-number">5.4.</span> <span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#标记"><span class="toc-number">5.5.</span> <span class="toc-text">标记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动画-amp-朝向"><span class="toc-number">5.6.</span> <span class="toc-text">动画&amp;朝向</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#属性存取器"><span class="toc-number">5.7.</span> <span class="toc-text">属性存取器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后记"><span class="toc-number">6.</span> <span class="toc-text">后记</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

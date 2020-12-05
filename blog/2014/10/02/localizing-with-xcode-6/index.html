@@ -1,0 +1,599 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>使用Xcode6将你的项目本地化 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="iOS和OSX支持40种语言的本地化，Xcode无疑为这一过程提供了强有力的支持。苹果将这一多语言适配过程细分为Internationalization（国际化）和Localization（本地化）两个阶段。">
+<meta name="keywords" content="Xcode,本地化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Xcode6将你的项目本地化">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2014/10/02/localizing-with-xcode-6/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="iOS和OSX支持40种语言的本地化，Xcode无疑为这一过程提供了强有力的支持。苹果将这一多语言适配过程细分为Internationalization（国际化）和Localization（本地化）两个阶段。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-9%402x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-2%402x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-3%402x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-4%402x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-5%402x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-8%402x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-6%402x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-7%402x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/QQ20141002-10%402x.png">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Xcode6将你的项目本地化">
+<meta name="twitter:description" content="iOS和OSX支持40种语言的本地化，Xcode无疑为这一过程提供了强有力的支持。苹果将这一多语言适配过程细分为Internationalization（国际化）和Localization（本地化）两个阶段。">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/QQ20141002-9%402x.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2014/10/02/localizing-with-xcode-6/" title="使用Xcode6将你的项目本地化" itemprop="url">使用Xcode6将你的项目本地化</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2014-10-02T04:54:41.000Z" itemprop="datePublished"> 发表于 2014-10-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#国际化–准备你的APP"><span class="toc-number">1.</span> <span class="toc-text">国际化–准备你的APP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSLocalizedString"><span class="toc-number">1.1.</span> <span class="toc-text">NSLocalizedString</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSFormatter"><span class="toc-number">1.2.</span> <span class="toc-text">NSFormatter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSBundle"><span class="toc-number">1.3.</span> <span class="toc-text">NSBundle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xcode"><span class="toc-number">1.4.</span> <span class="toc-text">Xcode</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地化–翻译你的APP"><span class="toc-number">2.</span> <span class="toc-text">本地化–翻译你的APP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迭代开发–更新你的APP"><span class="toc-number">3.</span> <span class="toc-text">迭代开发–更新你的APP</span></a></li></ol>
+		
+		</div>
+		
+		<p>iOS和OSX支持40种语言的本地化，Xcode无疑为这一过程提供了强有力的支持。苹果将这一多语言适配过程细分为Internationalization（国际化）和Localization（本地化）两个阶段。  </p>
+<a id="more"></a>
+<h2 id="国际化–准备你的APP"><a href="#国际化–准备你的APP" class="headerlink" title="国际化–准备你的APP"></a>国际化–准备你的APP</h2><p><img src="http://yulingtianxia.com/resources/QQ20141002-9%402x.png" alt>  </p>
+<p>在将你的APP适配各种语言本地化之前，你得先让你的APP富有国际范儿，也就是说国际化是一条通往本地化的必经之路。在国际化阶段，你需要让你的APP与语言和区域独立。  </p>
+<p>苹果的框架已经帮我们把不同语言的数据分离开，这更有助于我们管理这些资源，包括图片、声音、视频、文档、用户界面文字（甚至代码中编写的用户界面文字），它们会被建立在同一个bundle中。  </p>
+<h3 id="NSLocalizedString"><a href="#NSLocalizedString" class="headerlink" title="NSLocalizedString"></a>NSLocalizedString</h3><p>我们来使用<code>NSLocalizedString</code>来让用户界面的文字国际化，不过这些文字不是在IB上输入的，而是在代码中产生并赋值的：  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NSLocalizedString</span><span class="params">(key: String, tableName: String? = <span class="keyword">default</span>, bundle: NSBundle = <span class="keyword">default</span>, value: String = <span class="keyword">default</span>, #comment: String)</span></span> -&gt; <span class="type">String</span></span><br></pre></td></tr></table></figure>
+
+<p>上面这个Swift语言声明的函数可以直接返回一个经过本地化处理过的字符串，这就使得你在代码中给一些控件文本赋值时更有“国际化视野”：  </p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">self.text</span> = NSLocalizedString(<span class="string">"SHARE"</span>, comment: <span class="string">"share score"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>因为不用的语言会有不同的专业名词，所以最后的comment参数很重要，它可以暗示翻译人员这段文字要表达的含义。而第一个参数key的内容为基础语种的内容，将它作为“键”来映射其他语言对应翻译后的“值”。如果我们需要在字符串中插入其他内容，这时需要改进下：  </p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> text = <span class="built_in">String</span>.localizedStringWithFormat(NSLocalizedString(<span class="string">"I got %d points in Spiral. Come on with me! https://itunes.apple.com/us/app/square-spiral/id920811081"</span>, comment: <span class="string">"share content"</span>), <span class="built_in">Data</span>.score)</span><br></pre></td></tr></table></figure>
+
+<p><code>localizedStringWithFormat:</code>方法保证了插入字符串中的内容也被转化成本地格式，比如时间格式、数字的格式等。而此时在Swift字符串中插入其他数据就不能使用<code>\()</code>了，只能用百分号占位的形式。  </p>
+<p>对应的在Localizable.strings中可以这样写：  </p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*share score*/</span></span><br><span class="line"><span class="string">"SHARE"</span>=<span class="string">"分享战绩"</span>;</span><br><span class="line"><span class="comment">/*share content*/</span></span><br><span class="line"><span class="string">"I got %d points in Spiral. Come on with me! https://itunes.apple.com/us/app/square-spiral/id920811081"</span>=<span class="string">"我在Spiral游戏中得了%1<span class="subst">$d</span>分，快来超越我吧！https://itunes.apple.com/cn/app/square-spiral/id920811081"</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这样就将英文与中文键值对应起来了，注意那个<code>1$</code>表示是在键内容（即英文原文）中第一个插入的数据，因为不用语言表达同一个意思时，插入字符串中的数据顺序可能会有变化，这个<code>数字+$</code>的标记记录了它们原本的顺序。</p>
+<h3 id="NSFormatter"><a href="#NSFormatter" class="headerlink" title="NSFormatter"></a>NSFormatter</h3><p>NSFormatter算是老朋友了，它把数据转化成人们易读的字符串，而且还会根据不同语言和区域进行格式上的优化。它默认使用当地的语言习惯，我们不需要配置任何参数。比如显示时间日期，数字，金融，字节计数等格式上的本地化。现在iOS8和OSX Yosemite加入了健康相关的功能，NSFormatter也加入了很多新的量词，比如能量、长度高度、重量等方面。  </p>
+<h3 id="NSBundle"><a href="#NSBundle" class="headerlink" title="NSBundle"></a>NSBundle</h3><p>你的APP构建于很多文件夹中，而不是一个单独的文件。这些文件夹被叫做bundle。它们不仅仅包含了你的APP，还有你APP的扩展(extensions)，你的构架(frameworks)等。而NSBundle提供了获取这些bundle中资源的标准API。当你使用这些API的时候，它们会自动使用符合当前地区语言的最恰当的资源。建立bundle是Xcode的活儿，所以我们不需要手动去管理这些资源文件放在bundle的具体位置，而是告诉Xcode哪些资源可以被本地化，设置好资源文件对应的语言，然后就交给Xcode去管理这些资源文件在bundle中的位置吧。  </p>
+<p>所以我们在加载一些资源文件的时候依然向以前那样从bundle获取url就行啦，Xcode已经帮我们替换成了本地化的资源，前提是你已经在Xcode中设置好了当前语言版本的对应资源。  </p>
+<h3 id="Xcode"><a href="#Xcode" class="headerlink" title="Xcode"></a>Xcode</h3><p>在Xcode5中支持了使用base国际化并用自动布局优化国际化后的界面，现在其他资源文件也可以这么干了，甚至可以在Xcode中预览界面布局效果。  </p>
+<p>点选一个xib或storyboard文件后，在File Inspector中的Localization中可以设置支持的语言。Xcode会自动从界面元素中提取出文字到strings文件中，翻译人员可以根据注释来在对应语言的strings文件中进行翻译。当然也可以直观化的转换成界面形式的文件来直观化翻译工作：  </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20141002-2%402x.png" alt>  </p>
+<p>其他诸如图片、声音、影片等资源文件也可以通过类似的方法本地化：  </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20141002-3%402x.png" alt>  </p>
+<p>在Xcode6中我们可以在Debug时预览不同语言和地区APP的界面效果，这样我们就不用在debug阶段不断的切换模拟器或真机的系统语言了！首先要在scheme中更改下运行APP的语言和地区：  </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20141002-4%402x.png" alt>  </p>
+<p>注意到后面还有两项：双倍长度的模拟语言和从右到左的模拟语言，这两种是模拟极端状况下来考验我们UI效果的。比如在表达相同语义时英语的长度要比汉语长很多，而德语又比英语长一些，这很可能让APP的界面造成混乱；而还有语言是从右到作的（古汉语的写法？），这也都是一些APP需要考虑的地方。  </p>
+<p>在Xcode6的Assistent Editor中我们可以无须在模拟器或真机上运行APP就可以在设计界面时预览界面的本地化效果，并在右下角的语言选项中切换语言：  </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20141002-5%402x.png" alt>  </p>
+<p>PS：语言和地区这两个选项是有差别的，比如当我们将地区设置成瑞典，虽然我们没有提供对应的瑞典版本的界面文字翻译，但是时间日期的显示方式等还是会遵从瑞典的习惯来显示。所以地区这一项可供选择的选项包含了所有地区，而语言这一选项只包含了我们在国际化工作中所支持的语言，因为只有国际化中支持的语言（比如上图，我只加入了英语和汉语）才有相应的资源文件；而NSFormatter地区格式优化是内建的，无需我们提供格式。  </p>
+<h2 id="本地化–翻译你的APP"><a href="#本地化–翻译你的APP" class="headerlink" title="本地化–翻译你的APP"></a>本地化–翻译你的APP</h2><p><img src="http://yulingtianxia.com/resources/QQ20141002-8%402x.png" alt>  </p>
+<p>之前国际化的工作就是将工程变得有国际范儿，建立起了支持多语种的架构，那么接下来就是苦逼的翻译工作和本地资源准备工作，说好听点儿就叫本地化。  </p>
+<p>首先要把表面上的工作做了，也就是翻译用户界面上所有的文字。当然这不是程序员该干的活儿，更不能直接交给谷歌翻译，而程序员与专业翻译人员沟通时还是需要成本的：首先把需要翻译的内容从工程里整理出来，然后交给负责翻译的妹子，等妹子翻译好后再把结果导入工程中，嗯目测工作量亚历山大。PS：为什么翻译是妹子？  </p>
+<p>就算妹子再萌，也不能因为这占用了程序猿们宝贵的工作时间！Xcode6简化了导入导出这些资源的流程，它会检查IB资源和源文件并提取“source strings”，并生成XLIFF文件。翻译好的XLIFF文件也可以通过Xcode导入到工程中来生成和更新资源。嗯，可以把省下来的时间干一些其他的事情咯。  </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20141002-6%402x.png" alt>    </p>
+<p>PS：XLIFF是由软件开发商、本地化服务提供商、本地化工具提供商等团体共同倡议和设计，由OASIS标准组织发布的用于本地化数据交换的格式标准。它基于XML技术制定软件资源文件格式的转换规格，其目的在于提高软件的本地化作业效率。  </p>
+<p>导出和导出XLIFF就是如此简单，选中项目，在Editor菜单中可以就找到：  </p>
+<p><img src="http://yulingtianxia.com/resources/QQ20141002-7%402x.png" alt>  </p>
+<p>也可以通过命令行的方式进行导入导出XLIFF文件操作：  </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xcodebuide -exportLocalizations -project <span class="tag">&lt;<span class="name">project</span>&gt;</span> -localizationPath <span class="tag">&lt;<span class="name">path</span>&gt;</span></span><br><span class="line">xcodebuide -importLocalizations -project <span class="tag">&lt;<span class="name">project</span>&gt;</span> -localizationPath <span class="tag">&lt;<span class="name">path</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="迭代开发–更新你的APP"><a href="#迭代开发–更新你的APP" class="headerlink" title="迭代开发–更新你的APP"></a>迭代开发–更新你的APP</h2><p><img src="http://yulingtianxia.com/resources/QQ20141002-10%402x.png" alt>  </p>
+<p>无需把翻译工作推到最后去做，因为导入和导出XLIFF文件是可以持续集成的，一边写代码，一边把现有内容导出XLIFF给他人翻译，这样能提高效率。每当有新的翻译修改时也可以及时更新，Xcode会把XLIFF文件内容与当前翻译进度合并；在导出XLIFF时可以选择导出当前开发使用的语言还是已经翻译中的语言，这些强大的服务无疑是Xcode6所赐予我们的。  </p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Xcode/">Xcode</a><a href="/tags/本地化/">本地化</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2014/10/02/localizing-with-xcode-6/" data-title="使用Xcode6将你的项目本地化 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2014/11/05/objective-c-runtime/" title="Objective-C Runtime">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Objective-C Runtime</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2014/09/29/uialertcontroller-in-ios8/"  title="UIAlertController in iOS8">
+ <strong>下一篇：</strong><br/> 
+ <span>UIAlertController in iOS8
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#国际化–准备你的APP"><span class="toc-number">1.</span> <span class="toc-text">国际化–准备你的APP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSLocalizedString"><span class="toc-number">1.1.</span> <span class="toc-text">NSLocalizedString</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSFormatter"><span class="toc-number">1.2.</span> <span class="toc-text">NSFormatter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSBundle"><span class="toc-number">1.3.</span> <span class="toc-text">NSBundle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xcode"><span class="toc-number">1.4.</span> <span class="toc-text">Xcode</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地化–翻译你的APP"><span class="toc-number">2.</span> <span class="toc-text">本地化–翻译你的APP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迭代开发–更新你的APP"><span class="toc-number">3.</span> <span class="toc-text">迭代开发–更新你的APP</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

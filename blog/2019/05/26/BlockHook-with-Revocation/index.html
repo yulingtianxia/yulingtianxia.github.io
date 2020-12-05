@@ -1,0 +1,589 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>BlockHook with Revocation | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="BlockHook 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：  如何知道某个 Block 对象被谁 Hook 过？ 多次 Hook 的先后顺序？ 如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？  这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。 关于 BlockHook 的原理，">
+<meta name="keywords" content="Objective-C,BlockHook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BlockHook with Revocation">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2019/05/26/BlockHook-with-Revocation/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="BlockHook 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：  如何知道某个 Block 对象被谁 Hook 过？ 多次 Hook 的先后顺序？ 如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？  这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。 关于 BlockHook 的原理，">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook_Token_List.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook_invoke_call.png">
+<meta property="og:updated_time" content="2019-08-11T14:21:07.747Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BlockHook with Revocation">
+<meta name="twitter:description" content="BlockHook 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：  如何知道某个 Block 对象被谁 Hook 过？ 多次 Hook 的先后顺序？ 如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？  这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。 关于 BlockHook 的原理，">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook_Token_List.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/05/26/BlockHook-with-Revocation/" title="BlockHook with Revocation" itemprop="url">BlockHook with Revocation</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-05-26T09:20:10.000Z" itemprop="datePublished"> 发表于 2019-05-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#按顺序构造『虚拟的』-Hook-链表"><span class="toc-number">1.</span> <span class="toc-text">按顺序构造『虚拟的』 Hook 链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#撤销-Hook"><span class="toc-number">2.</span> <span class="toc-text">撤销 Hook</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p><a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 开创性地解决了 Objective-C 语言界 Hook Block 的问题，但也迎来了新的问题：</p>
+<ol>
+<li>如何知道某个 Block 对象被谁 Hook 过？</li>
+<li>多次 Hook 的先后顺序？</li>
+<li>如何处理好多次 Hook 同一个 Block 后对任意一次 Hook 的撤销？</li>
+</ol>
+<p>这些问题也是开发者在使用时向我反馈过的问题，在这篇文章里，这些问题都将会解决。</p>
+<p>关于 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 的原理，可以先阅读之前的文章：</p>
+<ul>
+<li><a href="http://yulingtianxia.com/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/">Hook Objective-C Block with Libffi</a></li>
+<li><a href="http://yulingtianxia.com/blog/2019/04/27/BlockHook-with-Struct/">BlockHook with Struct</a></li>
+</ul>
+<a id="more"></a>
+
+<h2 id="按顺序构造『虚拟的』-Hook-链表"><a href="#按顺序构造『虚拟的』-Hook-链表" class="headerlink" title="按顺序构造『虚拟的』 Hook 链表"></a>按顺序构造『虚拟的』 Hook 链表</h2><p>首先要有一个链表来按先后顺序记录一个 Block 对象上所有的 Hook。这个链表的格式以及持有关系也需要考虑在内。</p>
+<p>为此我构造了一个虚拟的链表来记录 Hook 的先后关系，而不是单独创建一个链表显式的记录。首先介绍下 Block 与 token 之间的引用关系：</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook_Token_List.png" alt></p>
+<p>可以看出每个 <code>BHToken</code> 记录了原始和替换后的 <code>invoke</code> 函数指针，那么先后两次 Hook 就靠 <code>invoke</code> 函数指针来关联了：<strong>每个 tokne 的 <code>originalInvoke</code> 就是上一次 Hook 的 token 的 <code>replacementInvoke</code></strong>。而拿到 token 又是靠 Block 对象上的 <code>AssociatedObject</code>，且 key 为 <code>replacementInvoke</code>。这样就构造了一条虚拟的链表：想要获得上次 Hook 的 token，只需在 Hook 的 Block 对象上使用 <code>originalInvoke</code> 作为 key 即可。</p>
+<p>下面的代码展示了获取下个 token 的 <code>next</code> 实现。因为链表可能会有新的插入和删除节点操作，所以需确保线程安全。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">BHToken </span>*)next</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">BHLock </span>*lock = [<span class="keyword">self.block </span><span class="keyword">bh_lockForKey:@selector(next)];</span></span><br><span class="line"><span class="keyword"> </span>   [lock lock]<span class="comment">;</span></span><br><span class="line">    <span class="meta">if</span> (!_next) &#123;</span><br><span class="line">        _next = objc_getAssociatedObject(<span class="keyword">self.block, </span><span class="keyword">self.originInvoke);</span></span><br><span class="line"><span class="keyword"> </span>   &#125;</span><br><span class="line">    <span class="keyword">BHToken </span>*result = _next<span class="comment">;</span></span><br><span class="line">    [lock unlock]<span class="comment">;</span></span><br><span class="line">    return result<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里使用 <code>replacementInvoke</code> 来作为 <code>AssociatedObject</code> 的 key 真是<strong>一举多得</strong>：</p>
+<ol>
+<li>将 token 的生命周期绑定到 Block 对象上，实现 self-managed</li>
+<li>因为函数指针地址是唯一的，确保 Block 上关联每个 token 的 key 不会冲突</li>
+<li>Block 的 <code>invoke</code> 指针作为 key，可以找到最后一次 Hook 的 token。进而按 Hook 先后顺序遍历出所有的 token。</li>
+</ol>
+<p>下面的代码展示了如何获取最后一次 Hook 的 token。在读取 <code>invoke</code> 函数指针的时候，注意保证线程安全。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">BHToken </span>*)<span class="keyword">block_currentHookToken</span></span><br><span class="line"><span class="keyword">&#123;</span></span><br><span class="line"><span class="keyword"> </span>   <span class="meta">if</span> (![<span class="keyword">self </span><span class="keyword">block_checkValid]) </span>&#123;</span><br><span class="line">        return nil<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">    void *invoke = [<span class="keyword">self </span><span class="keyword">block_currentInvokeFunction];</span></span><br><span class="line"><span class="keyword"> </span>   return objc_getAssociatedObject(<span class="keyword">self, </span>invoke)<span class="comment">;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void *)<span class="keyword">block_currentInvokeFunction</span></span><br><span class="line"><span class="keyword">&#123;</span></span><br><span class="line"><span class="keyword"> </span>   <span class="keyword">struct </span>_BHBlock *<span class="keyword">bh_block </span>= (__bridge void *)<span class="keyword">self;</span></span><br><span class="line"><span class="keyword"> </span>   <span class="keyword">BHLock </span>*lock = [<span class="keyword">self </span><span class="keyword">bh_lockForKey:_cmd];</span></span><br><span class="line"><span class="keyword"> </span>   [lock lock]<span class="comment">;</span></span><br><span class="line">    void *invoke = <span class="keyword">bh_block-&gt;invoke;</span></span><br><span class="line"><span class="keyword"> </span>   [lock unlock]<span class="comment">;</span></span><br><span class="line">    return invoke<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="撤销-Hook"><a href="#撤销-Hook" class="headerlink" title="撤销 Hook"></a>撤销 Hook</h2><p>俗话说『请神容易送神难』。好多 Hook 框架只解决的如何 Hook，但是却无法撤销恢复原样，留下一堆烂摊子。</p>
+<p>在搭建了 Hook 链表的基础上，多次 Hook 的链表可以简化成 <code>invoke</code> 函数指针之间的关系：</p>
+<p><img src="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/BlockHook/BlockHook_invoke_call.png" alt></p>
+<p>那么撤销 Hook 就可以从链表头部开始遍历，找到当前要 <code>remove</code> 的 token。接着链表上删除这个 token，而这又可以分为两个子问题：</p>
+<ol>
+<li>移除最后一次 Hook：需要将 Block 的 <code>invoke</code> 指针指向 token 的 <code>originalInvoke</code>。</li>
+<li>移除<em>非</em>最后一次 Hook：需要将上一次 Hook token 的 <code>originalInvoke</code> 指向当前 token 的 <code>originalInvoke</code>。</li>
+</ol>
+<p>最后肯定还要解除 Block 对象对 token 的持有。</p>
+<p>这部分逻辑的实现代码如下，在操作 Block 的 <code>invoke</code> 指针时依然需要注意线程安全问题：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)remove</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.isStackBlock) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Can't remove token for StackBlock!"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">self</span>.deadBlock = <span class="literal">nil</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.originInvoke) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">self</span>.block) &#123;</span><br><span class="line">            BHToken *current = [<span class="keyword">self</span>.block block_currentHookToken];</span><br><span class="line">            BHToken *last = <span class="literal">nil</span>;</span><br><span class="line">            <span class="keyword">while</span> (current) &#123;</span><br><span class="line">                <span class="keyword">if</span> (current == <span class="keyword">self</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (last) &#123; <span class="comment">// remove middle token</span></span><br><span class="line">                        last.originInvoke = <span class="keyword">self</span>.originInvoke;</span><br><span class="line">                        last.next = <span class="literal">nil</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span> &#123; <span class="comment">// remove head(current) token</span></span><br><span class="line">                        BHLock *lock = [<span class="keyword">self</span>.block bh_lockForKey:<span class="keyword">@selector</span>(block_currentInvokeFunction)];</span><br><span class="line">                        [lock lock];</span><br><span class="line">                        ((__bridge <span class="keyword">struct</span> _BHBlock *)<span class="keyword">self</span>.block)-&gt;invoke = <span class="keyword">self</span>.originInvoke;</span><br><span class="line">                        [lock unlock];</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                last = current;</span><br><span class="line">                current = [current next];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">self</span>.originInvoke = <span class="literal">NULL</span>;</span><br><span class="line">        objc_setAssociatedObject(<span class="keyword">self</span>.block, _replacementInvoke, <span class="literal">nil</span>, OBJC_ASSOCIATION_RETAIN);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 还在不断完善每一个细节，尽可能做到有始有终，至善尽美。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/BlockHook/">BlockHook</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2019/05/26/BlockHook-with-Revocation/" data-title="BlockHook with Revocation | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2019/06/19/BlockHook-with-Private-Data/" title="BlockHook with Private Data">
+  <strong>上一篇：</strong><br/>
+  <span>
+  BlockHook with Private Data</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2019/04/27/BlockHook-with-Struct/"  title="BlockHook with Struct">
+ <strong>下一篇：</strong><br/> 
+ <span>BlockHook with Struct
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#按顺序构造『虚拟的』-Hook-链表"><span class="toc-number">1.</span> <span class="toc-text">按顺序构造『虚拟的』 Hook 链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#撤销-Hook"><span class="toc-number">2.</span> <span class="toc-text">撤销 Hook</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

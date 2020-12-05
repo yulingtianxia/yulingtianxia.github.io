@@ -1,0 +1,621 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>When to Use Swift Structs and Classes | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="本文翻译自 Mike Ash 的 Friday Q&amp;amp;A 2015-07-17: When to Use Swift Structs and Classes">
+<meta name="keywords" content="Swift,翻译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When to Use Swift Structs and Classes">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="本文翻译自 Mike Ash 的 Friday Q&amp;amp;A 2015-07-17: When to Use Swift Structs and Classes">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="When to Use Swift Structs and Classes">
+<meta name="twitter:description" content="本文翻译自 Mike Ash 的 Friday Q&amp;amp;A 2015-07-17: When to Use Swift Structs and Classes">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/" title="When to Use Swift Structs and Classes" itemprop="url">When to Use Swift Structs and Classes</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-12T02:05:20.000Z" itemprop="datePublished"> 发表于 2015-08-12</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#值-VS-引用"><span class="toc-number">1.</span> <span class="toc-text">值 VS 引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值类型的经验"><span class="toc-number">2.</span> <span class="toc-text">值类型的经验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#做出抉择"><span class="toc-number">3.</span> <span class="toc-text">做出抉择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#嵌套类型"><span class="toc-number">4.</span> <span class="toc-text">嵌套类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a></li></ol>
+		
+		</div>
+		
+		<p>本文翻译自 Mike Ash 的 <a href="https://www.mikeash.com/pyblog/friday-qa-2015-07-17-when-to-use-swift-structs-and-classes.html" target="_blank" rel="noopener">Friday Q&amp;A 2015-07-17: When to Use Swift Structs and Classes</a>  </p>
+<a id="more"></a>
+
+<p>Swift 圈中有一个被反复讨论的话题已经成为了:何时使用<code>class</code>,何时使用<code>struct</code>.我觉得今天我也要给出我的个人观点.</p>
+<h2 id="值-VS-引用"><a href="#值-VS-引用" class="headerlink" title="值 VS 引用"></a>值 VS 引用</h2><p>答案真的很简单了:当你需要用值语义的时候使用<code>struct</code>,需要用引用语义使用<code>class</code>.就是这样!</p>
+<p>我们下周再见…</p>
+<p><strong>等下</strong><br>干啥?</p>
+<p><strong>还没回答我的问题呢</strong><br>你啥意思?答案不明摆着么?</p>
+<p><strong>哦,但是…</strong><br>啥?</p>
+<p><strong>什么是值/引用语义?</strong><br>哦我明白了,我可能接下来会探讨下.</p>
+<p><strong>还有他们是如何关联到<code>class</code>和<code>struct</code>上的</strong><br>嗯</p>
+<p>所有都归根结底到数据以及数据存储的位置.我们把东西存在局部变量,参数,属性和全局变量中.从根本上又划分为两种不同的<em>方式</em>.</p>
+<p>对于值语义来说,数据直接存在于存储单元中.对于引用语义,数据存在于其他地方,存储单元存储一个对数据的<em>引用</em>.当你存储数据的时候这种差异不一定明显.要注意的是拷贝存储的时候.对于值语义,你得到的是数据一份新拷贝.对于引用语义,你得到的是一份指向相同数据引用的新拷贝.</p>
+<p>真是抽象,我们来看个例子吧.我们暂时先把 Swift 这茬放下,我们先看个 Objective-C 的例子:</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">@interface</span> SomeClass : NSObject </span><br><span class="line"><span class="symbol">@property</span> <span class="built_in">int</span> <span class="built_in">number</span><span class="comment">;</span></span><br><span class="line"><span class="symbol">@end</span></span><br><span class="line"><span class="symbol">@implementation</span> SomeClass</span><br><span class="line"><span class="symbol">@end</span></span><br><span class="line"></span><br><span class="line">struct SomeStruct &#123;</span><br><span class="line"><span class="built_in">int</span> <span class="built_in">number</span><span class="comment">;</span></span><br><span class="line">&#125;<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">SomeClass *reference = [[SomeClass alloc] init]<span class="comment">;</span></span><br><span class="line">reference.<span class="built_in">number</span> = <span class="number">42</span><span class="comment">;</span></span><br><span class="line">SomeClass *reference2 = reference<span class="comment">;</span></span><br><span class="line">reference.<span class="built_in">number</span> = <span class="number">43</span><span class="comment">;</span></span><br><span class="line">NSLog(@<span class="string">"The number in reference2 is %d"</span>, reference2.<span class="built_in">number</span>)<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">struct SomeStruct value = &#123;&#125;<span class="comment">;</span></span><br><span class="line">value.<span class="built_in">number</span> = <span class="number">42</span><span class="comment">;</span></span><br><span class="line">struct SomeStruct value2 = value<span class="comment">;</span></span><br><span class="line">value.<span class="built_in">number</span> = <span class="number">43</span><span class="comment">;</span></span><br><span class="line">NSLog(@<span class="string">"The number in value2 is %d"</span>, value2.<span class="built_in">number</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p>打印结果:</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The <span class="built_in">number</span> <span class="keyword">in</span> reference2 <span class="keyword">is</span> <span class="number">43</span></span><br><span class="line">The <span class="built_in">number</span> <span class="keyword">in</span> value2 <span class="keyword">is</span> <span class="number">42</span></span><br></pre></td></tr></table></figure>
+
+<p>为啥不一样呢?</p>
+<p><code>SomeClass *reference = [[SomeClass alloc] init]</code> 这行代码在内存中创建了一个 <code>SomeClass</code> 的新实例,然后在变量中放置了一个对那个实例的引用. <code>reference2 = reference</code> 这行代码在新变量中放置了对相同对象的引用. <code>reference.number = 43</code> 这行代码修改的是两个变量当前一起指向的对象中存储的数字.结果就是日志打印的是对象中的值,即<code>43</code>.</p>
+<p><code>struct SomeStruct value = {}</code> 这行代码在变量中创建了一个 <code>SomeStruct</code> 的新实例. <code>value2 = value</code> 将实例拷贝到第二个变量.每个变量有各自的数据块.</p>
+<p>Swift 对应的例子:</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">class SomeClass &#123;</span><br><span class="line">   <span class="selector-tag">var</span> number: Int = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct SomeStruct &#123;</span><br><span class="line">   <span class="selector-tag">var</span> number: Int = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">var</span> reference = SomeClass()</span><br><span class="line">reference<span class="selector-class">.number</span> = <span class="number">42</span></span><br><span class="line"><span class="selector-tag">var</span> reference2 = reference</span><br><span class="line">reference<span class="selector-class">.number</span> = <span class="number">43</span></span><br><span class="line"><span class="function"><span class="title">print</span><span class="params">(<span class="string">"The number in reference2 is \(reference2.number)"</span>)</span></span></span><br><span class="line"></span><br><span class="line"><span class="selector-tag">var</span> value = SomeStruct()</span><br><span class="line">value<span class="selector-class">.number</span> = <span class="number">42</span></span><br><span class="line"><span class="selector-tag">var</span> value2 = value</span><br><span class="line">value<span class="selector-class">.number</span> = <span class="number">43</span></span><br><span class="line"><span class="function"><span class="title">print</span><span class="params">(<span class="string">"The number in value2 is \(value2.number)"</span>)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>输出结果跟以前一样:</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The <span class="built_in">number</span> <span class="keyword">in</span> reference2 <span class="keyword">is</span> <span class="number">43</span></span><br><span class="line">The <span class="built_in">number</span> <span class="keyword">in</span> value2 <span class="keyword">is</span> <span class="number">42</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="值类型的经验"><a href="#值类型的经验" class="headerlink" title="值类型的经验"></a>值类型的经验</h2><p>值类型并不是新鲜事物,但是对于很多人来说觉得它是新的.这是怎么回事呢?</p>
+<p><code>struct</code> 在绝大部分 Objective-C 代码中并不是很常用.我们偶尔以 <code>CGRect</code> 和 <code>CGPoint</code> 等方式接触到它们,但很少会自己去写.首先,它们不是很实用.用 Objective-C 在 <code>struct</code> 中正确地存储对象的引用的确很难,尤其是使用 ARC 的时候.</p>
+<p>很多其他语言干脆没有类似 <code>struct</code> 的东东.许多语言如同 Python 和 JavaScript 一样”万物皆对象”,只有引用类型.如果你是从这类语言转型到 Swift 的, 你可能对 <code>struct</code> 的概念就更陌生了.</p>
+<p>等一下!有种情况下几乎所有语言都使用的值类型:数字!稍微有点编程经验的程序员都不会对下面的行为感到惊讶,这跟语言无关:</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var <span class="keyword">x</span> = <span class="number">42</span></span><br><span class="line">var <span class="keyword">x</span><span class="number">2</span> = <span class="keyword">x</span></span><br><span class="line"><span class="keyword">x</span>++</span><br><span class="line">print(<span class="string">"x=\(x) x2=\(x2)"</span>)</span><br><span class="line">// prints: <span class="keyword">x</span>=<span class="number">43</span> <span class="keyword">x</span><span class="number">2</span>=<span class="number">42</span></span><br></pre></td></tr></table></figure>
+
+<p>很对我们来说如此显而易见和自然以至于我们甚至没意识到结果的差异,但它就在我们眼前.你从开始编程之日起一直在使用值类型,即使你没意识到.</p>
+<p>很多语言实际上将数字实现为引用类型,因为它们是”万物皆对象”哲学的死忠粉.然而,它们是<em>不可变</em>类型,值类型与不可变引用类型之间的差异很难察觉.它们表现得与值类型相同,尽管实现方式可能不同.</p>
+<p>这是理解值和引用类型重要的一环.当数据变化时,差异主要关系到语法方面.假如数据是不可变的,那么值和引用的差别就消失了,或至少变成了仅是性能问题而不是语法差异.</p>
+<p>实际上 Objective-C 的 <a href="https://www.mikeash.com/pyblog/friday-qa-2012-07-27-lets-build-tagged-pointers.html" target="_blank" rel="noopener">tagged pointers</a> 对此提到过.一个对象遇上了 tagged pointer 的处理,然后存储在指针的值中,就成了值类型.拷贝操作这时拷贝的就是对象内容了.表面上没差异,因为 Objective-C 函数库小心翼翼地仅将不可变类型放到 tagged pointer 中.有些 <code>NSNumber</code> 对象是引用类型而有些是值类型,但用起来没什么差别.</p>
+<h2 id="做出抉择"><a href="#做出抉择" class="headerlink" title="做出抉择"></a>做出抉择</h2><p>既然我们知道了值类型的工作原理,我们改为自己的数据类型选择那种方式呢?</p>
+<p>这两种类型根本的区别就是当对其使用<code>=</code>时会发生什么.值类型是被拷贝,而引用类型只是得到另一个新引用.</p>
+<p>因此在选择使用哪种类型时面对的根本问题是:拷贝它有意义么?拷贝操作是你想要变得简单,并经常使用的么?</p>
+<p>我们先看些极端的,显而易见的例子.整型数明显是可以拷贝的,应该是值类型.网络套接字感觉是不能被拷贝,应该是引用类型.像是用 x,y 对儿的点坐标是可拷贝的,应该是值类型.用来表示磁盘的控制器感觉上不太容易被拷贝,应该是引用类型.</p>
+<p>有些类型可以被拷贝,但它们不总是你希望的那样.建议把它们设为引用类型.比如屏幕上的一个按钮从概念上讲是可以拷贝的.副本按钮不会跟原来的按钮完全一样.点击副本按钮将不会激活原来的按钮.副本不会占用相同的屏幕位置.如果你将按钮传递到周围或放到一个新的变量里,你大概将想引用原本的按钮,除非明确被请求要做一份拷贝.这意味着你的按钮类型应该是一个引用类型.</p>
+<p>视图和窗口控制器是类似的例子.它们可能想象上是能拷贝的,但它几乎从来都不是你想要的那样.它们应该是引用类型.</p>
+<p>用于 Model 的类型该怎么搞?比方你有个 <code>User</code> 类型来表示系统中的用户,或者 <code>Crime</code> 类型来表示用户的活动.这些都是可完美拷贝的,所以它们或许应该是值类型.然而,你可能希望你程序中某处对 <code>User</code> 的 <code>Crime</code> 上的更新在程序的其他地方也可见.这就建议 <code>User</code> 应该被某种用户控制器来管理,而且它应该是引用类型.</p>
+<p>集合是个有趣的例子.这包括比如数组和字典之类的东西,以及字符串.它们是可拷贝的么?显而易见.你想要做的拷贝操作是否易发生且经常发生呢?这不好说.</p>
+<p>大多数语言对此说”不”,而是实现为引用类型. Objective-C,Java,Python,JavaScript 和几乎其他所有我能想到的语言都是这么干的.(一个主要的例外就是 C++ 的 STL 中的集合类型,但是 C++ 是语言世界中胡言乱语的疯子,它不走寻常路.)</p>
+<p>Swift 说”不错”,这意味着如 <code>Array</code>,<code>Dictionary</code> 和 <code>String</code> 都是 <code>struct</code> 而不是 <code>class</code>. 它们在赋值和作为参数传递时被拷贝.只要拷贝的开销小,这就是个彻底明智的选择,而Swift费了很大力气去实现这点.</p>
+<h2 id="嵌套类型"><a href="#嵌套类型" class="headerlink" title="嵌套类型"></a>嵌套类型</h2><p>嵌套使用值类型和引用类型会有四种组合方式.只是其中一个比较有趣.</p>
+<p>如果一个引用类型包含了另一个引用类型,没有什么有趣的发生.任何指向其内部或外部值的引用通常都能修改它.每个人都会看到发生的变更.</p>
+<p>如果一个值类型包含了另一个值类型,这实际上只是让其占用空间更多.内部值是外部值的一部分.如果你将外部值放进某个新的存储区,所有的值都会被拷贝,包括内部值.如果你将内部值放入某个新的存储,它会被拷贝.</p>
+<p>一个引用类型包含了一个值类型实际上让被引用的值占用空间更大了.拥有对外部值的引用就可以操作全部值,包括被嵌入的值.被嵌入值的所有变更对指向外部值的引用是可见的.如果你将内部值放入某个新的存储区,它会被拷贝至那里.</p>
+<p>一个值类型包含着一个引用类型那就不这么简单了.你实际上暗地里破坏了你想要用的值类型语义.这样做或好后坏,取决于你怎样去做.当你把一个引用类型放入到一个值类型中,当你把它放入新的存储区时外部值会被拷贝,但是拷贝后的副本有一个指向<em>相同内嵌的原始对象</em>的引用.这有个例子:</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Inner</span> &#123;</span><br><span class="line">   <span class="keyword">var</span> <span class="keyword">value</span> = <span class="number">42</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> Outer &#123;</span><br><span class="line">   <span class="keyword">var</span> <span class="keyword">value</span> = <span class="number">42</span></span><br><span class="line">   <span class="keyword">var</span> inner = Inner()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> outer = Outer()</span><br><span class="line"><span class="keyword">var</span> outer2 = outer</span><br><span class="line">outer.<span class="keyword">value</span> = <span class="number">43</span></span><br><span class="line">outer.inner.<span class="keyword">value</span> = <span class="number">43</span></span><br><span class="line">print(<span class="string">"outer2.value=\(outer2.value) outer2.inner.value=\(outer2.inner.value)"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>输出是:</p>
+<figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">outer</span><span class="number">2</span>.<span class="keyword">value</span>=<span class="number">42</span> <span class="keyword">outer</span><span class="number">2</span>.inner.<span class="keyword">value</span>=<span class="number">43</span></span><br></pre></td></tr></table></figure>
+
+<p>虽然 <code>outer2</code> 得到一份 <code>value</code> 的拷贝,但它只拷贝了 <code>inner</code> 的*引用,于是这两个 <code>struct</code> 最终共享同一个 <code>Inner</code> 实例.因此对 <code>outer.inner.value</code> 的更新会影响到 <code>outer2.inner.value</code>. 唉呀妈呀!</p>
+<p>这种做法真的很方便.用这个方法可以创建个能够执行写时拷贝的 <code>struct</code>,还能实现让值语义实际上不到处拷贝一坨坨的数据.这就是 Swift 中的集合的工作原理,你自己也可以实现自己的集合类型.想要知道更多详细信息,可以看看 <a href="https://www.mikeash.com/pyblog/friday-qa-2015-04-17-lets-build-swiftarray.html" target="_blank" rel="noopener">Let’s Build Swift.Array</a>.</p>
+<p>这么做也可能变得极其危险.比方说你创建了个 <code>Person</code> 类型.它被用作 Model 类当然也是可拷贝的,所以可以用 <code>struct</code> 实现咯.突发一阵对 OC 的怀旧,你决定用 <code>NSString</code> 作为 <code>Person</code> 的 <code>name</code>:</p>
+<figure class="highlight capnproto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">   var name: NSString</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后你创建按了一对儿 <code>Person</code> 实例,拼接字符串构建出 <code>name</code>:</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span><span class="built_in"> name</span> = NSMutableString()</span><br><span class="line">name.appendString(<span class="string">"Bob"</span>)</span><br><span class="line">name.appendString(<span class="string">" "</span>)</span><br><span class="line">name.appendString(<span class="string">"Josephsonson"</span>)</span><br><span class="line"><span class="keyword">let</span> bob = Person<span class="built_in">(name</span>:<span class="built_in"> name</span>)</span><br><span class="line"></span><br><span class="line">name.appendString(<span class="string">", Jr."</span>)</span><br><span class="line"><span class="keyword">let</span> bobjr = Person<span class="built_in">(name</span>:<span class="built_in"> name</span>)</span><br></pre></td></tr></table></figure>
+
+<p>然后输出它们:</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">print</span><span class="params">(bob.name)</span></span></span><br><span class="line"><span class="function"><span class="title">print</span><span class="params">(bobjr.name)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>结果产生了:</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Bob </span><span class="keyword">Josephsonson, </span><span class="keyword">Jr.</span></span><br><span class="line"><span class="keyword">Bob </span><span class="keyword">Josephsonson, </span><span class="keyword">Jr.</span></span><br></pre></td></tr></table></figure>
+
+<p>靠!</p>
+<p>发生了什么?区别于 Swift 的 <code>String</code> 类型, <code>NSString</code> 是一个引用类型.它是不可变的,但它有个可变的子类, <code>NSMutableString</code>. 当 <code>bob</code> 创建时,它创建了一个对 <code>name</code> 字符串的引用.当那个字符串随后被修改时,变更会通过 <code>bob</code> 展现出来.要注意到即使 <code>bob</code> 是被 <code>let</code> 约束的值类型,但实际上改变了 <code>bob</code>.这<em>算不上真的</em>修改了 <code>bob</code>,只是修改了 <code>bob</code> 中引用的一个值,但因为那个值是 <code>bob</code> 数据的一部分,从语义上让人感到像是对 <code>bob</code> 作了修改.</p>
+<p>这种事情在 Objective-C 中<em>一直</em>在发生.每个有经验的 Objective-C 程序员都有到处写防御拷贝的习惯.因为一个 <code>NSString</code> 实例可能实际上却是 <code>NSMutableString</code>, 为了避免灾难,你要将属性定义为 <code>copy</code>,或者在初始化时显式调用 <code>copy</code> 方法.这同样适用于 Cocoa 中各种各样的集合类型.</p>
+<p>在 Swift 中解决方案更简单些:使用值类型而不是引用类型.在这种情况下,让 <code>name</code> 成为 <code>String</code>.再也不用担心无意中把引用共享咯.</p>
+<p>在其他情况下,解决方案可能更简单.比如,你创建了一个包含视图的 <code>struct</code>,而视图是引用类型且不能改成值类型.这<em>或许</em>是个好的迹象表明你不该用 <code>struct</code>, 因为你不管怎样都不能维持值语义.</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>当移动值类型时它们会被拷贝,然而引用类型只是得到了一个对相同底层对象新引用.这意味着对引用类型的修改在每个引用上都看的到,然而对值类型的修改只会影响你修改的那块存储区.当选择使用哪种类型时,思考下如何拷贝你的类型比较恰当,如果需要深层拷贝就倾向于选择值类型.最后,谨防值类型中嵌入的引用类型,稍有不慎就会遭殃.</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Swift/">Swift</a><a href="/tags/翻译/">翻译</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2015/08/12/When-to-Use-Swift-Structs-and-Classes/" data-title="When to Use Swift Structs and Classes | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2015/10/20/Try-to-implement-picture-browser-mode-on-webview/" title="尝试实现 Web 上的看图模式">
+  <strong>上一篇：</strong><br/>
+  <span>
+  尝试实现 Web 上的看图模式</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2015/07/25/初识Core-Data-4/"  title="初识Core Data(4)">
+ <strong>下一篇：</strong><br/> 
+ <span>初识Core Data(4)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#值-VS-引用"><span class="toc-number">1.</span> <span class="toc-text">值 VS 引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值类型的经验"><span class="toc-number">2.</span> <span class="toc-text">值类型的经验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#做出抉择"><span class="toc-number">3.</span> <span class="toc-text">做出抉择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#嵌套类型"><span class="toc-number">4.</span> <span class="toc-text">嵌套类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

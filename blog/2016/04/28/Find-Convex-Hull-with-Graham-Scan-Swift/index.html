@@ -1,0 +1,596 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>Find Convex Hull with Graham Scan &amp; Swift | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="凸包(Convex hull) 是一个数学上的概念，在二维平面上可以想象成用一个橡皮筋套住一堆钉在平面上的钉子。本文讲述如何使用 Swift 实现 Graham scan 算法来寻找二维平面点集上的凸包。工程源码 Github：https://github.com/yulingtianxia/Algorithm-Experiment">
+<meta name="keywords" content="macOS,Swift,Algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Find Convex Hull with Graham Scan &amp; Swift">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2016/04/28/Find-Convex-Hull-with-Graham-Scan-Swift/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="凸包(Convex hull) 是一个数学上的概念，在二维平面上可以想象成用一个橡皮筋套住一堆钉在平面上的钉子。本文讲述如何使用 Swift 实现 Graham scan 算法来寻找二维平面点集上的凸包。工程源码 Github：https://github.com/yulingtianxia/Algorithm-Experiment">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/d/de/ConvexHull.svg">
+<meta property="og:image" content="http://yulingtianxia.com/resources/convexhull/convexhull.gif">
+<meta property="og:image" content="http://yulingtianxia.com/resources/convexhullQQ20160428-0@2x.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/convexhull/divideintotriangles@2x.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/1/1b/Graham_scan.png">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Find Convex Hull with Graham Scan &amp; Swift">
+<meta name="twitter:description" content="凸包(Convex hull) 是一个数学上的概念，在二维平面上可以想象成用一个橡皮筋套住一堆钉在平面上的钉子。本文讲述如何使用 Swift 实现 Graham scan 算法来寻找二维平面点集上的凸包。工程源码 Github：https://github.com/yulingtianxia/Algorithm-Experiment">
+<meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/commons/d/de/ConvexHull.svg">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2016/04/28/Find-Convex-Hull-with-Graham-Scan-Swift/" title="Find Convex Hull with Graham Scan &amp; Swift" itemprop="url">Find Convex Hull with Graham Scan &amp; Swift</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2016-04-28T14:37:16.000Z" itemprop="datePublished"> 发表于 2016-04-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简单粗暴的想法"><span class="toc-number">1.</span> <span class="toc-text">简单粗暴的想法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Graham-Scan"><span class="toc-number">2.</span> <span class="toc-text">Graham Scan</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+		
+		</div>
+		
+		<p><a href="https://en.wikipedia.org/wiki/Convex_hull" target="_blank" rel="noopener">凸包(Convex hull)</a> 是一个数学上的概念，在二维平面上可以想象成用一个橡皮筋套住一堆钉在平面上的钉子。本文讲述如何使用 Swift 实现 <a href="https://en.wikipedia.org/wiki/Graham_scan" target="_blank" rel="noopener">Graham scan</a> 算法来寻找二维平面点集上的凸包。工程源码 Github：<a href="https://github.com/yulingtianxia/Algorithm-Experiment" target="_blank" rel="noopener">https://github.com/yulingtianxia/Algorithm-Experiment</a></p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/d/de/ConvexHull.svg" alt="By Maksim (original); en:User:Pbroks3 (redraw), via Wikimedia Commons"><br><img src="http://yulingtianxia.com/resources/convexhull/convexhull.gif" alt></p>
+<a id="more"></a>
+
+<h1 id="简单粗暴的想法"><a href="#简单粗暴的想法" class="headerlink" title="简单粗暴的想法"></a>简单粗暴的想法</h1><p>直观上去看可以理解为『找出最外围的点』，进而把问题转化为『剔除凸多边形内部的点』，进而简化为『剔除任意三角形内的点』。PS：<strong>三角形</strong>指的是由点集内任意三个不相同的点构成的三角形，以下不再赘述定义，直接以<strong>三角形</strong>代指。</p>
+<p>下面需要做的是遍历所有三角形的排列组合，找出三角形上或内部的点，并剔除，因为它肯定不是凸包的顶点。</p>
+<p>如何判断一个点 <code>P</code> 是否在三角形 <code>ABC</code> 里面呢？</p>
+<p>很简单！如果点 <code>P</code> 在三角形 <code>ABC</code> 内，点 <code>A</code> 和 <code>P</code> 肯定在直线 <code>BC</code> 的同一侧，点 <code>B</code> 和 <code>P</code> 也肯定在直线 <code>AC</code> 同一侧，点 <code>C</code> 和 <code>P</code> 必定也在直线 <code>AB</code> 同一侧！</p>
+<p>果然够简单粗暴！</p>
+<p>假设直线 <code>BC</code> 方程为 <code>ax + by + c = 0</code>,如果点 <code>P(Xp,Yp)</code> 在直线 <code>BC</code> 上，则有 <code>a·Xp + b·Yp + c = 0</code>；如果点 <code>P(Xp,Yp)</code> 与点 <code>A(Xa,Ya)</code> 在直线 <code>BC</code> 同一侧，则有 <code>(a·Xp + b·Yp + c)(a·Xa + b·Ya + c) &gt; 0</code>。为了不被吐槽拿初中数学忽悠人，还是快速上代码吧：</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">func calculatePoint(pointP:CGPoint,onLine <span class="built_in">line</span>:(pointA:CGPoint,pointB:CGPoint)) -&gt; CGFloat &#123;</span><br><span class="line">    <span class="keyword">return</span> (pointP.y - <span class="built_in">line</span>.pointA.y) * (<span class="built_in">line</span>.pointB.x - <span class="built_in">line</span>.pointA.x) - (<span class="built_in">line</span>.pointB.y - <span class="built_in">line</span>.pointA.y) * (pointP.x - <span class="built_in">line</span>.pointA.x)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func checkPoint(P:CGPoint,inTriangle <span class="built_in">triangle</span>:(A:CGPoint,B:CGPoint,C:CGPoint)) -&gt; Bool &#123;</span><br><span class="line">    var Pp = calculatePoint(P, onLine: (<span class="built_in">triangle</span>.A,<span class="built_in">triangle</span>.B))</span><br><span class="line">    let AB = Pp == <span class="number">0</span>||Pp * calculatePoint(<span class="built_in">triangle</span>.C, onLine: (<span class="built_in">triangle</span>.A,<span class="built_in">triangle</span>.B)) &gt; <span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> !AB&#123;</span><br><span class="line">        <span class="keyword">return</span> AB</span><br><span class="line">    &#125;</span><br><span class="line">    Pp = calculatePoint(P, onLine: (<span class="built_in">triangle</span>.A,<span class="built_in">triangle</span>.C))</span><br><span class="line">    let AC = Pp == <span class="number">0</span>||Pp * calculatePoint(<span class="built_in">triangle</span>.B, onLine: (<span class="built_in">triangle</span>.A,<span class="built_in">triangle</span>.C)) &gt; <span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> !AC&#123;</span><br><span class="line">        <span class="keyword">return</span> AC</span><br><span class="line">    &#125;</span><br><span class="line">    Pp = calculatePoint(P, onLine: (<span class="built_in">triangle</span>.C,<span class="built_in">triangle</span>.B))</span><br><span class="line">    let BC = Pp == <span class="number">0</span>||Pp * calculatePoint(<span class="built_in">triangle</span>.A, onLine: (<span class="built_in">triangle</span>.C,<span class="built_in">triangle</span>.B)) &gt; <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> AB &amp;&amp; AC &amp;&amp; BC</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>calculatePoint: onLine:</code> 函数的作用是将点坐标代入直线方程式并返回计算结果；<code>checkPoint: inTriangle:</code> 函数的作用是判断某点是否在三角形上或内部。</p>
+<p>在开始暴力遍历所有的三角形组合并剔除不符合要求的点之前，我想再声明一个命题：『X 轴和 Y 轴的极值点肯定是凸包顶点』。也就是说如果一个点的 X 坐标最大，那么它肯定是凸包顶点。这个命题像是废话，用反证法其实也很容易证明：假如 <code>Y</code> 值最大的点 <code>P</code> 不是凸包顶点，那么必然处于某个三角形 <code>ABC</code> 内，并且 <code>ABC</code> 三个点的 <code>Y</code> 值都比 <code>P</code> 小，假设 <code>A</code> 点为三角形 <code>ABC</code> 中 <code>Y</code> 值最小的点，则 <code>P</code> 点和 <code>A</code> 点必然处于直线 <code>BC</code> 两侧，矛盾。命题得证。</p>
+<p>PS：这里注意我们想要的结果仅仅是<strong>凸包顶点</strong>，有些点可能位于两个相邻的凸包顶点连线上，这样的点只能算作<strong>凸包上的点</strong>，它们与<strong>凸包内的点</strong>一样需要被剔除。</p>
+<p>我们最终输出的结果希望是逆时针顺序输出的，比如下图中的凸包顶点输出顺序应为：<code>A,B,C,D,E,F,G,H</code>，其中 <code>A</code> 点和 <code>D</code> 点分别为 X 最小的点和 X 最大的点。</p>
+<p><img src="http://yulingtianxia.com/resources/convexhullQQ20160428-0@2x.png" alt="随机生成50个点集的凸包"></p>
+<p>有两种方案可以按照逆时针顺序输出结果：</p>
+<ol>
+<li>以 <code>A</code> 点为中心，向量 <code>DA</code> 方向做射线逆时针扫描，按照扫描到点的顺序输出即可，直至 360° 扫描完毕。</li>
+<li>将直线 <code>AD</code> 上方的点集 <code>Su</code> 按照 X 值从大到小排列，下方的点集 <code>Sd</code> 按照 X 值从小到大排列，最后输出顺序为：<code>A，Sd，D，Su</code></li>
+</ol>
+<p>很明显，第二种方案计算量小并且实现简单。</p>
+<p>但受到方案 1 的启发，我们可以将暴力遍历的时间复杂度减少一层。将 <code>A</code> 点与其他凸包顶点连上虚线：</p>
+<p><img src="http://yulingtianxia.com/resources/convexhull/divideintotriangles@2x.png" alt="以 A 点将凸包划分成几个三角形"></p>
+<p>也就是说可以把 <code>A</code> 点作为公共点来遍历三角形。因为 <code>A</code> 点肯定不会被剔除，并且上图中以 <code>A</code> 点为公共点的三角形已经覆盖了所有的点，不用担心会有遗漏。于是三角形的一个顶点已经确定下来了，只需遍历生成另两个顶点和一个需要判定是否在三角形内的点，四层循环嵌套降为三层！</p>
+<p>献上核心算法的 Swift 代码：</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">func generateConvexHull(inout <span class="built_in">points</span>:[PointView])&#123;</span><br><span class="line">   <span class="keyword">for</span> point <span class="keyword">in</span> <span class="built_in">points</span> &#123;</span><br><span class="line">       point.isConvexHullNode = <span class="literal">true</span></span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">if</span> <span class="built_in">points</span>.count &lt;= <span class="number">3</span> &#123;</span><br><span class="line">       <span class="built_in">return</span></span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="built_in">var</span> minXPoint = <span class="built_in">points</span>[<span class="number">0</span>]</span><br><span class="line">   <span class="built_in">var</span> maxXPoint = <span class="built_in">points</span>[<span class="number">0</span>]</span><br><span class="line">   <span class="keyword">for</span> point <span class="keyword">in</span> <span class="built_in">points</span> &#123;</span><br><span class="line">       minXPoint = point.<span class="built_in">position</span>.x &lt; minXPoint.<span class="built_in">position</span>.x ? point : minXPoint</span><br><span class="line">       maxXPoint = point.<span class="built_in">position</span>.x &gt; maxXPoint.<span class="built_in">position</span>.x ? point : maxXPoint</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="built_in">let</span> point1 = minXPoint;</span><br><span class="line">   <span class="keyword">for</span> point2 <span class="keyword">in</span> <span class="built_in">points</span> &#123;</span><br><span class="line">       <span class="keyword">if</span> !point2.isConvexHullNode || point2 == point1 &#123;</span><br><span class="line">           continue</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">for</span> point3 <span class="keyword">in</span> <span class="built_in">points</span> &#123;</span><br><span class="line">           <span class="keyword">if</span> !point3.isConvexHullNode || point3 == point1 || point3 == point2 &#123;</span><br><span class="line">               continue</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">for</span> point4 <span class="keyword">in</span> <span class="built_in">points</span> &#123;</span><br><span class="line">               <span class="keyword">if</span> !point4.isConvexHullNode || point4 == point1 || point4 == point2 || point4 == point3 &#123;</span><br><span class="line">                   continue</span><br><span class="line">               &#125;</span><br><span class="line">               <span class="keyword">if</span> checkPoint(point4.<span class="built_in">position</span>, inTriangle: (point2.<span class="built_in">position</span>,point3.<span class="built_in">position</span>,point1.<span class="built_in">position</span>)) &#123;</span><br><span class="line">                   point4.isConvexHullNode = <span class="literal">false</span></span><br><span class="line">                   continue</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="built_in">var</span> su = <span class="built_in">points</span>.filter &#123;</span><br><span class="line">       calculatePoint($<span class="number">0.</span><span class="built_in">position</span>, onLine: (minXPoint.<span class="built_in">position</span>,maxXPoint.<span class="built_in">position</span>)) &gt; <span class="number">0</span></span><br><span class="line">   &#125;</span><br><span class="line">   <span class="built_in">var</span> sl = <span class="built_in">points</span>.filter &#123;</span><br><span class="line">       calculatePoint($<span class="number">0.</span><span class="built_in">position</span>, onLine: (minXPoint.<span class="built_in">position</span>,maxXPoint.<span class="built_in">position</span>)) &lt; <span class="number">0</span></span><br><span class="line">   &#125;</span><br><span class="line">   su = su.<span class="built_in">sort</span> &#123;</span><br><span class="line">       <span class="built_in">return</span> ($<span class="number">0.</span><span class="built_in">position</span> as CGPoint).x &gt; ($<span class="number">1.</span><span class="built_in">position</span> as CGPoint).x</span><br><span class="line">   &#125;</span><br><span class="line">   sl = sl.<span class="built_in">sort</span> &#123;</span><br><span class="line">       <span class="built_in">return</span> ($<span class="number">0.</span><span class="built_in">position</span> as CGPoint).x &lt; ($<span class="number">1.</span><span class="built_in">position</span> as CGPoint).x</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="built_in">var</span> result = [minXPoint]</span><br><span class="line">   result += sl</span><br><span class="line">   result.<span class="built_in">append</span>(maxXPoint)</span><br><span class="line">   result += su</span><br><span class="line">   <span class="built_in">points</span> = result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这么暴力的算法复杂度也是高的惊人，为 <code>O(N^3)</code>！<strong>想必此时已经有不少已经脱了裤子的同学想问博主为什么要给自己看这些！</strong>说好的 <a href="https://en.wikipedia.org/wiki/Graham_scan" target="_blank" rel="noopener">Graham scan</a>算法呢？其实这部分『前戏』很重要，绝不是为了凑篇幅，一些重要概念对后面的正题理解有很大帮助，比如下面要介绍的 <code>PointView</code> 类（卧槽表碧莲啊还来！）</p>
+<p><code>PointView</code> 是算法演示程序中用于绘制和存储二维点坐标信息的类，它不仅存储坐标，还维护了状态 <code>isConvexHullNode</code>，并根据状态值是否为凸包顶点来改变 UI（红色的点为凸包顶点，紫色为非凸包顶点）。此外 <code>PointView</code> 还需要处理鼠标拖拽事件。这部分比较简单，就不上代码了。</p>
+<h1 id="Graham-Scan"><a href="#Graham-Scan" class="headerlink" title="Graham Scan"></a>Graham Scan</h1><p>当沿着凸包逆时针漫游时，你会发现总是在『向左拐』；反之则是『向右拐』。</p>
+<p>还记得之前说的以 <code>A</code> 点为中心逆时针扫描所有点的方案吧？将所有除 <code>A</code> 以外的点按照这个扫描顺序进行排列。然后在此基础上遍历并剔除『不向左拐』的点，最后输出的点集正好是按顺序排列好的。</p>
+<p>PS:判断 <code>P1P2P3</code> 在 <code>P2</code> 拐弯方向公式：<code>(p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)</code>，如果其结果为 <code>0</code>，这三个点是共线的，如果其结果为正，这三个点是向左拐的，否则，它是向右拐的。</p>
+<p>为了方便计算，通常选择 Y 值最小的点作为 <code>A</code> 点（Y 值一样就选最右边的点），其余的点就都落在第一、二象限。</p>
+<p>下图来自维基百科，但是漫游方向是<strong>顺时针</strong>的，也就是说要剔除<strong>不向右拐</strong>的点：</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Graham_scan.png" alt="via Wikimedia Commons"></p>
+<p>在 <code>P</code> 为原点的极坐标下按照极角大小构造顺时针排序的数组：<code>[A,B,C,D]</code>，计算极角的函数实现如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">calculatePolarAngle</span><span class="params">(origin:CGPoint, target:CGPoint)</span></span> -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> trans = (x: target.x - origin.x, y: target.y - origin.y)</span><br><span class="line">    <span class="keyword">let</span> angle = atan(<span class="type">Double</span>(trans.y) / <span class="type">Double</span>(trans.x))</span><br><span class="line">    <span class="keyword">switch</span> trans &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">let</span> (x,y) <span class="keyword">where</span> x &gt;= <span class="number">0</span> &amp;&amp; y &gt;= <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> angle</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">let</span> (x,y) <span class="keyword">where</span> x &lt; <span class="number">0</span> &amp;&amp; y &gt;= <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> angle + <span class="type">M_PI</span></span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">let</span> (x,y) <span class="keyword">where</span> x &lt;= <span class="number">0</span> &amp;&amp; y &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> angle + <span class="type">M_PI</span></span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">let</span> (x,y) <span class="keyword">where</span> x &gt; <span class="number">0</span> &amp;&amp; y &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> angle + <span class="number">2</span> * <span class="type">M_PI</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着就是遍历按极角排序好的数组。先将 <code>P</code> 点和 <code>A</code> 点 push 进栈，然后检查 <code>PAB</code> 是否不向右拐，因为在 <code>A</code> 点右拐所以将 <code>B</code> 点 push 进栈，然后继续检查 <code>C</code> 点。可以看出在 <code>C</code> 点处 <code>BCD</code> 向左拐了，于是 <code>C</code> 点被剔除，栈 pop 出 <code>C</code>。然后检查 <code>ABD</code> 处是否符合要求，结果是符合要求的，于是将 <code>D</code> 点 push 进栈。</p>
+<p>也就是说遍历数组时始终判断栈顶元素处拐弯方向是否符合要求：方向符合要求则将当前遍历的点 push 进栈，否则将栈顶元素 pop，并继续判断栈顶元素处拐弯是否符合要求，直到符合要求为止。（如若栈元素个数小于 <code>3</code>，则不再 pop）</p>
+<p>最后的实现算法 Swift 代码如下（逆时针漫游）</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">func generateConvexHull(inout <span class="built_in">points</span>: [PointView]) &#123;</span><br><span class="line">   <span class="keyword">for</span> point <span class="keyword">in</span> <span class="built_in">points</span> &#123;</span><br><span class="line">       point.isConvexHullNode = <span class="literal">true</span></span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">if</span> <span class="built_in">points</span>.count &lt;= <span class="number">3</span> &#123;</span><br><span class="line">       <span class="built_in">return</span></span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="built_in">var</span> minYPoint = <span class="built_in">points</span>[<span class="number">0</span>]</span><br><span class="line">   <span class="built_in">var</span> minIndex = <span class="number">0</span></span><br><span class="line">   <span class="keyword">for</span> (index,point) <span class="keyword">in</span> <span class="built_in">points</span>.enumerate() &#123;</span><br><span class="line">       (minIndex,minYPoint) = point.<span class="built_in">position</span>.y &lt; minYPoint.<span class="built_in">position</span>.y ? (index,point) : (minIndex,minYPoint)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="built_in">points</span>.removeAtIndex(minIndex)</span><br><span class="line">   <span class="built_in">points</span>.sortInPlace &#123;</span><br><span class="line">       <span class="built_in">return</span> calculatePolarAngle(minYPoint.<span class="built_in">position</span>, target: $<span class="number">0.</span><span class="built_in">position</span>) &lt; calculatePolarAngle(minYPoint.<span class="built_in">position</span>, target: $<span class="number">1.</span><span class="built_in">position</span>)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="built_in">var</span> stack = [minYPoint]</span><br><span class="line">   <span class="built_in">var</span> restPoints = [PointView]()</span><br><span class="line">   stack.<span class="built_in">append</span>(<span class="built_in">points</span>[<span class="number">0</span>])</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">for</span> point <span class="keyword">in</span> <span class="built_in">points</span>[<span class="number">1</span>..&lt;<span class="built_in">points</span>.count] &#123;</span><br><span class="line">       </span><br><span class="line">       func checkTurnsRight() -&gt; Bool &#123;</span><br><span class="line">           <span class="built_in">let</span> p1 = stack[stack.count-<span class="number">2</span>].<span class="built_in">position</span></span><br><span class="line">           <span class="built_in">let</span> p2 = stack.<span class="built_in">last</span>!.<span class="built_in">position</span></span><br><span class="line">           <span class="built_in">let</span> p3 = point.<span class="built_in">position</span></span><br><span class="line">           <span class="built_in">return</span> (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x) &lt;= <span class="number">0</span></span><br><span class="line">       &#125;</span><br><span class="line">       </span><br><span class="line">       <span class="keyword">while</span> checkTurnsRight() &#123;</span><br><span class="line">           stack.<span class="built_in">last</span>?.isConvexHullNode = <span class="literal">false</span></span><br><span class="line">           restPoints.<span class="built_in">append</span>(stack.<span class="built_in">last</span>!)</span><br><span class="line">           stack.removeLast()</span><br><span class="line">           <span class="keyword">if</span> stack.count &lt; <span class="number">3</span> &#123;</span><br><span class="line">               <span class="built_in">break</span></span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       stack.<span class="built_in">append</span>(point)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="built_in">points</span> = stack + restPoints</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Graham Scan 的时间复杂度是 <code>O(nlogn)</code>，而且只适用于二维平面。算法导论上也讲到了包裹法（Jarvis步进法）和分治法，时间复杂度都是 <code>O(nlogn)</code>。我的<a href="https://github.com/yulingtianxia/Algorithm-Experiment" target="_blank" rel="noopener">那个工程</a>里也有<a href="https://github.com/yulingtianxia/Algorithm-Experiment/blob/master/ConvexHull/ConvexHull/DivideAndConquer.swift" target="_blank" rel="noopener">分治法的 Swift 实现</a>。如果拓展到多维空间，我觉得使用 Swift 并不是一个很好的实现语言，Matlab 再适合不过了。</p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>博主江郎才尽竟然拿学校的某次算法实验充数尼玛坑爹呢这是！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/Swift/">Swift</a><a href="/tags/Algorithm/">Algorithm</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2016/04/28/Find-Convex-Hull-with-Graham-Scan-Swift/" data-title="Find Convex Hull with Graham Scan &amp; Swift | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/" title="让你的微信不再被人撤回消息">
+  <strong>上一篇：</strong><br/>
+  <span>
+  让你的微信不再被人撤回消息</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2016/03/28/Add-UITest-Label-for-UIAutomation/"  title="为 UIAutomation 添加自动化测试标签的探索">
+ <strong>下一篇：</strong><br/> 
+ <span>为 UIAutomation 添加自动化测试标签的探索
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简单粗暴的想法"><span class="toc-number">1.</span> <span class="toc-text">简单粗暴的想法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Graham-Scan"><span class="toc-number">2.</span> <span class="toc-text">Graham Scan</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

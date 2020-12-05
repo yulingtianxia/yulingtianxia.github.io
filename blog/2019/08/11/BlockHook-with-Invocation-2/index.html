@@ -1,0 +1,580 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>BlockHook with Invocation(2) | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="上一篇文章 简单介绍了下 retainArguments 和 block_interceptor 实现的思路，本文会详细讲解下 BHInvocation 的接口设计与实现，并与系统的 NSInvocation 作对比。">
+<meta name="keywords" content="Objective-C,Runtime,BlockHook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BlockHook with Invocation(2)">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2019/08/11/BlockHook-with-Invocation-2/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="上一篇文章 简单介绍了下 retainArguments 和 block_interceptor 实现的思路，本文会详细讲解下 BHInvocation 的接口设计与实现，并与系统的 NSInvocation 作对比。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yulingtianxia.com/resources/BlockHook/retainArguments.png">
+<meta property="og:updated_time" content="2020-08-22T11:03:57.819Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BlockHook with Invocation(2)">
+<meta name="twitter:description" content="上一篇文章 简单介绍了下 retainArguments 和 block_interceptor 实现的思路，本文会详细讲解下 BHInvocation 的接口设计与实现，并与系统的 NSInvocation 作对比。">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/BlockHook/retainArguments.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/08/11/BlockHook-with-Invocation-2/" title="BlockHook with Invocation(2)" itemprop="url">BlockHook with Invocation(2)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-08-11T14:18:51.000Z" itemprop="datePublished"> 发表于 2019-08-11</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#接口设计"><span class="toc-number">1.</span> <span class="toc-text">接口设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BlockHook-相关的接口"><span class="toc-number">1.1.</span> <span class="toc-text">BlockHook 相关的接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSInvocation-相关的接口"><span class="toc-number">1.2.</span> <span class="toc-text">NSInvocation 相关的接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#接口实现"><span class="toc-number">2.</span> <span class="toc-text">接口实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Copy-Pointer"><span class="toc-number">2.1.</span> <span class="toc-text">Copy Pointer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Retain-Pointer"><span class="toc-number">2.2.</span> <span class="toc-text">Retain Pointer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#读写参数和返回值"><span class="toc-number">2.3.</span> <span class="toc-text">读写参数和返回值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p><a href="http://yulingtianxia.com/blog/2019/07/27/BlockHook-with-Invocation/">上一篇文章</a> 简单介绍了下 <code>retainArguments</code> 和 <code>block_interceptor</code> 实现的思路，本文会详细讲解下 <code>BHInvocation</code> 的接口设计与实现，并与系统的 <code>NSInvocation</code> 作对比。</p>
+<a id="more"></a>
+
+<h2 id="接口设计"><a href="#接口设计" class="headerlink" title="接口设计"></a>接口设计</h2><p><code>BHInvocation</code> 相当于是参照 <code>NSInvocation</code> 的接口并改造了下，以承载 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 的一些元数据。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">BHInvocation</span> : <span class="title">NSObject</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">readonly</span>, <span class="keyword">weak</span>) BHToken *token;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">readonly</span>) BlockHookMode mode;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">getter</span>=isArgumentsRetained, <span class="keyword">readonly</span>) <span class="built_in">BOOL</span> argumentsRetained;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readonly</span>) <span class="built_in">NSMethodSignature</span> *methodSignature;</span><br><span class="line">- (<span class="keyword">void</span>)invokeOriginalBlock; <span class="comment">// 替代 invoke 和 invokeWithTarget:</span></span><br><span class="line">- (<span class="keyword">void</span>)retainArguments;</span><br><span class="line">- (<span class="keyword">void</span>)getReturnValue:(<span class="keyword">void</span> *)retLoc;</span><br><span class="line">- (<span class="keyword">void</span>)setReturnValue:(<span class="keyword">void</span> *)retLoc;</span><br><span class="line">- (<span class="keyword">void</span>)getArgument:(<span class="keyword">void</span> *)argumentLocation atIndex:(<span class="built_in">NSInteger</span>)idx;</span><br><span class="line">- (<span class="keyword">void</span>)setArgument:(<span class="keyword">void</span> *)argumentLocation atIndex:(<span class="built_in">NSInteger</span>)idx;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="BlockHook-相关的接口"><a href="#BlockHook-相关的接口" class="headerlink" title="BlockHook 相关的接口"></a>BlockHook 相关的接口</h3><p>为了存储 Hook 相关的信息，需要在 <code>NSInvocation</code> 的接口基础上新增 <code>token</code> 属性和 <code>mode</code> 属性。不过 <code>BHToken</code> 其实已经存储了 <code>BlockHookMode</code>，为何还要再在 <code>BHInvocation</code> 中加一个 <code>mode</code> 呢？</p>
+<p><code>BHToken</code> 存储的是一次 Hook 行为的元数据；<code>BHInvocation</code> 存储的是 Hook 后 Block 执行时的元数据。<code>BHToken</code> 存储的 <code>mode</code> 是 Hook 的模式，可能包含了多种模式；而 <code>BHInvocation</code> 存储的 <code>mode</code> 则是当前这次 Hook 执行回调所处的时机。</p>
+<p>例如同时 Hook Block 执行的前后，此时传入的 <code>mode</code> 值为 <code>BlockHookModeBefore|BlockHookModeAfter</code>，生成的 <code>BHToken</code> 的值也是一样。而 Block 执行前后会有两次回调，传入的 <code>BHInvocation</code> 参数内容却不太一样：其 <code>mode</code> 分别为 <code>BlockHookModeBefore</code> 和 <code>BlockHookModeAfter</code>。但这两次传入的 <code>BHInvocation</code> 中的 <code>token</code> 确是完全一样。</p>
+<p><code>BHToken</code> 也是初始化 <code>BHInvocation</code> 所用到的唯一参数。</p>
+<p>由于是 Hook，所以执行 Block 时需要注意是调用原始实现还是新的实现。 加入了 <code>invokeOriginalBlock</code> 接口来调用原始实现，这也是所有 AOP 工具的必要设计。</p>
+<h3 id="NSInvocation-相关的接口"><a href="#NSInvocation-相关的接口" class="headerlink" title="NSInvocation 相关的接口"></a><code>NSInvocation</code> 相关的接口</h3><p>为了降低使用者的学习成本，<a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 的接口设计上会尽量参照一些已有的 AOP 工具。在 Invocation 这块，能参照的最好的例子就是系统提供的 <code>NSInvocation</code>。其提供了<strong>读、写和 <code>retian</code> 参数列表/返回值</strong>的接口，以及方法签名等。</p>
+<p>而 <code>NSInvocation</code> 有些接口在 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 中是用不到的，比如 <code>selector</code> 属性没什么意义，再比如 <code>invoke</code> 和 <code>invokeWithTarget:</code> 这两个接口在 AOP 场景下也不必存在。</p>
+<h2 id="接口实现"><a href="#接口实现" class="headerlink" title="接口实现"></a>接口实现</h2><p>在<a href="http://yulingtianxia.com/blog/2019/07/27/BlockHook-with-Invocation/">上一篇文章</a>中介绍了过了 <code>retainArguments</code> 的实现思路，针对每个指向参数或返回值的指针都需要经历 “Copy” 和 “Retain” 两步：</p>
+<p><img src="http://yulingtianxia.com/resources/BlockHook/retainArguments.png" alt></p>
+<h3 id="Copy-Pointer"><a href="#Copy-Pointer" class="headerlink" title="Copy Pointer"></a>Copy Pointer</h3><p>无论 <code>pointer</code> 指向的内容是一个 <code>struct</code> 还是 <code>NSObject *</code>，都需要将 <code>pointer</code> 的内容拷贝，防止原始内存被修改或者释放。在拷贝前需要开辟新的内存，其生命周期与 <code>BHInvocation</code> 绑定在一起。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span> *)_copyPointer:(<span class="keyword">void</span> **)pointer encode:(<span class="keyword">const</span> <span class="keyword">char</span> *)encode key:(<span class="built_in">NSNumber</span> *)key</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSUInteger</span> pointerSize;</span><br><span class="line">    <span class="built_in">NSGetSizeAndAlignment</span>(encode, &amp;pointerSize, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="built_in">NSMutableData</span> *pointerData = [<span class="built_in">NSMutableData</span> dataWithLength:pointerSize];</span><br><span class="line">    <span class="keyword">self</span>.mallocMap[key] = pointerData;</span><br><span class="line">    <span class="keyword">void</span> *pointerBuf = pointerData.mutableBytes;</span><br><span class="line">    memcpy(pointerBuf, pointer, pointerSize);</span><br><span class="line">    <span class="keyword">return</span> pointerBuf;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Retain-Pointer"><a href="#Retain-Pointer" class="headerlink" title="Retain Pointer"></a>Retain Pointer</h3><p>如果 <code>pointer</code> 指向的内容依然是个指针，比如 <code>NSObject *</code> 或 <code>char *</code>，还需要防止其内容提前被释放，产生野指针。这里相当于是对 Objective-C 对象和 C-String 的特殊处理，以参数和返回值的 index 作为 key，利用字典 <code>retainMap</code> 强引用 Objective-C 对象；对于 Block 对象还需调用 <code>copy</code> 方法，将栈上的 Block 拷贝到堆上防止被提早释放；对于 C-String 则是开辟新内存并拷贝字符串内容，然后放入 <code>retainMap</code> 中；</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)_retainPointer:(<span class="keyword">void</span> **)pointer encode:(<span class="keyword">const</span> <span class="keyword">char</span> *)encode key:(<span class="built_in">NSNumber</span> *)key</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">void</span> *p = *pointer;</span><br><span class="line">    <span class="keyword">if</span> (!p) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (encode[<span class="number">0</span>] == <span class="string">'@'</span>) &#123;</span><br><span class="line">        <span class="keyword">id</span> arg = (__bridge <span class="keyword">id</span>)p;</span><br><span class="line">        <span class="keyword">if</span> (strcmp(encode, <span class="string">"@?"</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">self</span>.retainMap[key] = [arg <span class="keyword">copy</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.retainMap[key] = arg;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (encode[<span class="number">0</span>] == <span class="string">'*'</span>) &#123;</span><br><span class="line">        <span class="keyword">char</span> *arg = p;</span><br><span class="line">        <span class="built_in">NSMutableData</span> *data = [<span class="built_in">NSMutableData</span> dataWithLength:<span class="keyword">sizeof</span>(<span class="keyword">char</span>) * strlen(arg)];</span><br><span class="line">        <span class="keyword">self</span>.retainMap[key] = data;</span><br><span class="line">        <span class="keyword">char</span> *str = data.mutableBytes;</span><br><span class="line">        strcpy(str, arg);</span><br><span class="line">        *pointer = str;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="读写参数和返回值"><a href="#读写参数和返回值" class="headerlink" title="读写参数和返回值"></a>读写参数和返回值</h3><p><a href="http://yulingtianxia.com/blog/2019/07/27/BlockHook-with-Invocation/">上一篇文章</a>讲述了 <code>BHInvocation</code> 存储参数列表和返回值上的一些处理策略，这里来讲讲如何读写。</p>
+<p>在实现读写参数列表和返回值接口时，不仅仅是对 <code>args</code> 和 <code>retValue</code> 指针的读写操作，还要考虑到 Copy Pointer 和 Retain Pointer。</p>
+<p>Copy Pointer 这步无需自行开辟内存了，原因是写入时 <code>retainArguments</code> 的时候已经开辟好了，读取时直接使用传入的指针。</p>
+<p>Retain Pointer 接口使用 <code>idx</code> 作为 key，写入新的值时会替换字典 <code>retainMap</code> 中的旧值。这样既可以释放旧值，也能重新 retain 新值。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)getArgument:(<span class="keyword">void</span> *)argumentLocation atIndex:(<span class="built_in">NSInteger</span>)idx</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!argumentLocation || !<span class="keyword">self</span>.args || !<span class="keyword">self</span>.args[idx]) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">void</span> *arg = <span class="keyword">self</span>.args[idx];</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *type = [<span class="keyword">self</span>.methodSignature getArgumentTypeAtIndex:idx];</span><br><span class="line">    <span class="built_in">NSUInteger</span> argSize;</span><br><span class="line">    <span class="built_in">NSGetSizeAndAlignment</span>(type, &amp;argSize, <span class="literal">NULL</span>);</span><br><span class="line">    memcpy(argumentLocation, arg, argSize);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setArgument:(<span class="keyword">void</span> *)argumentLocation atIndex:(<span class="built_in">NSInteger</span>)idx</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!argumentLocation || !<span class="keyword">self</span>.args || !<span class="keyword">self</span>.args[idx]) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">void</span> *arg = <span class="keyword">self</span>.args[idx];</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *type = [<span class="keyword">self</span>.methodSignature getArgumentTypeAtIndex:idx];</span><br><span class="line">    <span class="built_in">NSUInteger</span> argSize;</span><br><span class="line">    <span class="built_in">NSGetSizeAndAlignment</span>(type, &amp;argSize, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.isArgumentsRetained) &#123;</span><br><span class="line">        [<span class="keyword">self</span> _retainPointer:argumentLocation encode:type key:@(idx)];</span><br><span class="line">    &#125;</span><br><span class="line">    memcpy(arg, argumentLocation, argSize);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 ARC 下从 <code>NSInvocation</code> 读取参数或返回值时，如果类型为 Objective-C 对象，则需要避免默认的强引用。<a href="https://stackoverflow.com/questions/16928299/get-block-argument-from-nsinvocation-with-arc" target="_blank" rel="noopener">Stack Overflow</a> 上有具体解决方案，其中的一种方案如下：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NSObject * __unsafe_unretained <span class="keyword">arg</span>;</span><br><span class="line">[invocation getArgument:&amp;<span class="keyword">arg</span> atIndex:<span class="number">1</span>];</span><br></pre></td></tr></table></figure>
+
+<p><code>BHInvocation</code> 由于高仿了 <code>NSInvocation</code> 的接口和实现，所以也需要注意此问题。究其原因在于 <code>memcpy</code> 只是内存拷贝，不是直接向 <code>strong</code> 类型变量赋值，并不会参与到 ARC 的引用计数中。而出了作用域后 ARC 会自动对 <code>strong</code> 类型 <code>release</code> 一次，导致读取到的对象过度释放，导致 crash。（PS：ARC 真实的实现机制会更复杂些，为了描述方便这里对原理进行了简化）</p>
+<p>其实还有一种更好的方式读参数，那就是直接在 <code>aspectBlock</code> 中取参数。<code>aspectBlock</code> 中的参数是可以随意写的，但需要跟 Block 的参数列表对应上。写法可以参照下面这个测试用例，直接获取参数，然后修改参数：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)testObjectArg &#123;</span><br><span class="line">    <span class="built_in">NSObject</span> *argOrig = [<span class="built_in">NSObject</span> new];</span><br><span class="line">    <span class="built_in">NSObject</span> *argFixed = [<span class="built_in">NSObject</span> new];</span><br><span class="line">    <span class="keyword">void</span> (^ObjectArgBlock)(<span class="built_in">NSObject</span> *) = ^(<span class="built_in">NSObject</span> *test)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">NSAssert</span>(test == argFixed, <span class="string">@"Modify struct member failed!"</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    [ObjectArgBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, <span class="built_in">NSObject</span> *test)&#123;</span><br><span class="line">        <span class="built_in">NSAssert</span>(test == argOrig, <span class="string">@"Wrong arg!"</span>);</span><br><span class="line">        <span class="comment">// Hook 改参数</span></span><br><span class="line">        [invocation setArgument:(<span class="keyword">void</span> *)&amp;argFixed atIndex:<span class="number">1</span>];</span><br><span class="line">    &#125;];</span><br><span class="line">    </span><br><span class="line">    ObjectArgBlock(argOrig);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最初 <code>BHInvocation</code> 还不够完善时，读写 Block 的参数/返回值只能用二级指针之类的晦涩语法直接操作 <code>args</code> 和 <code>retValue</code>，门槛较高而且还不够安全。<code>BHInvocation</code> 接口设计和实现上尽量参考已有的成熟案例，降低开发者学习成本，快速上手。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Runtime/">Runtime</a><a href="/tags/BlockHook/">BlockHook</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2019/08/11/BlockHook-with-Invocation-2/" data-title="BlockHook with Invocation(2) | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2019/09/01/App-Order-Files/" title="App 二进制文件重排已经被玩坏了">
+  <strong>上一篇：</strong><br/>
+  <span>
+  App 二进制文件重排已经被玩坏了</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2019/07/27/BlockHook-with-Invocation/"  title="BlockHook with Invocation(1)">
+ <strong>下一篇：</strong><br/> 
+ <span>BlockHook with Invocation(1)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#接口设计"><span class="toc-number">1.</span> <span class="toc-text">接口设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BlockHook-相关的接口"><span class="toc-number">1.1.</span> <span class="toc-text">BlockHook 相关的接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSInvocation-相关的接口"><span class="toc-number">1.2.</span> <span class="toc-text">NSInvocation 相关的接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#接口实现"><span class="toc-number">2.</span> <span class="toc-text">接口实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Copy-Pointer"><span class="toc-number">2.1.</span> <span class="toc-text">Copy Pointer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Retain-Pointer"><span class="toc-number">2.2.</span> <span class="toc-text">Retain Pointer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#读写参数和返回值"><span class="toc-number">2.3.</span> <span class="toc-text">读写参数和返回值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

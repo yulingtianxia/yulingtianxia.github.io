@@ -1,0 +1,586 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>BlockHook with Invocation(1) | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="BlockHook 在业界已经率先解决了在同步调用场景下对 Objective-C Block 的 AOP 问题。但也有很多场景是需要先调用一段自己的逻辑，然后再异步延时执行 Block。 比如从外部跳转到 App 某个页面前需要检查下登录态，如果未登录则需要走完登录流程后才能继续跳转页面，而几乎所有基于 Block callback 的路由组件都没提供路由拦截器的功能。不同的路由组件内部实现不同">
+<meta name="keywords" content="Objective-C,Runtime,BlockHook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BlockHook with Invocation(1)">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2019/07/27/BlockHook-with-Invocation/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="BlockHook 在业界已经率先解决了在同步调用场景下对 Objective-C Block 的 AOP 问题。但也有很多场景是需要先调用一段自己的逻辑，然后再异步延时执行 Block。 比如从外部跳转到 App 某个页面前需要检查下登录态，如果未登录则需要走完登录流程后才能继续跳转页面，而几乎所有基于 Block callback 的路由组件都没提供路由拦截器的功能。不同的路由组件内部实现不同">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yulingtianxia.com/resources/BlockHook/BlockInterceptor.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/BlockHook/realArgs.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/BlockHook/BHInvocation.png">
+<meta property="og:image" content="http://yulingtianxia.com/resources/BlockHook/retainArguments.png">
+<meta property="og:updated_time" content="2020-08-22T11:04:32.513Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BlockHook with Invocation(1)">
+<meta name="twitter:description" content="BlockHook 在业界已经率先解决了在同步调用场景下对 Objective-C Block 的 AOP 问题。但也有很多场景是需要先调用一段自己的逻辑，然后再异步延时执行 Block。 比如从外部跳转到 App 某个页面前需要检查下登录态，如果未登录则需要走完登录流程后才能继续跳转页面，而几乎所有基于 Block callback 的路由组件都没提供路由拦截器的功能。不同的路由组件内部实现不同">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/BlockHook/BlockInterceptor.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2019/07/27/BlockHook-with-Invocation/" title="BlockHook with Invocation(1)" itemprop="url">BlockHook with Invocation(1)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-27T09:14:27.000Z" itemprop="datePublished"> 发表于 2019-07-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">1.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BHInvocation-结构"><span class="toc-number">2.1.</span> <span class="toc-text">BHInvocation 结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#retainArguments-实现"><span class="toc-number">2.2.</span> <span class="toc-text">retainArguments 实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#block-interceptor-实现"><span class="toc-number">2.3.</span> <span class="toc-text">block_interceptor 实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+		
+		</div>
+		
+		<p><a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 在业界已经率先解决了在<strong>同步</strong>调用场景下对 Objective-C Block 的 AOP 问题。但也有很多场景是需要先调用一段自己的逻辑，然后再<strong>异步延时</strong>执行 Block。</p>
+<p>比如从外部跳转到 App 某个页面前需要检查下登录态，如果未登录则需要走完登录流程后才能继续跳转页面，而几乎所有基于 Block callback 的路由组件都没提供路由拦截器的功能。不同的路由组件内部实现不同，想要实现拦截器就需要针对不同的内部实现来修改路由组件源码。</p>
+<p>因此我实现了 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 的异步拦截功能，所有基于 Block 的路由组件就都有了通用的路由拦截器！</p>
+<p>当然，Block 拦截器的应用场景不仅于此。只要是需要『同步改异步执行』 Block 的场景都可以用到。</p>
+<p>让子弹再飞一会儿！</p>
+<a id="more"></a>
+
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p><a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 拦截器用法很简单，在已有 <code>BHInvocation</code> 参数的基础上，增加了一个 <code>completion</code> 回调。当拦截器的逻辑异步执行完后，调用 <code>completion</code> 即可继续执行原来的 Block。如果拦截器的逻辑是同步的，也依然可以用这个接口，只是没必要罢了，推荐直接用原来的 <code>block_hookWithMode:usingBlock:</code> 接口。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">void</span>(^IntercepterCompletion)(<span class="keyword">void</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> Interceptor for blocks. When your interceptor completed, call `completion` callback.</span></span><br><span class="line"><span class="comment"> You can call `completion` asynchronously!</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> @param interceptor You **MUST** call `completion` callback in interceptor, unless you want to cancel invocation.</span></span><br><span class="line"><span class="comment"> @return BHToken instance.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">- (BHToken *)block_interceptor:(<span class="keyword">void</span> (^)(BHInvocation *invocation, IntercepterCompletion completion))interceptor;</span><br></pre></td></tr></table></figure>
+
+<p>举个例子，拦截时修改传入的参数，并延迟 0.5 秒再执行 Block：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSObject</span> *testArg = [<span class="built_in">NSObject</span> new];</span><br><span class="line"><span class="built_in">NSObject</span> *testArg1 = [<span class="built_in">NSObject</span> new];</span><br><span class="line">    </span><br><span class="line"><span class="built_in">NSObject</span> *(^testblock)(<span class="built_in">NSObject</span> *) = ^(<span class="built_in">NSObject</span> *a) &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">NSObject</span> new];</span><br><span class="line">&#125;;</span><br><span class="line">    </span><br><span class="line">[testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) &#123;</span><br><span class="line">    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(<span class="number">0.5</span> * <span class="built_in">NSEC_PER_SEC</span>)), dispatch_get_main_queue(), ^&#123;</span><br><span class="line">        *(<span class="keyword">void</span> **)(invocation.args[<span class="number">1</span>]) = (__bridge <span class="keyword">void</span> *)(testArg1);</span><br><span class="line">        completion();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;];</span><br><span class="line">    </span><br><span class="line">testblock(testArg);</span><br></pre></td></tr></table></figure>
+
+<h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><p>首先想想如果要延迟一个 Objective-C 方法的执行，需要怎么做？</p>
+<p>答案是利用消息转发机制，<code>NSInvocation</code> 调用 <code>retainArguments</code> 将方法执行所需的上下文持有，这样才能保证方法执行时所需的参数、<code>target</code> 等不会被释放。</p>
+<p>对于 Block 来说，虽然也能通过 <code>NSInvocation</code> 来进行调用，但是经过 Hook 过后已经不再适用。因为 <code>NSInvocation</code> 的实现机制以及生命周期管理是个黑盒，且无法承载 Hook 相关的信息，需要自己来实现个 <code>BHInvocation</code>。</p>
+<p><img src="http://yulingtianxia.com/resources/BlockHook/BlockInterceptor.png" alt></p>
+<h3 id="BHInvocation-结构"><a href="#BHInvocation-结构" class="headerlink" title="BHInvocation 结构"></a>BHInvocation 结构</h3><p>我之前的 <a href="http://yulingtianxia.com/blog/2019/04/27/BlockHook-with-Struct/">BlockHook with Struct</a> 这篇文章提到了个技术点：在 x86 架构下，当 Block 返回值是大于 16 Byte 的 <code>struct</code> 时，参数列表有些变化：</p>
+<p><img src="http://yulingtianxia.com/resources/BlockHook/realArgs.png" alt></p>
+<p>为了兼容这种情况，需要两套 <code>args</code> 和 <code>retValue</code>。一套『真的』用于传给 libffi 调用原始函数指针，另一套『假的』提供给使用方读写参数和返回值。这样使用方无需关心底层特殊逻辑，直接用就行了。</p>
+<p><code>BHInvocation</code> 主要结构如下：</p>
+<p><img src="http://yulingtianxia.com/resources/BlockHook/BHInvocation.png" alt></p>
+<p>PS：<code>BHInvocation</code> 与 <code>NSInvocation</code> 的场景和用法有些不同，所以实现上也会有差异。<code>NSInvocation</code> 没有公开源码，想了解原理的可以看看 mikeash 的实现： <a href="https://github.com/mikeash/MAInvocation" target="_blank" rel="noopener">MAInvocation</a>。但我并没有参考过 mikeash 的源码，因为等我写完了才发现它。。。</p>
+<h3 id="retainArguments-实现"><a href="#retainArguments-实现" class="headerlink" title="retainArguments 实现"></a><code>retainArguments</code> 实现</h3><p><code>retainArguments</code> 实现策略：</p>
+<ol>
+<li>拷贝 <code>void **args</code> 指针数组和返回值指针</li>
+<li><code>retain</code> 指针内容类型为 Objective-C 对象的参数</li>
+<li>如果参数中也有其他 Block 对象，则 <code>copy</code> 过来</li>
+<li>如果参数中有 C-string，则 <code>strcpy</code> 过来</li>
+</ol>
+<p><img src="http://yulingtianxia.com/resources/BlockHook/retainArguments.png" alt></p>
+<p>需要注意的是这里依然要考虑两套 <code>args</code> 和 <code>retValue</code> 的问题。代码就不贴了，有兴趣的可以自己去看。</p>
+<h3 id="block-interceptor-实现"><a href="#block-interceptor-实现" class="headerlink" title="block_interceptor 实现"></a><code>block_interceptor</code> 实现</h3><p>解决了 <code>retainArguments</code> 的实现，一切都好说了。只要基于原有的 <code>block_hookWithMode:usingBlock:</code> 接口稍加改装即可：</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- <span class="params">(BHToken *)</span>block_interceptor:<span class="params">(void (^)</span><span class="params">(BHInvocation *invocation, IntercepterCompletion completion)</span>)interceptor &#123;</span><br><span class="line">    return [self block_hookWithMode:BlockHookModeInstead usingBlock:^<span class="params">(BHInvocation *invocation)</span> &#123;</span><br><span class="line">        if <span class="params">(interceptor)</span> &#123;</span><br><span class="line">            IntercepterCompletion completion = ^<span class="params">()</span> &#123;</span><br><span class="line">                [invocation invokeOriginalBlock];</span><br><span class="line">            &#125;;</span><br><span class="line">            interceptor<span class="params">(invocation, completion)</span>;</span><br><span class="line">            [invocation retainArguments];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>写了这么多关于 <a href="https://github.com/yulingtianxia/BlockHook" target="_blank" rel="noopener">BlockHook</a> 的文章，我越来越发现自己在苹果爸爸面前所表现出的无知。几乎每一步都要去踩很多坑，看很多源码。而这次是看着苹果爸爸的文档脑补如何实现，业界也没有能参考的先例。</p>
+<p>这种感觉犹如自己在黑暗中不断探索，并享受着这种孤独。</p>
+<p>标题暗示着，这篇文章可能会有后续的。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Objective-C/">Objective-C</a><a href="/tags/Runtime/">Runtime</a><a href="/tags/BlockHook/">BlockHook</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2019/07/27/BlockHook-with-Invocation/" data-title="BlockHook with Invocation(1) | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2019/08/11/BlockHook-with-Invocation-2/" title="BlockHook with Invocation(2)">
+  <strong>上一篇：</strong><br/>
+  <span>
+  BlockHook with Invocation(2)</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2019/06/19/BlockHook-with-Private-Data/"  title="BlockHook with Private Data">
+ <strong>下一篇：</strong><br/> 
+ <span>BlockHook with Private Data
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">1.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BHInvocation-结构"><span class="toc-number">2.1.</span> <span class="toc-text">BHInvocation 结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#retainArguments-实现"><span class="toc-number">2.2.</span> <span class="toc-text">retainArguments 实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#block-interceptor-实现"><span class="toc-number">2.3.</span> <span class="toc-text">block_interceptor 实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

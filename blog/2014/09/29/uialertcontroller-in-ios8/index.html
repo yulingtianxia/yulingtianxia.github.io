@@ -1,0 +1,582 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>UIAlertController in iOS8 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="iOS8新推出的UIAlertController究竟是为了什么？已有的UIActionSheet和UIAlertView就这样被打酱油了么？其实不然。。。">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UIAlertController in iOS8">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2014/09/29/uialertcontroller-in-ios8/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="iOS8新推出的UIAlertController究竟是为了什么？已有的UIActionSheet和UIAlertView就这样被打酱油了么？其实不然。。。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yulingtianxia.com/resources/IMG_0906.PNG">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UIAlertController in iOS8">
+<meta name="twitter:description" content="iOS8新推出的UIAlertController究竟是为了什么？已有的UIActionSheet和UIAlertView就这样被打酱油了么？其实不然。。。">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/IMG_0906.PNG">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2014/09/29/uialertcontroller-in-ios8/" title="UIAlertController in iOS8" itemprop="url">UIAlertController in iOS8</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2014-09-29T12:29:28.000Z" itemprop="datePublished"> 发表于 2014-09-29</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIAlertController是什么"><span class="toc-number">1.</span> <span class="toc-text">UIAlertController是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么不直接使用UIActionSheet和UIAlertView"><span class="toc-number">2.</span> <span class="toc-text">为什么不直接使用UIActionSheet和UIAlertView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个UIAlertController"><span class="toc-number">3.</span> <span class="toc-text">创建一个UIAlertController</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加动作"><span class="toc-number">4.</span> <span class="toc-text">添加动作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加文本框"><span class="toc-number">5.</span> <span class="toc-text">添加文本框</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>iOS8新推出的UIAlertController究竟是为了什么？已有的<code>UIActionSheet</code>和<code>UIAlertView</code>就这样被打酱油了么？其实不然。。。  </p>
+<a id="more"></a>
+<h2 id="UIAlertController是什么"><a href="#UIAlertController是什么" class="headerlink" title="UIAlertController是什么"></a>UIAlertController是什么</h2><p><code>UIAlertController</code>是iOS8中新加入的一个ViewController，其主要功能是提醒（Alert），并取代 <code>UIActionSheet</code>和<code>UIAlertView</code>向用户展示提醒消息。因为它是一个ViewController，所以可以用<code>presentViewController:animated:completion:</code>方法来弹出它。  </p>
+<h2 id="为什么不直接使用UIActionSheet和UIAlertView"><a href="#为什么不直接使用UIActionSheet和UIAlertView" class="headerlink" title="为什么不直接使用UIActionSheet和UIAlertView"></a>为什么不直接使用<code>UIActionSheet</code>和<code>UIAlertView</code></h2><ol>
+<li><code>UIAlertController</code>采用block异步回调的形式来代理按钮的动作和文本框的配置，这样显得更加代码紧凑，可读性高。这样就不用通过协议代理给其他类，使得同一个逻辑下本应在一起的代码分离开。  </li>
+<li><code>UIActionSheet</code>和<code>UIAlertView</code>执行的都是提醒功能，只是展现的位置略有不同，合并相似功能并上升到Controller的级别，这是一种进步。  </li>
+<li><code>UIAlertController</code>在添加按钮和文本框时更加灵活，而<code>UIAlertView</code>只提供了四种Style，局限性太大。  </li>
+<li><code>UIAlertController</code>在增加拓展性的基础上也限定了一些风格来进行约束，不过新增加的风格比<code>UIAlertView</code>更贴合实际应用。  </li>
+</ol>
+<p>PS：其实最直接的原因就是博主想弹出个Alert，有俩文本框的（不要密码输入框），可惜<code>UIAlertView</code>做不到啊！！！  </p>
+<h2 id="创建一个UIAlertController"><a href="#创建一个UIAlertController" class="headerlink" title="创建一个UIAlertController"></a>创建一个<code>UIAlertController</code></h2><p>创建很简单有木有：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">convenience init(title title: <span class="keyword">String</span>?,</span><br><span class="line">         <span class="keyword">message</span> <span class="keyword">message</span>: <span class="keyword">String</span>?,</span><br><span class="line">  preferredStyle preferredStyle: UIAlertControllerStyle)</span><br></pre></td></tr></table></figure>
+
+<p>举个栗子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> title = <span class="string">"Enter Choices of the Trouble"</span></span><br><span class="line"><span class="keyword">let</span> message = detailItem?.content</span><br><span class="line"><span class="keyword">let</span> alert = UIAlertController(title: title, <span class="attr">message</span>: message, <span class="attr">preferredStyle</span>: UIAlertControllerStyle.Alert)</span><br></pre></td></tr></table></figure>
+
+<p><code>title</code>和<code>message</code>自然不用说了吧，需要注意的是<code>preferredStyle</code>一旦设定好以后就不能改了哦，因为它就是区分<code>UIAlertController</code>到底是对应着<code>UIActionSheet</code>还是<code>UIAlertView</code>，一共就这两种Style：  </p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">UIAlertControllerStyle</span> : <span class="title">Int</span> &#123;</span></span><br><span class="line">    <span class="keyword">case</span> ActionSheet</span><br><span class="line">    <span class="keyword">case</span> Alert</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加动作"><a href="#添加动作" class="headerlink" title="添加动作"></a>添加动作</h2><p>以前的做法是给个按钮标题数组然后在实现协议的代理方法中判断下按钮序列，然后对应给出不同的处理流程。分散的逻辑和代码无疑增加了开发者的工作量，还要求对应的类实现代理协议，真是out了。  </p>
+<p>这里介绍一个新的类：UIAlertAction，<code>UIAlertController</code>弱化了以前添加Button的概念，而是添加UIAlertAction。其实说白了就是将按钮和处理方法捏到一起成为一个“动作”：  </p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">convenience init(<span class="name">title</span> title: String,</span><br><span class="line">           style style: UIAlertActionStyle,</span><br><span class="line">         handler handler: ((<span class="name">UIAlertAction!</span>) -&gt; Void)!)</span><br></pre></td></tr></table></figure>
+
+<p><code>title</code>就是按钮的文本内容；<code>style</code>是按钮的风格，一共有三种风格：Default，Cancel和Destructive，其中Destructive会使按钮文字变成红色；<code>handler</code>是处理按钮按下后的一个block，这段代码块与添加的按钮紧密结合成“动作”，最后通过<code>addAction:</code>方法将UIAlertAction添加到<code>UIAlertController</code>中：  </p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> cancelbtn = <span class="string">"Cancel"</span></span><br><span class="line"><span class="keyword">let</span> cancelAction = UIAlertAction<span class="function"><span class="params">(title: cancelbtn, style: .Cancel)</span> &#123; <span class="params">(action)</span> -&gt;</span> Void <span class="keyword">in</span></span><br><span class="line"><span class="regexp">//add some code...            </span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp">alert.addAction(cancelAction)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="添加文本框"><a href="#添加文本框" class="headerlink" title="添加文本框"></a>添加文本框</h2><p>这也是最令博主激动的地方，最然不能自定义Alert中的内容，但起码添加UITextField不受限制了。添加文本框的方法实在是简洁：  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">addTextFieldWithConfigurationHandler</span><span class="params">(<span class="number">_</span> configurationHandler: <span class="params">(<span class="params">(UITextField!)</span></span></span></span> -&gt; <span class="type">Void</span>)!)</span><br></pre></td></tr></table></figure>
+
+<p>一个block就解决了！你只需要在block中配置下文本框的字体、键盘、代理等即可，举个栗子：  </p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">alert<span class="selector-class">.addTextFieldWithConfigurationHandler</span> &#123; (choiceNameTF) -&gt; Void <span class="keyword">in</span></span><br><span class="line">	  choiceNameTF<span class="selector-class">.borderStyle</span> = .None</span><br><span class="line">	  choiceNameTF<span class="selector-class">.placeholder</span> = <span class="string">"An answer of your trouble"</span></span><br><span class="line">	  choiceNameTF<span class="selector-class">.delegate</span> = self</span><br><span class="line">	  choiceNameTF.becomeFirstResponder()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>美中不足的是文本框的代理还需要在另外一个地方写代码来实现协议，这种历史遗留问题终将被block统统解决！  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>UIAlertController</code>的确是方便多了，无论是代码的简洁性还是可读性，都有了较大的提升。不过也有缺点，就是动用Controller的层级略显麻烦，尤其是使用<code>presentViewController:animated:completion:</code>方法来弹出Alert界面与之前的一个潇洒的<code>show</code>相比真是有些“霸气”。看个人喜好了，只要满足需求，咋方便咋用。  </p>
+<p>最后，贴上一张效果图：  </p>
+<p><img src="http://yulingtianxia.com/resources/IMG_0906.PNG" alt>  </p>
+<p>图片截取自<a href="https://itunes.apple.com/cn/app/hardchoice/id923977271?mt=8" target="_blank" rel="noopener">HardChoice</a>  </p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/iOS/">iOS</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2014/09/29/uialertcontroller-in-ios8/" data-title="UIAlertController in iOS8 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2014/10/02/localizing-with-xcode-6/" title="使用Xcode6将你的项目本地化">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用Xcode6将你的项目本地化</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2014/09/26/building-assert-in-swift-1/"  title="在Swift中构建assert(), 第一部分: Lazy Evaluation">
+ <strong>下一篇：</strong><br/> 
+ <span>在Swift中构建assert(), 第一部分: Lazy Evaluation
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIAlertController是什么"><span class="toc-number">1.</span> <span class="toc-text">UIAlertController是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么不直接使用UIActionSheet和UIAlertView"><span class="toc-number">2.</span> <span class="toc-text">为什么不直接使用UIActionSheet和UIAlertView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个UIAlertController"><span class="toc-number">3.</span> <span class="toc-text">创建一个UIAlertController</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加动作"><span class="toc-number">4.</span> <span class="toc-text">添加动作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加文本框"><span class="toc-number">5.</span> <span class="toc-text">添加文本框</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

@@ -1,0 +1,589 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>MacOSX10.9上用Octopress和GitHub搭建个人博客 | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="网上已经有很多关于搭建Octopress的文章了，但我写这篇文章的目的是帮助Mac新手们搭建自己的Octopress，尤其是最新的Mavericks系统 这篇博文包括：  Octopress搭建 Github Page 部署 Blog的美化工作">
+<meta name="keywords" content="macOS,Octopress,GitHub">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MacOSX10.9上用Octopress和GitHub搭建个人博客">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2014/04/05/macosx10-dot-9shang-yong-octopresshe-githubda-jian-ge-ren-bo-ke/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="网上已经有很多关于搭建Octopress的文章了，但我写这篇文章的目的是帮助Mac新手们搭建自己的Octopress，尤其是最新的Mavericks系统 这篇博文包括：  Octopress搭建 Github Page 部署 Blog的美化工作">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MacOSX10.9上用Octopress和GitHub搭建个人博客">
+<meta name="twitter:description" content="网上已经有很多关于搭建Octopress的文章了，但我写这篇文章的目的是帮助Mac新手们搭建自己的Octopress，尤其是最新的Mavericks系统 这篇博文包括：  Octopress搭建 Github Page 部署 Blog的美化工作">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2014/04/05/macosx10-dot-9shang-yong-octopresshe-githubda-jian-ge-ren-bo-ke/" title="MacOSX10.9上用Octopress和GitHub搭建个人博客" itemprop="url">MacOSX10.9上用Octopress和GitHub搭建个人博客</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2014-04-05T06:28:54.000Z" itemprop="datePublished"> 发表于 2014-04-05</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Octopress搭建"><span class="toc-number">1.</span> <span class="toc-text">Octopress搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Github-Page-部署"><span class="toc-number">2.</span> <span class="toc-text">Github Page 部署</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Blog的美化工作"><span class="toc-number">3.</span> <span class="toc-text">Blog的美化工作</span></a></li></ol>
+		
+		</div>
+		
+		<p>网上已经有很多关于搭建Octopress的文章了，但我写这篇文章的目的是帮助Mac新手们搭建自己的Octopress，尤其是最新的Mavericks系统</p>
+<p>这篇博文包括：</p>
+<ul>
+<li>Octopress搭建</li>
+<li>Github Page 部署</li>
+<li>Blog的美化工作</li>
+</ul>
+<a id="more"></a>
+<hr>
+<h1 id="Octopress搭建"><a href="#Octopress搭建" class="headerlink" title="Octopress搭建"></a>Octopress搭建</h1><p>众所周知，MacOSX自带Ruby，10.9系统带了两个版本的Ruby：1.8和2.0，因为Octopress需要Ruby1.9.3以上的支持，所以Mavericks自带的Ruby2.0是可以胜任的，新手们可以松一口气了。<br>如果没有安装command line tools，可以直接安装Xcode。Xcode5之后，command line tools都是跟随Xcode自带的，不用单独安装，想卸载也就麻烦了，可以在Xcode中Preferences-&gt;Locations中查看command line tools版本。  </p>
+<p>系统没升级到最新版的童鞋，可以打开终端（terminal）通过下面的命令查看自己的Ruby版本：</p>
+<pre><code>ruby --version</code></pre><p>没安装RVM的童鞋运行下面的命令：</p>
+<pre><code>curl -L https://get.rvm.io | bash -s stable --ruby</code></pre><p>下面我们需要从Github上clone下Octopress</p>
+<pre><code>git clone git://github.com/imathis/octopress.git octopress</code></pre><p>这条命令将octopress的源码下载到了你个人文件夹下的octopress文件夹，如果对git命令不太熟，可以在<a href="https://mac.github.com" target="_blank" rel="noopener">这里</a>下载Github的Mac客户端，关于Github的使用，网上有很多教程。<br>下一步，安装依赖</p>
+<pre><code>cd octopress ＃进入octopress目录
+gem install bundler</code></pre><p>这里碰到的问题可能有两种：  </p>
+<ol>
+<li><p>权限不够，无法访问到一些文件夹  </p>
+</li>
+<li><p>等了很久没有反应<br>如果你之前对Linux比较熟，第一个问题可以很简单的解决，这是因为一些文件夹需要root权限访问，运行</p>
+<p> sudo gem install bundler<br>提示输入密码的时候，输入你自己的MacOSX开机密码后回车，注意输入密码的过程中终端无任何显示，这跟Linux一样<br>如果半天都没有反应，这是因为rubygems.org 的文件资源被墙了，可以在<a href="http://ruby.taobao.org" target="_blank" rel="noopener">这里</a>查看解决方法，或者干脆翻墙，推荐<a href="http://tizipro.com/?r=ee0508bc191f5651" target="_blank" rel="noopener">云梯VPN</a>科学上网，我个人比较推荐翻墙。  </p>
+</li>
+</ol>
+<p>PS：云梯VPN优惠链接：<a href="http://tizipro.com/?r=ee0508bc191f5651" target="_blank" rel="noopener">http://tizipro.com/?r=ee0508bc191f5651</a></p>
+<p>接下来运行：    </p>
+<pre><code>bundle install</code></pre><p>不出意外，肯定会出错，最后一句应该是“Make sure that <code>gem install RedCloth -v &#39;4.2.9&#39;</code> succeeds before bundling.”再往前追寻问题的根源，会发现这么一句“clang: error: unknown argument: ‘-multiply_definedsuppress’ [-Wunused-command-line-argument-hard-err”。<br>这是因为Xcode 5.1的LLVM编译器将未识别的命令行选项认为是error，导致诸如Python本地拓展和Ruby Gem报错，解决方案：在执行命令行前加ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future，这样就忽略了报错。感谢<a href="http://www.andrewhay.ca/archives/2558?utm_source=tuicool" target="_blank" rel="noopener">Andrew Hay的文章</a>帮我解决了问题。<br>所以应该这样：</p>
+<pre><code>ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future bundle install</code></pre><p>问题解决<br>最后安装默认的主题</p>
+<pre><code>rake install    </code></pre><p>如果出现“You have already activated rake 10.3.1, but your Gemfile requires rake 0.9.6. Prepending <code>bundle exec</code> to your command may solve this.”这样的提示，有三种解决方法：  </p>
+<ol>
+<li>运行<code>bundle update</code></li>
+<li>按照提示在前面加上<code>bundle exec</code>，即运行<code>bundle exec rake install</code></li>
+<li>卸载不一样的版本 gem uninstall rake -v=10.3.1<br>这三种方法建议先用方法1，如果不行再用方法3，方法2是无奈之举  </li>
+</ol>
+<p><strong>关于创建博文</strong></p>
+<pre><code>rake new_post[&quot;first post&quot;]＃双引号中为博文标题，可以自己定义，生成markdown文件
+rake generate ＃生成HTML文件</code></pre><p>这里推荐一个markdown编辑器<a href="http://mouapp.com" target="_blank" rel="noopener">Mou</a>，markdown是用来编写我们博客的语言，文件后缀名为md或markdown，学过Latex的童鞋可能会了解得更快一些，用markdown编写HTML版面是再好不过得了，markdown速成<a href="http://www.ituring.com.cn/article/23" target="_blank" rel="noopener">传送门</a>。网上教程也挺多的，语法风格跟Latex有点像。  </p>
+<h1 id="Github-Page-部署"><a href="#Github-Page-部署" class="headerlink" title="Github Page 部署"></a>Github Page 部署</h1><p>首先要有一个Github账号，假设用户名为username，那么新建一个仓库，名字叫“username.github.io”，Github会自动识别它为你的个人页面。你可以通过username.github.io这个网址来访问你部署的静态网页。创建完成后，获取你这个仓库的Git Url，SSH或者Http协议的都可以，然后执行<code>rake setup_github_pages</code>，当提示你的时候输入你前面创建的仓库的Git Url。比如<code>git@github.com:username/username.github.com.git</code><br>你会发现octopress文件夹中多了_deploy目录，并将这个目录当作master分支，而其余的文件都作为新建立的source分支。octopress原理是在source分支保存框架所需要的文件，还有博客的markdown文件，然后每次将生成的html文件放入master分支，通过username.github.io访问到的是已经生成好的master分支的文件，也就是_deploy文件夹的内容。<br>运行下面代码来生成部署网页到Github：</p>
+<pre><code>rake generate
+rake deploy</code></pre><p>现在访问你的网站，已经有了一个页面，使用的是系统默认主题。为了避免博客的源码受到破坏，需要把source分支也commit上去。不会用git命令的同学可以用Github的Mac客户端。</p>
+<pre><code>git add .
+git commit -m &apos;your message&apos;
+git push origin source</code></pre><p>如果你有自己的域名，可以通过在仓库中新建CNAME文件进行配置映射，这里不再细说。</p>
+<h1 id="Blog的美化工作"><a href="#Blog的美化工作" class="headerlink" title="Blog的美化工作"></a>Blog的美化工作</h1><p>可以用<a href="https://github.com/shashankmehta/greyshade" target="_blank" rel="noopener">greyshade</a>或者<a href="https://github.com/tommy351/Octopress-Theme-Slash" target="_blank" rel="noopener">slash</a>主题美化博客，根据个人喜好了。需要注意的是，greyshade这个主题有些不足之处，比如，disqus实效，还有如何添加新浪微博链接，请看<a href="http://bryanone.com/blog/2014/03/01/problem-with-greyshade/" target="_blank" rel="noopener">这里</a>和<a href="http://imallen.com/blog/2013/05/12/add-support-for-weibo-and-dribbble-to-greyshade.html" target="_blank" rel="noopener">这里</a>。如果首页左侧没有显示title和subtitle等信息，可以修改/source/_includes/header.html文件，添加</p>
+<pre><code>&lt;h1&gt;&lt;a href=&quot;{{ root_url }}/&quot;&gt;{{ site.title }}&lt;/a&gt;&lt;/h1&gt;
+&lt;p class=&quot;subtitle&quot;&gt;{{ site.subtitle }}&lt;/p&gt;</code></pre><p>修改_config.yml文件，可以配置博客的参数，网上有很多详细的教程来说明每个属性是干什么的，需要注意的一点就是冒号后面一定要加空格，否则编译不通过。建议下载一个Sublime Text来打开这些前台文件，增加效率。博客头像和Github一样采用<a href="www.gravatar.com">gravatar</a>的头像托管服务，在_config.yml文件中的email属性中填入你在gravatar的邮件或者在email_md5属性中填入md5码也可。<br><strong>关于添加标签云效果</strong>  </p>
+<ol>
+<li>将<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/plugins/category_cloud.rb" target="_blank" rel="noopener">category_cloud.rb</a>复制到你的<code>/octopress/plugins/</code>文件夹下  </li>
+<li>拷贝<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/source/_includes/custom/asides/category_cloud.html" target="_blank" rel="noopener">category_cloud.html</a>到你的<code>octopress/source/_includes/custom/asides/</code>目录  </li>
+<li>在你的 <code>octopress/_config.yml</code> 文件中的<code>default_asides</code>项中加入第二步添加的路径：<code>custom/asides/category_cloud.html</code>  </li>
+<li>拷贝<a href="https://github.com/yulingtianxia/yulingtianxia.github.io/blob/source/source/javascripts/tagcloud.swf" target="_blank" rel="noopener">tagcloud.swf</a>到<code>source/javascripts/</code>文件夹<br>如果想修改标签云的颜色可以在<code>category_cloud.rb</code>文件中改变：  <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@opts</span>[<span class="string">'bgcolor'</span>] = <span class="string">'#3D4349'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'tcolor1'</span>] = <span class="string">'#8B85C3'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'tcolor2'</span>] = <span class="string">'#C03999'</span></span><br><span class="line">    <span class="variable">@opts</span>[<span class="string">'hicolor'</span>] = <span class="string">'#ffffff'</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p><code>tcolor1</code>为文章数量比较多的分类颜色<br><code>tcolor2</code>为普通分类颜色<br><code>hicolor</code>为鼠标高亮颜色<br>诸如添加Google Analyse和百度统计，添加分享和评论系统，还有版权信息，网上的教程也很多，参考<a href="http://www.cnblogs.com/oec2003/archive/2013/05/31/3109577.html" target="_blank" rel="noopener">oec2003</a>和<a href="http://beyondvincent.com/blog/2013/07/27/107-hello-page-of-github/" target="_blank" rel="noopener">破船</a>的文章，本文主要是介绍MacOSX上面的部署工作。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/macOS/">macOS</a><a href="/tags/Octopress/">Octopress</a><a href="/tags/GitHub/">GitHub</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2014/04/05/macosx10-dot-9shang-yong-octopresshe-githubda-jian-ge-ren-bo-ke/" data-title="MacOSX10.9上用Octopress和GitHub搭建个人博客 | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2014/04/06/xcodehe-objective-c-cheat-sheet/" title="Xcode,Swift和Objective-C Cheat Sheet">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Xcode,Swift和Objective-C Cheat Sheet</span>
+</a>
+</div>
+
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Octopress搭建"><span class="toc-number">1.</span> <span class="toc-text">Octopress搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Github-Page-部署"><span class="toc-number">2.</span> <span class="toc-text">Github Page 部署</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Blog的美化工作"><span class="toc-number">3.</span> <span class="toc-text">Blog的美化工作</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
