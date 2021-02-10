@@ -38,7 +38,7 @@
 <meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperA.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperB.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/MethodSwizzling/SC_Perfect.png">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta property="og:updated_time" content="2021-02-10T16:32:48.572Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Objective-C Method Swizzling">
 <meta name="twitter:description" content="Objective-C 中的 Hook 又被称作 Method Swizzling，这是动态语言大都具有的特性。在 Objective-C 中经常会把 Hook 的逻辑写在 + load 方法中，这是利用它调用时机较提前等性质。 有时候需要 Hook 子类和父类的同一个方法，但是它们的 + load 方法调用顺序不同。一个常见的顺序可能是：父类-&amp;gt;子类-&amp;gt;子类类别-&amp;gt;父类类别。所">
@@ -121,7 +121,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Method-Swizzling-常用实现方案"><span class="toc-number">1.</span> <span class="toc-text">Method Swizzling 常用实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-A"><span class="toc-number">1.1.</span> <span class="toc-text">方案 A</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-B"><span class="toc-number">1.2.</span> <span class="toc-text">方案 B</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#研究背景"><span class="toc-number">2.</span> <span class="toc-text">研究背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Child-后-Super"><span class="toc-number">3.</span> <span class="toc-text">Hook 顺序：先 Child 后 Super</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法"><span class="toc-number">3.1.</span> <span class="toc-text">Super 未实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-A"><span class="toc-number">3.1.1.</span> <span class="toc-text">Super:Plan A,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-A"><span class="toc-number">3.1.2.</span> <span class="toc-text">Super:Plan B,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-B"><span class="toc-number">3.1.3.</span> <span class="toc-text">Super:Plan A,Child Plan B</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-B"><span class="toc-number">3.1.4.</span> <span class="toc-text">Super:Plan B,Child Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法"><span class="toc-number">3.2.</span> <span class="toc-text">Super 实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-A"><span class="toc-number">3.2.1.</span> <span class="toc-text">Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-B"><span class="toc-number">3.2.2.</span> <span class="toc-text">Child:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法"><span class="toc-number">3.3.</span> <span class="toc-text">Super 未实现方法,Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A"><span class="toc-number">3.3.1.</span> <span class="toc-text">Super:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B"><span class="toc-number">3.3.2.</span> <span class="toc-text">Super:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法"><span class="toc-number">3.4.</span> <span class="toc-text">Super 实现方法,Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Super-后-Child"><span class="toc-number">4.</span> <span class="toc-text">Hook 顺序：先 Super 后 Child</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法-1"><span class="toc-number">4.1.</span> <span class="toc-text">Super 未实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-A-1"><span class="toc-number">4.1.1.</span> <span class="toc-text">Super:Plan A,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-A-1"><span class="toc-number">4.1.2.</span> <span class="toc-text">Super:Plan B,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-B-1"><span class="toc-number">4.1.3.</span> <span class="toc-text">Super:Plan A,Child Plan B</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-B-1"><span class="toc-number">4.1.4.</span> <span class="toc-text">Super:Plan B,Child Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法-1"><span class="toc-number">4.2.</span> <span class="toc-text">Super 实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-A-1"><span class="toc-number">4.2.1.</span> <span class="toc-text">Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-B-1"><span class="toc-number">4.2.2.</span> <span class="toc-text">Child:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法-1"><span class="toc-number">4.3.</span> <span class="toc-text">Super 未实现方法,Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-1"><span class="toc-number">4.3.1.</span> <span class="toc-text">Super:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-1"><span class="toc-number">4.3.2.</span> <span class="toc-text">Super:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法-1"><span class="toc-number">4.4.</span> <span class="toc-text">Super 实现方法,Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Child-类后-Super-类"><span class="toc-number">5.1.</span> <span class="toc-text">Hook 顺序：先 Child 类后 Super 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Super-类后-Child-类"><span class="toc-number">5.2.</span> <span class="toc-text">Hook 顺序：先 Super 类后 Child 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Objective-C-Method-Swizzling-最佳实践"><span class="toc-number">5.3.</span> <span class="toc-text">Objective-C Method Swizzling 最佳实践</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">6.</span> <span class="toc-text">Reference</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Method-Swizzling-常用实现方案"><span class="toc-number">1.</span> <span class="toc-text">Method Swizzling 常用实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-A"><span class="toc-number">1.1.</span> <span class="toc-text">方案 A</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-B"><span class="toc-number">1.2.</span> <span class="toc-text">方案 B</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#研究背景"><span class="toc-number">2.</span> <span class="toc-text">研究背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Child-后-Super"><span class="toc-number">3.</span> <span class="toc-text">Hook 顺序：先 Child 后 Super</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法"><span class="toc-number">3.1.</span> <span class="toc-text">Super 未实现方法, Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA-Child-PlanA"><span class="toc-number">3.1.1.</span> <span class="toc-text">Super:PlanA, Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB-Child-PlanA"><span class="toc-number">3.1.2.</span> <span class="toc-text">Super:PlanB, Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA-Child-PlanB"><span class="toc-number">3.1.3.</span> <span class="toc-text">Super:PlanA, Child:PlanB</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB-Child-PlanB"><span class="toc-number">3.1.4.</span> <span class="toc-text">Super:PlanB, Child: PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法"><span class="toc-number">3.2.</span> <span class="toc-text">Super 实现方法, Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-PlanA"><span class="toc-number">3.2.1.</span> <span class="toc-text">Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-PlanB"><span class="toc-number">3.2.2.</span> <span class="toc-text">Child:PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法"><span class="toc-number">3.3.</span> <span class="toc-text">Super 未实现方法, Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA"><span class="toc-number">3.3.1.</span> <span class="toc-text">Super:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB"><span class="toc-number">3.3.2.</span> <span class="toc-text">Super:PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法"><span class="toc-number">3.4.</span> <span class="toc-text">Super 实现方法, Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Super-后-Child"><span class="toc-number">4.</span> <span class="toc-text">Hook 顺序：先 Super 后 Child</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法-1"><span class="toc-number">4.1.</span> <span class="toc-text">Super 未实现方法, Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA-Child-PlanA-1"><span class="toc-number">4.1.1.</span> <span class="toc-text">Super:PlanA, Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB-Child-PlanA-1"><span class="toc-number">4.1.2.</span> <span class="toc-text">Super:PlanB, Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA-Child-PlanB-1"><span class="toc-number">4.1.3.</span> <span class="toc-text">Super:PlanA, Child PlanB</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB-Child-PlanB-1"><span class="toc-number">4.1.4.</span> <span class="toc-text">Super:PlanB, Child PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法-1"><span class="toc-number">4.2.</span> <span class="toc-text">Super 实现方法, Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-PlanA-1"><span class="toc-number">4.2.1.</span> <span class="toc-text">Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-PlanB-1"><span class="toc-number">4.2.2.</span> <span class="toc-text">Child:PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法-1"><span class="toc-number">4.3.</span> <span class="toc-text">Super 未实现方法, Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA-1"><span class="toc-number">4.3.1.</span> <span class="toc-text">Super:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB-1"><span class="toc-number">4.3.2.</span> <span class="toc-text">Super:PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法-1"><span class="toc-number">4.4.</span> <span class="toc-text">Super 实现方法, Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Child-类后-Super-类"><span class="toc-number">5.1.</span> <span class="toc-text">Hook 顺序：先 Child 类后 Super 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Super-类后-Child-类"><span class="toc-number">5.2.</span> <span class="toc-text">Hook 顺序：先 Super 类后 Child 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Objective-C-Method-Swizzling-最佳实践"><span class="toc-number">5.3.</span> <span class="toc-text">Objective-C Method Swizzling 最佳实践</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">6.</span> <span class="toc-text">Reference</span></a></li></ol>
 		
 		</div>
 		
@@ -155,144 +155,145 @@
 <p><img src="http://yulingtianxia.com/resources/MethodSwizzling/%E6%A8%A1%E6%9D%BF.png" alt="模板"></p>
 <p><strong>下文中的图例均为 Hook 后的结果(Hook 前的太简单了懒得画)。如果不理解 <code>Selector</code>,<code>Method</code> 与 <code>IMP</code> 三者的关系，甚至不理解 Method Swizzling 原理，请先阅读 <a href="http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/">Objective-C Runtime</a>！如果还是看不懂，那就再看一遍吧！</strong></p>
 <h2 id="Hook-顺序：先-Child-后-Super"><a href="#Hook-顺序：先-Child-后-Super" class="headerlink" title="Hook 顺序：先 Child 后 Super"></a>Hook 顺序：先 Child 后 Super</h2><p>这个顺序本身就不被大众认可却又不得不广泛被使用，因为很多想 Hook 系统 API 只能从 Category 下手。当子类同样的方法也被 Hook 后，奇怪的事情便发生了。</p>
-<h3 id="Super-未实现方法-Child-未实现方法"><a href="#Super-未实现方法-Child-未实现方法" class="headerlink" title="Super 未实现方法,Child 未实现方法"></a>Super 未实现方法,Child 未实现方法</h3><h4 id="Super-Plan-A-Child-Plan-A"><a href="#Super-Plan-A-Child-Plan-A" class="headerlink" title="Super:Plan A,Child:Plan A"></a>Super:Plan A,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildA.png" alt="CS_SuperAChildA"></p>
+<h3 id="Super-未实现方法-Child-未实现方法"><a href="#Super-未实现方法-Child-未实现方法" class="headerlink" title="Super 未实现方法, Child 未实现方法"></a>Super 未实现方法, Child 未实现方法</h3><h4 id="Super-PlanA-Child-PlanA"><a href="#Super-PlanA-Child-PlanA" class="headerlink" title="Super:PlanA, Child:PlanA"></a>Super:PlanA, Child:PlanA</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildA.png" alt="CS_SuperAChildA"></p>
 <p>方法执行结果：</p>
 <ol>
-<li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
+<li>Child 对象：Child_Swizzle-&gt;Base (Super_Swizzle 被忽略)</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
-<h4 id="Super-Plan-B-Child-Plan-A"><a href="#Super-Plan-B-Child-Plan-A" class="headerlink" title="Super:Plan B,Child:Plan A"></a>Super:Plan B,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildA.png" alt="CS_SuperBChildA"></p>
+<h4 id="Super-PlanB-Child-PlanA"><a href="#Super-PlanB-Child-PlanA" class="headerlink" title="Super:PlanB, Child:PlanA"></a>Super:PlanB, Child:PlanA</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildA.png" alt="CS_SuperBChildA"></p>
 <p>方法执行结果：</p>
 <ol>
-<li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
-<li>Super 对象正常</li>
-<li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
+<li>Child 对象：Child_Swizzle-&gt;Base (Super_Swizzle 被忽略)</li>
+<li>Super 对象正常：Super_Swizzle-&gt;Base</li>
+<li>Base 对象：产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
 </ol>
-<h4 id="Super-Plan-A-Child-Plan-B"><a href="#Super-Plan-A-Child-Plan-B" class="headerlink" title="Super:Plan A,Child Plan B"></a>Super:Plan A,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildB.png" alt="CS_SuperAChildB"></p>
+<h4 id="Super-PlanA-Child-PlanB"><a href="#Super-PlanA-Child-PlanB" class="headerlink" title="Super:PlanA, Child:PlanB"></a>Super:PlanA, Child:PlanB</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperAChildB.png" alt="CS_SuperAChildB"></p>
 <p>方法执行结果：</p>
 <ol>
-<li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，结果是 Super_Swizzle-&gt;Child_Swizzle-&gt;Base (顺序错误)；如果两个 <code>selector</code> 相同，则导致 Super_Swizzle 调用的是 Child_Swizzle 方法，结果是 Super_Swizzle-&gt;Base (Child_Swizzle 被忽略)。</li>
+<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则会一直调用 Child_Swizzle 进入死循环。</li>
+<li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦间接等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。</li>
+</ol>
+<h4 id="Super-PlanB-Child-PlanB"><a href="#Super-PlanB-Child-PlanB" class="headerlink" title="Super:PlanB, Child: PlanB"></a>Super:PlanB, Child: PlanB</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildB.png" alt="CS_SuperBChildB"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，结果是 Super_Swizzle-&gt;Child_Swizzle-&gt;Base (顺序错误)；如果两个 <code>selector</code> 相同，则导致 Super_Swizzle 调用的是 Child_Swizzle 方法，结果是 Super_Swizzle-&gt;Base (Child_Swizzle 被忽略)。</li>
 <li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则会一直调用 Child_Swizzle 进入死循环</li>
-<li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦间接等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
+<li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦间接等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。</li>
 </ol>
-<h4 id="Super-Plan-B-Child-Plan-B"><a href="#Super-Plan-B-Child-Plan-B" class="headerlink" title="Super:Plan B,Child Plan B"></a>Super:Plan B,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperBChildB.png" alt="CS_SuperBChildB"></p>
+<h3 id="Super-实现方法-Child-未实现方法"><a href="#Super-实现方法-Child-未实现方法" class="headerlink" title="Super 实现方法, Child 未实现方法"></a>Super 实现方法, Child 未实现方法</h3><p>由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。</p>
+<h4 id="Child-PlanA"><a href="#Child-PlanA" class="headerlink" title="Child:PlanA"></a>Child:PlanA</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildA.png" alt="CS_ChildA"></p>
 <p>方法执行结果：</p>
 <ol>
-<li>Child 对象：Super-&gt;Child-&gt;Base</li>
-<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则会一直调用 Child_Swizzle 进入死循环</li>
-<li>Base 对象产生 <code>unrecognized selector</code> 异常</li>
-</ol>
-<h3 id="Super-实现方法-Child-未实现方法"><a href="#Super-实现方法-Child-未实现方法" class="headerlink" title="Super 实现方法,Child 未实现方法"></a>Super 实现方法,Child 未实现方法</h3><p>由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。</p>
-<h4 id="Child-Plan-A"><a href="#Child-Plan-A" class="headerlink" title="Child:Plan A"></a>Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildA.png" alt="CS_ChildA"></p>
-<p>方法执行结果：</p>
-<ol>
-<li>Child 对象：Child-&gt;Base (Super 被忽略)</li>
+<li>Child 对象：Child_Swizzle-&gt;Super-&gt;Base (Super_Swizzle 被忽略)</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
-<h4 id="Child-Plan-B"><a href="#Child-Plan-B" class="headerlink" title="Child:Plan B"></a>Child:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildB.png" alt="CS_ChildB"></p>
+<h4 id="Child-PlanB"><a href="#Child-PlanB" class="headerlink" title="Child:PlanB"></a>Child:PlanB</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_ChildB.png" alt="CS_ChildB"></p>
 <p>方法执行结果：</p>
 <ol>
-<li>Child 对象：Super-&gt;Child-&gt;Base</li>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果为 Super_Swizzle-&gt;Child_Swizzle-&gt;Super-&gt;Base (顺序错误)；如果两个 <code>selector</code> 相同则结果为 Super_Swizzle-&gt;Super-&gt;Base (Child_Swizzle 被忽略)</li>
 <li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则会一直调用 Child_Swizzle 进入死循环</li>
 <li>Base 对象正常</li>
 </ol>
-<h3 id="Super-未实现方法-Child-实现方法"><a href="#Super-未实现方法-Child-实现方法" class="headerlink" title="Super 未实现方法,Child 实现方法"></a>Super 未实现方法,Child 实现方法</h3><p>由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。</p>
-<h4 id="Super-Plan-A"><a href="#Super-Plan-A" class="headerlink" title="Super:Plan A"></a>Super:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperA.png" alt="CS_SuperA"></p>
-<p>方法执行结果（一切正常）：</p>
-<ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
-<li>Super 和 Base 对象均正常</li>
-</ol>
-<h4 id="Super-Plan-B"><a href="#Super-Plan-B" class="headerlink" title="Super:Plan B"></a>Super:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperB.png" alt="CS_SuperB"></p>
+<h3 id="Super-未实现方法-Child-实现方法"><a href="#Super-未实现方法-Child-实现方法" class="headerlink" title="Super 未实现方法, Child 实现方法"></a>Super 未实现方法, Child 实现方法</h3><p>由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。</p>
+<h4 id="Super-PlanA"><a href="#Super-PlanA" class="headerlink" title="Super:PlanA"></a>Super:PlanA</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperA.png" alt="CS_SuperA"></p>
 <p>方法执行结果：</p>
 <ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
-<li>Super 对象正常：Super-&gt;Base</li>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常 Child_Swizzle-&gt;Child-&gt;Super_Swizzle-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Child 和 Super_Swizzle 死循环。</li>
+<li>Super 和 Base 对象均正常</li>
+</ol>
+<h4 id="Super-PlanB"><a href="#Super-PlanB" class="headerlink" title="Super:PlanB"></a>Super:PlanB</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_SuperB.png" alt="CS_SuperB"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常 Child_Swizzle-&gt;Child-&gt;Super_Swizzle-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Child 和 Super_Swizzle 死循环。</li>
+<li>Super 对象正常：Super_Swizzle-&gt;Base</li>
 <li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
 </ol>
-<h3 id="Super-实现方法-Child-实现方法"><a href="#Super-实现方法-Child-实现方法" class="headerlink" title="Super 实现方法,Child 实现方法"></a>Super 实现方法,Child 实现方法</h3><p>相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。</p>
+<h3 id="Super-实现方法-Child-实现方法"><a href="#Super-实现方法-Child-实现方法" class="headerlink" title="Super 实现方法, Child 实现方法"></a>Super 实现方法, Child 实现方法</h3><p>相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。</p>
 <p><img src="http://yulingtianxia.com/resources/MethodSwizzling/CS_Perfect.png" alt="CS_Perfect"></p>
-<p>方法执行结果（一切正常）：</p>
+<p>方法执行结果：</p>
 <ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常 Child_Swizzle-&gt;Child-&gt;Super_Swizzle-&gt;Super-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Child 和 Super_Swizzle 死循环。</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
 <h2 id="Hook-顺序：先-Super-后-Child"><a href="#Hook-顺序：先-Super-后-Child" class="headerlink" title="Hook 顺序：先 Super 后 Child"></a>Hook 顺序：先 Super 后 Child</h2><p>并不是 Hook 顺序对了就能保平安，姿势也同样重要。</p>
-<h3 id="Super-未实现方法-Child-未实现方法-1"><a href="#Super-未实现方法-Child-未实现方法-1" class="headerlink" title="Super 未实现方法,Child 未实现方法"></a>Super 未实现方法,Child 未实现方法</h3><h4 id="Super-Plan-A-Child-Plan-A-1"><a href="#Super-Plan-A-Child-Plan-A-1" class="headerlink" title="Super:Plan A,Child:Plan A"></a>Super:Plan A,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildA.png" alt="SC_SuperAChildA"></p>
-<p>方法执行结果（一切正常）：</p>
+<h3 id="Super-未实现方法-Child-未实现方法-1"><a href="#Super-未实现方法-Child-未实现方法-1" class="headerlink" title="Super 未实现方法, Child 未实现方法"></a>Super 未实现方法, Child 未实现方法</h3><h4 id="Super-PlanA-Child-PlanA-1"><a href="#Super-PlanA-Child-PlanA-1" class="headerlink" title="Super:PlanA, Child:PlanA"></a>Super:PlanA, Child:PlanA</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildA.png" alt="SC_SuperAChildA"></p>
+<p>方法执行结果：</p>
 <ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常 Child_Swizzle-&gt;Super_Swizzle-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Super_Swizzle 死循环。</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
-<h4 id="Super-Plan-B-Child-Plan-A-1"><a href="#Super-Plan-B-Child-Plan-A-1" class="headerlink" title="Super:Plan B,Child:Plan A"></a>Super:Plan B,Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildA.png" alt="SC_SuperBChildA"></p>
+<h4 id="Super-PlanB-Child-PlanA-1"><a href="#Super-PlanB-Child-PlanA-1" class="headerlink" title="Super:PlanB, Child:PlanA"></a>Super:PlanB, Child:PlanA</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildA.png" alt="SC_SuperBChildA"></p>
 <p>方法执行结果：</p>
 <ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
-<li>Super 对象正常：Super-&gt;Base</li>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常 Child_Swizzle-&gt;Super_Swizzle-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Super_Swizzle 死循环。</li>
+<li>Super 对象正常：Super_Swizzle-&gt;Base</li>
 <li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
 </ol>
-<h4 id="Super-Plan-A-Child-Plan-B-1"><a href="#Super-Plan-A-Child-Plan-B-1" class="headerlink" title="Super:Plan A,Child Plan B"></a>Super:Plan A,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildB.png" alt="SC_SuperAChildB"></p>
+<h4 id="Super-PlanA-Child-PlanB-1"><a href="#Super-PlanA-Child-PlanB-1" class="headerlink" title="Super:PlanA, Child PlanB"></a>Super:PlanA, Child PlanB</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperAChildB.png" alt="SC_SuperAChildB"></p>
 <p>方法执行结果：</p>
 <ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
-<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则 Child-&gt;Base (Super 被忽略)</li>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常：Child_Swizzle-&gt;Super_Swizzle-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Super_Swizzle 死循环。</li>
+<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则 Child_Swizzle-&gt;Base (Super_Swizzle 被忽略)</li>
 <li>Base 对象正常</li>
 </ol>
-<h4 id="Super-Plan-B-Child-Plan-B-1"><a href="#Super-Plan-B-Child-Plan-B-1" class="headerlink" title="Super:Plan B,Child Plan B"></a>Super:Plan B,Child Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildB.png" alt="SC_SuperBChildB"></p>
+<h4 id="Super-PlanB-Child-PlanB-1"><a href="#Super-PlanB-Child-PlanB-1" class="headerlink" title="Super:PlanB, Child PlanB"></a>Super:PlanB, Child PlanB</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperBChildB.png" alt="SC_SuperBChildB"></p>
 <ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
-<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则 Child-&gt;Base (Super 被忽略)</li>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常为 Child_Swizzle-&gt;Super_Swizzle-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Super_Swizzle 死循环。</li>
+<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则 Child_Swizzle-&gt;Base (Super_Swizzle 被忽略)</li>
 <li>Base 对象产生 <code>unrecognized selector</code> 异常</li>
 </ol>
-<h3 id="Super-实现方法-Child-未实现方法-1"><a href="#Super-实现方法-Child-未实现方法-1" class="headerlink" title="Super 实现方法,Child 未实现方法"></a>Super 实现方法,Child 未实现方法</h3><p>由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。</p>
-<h4 id="Child-Plan-A-1"><a href="#Child-Plan-A-1" class="headerlink" title="Child:Plan A"></a>Child:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildA.png" alt="SC_ChildA"></p>
-<p>方法执行结果（一切正常）：</p>
-<ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
-<li>Super 和 Base 对象均正常</li>
-</ol>
-<h4 id="Child-Plan-B-1"><a href="#Child-Plan-B-1" class="headerlink" title="Child:Plan B"></a>Child:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildB.png" alt="SC_ChildB"></p>
+<h3 id="Super-实现方法-Child-未实现方法-1"><a href="#Super-实现方法-Child-未实现方法-1" class="headerlink" title="Super 实现方法, Child 未实现方法"></a>Super 实现方法, Child 未实现方法</h3><p>由于 Super 类被 Hook 的方法已经被实现，所以只需区分 Child 的 Hook 方案。</p>
+<h4 id="Child-PlanA-1"><a href="#Child-PlanA-1" class="headerlink" title="Child:PlanA"></a>Child:PlanA</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildA.png" alt="SC_ChildA"></p>
 <p>方法执行结果：</p>
 <ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
-<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则 Child-&gt;Base (Super 被忽略)</li>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常 Child_Swizzle-&gt;Super_Swizzle-&gt;Super-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Super_Swizzle 死循环。</li>
+<li>Super 和 Base 对象均正常</li>
+</ol>
+<h4 id="Child-PlanB-1"><a href="#Child-PlanB-1" class="headerlink" title="Child:PlanB"></a>Child:PlanB</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_ChildB.png" alt="SC_ChildB"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常 Child_Swizzle-&gt;Super_Swizzle-&gt;Super-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Super_Swizzle 死循环。</li>
+<li>Super 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则会产生 <code>unrecognized selector</code> 异常；如果两个 <code>selector</code> 相同则结果为 Child_Swizzle-&gt;Super-&gt;Base (Super_Swizzle 被忽略)</li>
 <li>Base 对象正常</li>
 </ol>
-<h3 id="Super-未实现方法-Child-实现方法-1"><a href="#Super-未实现方法-Child-实现方法-1" class="headerlink" title="Super 未实现方法,Child 实现方法"></a>Super 未实现方法,Child 实现方法</h3><p>由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。</p>
-<h4 id="Super-Plan-A-1"><a href="#Super-Plan-A-1" class="headerlink" title="Super:Plan A"></a>Super:Plan A</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperA.png" alt="SC_SuperA"></p>
-<p>方法执行结果（一切正常）：</p>
-<ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
-<li>Super 和 Base 对象均正常</li>
-</ol>
-<h4 id="Super-Plan-B-1"><a href="#Super-Plan-B-1" class="headerlink" title="Super:Plan B"></a>Super:Plan B</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperB.png" alt="SC_SuperB"></p>
+<h3 id="Super-未实现方法-Child-实现方法-1"><a href="#Super-未实现方法-Child-实现方法-1" class="headerlink" title="Super 未实现方法, Child 实现方法"></a>Super 未实现方法, Child 实现方法</h3><p>由于 Child 类被 Hook 的方法已经被实现，所以只需区分 Super 的 Hook 方案。</p>
+<h4 id="Super-PlanA-1"><a href="#Super-PlanA-1" class="headerlink" title="Super:PlanA"></a>Super:PlanA</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperA.png" alt="SC_SuperA"></p>
 <p>方法执行结果：</p>
 <ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
-<li>Super 对象正常：Super-&gt;Base</li>
-<li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
-</ol>
-<h3 id="Super-实现方法-Child-实现方法-1"><a href="#Super-实现方法-Child-实现方法-1" class="headerlink" title="Super 实现方法,Child 实现方法"></a>Super 实现方法,Child 实现方法</h3><p>相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。</p>
-<p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_Perfect.png" alt="SC_Perfect"></p>
-<p>方法执行结果（一切正常）：</p>
-<ol>
-<li>Child 对象正常：Child-&gt;Super-&gt;Base</li>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常 Child_Swizzle-&gt;Child-&gt;Super_Swizzle-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Child 和 Super_Swizzle 死循环。</li>
 <li>Super 和 Base 对象均正常</li>
 </ol>
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><h3 id="Hook-顺序：先-Child-类后-Super-类"><a href="#Hook-顺序：先-Child-类后-Super-类" class="headerlink" title="Hook 顺序：先 Child 类后 Super 类"></a>Hook 顺序：先 Child 类后 Super 类</h3><p>为了保证 Hook 后方法调用顺序是对的，需要同时满足以下两个条件：</p>
+<h4 id="Super-PlanB-1"><a href="#Super-PlanB-1" class="headerlink" title="Super:PlanB"></a>Super:PlanB</h4><p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_SuperB.png" alt="SC_SuperB"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常 Child_Swizzle-&gt;Child-&gt;Super_Swizzle-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Child 和 Super_Swizzle 死循环。</li>
+<li>Super 对象正常：Super_Swizzle-&gt;Base</li>
+<li>Base 对象产生 <code>unrecognized selector</code> 异常，此情况亦等同于：在子类类别中 Hook 了子类未实现而父类实现了的方法。（Super 是 Base 的子类）</li>
+</ol>
+<h3 id="Super-实现方法-Child-实现方法-1"><a href="#Super-实现方法-Child-实现方法-1" class="headerlink" title="Super 实现方法, Child 实现方法"></a>Super 实现方法, Child 实现方法</h3><p>相当于 Super 和 Child 都使用方案 B 进行 Hook，所以只有一种情况。</p>
+<p><img src="http://yulingtianxia.com/resources/MethodSwizzling/SC_Perfect.png" alt="SC_Perfect"></p>
+<p>方法执行结果：</p>
+<ol>
+<li>Child 对象：如果 Super_Swizzle 与 Child_Swizzle 的 <code>selector</code> 不同，则结果正常 Child_Swizzle-&gt;Child-&gt;Super_Swizzle-&gt;Super-&gt;Base；如果两个 <code>selector</code> 相同则会一直调用 Child 和 Super_Swizzle 死循环。</li>
+<li>Super 和 Base 对象均正常</li>
+</ol>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><h3 id="Hook-顺序：先-Child-类后-Super-类"><a href="#Hook-顺序：先-Child-类后-Super-类" class="headerlink" title="Hook 顺序：先 Child 类后 Super 类"></a>Hook 顺序：先 Child 类后 Super 类</h3><p>为了保证 Hook 后方法调用顺序是对的，需要同时满足以下三个条件：</p>
 <ol>
 <li>Child 类实现被 Hook 的方法</li>
+<li>Super 和 Child 中用于 Swizzle 新增的方法命名不同</li>
 <li>Super 类实现被 Hook 的方法或使用 A 方案 Hook</li>
 </ol>
-<h3 id="Hook-顺序：先-Super-类后-Child-类"><a href="#Hook-顺序：先-Super-类后-Child-类" class="headerlink" title="Hook 顺序：先 Super 类后 Child 类"></a>Hook 顺序：先 Super 类后 Child 类</h3><p>因为 Hook 的顺序是正确的，所以只需满足以下任意一个条件即可：</p>
+<h3 id="Hook-顺序：先-Super-类后-Child-类"><a href="#Hook-顺序：先-Super-类后-Child-类" class="headerlink" title="Hook 顺序：先 Super 类后 Child 类"></a>Hook 顺序：先 Super 类后 Child 类</h3><p>虽然 Hook 的顺序是正确的，也需要同时满足以下两个条件才能保证调用顺序也是对的：</p>
 <ol>
-<li>实现被 Hook 的方法</li>
-<li>使用方案 A 进行 Hook</li>
+<li>Super 类和 Child 类中用于 Swizzle 新增的方法命名不同</li>
+<li>类实现了被 Hook 的方法或使用方案 A 来 Hook</li>
 </ol>
 <h3 id="Objective-C-Method-Swizzling-最佳实践"><a href="#Objective-C-Method-Swizzling-最佳实践" class="headerlink" title="Objective-C Method Swizzling 最佳实践"></a>Objective-C Method Swizzling 最佳实践</h3><ol>
-<li>Hook 顺序并不能保证结果一定正确，但先 Super 后 Child 效果更佳</li>
-<li>方案 A 明显优于方案 B</li>
-<li>方案 A 中的『静态方法版本』固然更缜密，但操作复杂。为了提升开发效率，建议参考 CaptainHook 的宏定义实现。</li>
+<li>Hook 顺序并不能保证结果一定正确，但先 Super 后 Child 更加安全</li>
+<li>如果 Hook 父类和子类的同一个方法，用于 Swizzle 的方法名需要保持唯一。如果子类用于 Hook 的新增方法名与父类相同，则会导致调用逻辑错误或死循环。</li>
+<li>方案 A 明显优于方案 B。方案 A 中的『静态方法版本』固然更缜密，但操作复杂。为了提升开发效率，建议参考 CaptainHook 的宏定义实现。</li>
 <li><a href="https://github.com/rabovik/RSSwizzle" target="_blank" rel="noopener">RSSwizzle</a> 被很多人推荐，它用很复杂的方式解决了 <a href="http://stackoverflow.com/questions/5339276/what-are-the-dangers-of-method-swizzling-in-objective-c" target="_blank" rel="noopener">What are the Dangers of Method Swizzling in Objective C?</a> 中提到的一系列问题。不过引入它还是有一些成本的，建议在本文列举的那些极端特殊情况下才使用它，毕竟方案 A 已经能 Cover 到大部分情况了。</li>
 <li><a href="https://github.com/rentzsch/jrswizzle" target="_blank" rel="noopener">jrswizzle</a> 尝试解决在不同平台和系统版本上的 Method Swizzling 与类继承关系的冲突。对各平台低版本系统兼容性较强。</li>
 </ol>
@@ -365,7 +366,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Method-Swizzling-常用实现方案"><span class="toc-number">1.</span> <span class="toc-text">Method Swizzling 常用实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-A"><span class="toc-number">1.1.</span> <span class="toc-text">方案 A</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-B"><span class="toc-number">1.2.</span> <span class="toc-text">方案 B</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#研究背景"><span class="toc-number">2.</span> <span class="toc-text">研究背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Child-后-Super"><span class="toc-number">3.</span> <span class="toc-text">Hook 顺序：先 Child 后 Super</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法"><span class="toc-number">3.1.</span> <span class="toc-text">Super 未实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-A"><span class="toc-number">3.1.1.</span> <span class="toc-text">Super:Plan A,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-A"><span class="toc-number">3.1.2.</span> <span class="toc-text">Super:Plan B,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-B"><span class="toc-number">3.1.3.</span> <span class="toc-text">Super:Plan A,Child Plan B</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-B"><span class="toc-number">3.1.4.</span> <span class="toc-text">Super:Plan B,Child Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法"><span class="toc-number">3.2.</span> <span class="toc-text">Super 实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-A"><span class="toc-number">3.2.1.</span> <span class="toc-text">Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-B"><span class="toc-number">3.2.2.</span> <span class="toc-text">Child:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法"><span class="toc-number">3.3.</span> <span class="toc-text">Super 未实现方法,Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A"><span class="toc-number">3.3.1.</span> <span class="toc-text">Super:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B"><span class="toc-number">3.3.2.</span> <span class="toc-text">Super:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法"><span class="toc-number">3.4.</span> <span class="toc-text">Super 实现方法,Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Super-后-Child"><span class="toc-number">4.</span> <span class="toc-text">Hook 顺序：先 Super 后 Child</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法-1"><span class="toc-number">4.1.</span> <span class="toc-text">Super 未实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-A-1"><span class="toc-number">4.1.1.</span> <span class="toc-text">Super:Plan A,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-A-1"><span class="toc-number">4.1.2.</span> <span class="toc-text">Super:Plan B,Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-Child-Plan-B-1"><span class="toc-number">4.1.3.</span> <span class="toc-text">Super:Plan A,Child Plan B</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-Child-Plan-B-1"><span class="toc-number">4.1.4.</span> <span class="toc-text">Super:Plan B,Child Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法-1"><span class="toc-number">4.2.</span> <span class="toc-text">Super 实现方法,Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-A-1"><span class="toc-number">4.2.1.</span> <span class="toc-text">Child:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-Plan-B-1"><span class="toc-number">4.2.2.</span> <span class="toc-text">Child:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法-1"><span class="toc-number">4.3.</span> <span class="toc-text">Super 未实现方法,Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-A-1"><span class="toc-number">4.3.1.</span> <span class="toc-text">Super:Plan A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-Plan-B-1"><span class="toc-number">4.3.2.</span> <span class="toc-text">Super:Plan B</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法-1"><span class="toc-number">4.4.</span> <span class="toc-text">Super 实现方法,Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Child-类后-Super-类"><span class="toc-number">5.1.</span> <span class="toc-text">Hook 顺序：先 Child 类后 Super 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Super-类后-Child-类"><span class="toc-number">5.2.</span> <span class="toc-text">Hook 顺序：先 Super 类后 Child 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Objective-C-Method-Swizzling-最佳实践"><span class="toc-number">5.3.</span> <span class="toc-text">Objective-C Method Swizzling 最佳实践</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">6.</span> <span class="toc-text">Reference</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Method-Swizzling-常用实现方案"><span class="toc-number">1.</span> <span class="toc-text">Method Swizzling 常用实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-A"><span class="toc-number">1.1.</span> <span class="toc-text">方案 A</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方案-B"><span class="toc-number">1.2.</span> <span class="toc-text">方案 B</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#研究背景"><span class="toc-number">2.</span> <span class="toc-text">研究背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Child-后-Super"><span class="toc-number">3.</span> <span class="toc-text">Hook 顺序：先 Child 后 Super</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法"><span class="toc-number">3.1.</span> <span class="toc-text">Super 未实现方法, Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA-Child-PlanA"><span class="toc-number">3.1.1.</span> <span class="toc-text">Super:PlanA, Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB-Child-PlanA"><span class="toc-number">3.1.2.</span> <span class="toc-text">Super:PlanB, Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA-Child-PlanB"><span class="toc-number">3.1.3.</span> <span class="toc-text">Super:PlanA, Child:PlanB</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB-Child-PlanB"><span class="toc-number">3.1.4.</span> <span class="toc-text">Super:PlanB, Child: PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法"><span class="toc-number">3.2.</span> <span class="toc-text">Super 实现方法, Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-PlanA"><span class="toc-number">3.2.1.</span> <span class="toc-text">Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-PlanB"><span class="toc-number">3.2.2.</span> <span class="toc-text">Child:PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法"><span class="toc-number">3.3.</span> <span class="toc-text">Super 未实现方法, Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA"><span class="toc-number">3.3.1.</span> <span class="toc-text">Super:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB"><span class="toc-number">3.3.2.</span> <span class="toc-text">Super:PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法"><span class="toc-number">3.4.</span> <span class="toc-text">Super 实现方法, Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-顺序：先-Super-后-Child"><span class="toc-number">4.</span> <span class="toc-text">Hook 顺序：先 Super 后 Child</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-未实现方法-1"><span class="toc-number">4.1.</span> <span class="toc-text">Super 未实现方法, Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA-Child-PlanA-1"><span class="toc-number">4.1.1.</span> <span class="toc-text">Super:PlanA, Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB-Child-PlanA-1"><span class="toc-number">4.1.2.</span> <span class="toc-text">Super:PlanB, Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA-Child-PlanB-1"><span class="toc-number">4.1.3.</span> <span class="toc-text">Super:PlanA, Child PlanB</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB-Child-PlanB-1"><span class="toc-number">4.1.4.</span> <span class="toc-text">Super:PlanB, Child PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-未实现方法-1"><span class="toc-number">4.2.</span> <span class="toc-text">Super 实现方法, Child 未实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-PlanA-1"><span class="toc-number">4.2.1.</span> <span class="toc-text">Child:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Child-PlanB-1"><span class="toc-number">4.2.2.</span> <span class="toc-text">Child:PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-未实现方法-Child-实现方法-1"><span class="toc-number">4.3.</span> <span class="toc-text">Super 未实现方法, Child 实现方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanA-1"><span class="toc-number">4.3.1.</span> <span class="toc-text">Super:PlanA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Super-PlanB-1"><span class="toc-number">4.3.2.</span> <span class="toc-text">Super:PlanB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-实现方法-Child-实现方法-1"><span class="toc-number">4.4.</span> <span class="toc-text">Super 实现方法, Child 实现方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">5.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Child-类后-Super-类"><span class="toc-number">5.1.</span> <span class="toc-text">Hook 顺序：先 Child 类后 Super 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-顺序：先-Super-类后-Child-类"><span class="toc-number">5.2.</span> <span class="toc-text">Hook 顺序：先 Super 类后 Child 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Objective-C-Method-Swizzling-最佳实践"><span class="toc-number">5.3.</span> <span class="toc-text">Objective-C Method Swizzling 最佳实践</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">6.</span> <span class="toc-text">Reference</span></a></li></ol>
  
   </div>
 
@@ -484,7 +485,7 @@
     
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
 		
 		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
 		
