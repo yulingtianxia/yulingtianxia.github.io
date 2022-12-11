@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>Core ML and Vision Framework on iOS 11 | yulingtianxia&#39;s blog</title>
@@ -12,12 +12,13 @@
 
     
     <meta name="description" content="机器学习和计算机视觉在 iOS 上虽然早已有了系统级的支持，但 WWDC 17 发布的 iOS 11 将它们的使用门槛大大降低。苹果提供了设计合理且容易上手的 API，让那些对基础理论知识一窍不通的门外汉也能玩转高大上的前沿科技，这是苹果一贯的风格。">
+<meta name="keywords" content="iOS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Core ML and Vision Framework on iOS 11">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2017/06/19/Core-ML-and-Vision-Framework-on-iOS-11/index.html">
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="机器学习和计算机视觉在 iOS 上虽然早已有了系统级的支持，但 WWDC 17 发布的 iOS 11 将它们的使用门槛大大降低。苹果提供了设计合理且容易上手的 API，让那些对基础理论知识一窍不通的门外汉也能玩转高大上的前沿科技，这是苹果一贯的风格。">
-<meta property="og:locale" content="zh_CN">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://github.com/yulingtianxia/Core-ML-Sample/blob/master/coreml.gif?raw=true">
 <meta property="og:image" content="http://yulingtianxia.com/resources/iOS11/coreml1.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/iOS11/coreml2.png">
@@ -29,11 +30,10 @@
 <meta property="og:image" content="http://yulingtianxia.com/resources/iOS11/506_vision_framework_building_on_core_ml_%E9%A1%B5%E9%9D%A2_36.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/iOS11/506_vision_framework_building_on_core_ml_%E9%A1%B5%E9%9D%A2_40.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/iOS11/506_vision_framework_building_on_core_ml_%E9%A1%B5%E9%9D%A2_72.png">
-<meta property="article:published_time" content="2017-06-19T02:05:41.000Z">
-<meta property="article:modified_time" content="2019-05-26T10:08:45.000Z">
-<meta property="article:author" content="杨萧玉">
-<meta property="article:tag" content="iOS">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Core ML and Vision Framework on iOS 11">
+<meta name="twitter:description" content="机器学习和计算机视觉在 iOS 上虽然早已有了系统级的支持，但 WWDC 17 发布的 iOS 11 将它们的使用门槛大大降低。苹果提供了设计合理且容易上手的 API，让那些对基础理论知识一窍不通的门外汉也能玩转高大上的前沿科技，这是苹果一贯的风格。">
 <meta name="twitter:image" content="https://github.com/yulingtianxia/Core-ML-Sample/blob/master/coreml.gif?raw=true">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -48,11 +48,9 @@
     <link rel="apple-touch-icon" href="/img/jacman.jpg">
     <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
     
-    
-<link rel="stylesheet" href="/css/style.css">
-
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
@@ -115,7 +113,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-ML"><span class="toc-number">1.</span> <span class="toc-text">Core ML</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Model-%E8%BD%AC%E6%8D%A2%E5%B7%A5%E5%85%B7"><span class="toc-number">1.2.</span> <span class="toc-text">Model 转换工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%95%E5%B1%82%E8%AE%A1%E7%AE%97%E6%80%A7%E8%83%BD"><span class="toc-number">1.3.</span> <span class="toc-text">底层计算性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Demo-%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="toc-number">1.4.</span> <span class="toc-text">Demo: 数据预处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vision"><span class="toc-number">2.</span> <span class="toc-text">Vision</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.1.</span> <span class="toc-text">应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vision-%E4%BD%BF%E7%94%A8%E5%A7%BF%E5%8A%BF"><span class="toc-number">2.2.</span> <span class="toc-text">Vision 使用姿势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Demo-%E4%B8%8E-Core-ML-%E9%9B%86%E6%88%90"><span class="toc-number">2.3.</span> <span class="toc-text">Demo: 与 Core ML 集成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">2.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%84%9F%E5%8F%97"><span class="toc-number">3.</span> <span class="toc-text">感受</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-ML"><span class="toc-number">1.</span> <span class="toc-text">Core ML</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Model-转换工具"><span class="toc-number">1.2.</span> <span class="toc-text">Model 转换工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#底层计算性能"><span class="toc-number">1.3.</span> <span class="toc-text">底层计算性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Demo-数据预处理"><span class="toc-number">1.4.</span> <span class="toc-text">Demo: 数据预处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vision"><span class="toc-number">2.</span> <span class="toc-text">Vision</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#应用场景"><span class="toc-number">2.1.</span> <span class="toc-text">应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vision-使用姿势"><span class="toc-number">2.2.</span> <span class="toc-text">Vision 使用姿势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Demo-与-Core-ML-集成"><span class="toc-number">2.3.</span> <span class="toc-text">Demo: 与 Core ML 集成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结-1"><span class="toc-number">2.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受"><span class="toc-number">3.</span> <span class="toc-text">感受</span></a></li></ol>
 		
 		</div>
 		
@@ -257,7 +255,7 @@
 
 <section id="comments" class="comment">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 
@@ -269,7 +267,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-ML"><span class="toc-number">1.</span> <span class="toc-text">Core ML</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Model-%E8%BD%AC%E6%8D%A2%E5%B7%A5%E5%85%B7"><span class="toc-number">1.2.</span> <span class="toc-text">Model 转换工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%95%E5%B1%82%E8%AE%A1%E7%AE%97%E6%80%A7%E8%83%BD"><span class="toc-number">1.3.</span> <span class="toc-text">底层计算性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Demo-%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="toc-number">1.4.</span> <span class="toc-text">Demo: 数据预处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vision"><span class="toc-number">2.</span> <span class="toc-text">Vision</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.1.</span> <span class="toc-text">应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vision-%E4%BD%BF%E7%94%A8%E5%A7%BF%E5%8A%BF"><span class="toc-number">2.2.</span> <span class="toc-text">Vision 使用姿势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Demo-%E4%B8%8E-Core-ML-%E9%9B%86%E6%88%90"><span class="toc-number">2.3.</span> <span class="toc-text">Demo: 与 Core ML 集成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">2.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%84%9F%E5%8F%97"><span class="toc-number">3.</span> <span class="toc-text">感受</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Core-ML"><span class="toc-number">1.</span> <span class="toc-text">Core ML</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Model-转换工具"><span class="toc-number">1.2.</span> <span class="toc-text">Model 转换工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#底层计算性能"><span class="toc-number">1.3.</span> <span class="toc-text">底层计算性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Demo-数据预处理"><span class="toc-number">1.4.</span> <span class="toc-text">Demo: 数据预处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vision"><span class="toc-number">2.</span> <span class="toc-text">Vision</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#应用场景"><span class="toc-number">2.1.</span> <span class="toc-text">应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vision-使用姿势"><span class="toc-number">2.2.</span> <span class="toc-text">Vision 使用姿势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Demo-与-Core-ML-集成"><span class="toc-number">2.3.</span> <span class="toc-text">Demo: 与 Core ML 集成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结-1"><span class="toc-number">2.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受"><span class="toc-number">3.</span> <span class="toc-text">感受</span></a></li></ol>
  
   </div>
 
@@ -305,7 +303,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/%E5%AD%97%E4%BD%93/" style="font-size: 10px;">字体</a> <a href="/tags/%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A/" style="font-size: 10px;">开发者大会</a> <a href="/tags/%E6%9C%AC%E5%9C%B0%E5%8C%96/" style="font-size: 10px;">本地化</a> <a href="/tags/%E7%9E%8E%E6%8A%98%E8%85%BE/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14.62px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 

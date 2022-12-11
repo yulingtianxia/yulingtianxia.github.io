@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>Parallel Computation using MPS | yulingtianxia&#39;s blog</title>
@@ -12,12 +12,13 @@
 
     
     <meta name="description" content="在照片质量评分组件 PhotoAssessment 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。 至此，几乎所有图像处理与计算任务都交由 GP">
+<meta name="keywords" content="Metal">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Parallel Computation using MPS">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2019/02/28/Parallel-Computation-using-MPS/index.html">
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="在照片质量评分组件 PhotoAssessment 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。 至此，几乎所有图像处理与计算任务都交由 GP">
-<meta property="og:locale" content="zh_CN">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command%20structure0.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command%20structure1.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/Cmd-Model-threads.png">
@@ -26,11 +27,10 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/grid%20coordinates.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/underutilization%20of%20threads.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/nonuniform%20threadgroups.png">
-<meta property="article:published_time" content="2019-02-27T17:50:50.000Z">
-<meta property="article:modified_time" content="2019-07-20T09:51:45.000Z">
-<meta property="article:author" content="杨萧玉">
-<meta property="article:tag" content="Metal">
+<meta property="og:updated_time" content="2019-07-20T09:51:45.000Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Parallel Computation using MPS">
+<meta name="twitter:description" content="在照片质量评分组件 PhotoAssessment 项目上，有些算法的实现是使用 CPU 运行的。通过使用 MPS(Metal Performance Shader) 在 GPU 上并行计算，显著提升了性能，算法执行耗时降低了 99.9% 以上。震惊，呵呵。随着性能上成百上千倍的提升，可以在相等时间内处理更大尺寸的图片，进而提升组件的准确度和用户体验。 至此，几乎所有图像处理与计算任务都交由 GP">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/yulingtianxia/Blog-Hexo-Source/master/source/resources/MPS/command%20structure0.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -45,11 +45,9 @@
     <link rel="apple-touch-icon" href="/img/jacman.jpg">
     <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
     
-    
-<link rel="stylesheet" href="/css/style.css">
-
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
@@ -112,7 +110,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="toc-number">1.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader-%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.</span> <span class="toc-text">Shader 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Threadgroup"><span class="toc-number">2.1.</span> <span class="toc-text">Threadgroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Non-uniform-Threadgroup-Size"><span class="toc-number">2.2.</span> <span class="toc-text">Non-uniform Threadgroup Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%94%9F%E6%88%90-Histogram"><span class="toc-number">2.3.</span> <span class="toc-text">原子操作生成 Histogram</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B8%A9%E5%9D%91"><span class="toc-number">2.4.</span> <span class="toc-text">踩坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#性能对比"><span class="toc-number">1.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader-的实现"><span class="toc-number">2.</span> <span class="toc-text">Shader 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Threadgroup"><span class="toc-number">2.1.</span> <span class="toc-text">Threadgroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Non-uniform-Threadgroup-Size"><span class="toc-number">2.2.</span> <span class="toc-text">Non-uniform Threadgroup Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原子操作生成-Histogram"><span class="toc-number">2.3.</span> <span class="toc-text">原子操作生成 Histogram</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#踩坑"><span class="toc-number">2.4.</span> <span class="toc-text">踩坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li></ol>
 		
 		</div>
 		
@@ -150,8 +148,7 @@
 <p>为了达到更好的性能，需要将 threadgroup 包含的线程数量设定为 <code>threadExecutionWidth</code> 的整数倍。</p>
 <figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="attr">w</span> = computePipelineState.threadExecutionWidth;</span><br><span class="line"><span class="keyword">let</span> <span class="attr">h</span> = computePipelineState.maxTotalThreadsPerThreadgroup / w;</span><br><span class="line"><span class="attr">threadGroupSize</span> = MTLSize(width: w, height: h, depth: <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
 
-<p>在编写 Shader 时，可以通过参数获取到当前处理的像素所处的相对位置。在 C++ 14 中是使用属性的方式来标记参数用途。比如 <code>thread_position_in_grid</code> 指的是当前线程处理的像素在 Grid 中的位置。类似的属性很多，比如 <code>threadgroup_position_in_grid</code>, <code>thread_position_in_threadgroup</code>,
-<code>threads_per_threadgroup</code>, <code>simdgroup_index_in_threadgroup</code>, <code>thread_index_in_simdgroup</code> …</p>
+<p>在编写 Shader 时，可以通过参数获取到当前处理的像素所处的相对位置。在 C++ 14 中是使用属性的方式来标记参数用途。比如 <code>thread_position_in_grid</code> 指的是当前线程处理的像素在 Grid 中的位置。类似的属性很多，比如 <code>threadgroup_position_in_grid</code>, <code>thread_position_in_threadgroup</code>,<br><code>threads_per_threadgroup</code>, <code>simdgroup_index_in_threadgroup</code>, <code>thread_index_in_simdgroup</code> …</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kernel void</span><br><span class="line">rgb2hsvKernelNonuniform(texture2d&lt;float, access::<span class="built_in">read</span>&gt; inTexture <span class="string">[[texture(0)]]</span>,</span><br><span class="line">              texture2d&lt;float, access::<span class="built_in">write</span>&gt; outTexture <span class="string">[[texture(1)]]</span>,</span><br><span class="line">              uint2 gid <span class="string">[[thread_position_in_grid]]</span>)</span><br><span class="line">&#123;</span><br><span class="line">    float4 pixel = inTexture.<span class="built_in">read</span>(gid);</span><br><span class="line">    // 省略部分代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>比如传入的 <code>gid</code> 为 (9, 10)，那么就可以从 <code>inTexture</code> 中读取到此位置像素的数据。因为 Grid 坐标系是基于这个 Texture 的。</p>
@@ -252,7 +249,7 @@
 
 <section id="comments" class="comment">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 
@@ -264,7 +261,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="toc-number">1.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader-%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.</span> <span class="toc-text">Shader 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Threadgroup"><span class="toc-number">2.1.</span> <span class="toc-text">Threadgroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Non-uniform-Threadgroup-Size"><span class="toc-number">2.2.</span> <span class="toc-text">Non-uniform Threadgroup Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%94%9F%E6%88%90-Histogram"><span class="toc-number">2.3.</span> <span class="toc-text">原子操作生成 Histogram</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B8%A9%E5%9D%91"><span class="toc-number">2.4.</span> <span class="toc-text">踩坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#性能对比"><span class="toc-number">1.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shader-的实现"><span class="toc-number">2.</span> <span class="toc-text">Shader 的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Threadgroup"><span class="toc-number">2.1.</span> <span class="toc-text">Threadgroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Non-uniform-Threadgroup-Size"><span class="toc-number">2.2.</span> <span class="toc-text">Non-uniform Threadgroup Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原子操作生成-Histogram"><span class="toc-number">2.3.</span> <span class="toc-text">原子操作生成 Histogram</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#踩坑"><span class="toc-number">2.4.</span> <span class="toc-text">踩坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">3.</span> <span class="toc-text">Reference</span></a></li></ol>
  
   </div>
 
@@ -300,7 +297,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/%E5%AD%97%E4%BD%93/" style="font-size: 10px;">字体</a> <a href="/tags/%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A/" style="font-size: 10px;">开发者大会</a> <a href="/tags/%E6%9C%AC%E5%9C%B0%E5%8C%96/" style="font-size: 10px;">本地化</a> <a href="/tags/%E7%9E%8E%E6%8A%98%E8%85%BE/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14.62px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 

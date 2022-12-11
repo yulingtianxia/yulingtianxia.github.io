@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>用 Dart 来写 Objective-C 代码 | yulingtianxia&#39;s blog</title>
@@ -12,20 +12,17 @@
 
     
     <meta name="description" content="这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。 Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 dart_native，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native">
+<meta name="keywords" content="Objective-C,Runtime,Dart,DartNative">
 <meta property="og:type" content="article">
 <meta property="og:title" content="用 Dart 来写 Objective-C 代码">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2019/10/27/Write-Objective-C-Code-using-Dart/index.html">
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。 Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 dart_native，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-10-27T09:59:40.000Z">
-<meta property="article:modified_time" content="2020-09-28T09:07:35.000Z">
-<meta property="article:author" content="杨萧玉">
-<meta property="article:tag" content="Objective-C">
-<meta property="article:tag" content="Runtime">
-<meta property="article:tag" content="Dart">
-<meta property="article:tag" content="DartNative">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-09-28T09:07:35.000Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用 Dart 来写 Objective-C 代码">
+<meta name="twitter:description" content="这篇文章不是讲 Flutter Channel 入门的，可能让你失望了。不过继续往下读可能也会有点收获。 Flutter 提升了客户端开发的效率，但在跟 Native 代码配合开发时也带来了不好的体验。于是我写了个 Flutter 插件 dart_native，使开发者可以用 Dart 的语法来写 Objective-C 代码。借助于 Flutter 的热重载，也可以更高效的动态调试 Native">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -39,11 +36,9 @@
     <link rel="apple-touch-icon" href="/img/jacman.jpg">
     <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
     
-    
-<link rel="stylesheet" href="/css/style.css">
-
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
@@ -106,7 +101,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">解决问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD"><span class="toc-number">5.</span> <span class="toc-text">后续</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景"><span class="toc-number">1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析问题"><span class="toc-number">2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决问题"><span class="toc-number">3.</span> <span class="toc-text">解决问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">4.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后续"><span class="toc-number">5.</span> <span class="toc-text">后续</span></a></li></ol>
 		
 		</div>
 		
@@ -212,7 +207,7 @@
 
 <section id="comments" class="comment">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 
@@ -224,7 +219,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">解决问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD"><span class="toc-number">5.</span> <span class="toc-text">后续</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题背景"><span class="toc-number">1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析问题"><span class="toc-number">2.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决问题"><span class="toc-number">3.</span> <span class="toc-text">解决问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方法"><span class="toc-number">4.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后续"><span class="toc-number">5.</span> <span class="toc-text">后续</span></a></li></ol>
  
   </div>
 
@@ -260,7 +255,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/%E5%AD%97%E4%BD%93/" style="font-size: 10px;">字体</a> <a href="/tags/%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A/" style="font-size: 10px;">开发者大会</a> <a href="/tags/%E6%9C%AC%E5%9C%B0%E5%8C%96/" style="font-size: 10px;">本地化</a> <a href="/tags/%E7%9E%8E%E6%8A%98%E8%85%BE/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14.62px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 

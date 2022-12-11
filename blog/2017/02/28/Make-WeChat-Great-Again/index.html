@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>Make WeChat Great Again | yulingtianxia&#39;s blog</title>
@@ -11,23 +11,23 @@
     
 
     
-    <meta name="description" content="关闭朋友圈有一年多了，突然有一天微信的策略变了，在关闭朋友圈的同时也不让别人查看自己的朋友圈了。有妹子表示看不到我朋友圈很不爽，于是我决定对微信进行一番改造！初步实现效果：  关闭『发现』页面的『朋友圈』、『购物』和『游戏』入口 修改微信运动步数 去除各种小红点提示 设置夜间模式 阻止撤回消息 屏蔽群&amp;好友消息  手机无需越狱，项目 GitHub 地址: FishChat，Make WeC">
+    <meta name="description" content="关闭朋友圈有一年多了，突然有一天微信的策略变了，在关闭朋友圈的同时也不让别人查看自己的朋友圈了。有妹子表示看不到我朋友圈很不爽，于是我决定对微信进行一番改造！初步实现效果：  关闭『发现』页面的『朋友圈』、『购物』和『游戏』入口 修改微信运动步数 去除各种小红点提示 设置夜间模式 阻止撤回消息 屏蔽群&amp;amp;好友消息  手机无需越狱，项目 GitHub 地址: FishChat，Make WeC">
+<meta name="keywords" content="Reverse Engineering">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Make WeChat Great Again">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2017/02/28/Make-WeChat-Great-Again/index.html">
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
-<meta property="og:description" content="关闭朋友圈有一年多了，突然有一天微信的策略变了，在关闭朋友圈的同时也不让别人查看自己的朋友圈了。有妹子表示看不到我朋友圈很不爽，于是我决定对微信进行一番改造！初步实现效果：  关闭『发现』页面的『朋友圈』、『购物』和『游戏』入口 修改微信运动步数 去除各种小红点提示 设置夜间模式 阻止撤回消息 屏蔽群&amp;好友消息  手机无需越狱，项目 GitHub 地址: FishChat，Make WeC">
-<meta property="og:locale" content="zh_CN">
+<meta property="og:description" content="关闭朋友圈有一年多了，突然有一天微信的策略变了，在关闭朋友圈的同时也不让别人查看自己的朋友圈了。有妹子表示看不到我朋友圈很不爽，于是我决定对微信进行一番改造！初步实现效果：  关闭『发现』页面的『朋友圈』、『购物』和『游戏』入口 修改微信运动步数 去除各种小红点提示 设置夜间模式 阻止撤回消息 屏蔽群&amp;amp;好友消息  手机无需越狱，项目 GitHub 地址: FishChat，Make WeC">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_discover.PNG?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_setting_keyboard.PNG?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_setting_stepcount.PNG?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_mystepcount.PNG?raw=true">
 <meta property="og:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_about.PNG?raw=true">
-<meta property="article:published_time" content="2017-02-27T17:08:05.000Z">
-<meta property="article:modified_time" content="2019-05-26T10:08:45.000Z">
-<meta property="article:author" content="杨萧玉">
-<meta property="article:tag" content="Reverse Engineering">
+<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Make WeChat Great Again">
+<meta name="twitter:description" content="关闭朋友圈有一年多了，突然有一天微信的策略变了，在关闭朋友圈的同时也不让别人查看自己的朋友圈了。有妹子表示看不到我朋友圈很不爽，于是我决定对微信进行一番改造！初步实现效果：  关闭『发现』页面的『朋友圈』、『购物』和『游戏』入口 修改微信运动步数 去除各种小红点提示 设置夜间模式 阻止撤回消息 屏蔽群&amp;amp;好友消息  手机无需越狱，项目 GitHub 地址: FishChat，Make WeC">
 <meta name="twitter:image" content="https://github.com/yulingtianxia/FishChat/blob/master/Images/wechat_discover.PNG?raw=true">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -42,11 +42,9 @@
     <link rel="apple-touch-icon" href="/img/jacman.jpg">
     <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
     
-    
-<link rel="stylesheet" href="/css/style.css">
-
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
@@ -109,7 +107,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E6%AC%B2%E5%96%84%E5%85%B6%E4%BA%8B%E5%BF%85%E5%85%88%E5%88%A9%E5%85%B6%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">工欲善其事必先利其器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%8B%E5%90%8E%E5%B0%B1%E6%98%AF%E4%B8%8D%E5%81%9C%E5%9C%B0-Hook"><span class="toc-number">2.</span> <span class="toc-text">之后就是不停地 Hook</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E3%80%8E%E5%8F%91%E7%8E%B0%E3%80%8F%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%90%84%E7%A7%8D%E5%85%A5%E5%8F%A3-%E6%B8%85%E5%90%9B%E4%BE%A7"><span class="toc-number">2.1.</span> <span class="toc-text">关闭『发现』页面的各种入口 - 清君侧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%BE%AE%E4%BF%A1%E8%BF%90%E5%8A%A8%E6%AD%A5%E6%95%B0-%E8%A3%85%E9%80%BC%E5%85%9A%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB"><span class="toc-number">2.2.</span> <span class="toc-text">修改微信运动步数 - 装逼党的自我修养</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E7%BA%A2%E7%82%B9%E6%B6%88%E9%99%A4%E8%AE%A1%E5%88%92-%E6%88%91%E6%83%B3%E9%9D%99%E9%9D%99"><span class="toc-number">2.3.</span> <span class="toc-text">小红点消除计划 - 我想静静</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9C%E9%97%B4%E6%A8%A1%E5%BC%8F-%E8%BE%A3%E7%9C%BC%E7%9D%9B"><span class="toc-number">2.4.</span> <span class="toc-text">夜间模式 - 辣眼睛</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%BB%E6%AD%A2%E6%92%A4%E5%9B%9E%E6%B6%88%E6%81%AF-%E7%9F%A5%E9%81%93%E7%9C%9F%E7%9B%B8%E7%9A%84%E6%88%91%E7%9C%BC%E6%B3%AA%E6%8E%89%E4%B8%8B%E6%9D%A5"><span class="toc-number">2.5.</span> <span class="toc-text">阻止撤回消息 - 知道真相的我眼泪掉下来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E5%B1%8F%E8%94%BD-%E4%B8%8D%E8%A6%81%E5%85%8D%E6%89%93%E6%89%B0"><span class="toc-number">2.6.</span> <span class="toc-text">要屏蔽 - 不要免打扰</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#工欲善其事必先利其器"><span class="toc-number">1.</span> <span class="toc-text">工欲善其事必先利其器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#之后就是不停地-Hook"><span class="toc-number">2.</span> <span class="toc-text">之后就是不停地 Hook</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#关闭『发现』页面的各种入口-清君侧"><span class="toc-number">2.1.</span> <span class="toc-text">关闭『发现』页面的各种入口 - 清君侧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改微信运动步数-装逼党的自我修养"><span class="toc-number">2.2.</span> <span class="toc-text">修改微信运动步数 - 装逼党的自我修养</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小红点消除计划-我想静静"><span class="toc-number">2.3.</span> <span class="toc-text">小红点消除计划 - 我想静静</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#夜间模式-辣眼睛"><span class="toc-number">2.4.</span> <span class="toc-text">夜间模式 - 辣眼睛</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#阻止撤回消息-知道真相的我眼泪掉下来"><span class="toc-number">2.5.</span> <span class="toc-text">阻止撤回消息 - 知道真相的我眼泪掉下来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#要屏蔽-不要免打扰"><span class="toc-number">2.6.</span> <span class="toc-text">要屏蔽 - 不要免打扰</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
 		
 		</div>
 		
@@ -273,7 +271,7 @@
 
 <section id="comments" class="comment">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 
@@ -285,7 +283,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E6%AC%B2%E5%96%84%E5%85%B6%E4%BA%8B%E5%BF%85%E5%85%88%E5%88%A9%E5%85%B6%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">工欲善其事必先利其器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%8B%E5%90%8E%E5%B0%B1%E6%98%AF%E4%B8%8D%E5%81%9C%E5%9C%B0-Hook"><span class="toc-number">2.</span> <span class="toc-text">之后就是不停地 Hook</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E3%80%8E%E5%8F%91%E7%8E%B0%E3%80%8F%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%90%84%E7%A7%8D%E5%85%A5%E5%8F%A3-%E6%B8%85%E5%90%9B%E4%BE%A7"><span class="toc-number">2.1.</span> <span class="toc-text">关闭『发现』页面的各种入口 - 清君侧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%BE%AE%E4%BF%A1%E8%BF%90%E5%8A%A8%E6%AD%A5%E6%95%B0-%E8%A3%85%E9%80%BC%E5%85%9A%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB"><span class="toc-number">2.2.</span> <span class="toc-text">修改微信运动步数 - 装逼党的自我修养</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E7%BA%A2%E7%82%B9%E6%B6%88%E9%99%A4%E8%AE%A1%E5%88%92-%E6%88%91%E6%83%B3%E9%9D%99%E9%9D%99"><span class="toc-number">2.3.</span> <span class="toc-text">小红点消除计划 - 我想静静</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9C%E9%97%B4%E6%A8%A1%E5%BC%8F-%E8%BE%A3%E7%9C%BC%E7%9D%9B"><span class="toc-number">2.4.</span> <span class="toc-text">夜间模式 - 辣眼睛</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%BB%E6%AD%A2%E6%92%A4%E5%9B%9E%E6%B6%88%E6%81%AF-%E7%9F%A5%E9%81%93%E7%9C%9F%E7%9B%B8%E7%9A%84%E6%88%91%E7%9C%BC%E6%B3%AA%E6%8E%89%E4%B8%8B%E6%9D%A5"><span class="toc-number">2.5.</span> <span class="toc-text">阻止撤回消息 - 知道真相的我眼泪掉下来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E5%B1%8F%E8%94%BD-%E4%B8%8D%E8%A6%81%E5%85%8D%E6%89%93%E6%89%B0"><span class="toc-number">2.6.</span> <span class="toc-text">要屏蔽 - 不要免打扰</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#工欲善其事必先利其器"><span class="toc-number">1.</span> <span class="toc-text">工欲善其事必先利其器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#之后就是不停地-Hook"><span class="toc-number">2.</span> <span class="toc-text">之后就是不停地 Hook</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#关闭『发现』页面的各种入口-清君侧"><span class="toc-number">2.1.</span> <span class="toc-text">关闭『发现』页面的各种入口 - 清君侧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改微信运动步数-装逼党的自我修养"><span class="toc-number">2.2.</span> <span class="toc-text">修改微信运动步数 - 装逼党的自我修养</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小红点消除计划-我想静静"><span class="toc-number">2.3.</span> <span class="toc-text">小红点消除计划 - 我想静静</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#夜间模式-辣眼睛"><span class="toc-number">2.4.</span> <span class="toc-text">夜间模式 - 辣眼睛</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#阻止撤回消息-知道真相的我眼泪掉下来"><span class="toc-number">2.5.</span> <span class="toc-text">阻止撤回消息 - 知道真相的我眼泪掉下来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#要屏蔽-不要免打扰"><span class="toc-number">2.6.</span> <span class="toc-text">要屏蔽 - 不要免打扰</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
  
   </div>
 
@@ -321,7 +319,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/%E5%AD%97%E4%BD%93/" style="font-size: 10px;">字体</a> <a href="/tags/%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A/" style="font-size: 10px;">开发者大会</a> <a href="/tags/%E6%9C%AC%E5%9C%B0%E5%8C%96/" style="font-size: 10px;">本地化</a> <a href="/tags/%E7%9E%8E%E6%8A%98%E8%85%BE/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14.62px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
