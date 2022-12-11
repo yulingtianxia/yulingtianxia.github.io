@@ -12,21 +12,22 @@
 
     
     <meta name="description" content="2022 年 8 月底，Flutter 发布了 3.3 稳定版，随之发布的 Dart 2.18 宣布支持 Dart 与 Objective-C 和 Swift 互调，而 Java 与 Java/Kotlin 的互调也在开发中。整体思路跟 DartNative 三年前的思路类似，走的也是跨语言 API 直接调用(但官方目前只支持同步)，然后通过工具链生成接口绑定。发布当天就有人给我提 Issue 了">
-<meta name="keywords" content="Dart,DartNative,Flutter">
+<meta name="keywords" content="Dart,Flutter,DartNative">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Flutter 官方终于出手了，DartNative 将何去何从?">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2022/12/12/DartNative-Interface/index.html">
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="2022 年 8 月底，Flutter 发布了 3.3 稳定版，随之发布的 Dart 2.18 宣布支持 Dart 与 Objective-C 和 Swift 互调，而 Java 与 Java/Kotlin 的互调也在开发中。整体思路跟 DartNative 三年前的思路类似，走的也是跨语言 API 直接调用(但官方目前只支持同步)，然后通过工具链生成接口绑定。发布当天就有人给我提 Issue 了">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yulingtianxia.com/resources/DartNative/20221212-025211@2x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/DartNative/14035340227.png">
 <meta property="og:image" content="https://github.com/dart-native/dart_native/blob/master/images/dartnative.png?raw=true">
 <meta property="og:image" content="http://yulingtianxia.com/resources/DartNative/IMG_4853.JPG">
-<meta property="og:updated_time" content="2022-12-11T17:46:50.272Z">
+<meta property="og:updated_time" content="2022-12-11T18:55:13.621Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flutter 官方终于出手了，DartNative 将何去何从?">
 <meta name="twitter:description" content="2022 年 8 月底，Flutter 发布了 3.3 稳定版，随之发布的 Dart 2.18 宣布支持 Dart 与 Objective-C 和 Swift 互调，而 Java 与 Java/Kotlin 的互调也在开发中。整体思路跟 DartNative 三年前的思路类似，走的也是跨语言 API 直接调用(但官方目前只支持同步)，然后通过工具链生成接口绑定。发布当天就有人给我提 Issue 了">
-<meta name="twitter:image" content="http://yulingtianxia.com/resources/DartNative/14035340227.png">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/DartNative/20221212-025211@2x.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
 
@@ -109,7 +110,9 @@
 		
 		</div>
 		
-		<p>2022 年 8 月底，Flutter 发布了 3.3 稳定版，随之发布的 Dart 2.18 宣布<a href="https://flutter.cn/posts/dart-2-18#dart-与-objective-c-和-swift-互调" target="_blank" rel="noopener">支持 Dart 与 Objective-C 和 Swift 互调</a>，而 <a href="https://github.com/dart-lang/sdk/issues/49674" target="_blank" rel="noopener">Java 与 Java/Kotlin 的互调也在开发中</a>。整体思路跟 DartNative 三年前的思路类似，走的也是跨语言 API 直接调用(但官方目前只支持同步)，然后通过工具链生成接口绑定。发布当天就有人给我提 Issue 了：<a href="https://github.com/dart-native/dart_native/issues/105" target="_blank" rel="noopener">老哥，考虑一下这个库未来何去何从吧，官方有了</a>。联想到之前 5 月份 Flutter 3.0(Dart 2.17) 发布时官方支持了 Dart Finalizer，跟 DartNative 一年前就支持的 Finalizer 冲突了，想必是有备而来了。</p>
+		<p>2022 年 8 月底，Flutter 发布了 3.3 稳定版，随之发布的 Dart 2.18 宣布<a href="https://flutter.cn/posts/dart-2-18#dart-与-objective-c-和-swift-互调" target="_blank" rel="noopener">支持 Dart 与 Objective-C 和 Swift 互调</a>，而 <a href="https://github.com/dart-lang/sdk/issues/49674" target="_blank" rel="noopener">Java 与 Java/Kotlin 的互调也在开发中</a>。整体思路跟 DartNative 三年前的思路类似，走的也是跨语言 API 直接调用(但官方目前只支持同步)，然后通过工具链生成接口绑定。发布当天就有人给我提 Issue 了：<a href="https://github.com/dart-native/dart_native/issues/105" target="_blank" rel="noopener">老哥，考虑一下这个库未来何去何从吧，官方有了</a>，竟如此『不讲武德』</p>
+<p><img src="http://yulingtianxia.com/resources/DartNative/20221212-025211@2x.png" alt></p>
+<p>联想到之前 5 月份 Flutter 3.0(Dart 2.17) 发布时官方支持了 Dart Finalizer，跟 DartNative 一年前就支持的 Finalizer 冲突了，看来是『有备而来』啊:</p>
 <p><img src="http://yulingtianxia.com/resources/DartNative/14035340227.png" alt></p>
 <a id="more"></a>
 
@@ -160,7 +163,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/Flutter/">Flutter</a><a href="/tags/DartNative/">DartNative</a>
   </div>
 
 </div>
