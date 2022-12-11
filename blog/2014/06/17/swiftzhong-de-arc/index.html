@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head><meta name="generator" content="Hexo 3.9.0">
+<head>
   <meta charset="UTF-8">
   
     <title>Swift中的ARC | yulingtianxia&#39;s blog</title>
@@ -12,13 +12,12 @@
 
     
     <meta name="description" content="Objective-C中的ARC被Swift很好的继承下来了，本文参考自Swift文档网上的翻译，主要重点记录下Swift中的ARC与OC对比需要注意的地方。(2014-8-8更新至beta5语法)">
-<meta name="keywords" content="Swift,ARC">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Swift中的ARC">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/06/17/swiftzhong-de-arc/index.html">
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="Objective-C中的ARC被Swift很好的继承下来了，本文参考自Swift文档网上的翻译，主要重点记录下Swift中的ARC与OC对比需要注意的地方。(2014-8-8更新至beta5语法)">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/referenceCycle01_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/referenceCycle02_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/referenceCycle03_2x.png">
@@ -29,10 +28,12 @@
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/unownedReference02_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/closureReferenceCycle01_2x.png">
 <meta property="og:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/closureReferenceCycle02_2x.png">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta property="article:published_time" content="2014-06-17T02:32:38.000Z">
+<meta property="article:modified_time" content="2019-05-26T10:08:45.000Z">
+<meta property="article:author" content="杨萧玉">
+<meta property="article:tag" content="Swift">
+<meta property="article:tag" content="ARC">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Swift中的ARC">
-<meta name="twitter:description" content="Objective-C中的ARC被Swift很好的继承下来了，本文参考自Swift文档网上的翻译，主要重点记录下Swift中的ARC与OC对比需要注意的地方。(2014-8-8更新至beta5语法)">
 <meta name="twitter:image" content="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Art/referenceCycle01_2x.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -47,9 +48,11 @@
     <link rel="apple-touch-icon" href="/img/jacman.jpg">
     <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
     
-    <link rel="stylesheet" href="/css/style.css">
+    
+<link rel="stylesheet" href="/css/style.css">
+
 </head>
-</html>
+
   <body>
     <header>
       
@@ -112,7 +115,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类实例之间强引用循环的产生"><span class="toc-number">2.</span> <span class="toc-text">类实例之间强引用循环的产生</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何解决实例间强引用循环"><span class="toc-number">3.</span> <span class="toc-text">如何解决实例间强引用循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#弱引用"><span class="toc-number">3.1.</span> <span class="toc-text">弱引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无主引用"><span class="toc-number">3.2.</span> <span class="toc-text">无主引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无主引用以及隐式解析可选属性"><span class="toc-number">3.3.</span> <span class="toc-text">无主引用以及隐式解析可选属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">3.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#闭包引起的强引用循环"><span class="toc-number">4.</span> <span class="toc-text">闭包引起的强引用循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决闭包引起的循环强引用"><span class="toc-number">5.</span> <span class="toc-text">解决闭包引起的循环强引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义捕获列表"><span class="toc-number">5.1.</span> <span class="toc-text">定义捕获列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#捕获列表中的弱引用和无主引用"><span class="toc-number">5.2.</span> <span class="toc-text">捕获列表中的弱引用和无主引用</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%AE%9E%E4%BE%8B%E4%B9%8B%E9%97%B4%E5%BC%BA%E5%BC%95%E7%94%A8%E5%BE%AA%E7%8E%AF%E7%9A%84%E4%BA%A7%E7%94%9F"><span class="toc-number">2.</span> <span class="toc-text">类实例之间强引用循环的产生</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%AE%9E%E4%BE%8B%E9%97%B4%E5%BC%BA%E5%BC%95%E7%94%A8%E5%BE%AA%E7%8E%AF"><span class="toc-number">3.</span> <span class="toc-text">如何解决实例间强引用循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B1%E5%BC%95%E7%94%A8"><span class="toc-number">3.1.</span> <span class="toc-text">弱引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E4%B8%BB%E5%BC%95%E7%94%A8"><span class="toc-number">3.2.</span> <span class="toc-text">无主引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E4%B8%BB%E5%BC%95%E7%94%A8%E4%BB%A5%E5%8F%8A%E9%9A%90%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%AF%E9%80%89%E5%B1%9E%E6%80%A7"><span class="toc-number">3.3.</span> <span class="toc-text">无主引用以及隐式解析可选属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AD%E5%8C%85%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BC%BA%E5%BC%95%E7%94%A8%E5%BE%AA%E7%8E%AF"><span class="toc-number">4.</span> <span class="toc-text">闭包引起的强引用循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E9%97%AD%E5%8C%85%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%BA%E5%BC%95%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">解决闭包引起的循环强引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%8D%95%E8%8E%B7%E5%88%97%E8%A1%A8"><span class="toc-number">5.1.</span> <span class="toc-text">定义捕获列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8D%95%E8%8E%B7%E5%88%97%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BC%B1%E5%BC%95%E7%94%A8%E5%92%8C%E6%97%A0%E4%B8%BB%E5%BC%95%E7%94%A8"><span class="toc-number">5.2.</span> <span class="toc-text">捕获列表中的弱引用和无主引用</span></a></li></ol></li></ol>
 		
 		</div>
 		
@@ -258,7 +261,7 @@
 
 <section id="comments" class="comment">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 
@@ -270,7 +273,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类实例之间强引用循环的产生"><span class="toc-number">2.</span> <span class="toc-text">类实例之间强引用循环的产生</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何解决实例间强引用循环"><span class="toc-number">3.</span> <span class="toc-text">如何解决实例间强引用循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#弱引用"><span class="toc-number">3.1.</span> <span class="toc-text">弱引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无主引用"><span class="toc-number">3.2.</span> <span class="toc-text">无主引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无主引用以及隐式解析可选属性"><span class="toc-number">3.3.</span> <span class="toc-text">无主引用以及隐式解析可选属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">3.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#闭包引起的强引用循环"><span class="toc-number">4.</span> <span class="toc-text">闭包引起的强引用循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决闭包引起的循环强引用"><span class="toc-number">5.</span> <span class="toc-text">解决闭包引起的循环强引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义捕获列表"><span class="toc-number">5.1.</span> <span class="toc-text">定义捕获列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#捕获列表中的弱引用和无主引用"><span class="toc-number">5.2.</span> <span class="toc-text">捕获列表中的弱引用和无主引用</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%AE%9E%E4%BE%8B%E4%B9%8B%E9%97%B4%E5%BC%BA%E5%BC%95%E7%94%A8%E5%BE%AA%E7%8E%AF%E7%9A%84%E4%BA%A7%E7%94%9F"><span class="toc-number">2.</span> <span class="toc-text">类实例之间强引用循环的产生</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%AE%9E%E4%BE%8B%E9%97%B4%E5%BC%BA%E5%BC%95%E7%94%A8%E5%BE%AA%E7%8E%AF"><span class="toc-number">3.</span> <span class="toc-text">如何解决实例间强引用循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B1%E5%BC%95%E7%94%A8"><span class="toc-number">3.1.</span> <span class="toc-text">弱引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E4%B8%BB%E5%BC%95%E7%94%A8"><span class="toc-number">3.2.</span> <span class="toc-text">无主引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E4%B8%BB%E5%BC%95%E7%94%A8%E4%BB%A5%E5%8F%8A%E9%9A%90%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%AF%E9%80%89%E5%B1%9E%E6%80%A7"><span class="toc-number">3.3.</span> <span class="toc-text">无主引用以及隐式解析可选属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AD%E5%8C%85%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BC%BA%E5%BC%95%E7%94%A8%E5%BE%AA%E7%8E%AF"><span class="toc-number">4.</span> <span class="toc-text">闭包引起的强引用循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E9%97%AD%E5%8C%85%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%BA%E5%BC%95%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">解决闭包引起的循环强引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%8D%95%E8%8E%B7%E5%88%97%E8%A1%A8"><span class="toc-number">5.1.</span> <span class="toc-text">定义捕获列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8D%95%E8%8E%B7%E5%88%97%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BC%B1%E5%BC%95%E7%94%A8%E5%92%8C%E6%97%A0%E4%B8%BB%E5%BC%95%E7%94%A8"><span class="toc-number">5.2.</span> <span class="toc-text">捕获列表中的弱引用和无主引用</span></a></li></ol></li></ol>
  
   </div>
 
@@ -306,7 +309,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/%E5%AD%97%E4%BD%93/" style="font-size: 10px;">字体</a> <a href="/tags/%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A/" style="font-size: 10px;">开发者大会</a> <a href="/tags/%E6%9C%AC%E5%9C%B0%E5%8C%96/" style="font-size: 10px;">本地化</a> <a href="/tags/%E7%9E%8E%E6%8A%98%E8%85%BE/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14.62px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
@@ -389,7 +392,7 @@
     
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2022 
 		
 		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
 		

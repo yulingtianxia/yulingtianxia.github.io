@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head><meta name="generator" content="Hexo 3.9.0">
+<head>
   <meta charset="UTF-8">
   
     <title>用Swift和SpriteKit开发iOS游戏 | yulingtianxia&#39;s blog</title>
@@ -12,18 +12,20 @@
 
     
     <meta name="description" content="之前用SpriteKit做过一个叫做ColorAtom的小游戏，用了访问者模式处理碰撞检测，还用了SpriteKit中的粒子系统、连接体、力场和动画等，可以说是一个学习SpriteKit比较不错的Demo，随着Swift的火热，我也用Swift和SpriteKit写了一个更为简单的小游戏Spiral">
-<meta name="keywords" content="iOS,Swift,SpriteKit">
 <meta property="og:type" content="article">
 <meta property="og:title" content="用Swift和SpriteKit开发iOS游戏">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2014/07/17/a-ios-game-developed-by-swift-and-spritekit/index.html">
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
 <meta property="og:description" content="之前用SpriteKit做过一个叫做ColorAtom的小游戏，用了访问者模式处理碰撞检测，还用了SpriteKit中的粒子系统、连接体、力场和动画等，可以说是一个学习SpriteKit比较不错的Demo，随着Swift的火热，我也用Swift和SpriteKit写了一个更为简单的小游戏Spiral">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/140557437844.gif">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta property="article:published_time" content="2014-07-17T04:54:13.000Z">
+<meta property="article:modified_time" content="2019-05-26T10:08:45.000Z">
+<meta property="article:author" content="杨萧玉">
+<meta property="article:tag" content="Swift">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="SpriteKit">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="用Swift和SpriteKit开发iOS游戏">
-<meta name="twitter:description" content="之前用SpriteKit做过一个叫做ColorAtom的小游戏，用了访问者模式处理碰撞检测，还用了SpriteKit中的粒子系统、连接体、力场和动画等，可以说是一个学习SpriteKit比较不错的Demo，随着Swift的火热，我也用Swift和SpriteKit写了一个更为简单的小游戏Spiral">
 <meta name="twitter:image" content="http://yulingtianxia.com/resources/140557437844.gif">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -38,9 +40,11 @@
     <link rel="apple-touch-icon" href="/img/jacman.jpg">
     <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
     
-    <link rel="stylesheet" href="/css/style.css">
+    
+<link rel="stylesheet" href="/css/style.css">
+
 </head>
-</html>
+
   <body>
     <header>
       
@@ -103,7 +107,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绘制基本界面"><span class="toc-number">2.</span> <span class="toc-text">绘制基本界面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#螺旋线的绘制"><span class="toc-number">2.1.</span> <span class="toc-text">螺旋线的绘制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四种精灵的绘制"><span class="toc-number">2.2.</span> <span class="toc-text">四种精灵的绘制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift中用访问者模式处理碰撞"><span class="toc-number">3.</span> <span class="toc-text">Swift中用访问者模式处理碰撞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#界面数据显示"><span class="toc-number">4.</span> <span class="toc-text">界面数据显示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按钮的绘制和截图分享"><span class="toc-number">5.</span> <span class="toc-text">按钮的绘制和截图分享</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%98%E5%88%B6%E5%9F%BA%E6%9C%AC%E7%95%8C%E9%9D%A2"><span class="toc-number">2.</span> <span class="toc-text">绘制基本界面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%9E%BA%E6%97%8B%E7%BA%BF%E7%9A%84%E7%BB%98%E5%88%B6"><span class="toc-number">2.1.</span> <span class="toc-text">螺旋线的绘制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E7%A7%8D%E7%B2%BE%E7%81%B5%E7%9A%84%E7%BB%98%E5%88%B6"><span class="toc-number">2.2.</span> <span class="toc-text">四种精灵的绘制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift%E4%B8%AD%E7%94%A8%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F%E5%A4%84%E7%90%86%E7%A2%B0%E6%92%9E"><span class="toc-number">3.</span> <span class="toc-text">Swift中用访问者模式处理碰撞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2%E6%95%B0%E6%8D%AE%E6%98%BE%E7%A4%BA"><span class="toc-number">4.</span> <span class="toc-text">界面数据显示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%89%E9%92%AE%E7%9A%84%E7%BB%98%E5%88%B6%E5%92%8C%E6%88%AA%E5%9B%BE%E5%88%86%E4%BA%AB"><span class="toc-number">5.</span> <span class="toc-text">按钮的绘制和截图分享</span></a></li></ol>
 		
 		</div>
 		
@@ -196,7 +200,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/iOS/">iOS</a><a href="/tags/Swift/">Swift</a><a href="/tags/SpriteKit/">SpriteKit</a>
+  <span></span> <a href="/tags/Swift/">Swift</a><a href="/tags/iOS/">iOS</a><a href="/tags/SpriteKit/">SpriteKit</a>
   </div>
 
 </div>
@@ -241,7 +245,7 @@
 
 <section id="comments" class="comment">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 
@@ -253,7 +257,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绘制基本界面"><span class="toc-number">2.</span> <span class="toc-text">绘制基本界面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#螺旋线的绘制"><span class="toc-number">2.1.</span> <span class="toc-text">螺旋线的绘制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四种精灵的绘制"><span class="toc-number">2.2.</span> <span class="toc-text">四种精灵的绘制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift中用访问者模式处理碰撞"><span class="toc-number">3.</span> <span class="toc-text">Swift中用访问者模式处理碰撞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#界面数据显示"><span class="toc-number">4.</span> <span class="toc-text">界面数据显示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按钮的绘制和截图分享"><span class="toc-number">5.</span> <span class="toc-text">按钮的绘制和截图分享</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%98%E5%88%B6%E5%9F%BA%E6%9C%AC%E7%95%8C%E9%9D%A2"><span class="toc-number">2.</span> <span class="toc-text">绘制基本界面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%9E%BA%E6%97%8B%E7%BA%BF%E7%9A%84%E7%BB%98%E5%88%B6"><span class="toc-number">2.1.</span> <span class="toc-text">螺旋线的绘制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E7%A7%8D%E7%B2%BE%E7%81%B5%E7%9A%84%E7%BB%98%E5%88%B6"><span class="toc-number">2.2.</span> <span class="toc-text">四种精灵的绘制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift%E4%B8%AD%E7%94%A8%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F%E5%A4%84%E7%90%86%E7%A2%B0%E6%92%9E"><span class="toc-number">3.</span> <span class="toc-text">Swift中用访问者模式处理碰撞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2%E6%95%B0%E6%8D%AE%E6%98%BE%E7%A4%BA"><span class="toc-number">4.</span> <span class="toc-text">界面数据显示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%89%E9%92%AE%E7%9A%84%E7%BB%98%E5%88%B6%E5%92%8C%E6%88%AA%E5%9B%BE%E5%88%86%E4%BA%AB"><span class="toc-number">5.</span> <span class="toc-text">按钮的绘制和截图分享</span></a></li></ol>
  
   </div>
 
@@ -289,7 +293,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/%E5%AD%97%E4%BD%93/" style="font-size: 10px;">字体</a> <a href="/tags/%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A/" style="font-size: 10px;">开发者大会</a> <a href="/tags/%E6%9C%AC%E5%9C%B0%E5%8C%96/" style="font-size: 10px;">本地化</a> <a href="/tags/%E7%9E%8E%E6%8A%98%E8%85%BE/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14.62px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
@@ -372,7 +376,7 @@
     
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2022 
 		
 		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
 		

@@ -1,0 +1,589 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Flutter 官方终于出手了，DartNative 将何去何从? | yulingtianxia&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="杨萧玉">
+    
+
+    
+    <meta name="description" content="2022 年 8 月底，Flutter 发布了 3.3 稳定版，随之发布的 Dart 2.18 宣布支持 Dart 与 Objective-C 和 Swift 互调，而 Java 与 Java&#x2F;Kotlin 的互调也在开发中。整体思路跟 DartNative 三年前的思路类似，走的也是跨语言 API 直接调用(但官方目前只支持同步)，然后通过工具链生成接口绑定。发布当天就有人给我提 Is">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flutter 官方终于出手了，DartNative 将何去何从?">
+<meta property="og:url" content="http://yulingtianxia.com/blog/2022/12/12/DartNative-Interface/index.html">
+<meta property="og:site_name" content="yulingtianxia&#39;s blog">
+<meta property="og:description" content="2022 年 8 月底，Flutter 发布了 3.3 稳定版，随之发布的 Dart 2.18 宣布支持 Dart 与 Objective-C 和 Swift 互调，而 Java 与 Java&#x2F;Kotlin 的互调也在开发中。整体思路跟 DartNative 三年前的思路类似，走的也是跨语言 API 直接调用(但官方目前只支持同步)，然后通过工具链生成接口绑定。发布当天就有人给我提 Is">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yulingtianxia.com/resources/DartNative/14035340227.png">
+<meta property="og:image" content="https://github.com/dart-native/dart_native/blob/master/images/dartnative.png?raw=true">
+<meta property="og:image" content="http://yulingtianxia.com/resources/DartNative/IMG_4853.JPG">
+<meta property="article:published_time" content="2022-12-11T17:46:52.000Z">
+<meta property="article:modified_time" content="2022-12-11T17:46:50.272Z">
+<meta property="article:author" content="杨萧玉">
+<meta property="article:tag" content="Dart">
+<meta property="article:tag" content="DartNative">
+<meta property="article:tag" content="Flutter">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yulingtianxia.com/resources/DartNative/14035340227.png">
+<meta name="twitter:creator" content="@yulingtianxia">
+<link rel="publisher" href="106642427004837273341">
+
+    
+    <link rel="alternative" href="/atom.xml" title="yulingtianxia&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="yulingtianxia&#39;s blog" title="yulingtianxia&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="yulingtianxia&#39;s blog">yulingtianxia&#39;s blog</a></h1>
+				<h2 class="blog-motto">玉令天下的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Google" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2022/12/12/DartNative-Interface/" title="Flutter 官方终于出手了，DartNative 将何去何从?" itemprop="url">Flutter 官方终于出手了，DartNative 将何去何从?</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/106642427004837273341?rel=author" title="杨萧玉" target="_blank" itemprop="author">杨萧玉</a>
+		
+  <p class="article-time">
+    <time datetime="2022-12-11T17:46:52.000Z" itemprop="datePublished"> 发表于 2022-12-12</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ffigen-%E4%B8%8E-DartNative"><span class="toc-number">1.</span> <span class="toc-text">ffigen 与 DartNative</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-DartNative-Interface"><span class="toc-number">2.</span> <span class="toc-text">什么是 DartNative Interface</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.1.</span> <span class="toc-text">使用示例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Dart-%E8%B0%83%E7%94%A8-Native"><span class="toc-number">2.1.1.</span> <span class="toc-text">Dart 调用 Native</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Native-%E8%B0%83%E7%94%A8-Dart"><span class="toc-number">2.1.2.</span> <span class="toc-text">Native 调用 Dart</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Dart-Finalizer"><span class="toc-number">2.1.3.</span> <span class="toc-text">Dart Finalizer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%95%E5%8E%BB%E4%BD%95%E4%BB%8E"><span class="toc-number">3.</span> <span class="toc-text">何去何从?</span></a></li></ol>
+		
+		</div>
+		
+		<p>2022 年 8 月底，Flutter 发布了 3.3 稳定版，随之发布的 Dart 2.18 宣布<a target="_blank" rel="noopener" href="https://flutter.cn/posts/dart-2-18#dart-%E4%B8%8E-objective-c-%E5%92%8C-swift-%E4%BA%92%E8%B0%83">支持 Dart 与 Objective-C 和 Swift 互调</a>，而 <a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/issues/49674">Java 与 Java&#x2F;Kotlin 的互调也在开发中</a>。整体思路跟 DartNative 三年前的思路类似，走的也是跨语言 API 直接调用(但官方目前只支持同步)，然后通过工具链生成接口绑定。发布当天就有人给我提 Issue 了：<a target="_blank" rel="noopener" href="https://github.com/dart-native/dart_native/issues/105">老哥，考虑一下这个库未来何去何从吧，官方有了</a>。联想到之前 5 月份 Flutter 3.0(Dart 2.17) 发布时官方支持了 Dart Finalizer，跟 DartNative 一年前就支持的 Finalizer 冲突了，想必是有备而来了。</p>
+<p><img src="http://yulingtianxia.com/resources/DartNative/14035340227.png"></p>
+<span id="more"></span>
+
+<h2 id="ffigen-与-DartNative"><a href="#ffigen-与-DartNative" class="headerlink" title="ffigen 与 DartNative"></a>ffigen 与 DartNative</h2><p>Flutter 官方为了支持 Dart 与 Objective-C 和 Swift 互调，基于 ffigen 工具生成了大量的模板代码，缺点是可读性差，优点是性能好一些；DartNative 基于 Native Runtime 动态调用任意 Objective-C 和 Swift 方法，codegen 只是锦上添花，缺点是首次调用性能有所牺牲（有 cache），优点是动态性强且生成代码可读性高，即便手写代码也很少。</p>
+<p>目前二者的实现细节差异也蛮大，比如官方的代码生成是基于 clang 的，比 DartNative codegen 基于的 antlr 更严谨一些，但是使用成本也高很多。官方的 ffigen 目前虽然从 Sample 示例上虽然还没看到对异步调用和回调等能力的支持，不过从整体上官方投入力度还是蛮大的，比我这种利用空闲时间断断续续搞的 sideproject 强多了，后续的能力补齐只是时间问题。</p>
+<p>这三年来我曾一直怀疑 DartNative 的设计路线是否正确，现在官方亲自下场了，那说明这个思路还是有前瞻性的。不过在此之前我也一直在反思这个设计的缺点：把抹平各语言 API 的工作交给了 dart 这一层，需要写平台判断的代码，这与主流的 Channel 接口绑定方案使用上差异很大，增加了理解成本和门槛。为了补齐这块短板，我和另一位贡献者 <a target="_blank" rel="noopener" href="https://github.com/hui19">hui19</a> 参考了 JSI 等跨语言 bridge 接口绑定的设计，提出了开发 DartNative Interface（简称 DNI?），并在 2022 年 5 月份 DartNative 的 0.7.x 版本开始支持（比官方 8 月份发布 Dart 2.18 还要早哈哈）。</p>
+<p>于是有意思的事情出现了：Channel&#x2F;ffigen 和 DartNative 正在朝着对方的设计思路演进，但实现上却有很大差别。这里没有吹嘘 Flutter 官方是参考了 DartNative 的意思，毕竟这种只有不到 900 Star 的小项目根本不会受到 Google 官方关注，我相信这只是巧合罢了。而且 ffigen 和 DartNative 都是基于官方的 dart:ffi 实现的，所以 Google 永远都是爸爸。</p>
+<h2 id="什么是-DartNative-Interface"><a href="#什么是-DartNative-Interface" class="headerlink" title="什么是 DartNative Interface"></a>什么是 DartNative Interface</h2><p>DartNative Interface 实现了跨语言接口之间的绑定和双向调用。相比于 Channel，无需针对 method 写一堆 if-else，也不用把参数挤在一坨序列化和反序列化。DartNative Interface 会将参数列表和返回值自动转换，并支持同步调用和异步协程（这 Channel 它能比吗？它不可以）。iOS&#x2F;macOS&#x2F;Android 目前支持的数据类型：num&#x2F;String&#x2F;List&#x2F;Map&#x2F;Set&#x2F;NativeByte&#x2F;NativeObject，支持双向互相调用。iOS&#x2F;macOS 额外支持 Function&#x2F;Pointer，支持 Swift。</p>
+<p>相比于 DartNative 之前的设计，接口绑定意味着减少了对 native 调用的动态性，但也提供了抹平多端接口差异的标准化方案。继承了 DartNative 强大的类型转换和生命周期管理能力，更加易用。</p>
+<p><img src="https://github.com/dart-native/dart_native/blob/master/images/dartnative.png?raw=true"></p>
+<h3 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h3><h4 id="Dart-调用-Native"><a href="#Dart-调用-Native" class="headerlink" title="Dart 调用 Native"></a>Dart 调用 Native</h4><p>Dart 代码：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">interface</span> = <span class="title">Interface</span>(&quot;<span class="title">MyFirstInterface</span>&quot;);</span></span><br><span class="line"><span class="class">// <span class="title">Example</span> <span class="title">for</span> <span class="title">string</span> <span class="title">type</span>.</span></span><br><span class="line"><span class="class"><span class="title">String</span> <span class="title">helloWorld</span>() </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> interface.invokeMethodSync(<span class="string">&#x27;hello&#x27;</span>, args: [<span class="string">&#x27;world&#x27;</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Example for num type.</span></span><br><span class="line">Future&lt;<span class="built_in">int</span>&gt; sum(<span class="built_in">int</span> a, <span class="built_in">int</span> b) &#123;</span><br><span class="line">    <span class="keyword">return</span> interface.invokeMethod(<span class="string">&#x27;sum&#x27;</span>, args: [a, b]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对应的 Objective-C 代码：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">DNInterfaceDemo</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Register interface name.</span></span><br><span class="line">InterfaceEntry(MyFirstInterface)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Register method &quot;hello&quot;.</span></span><br><span class="line">InterfaceMethod(hello, myHello:(<span class="built_in">NSString</span> *)str) &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;hello %@!&quot;</span>, str];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Register method &quot;sum&quot;.</span></span><br><span class="line">InterfaceMethod(sum, addA:(int32_t)a withB:(int32_t)b) &#123;</span><br><span class="line">    <span class="keyword">return</span> @(a + b);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>对应的 Java 代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// load libdart_native.so</span></span><br><span class="line">DartNativePlugin.loadSo();</span><br><span class="line"></span><br><span class="line"><span class="meta">@InterfaceEntry(name = &quot;MyFirstInterface&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InterfaceDemo</span> <span class="keyword">extends</span> <span class="title class_">DartNativeInterface</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InterfaceMethod(name = &quot;hello&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">hello</span><span class="params">(String str)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello &quot;</span> + str;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InterfaceMethod(name = &quot;sum&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">sum</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> a + b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Native-调用-Dart"><a href="#Native-调用-Dart" class="headerlink" title="Native 调用 Dart"></a>Native 调用 Dart</h4><p>Dart 代码：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">interface.setMethodCallHandler(<span class="string">&#x27;totalCost&#x27;</span>,</span><br><span class="line">        (<span class="built_in">double</span> unitCost, <span class="built_in">int</span> count, <span class="built_in">List</span> list) <span class="keyword">async</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&#x27;totalCost: <span class="subst">$&#123;unitCost * count&#125;</span>&#x27;</span>: list&#125;;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>对应的 Objective-C 代码：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[<span class="keyword">self</span> invokeMethod:<span class="string">@&quot;totalCost&quot;</span></span><br><span class="line">         arguments:@[@<span class="number">0.123456789</span>, @<span class="number">10</span>, @[<span class="string">@&quot;testArray&quot;</span>]]</span><br><span class="line">            result:^(<span class="type">id</span> _Nullable result, <span class="built_in">NSError</span> * _Nullable error) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;%@&quot;</span>, result);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>对应的 Java 代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">invokeMethod(<span class="string">&quot;totalCost&quot;</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="number">0.123456789</span>, <span class="number">10</span>, Arrays.asList(<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>)&#125;,</span><br><span class="line">             <span class="keyword">new</span> <span class="title class_">DartNativeResult</span>() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onResult</span><span class="params">(<span class="meta">@Nullable</span> Object result)</span> &#123;</span><br><span class="line">                    <span class="type">Map</span> <span class="variable">retMap</span> <span class="operator">=</span> (Map) result;</span><br><span class="line">                    <span class="comment">// do something</span></span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">error</span><span class="params">(<span class="meta">@Nullable</span> String errorMessage)</span> &#123;</span><br><span class="line">                    <span class="comment">// do something</span></span><br><span class="line">                &#125;</span><br><span class="line">              &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h4 id="Dart-Finalizer"><a href="#Dart-Finalizer" class="headerlink" title="Dart Finalizer"></a>Dart Finalizer</h4><p>Flutter 3.0(Dart 2.17) 开始支持 Dart Finalizer，但是使用 DartNative，只需要 Flutter 2.2(Dart 2.13) 就可以了：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> foo = Bar(); <span class="comment">// A custom instance.</span></span><br><span class="line">unitTest.addFinalizer(() &#123; <span class="comment">// register a finalizer callback.</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;The instance of \&#x27;foo\&#x27; has been destroyed!&#x27;</span>); <span class="comment">// When `foo` is destroyed by GC, this line of code will be executed.</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>如果想在 Native 监听一个 Dart 对象被销毁，做法是 Dart 从 Native 获取一个对象，并作为另一个想要被监听的 Dart 对象的属性：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DartLifecycleObject</span> </span>&#123;</span><br><span class="line">  <span class="keyword">late</span> <span class="keyword">final</span> <span class="built_in">dynamic</span> finalizer;</span><br><span class="line">  DartLifecycleObject() &#123;</span><br><span class="line">    finalizer = interface.invokeMethodSync(<span class="string">&#x27;finalizer&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里以 OC 语言为例，可以返回一个自定义类（DNDartFinalizer）的对象：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">InterfaceMethod(finalizer, finalizerObject) &#123;</span><br><span class="line">    <span class="keyword">return</span> [[DNDartFinalizer alloc] init];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当 Dart 对象（DartLifecycleObject）被释放后，DNDartFinalizer 对象也会被释放，所以在 dealloc 方法中可以监听到：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">DNDartFinalizer</span></span></span><br><span class="line">- (<span class="type">void</span>)dealloc &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;DartLifecycleObject dead!&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="何去何从"><a href="#何去何从" class="headerlink" title="何去何从?"></a>何去何从?</h2><p>DartNative 的最近一次技术分享是在 2021 年底的 GMTC 深圳站：<a target="_blank" rel="noopener" href="https://gmtc.infoq.cn/2021/shenzhen/presentation/4010">Flutter 自研通道 DartNative 的探索与实现</a>。不过那次分享的内容有所保留，不仅没有提到 DartNative 的 Interface 开发计划，连当时已经做了的一些新特性都没有讲，比如支持 Swift 和 macOS、适配 Dart nullsafety、支持 muti-isolates、支持 OC 方法和 block 返回 Future 给 Dart 等。原因是篇幅要精简，况且总得攒点东西留着后续分享不是嘛？</p>
+<p>当时我还是 Flutter 专题的出品人，title 长度虽然比不过龙妈，但依然被黑惨了：</p>
+<p><img src="http://yulingtianxia.com/resources/DartNative/IMG_4853.JPG"></p>
+<p>接下来的故事比较有意思，手 Q 后来下掉了 Flutter，业务就缺乏了落地验证场景（iOS App 是否使用 Flutter 并不是机密，扒一下安装包就看得出来，网上也有人统计过各大 App 使用 Flutter 的情况）。考虑到腾讯 Flutter Oteam 未来的发展需要落地到具体业务，于是我把 Oteam 负责人的职位交接给了其他大佬。DartNative 依旧在修修补补，毕竟公司还有其他的 App 在使用，GitHub 也偶尔有提 Issue。下掉 Flutter 后我又接手了小程序，之前有用 Flutter 写的业务如今运行在了小程序上。缘，妙不可言。</p>
+<p>最后就是官方宣布 ffigen 支持直接调用 Objective-C&#x2F;Swift 之后，Java&#x2F;Kotlin 也在进行中。我估计再给 Flutter 官方一年时间，ffigen 应该可以补齐能力。剩下的就是 Channel 与 DartNative Interface 的差异了，我只能抽业余时间尽量缝缝补补吧，也期待官方能力不断拓展，毕竟总有那么一天的。目前 DartNative 的硬伤是不支持 Windows，如果有 Windows 大佬欢迎共建。我是肝不动了，否则博客能断更两年么（手动狗头）？</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Dart/">Dart</a><a href="/tags/DartNative/">DartNative</a><a href="/tags/Flutter/">Flutter</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yulingtianxia.com/blog/2022/12/12/DartNative-Interface/" data-title="Flutter 官方终于出手了，DartNative 将何去何从? | yulingtianxia&#39;s blog" data-tsina="1680627603" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/blog/2020/12/06/CPP-Summit-2020/"  title="CPP-Summit 2020">
+ <strong>下一篇：</strong><br/> 
+ <span>CPP-Summit 2020
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ffigen-%E4%B8%8E-DartNative"><span class="toc-number">1.</span> <span class="toc-text">ffigen 与 DartNative</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-DartNative-Interface"><span class="toc-number">2.</span> <span class="toc-text">什么是 DartNative Interface</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.1.</span> <span class="toc-text">使用示例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Dart-%E8%B0%83%E7%94%A8-Native"><span class="toc-number">2.1.1.</span> <span class="toc-text">Dart 调用 Native</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Native-%E8%B0%83%E7%94%A8-Dart"><span class="toc-number">2.1.2.</span> <span class="toc-text">Native 调用 Dart</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Dart-Finalizer"><span class="toc-number">2.1.3.</span> <span class="toc-text">Dart Finalizer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%95%E5%8E%BB%E4%BD%95%E4%BB%8E"><span class="toc-number">3.</span> <span class="toc-text">何去何从?</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="yulingtianxia" data-theme="medium"></div>
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://fish.yulingtianxia.com" target="_blank" title="养小鱼的水塘">养小鱼的水塘</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/%E5%AD%97%E4%BD%93/" style="font-size: 10px;">字体</a> <a href="/tags/%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A/" style="font-size: 10px;">开发者大会</a> <a href="/tags/%E6%9C%AC%E5%9C%B0%E5%8C%96/" style="font-size: 10px;">本地化</a> <a href="/tags/%E7%9E%8E%E6%8A%98%E8%85%BE/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14.62px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1680627603&verifier=c09974f5&dpc=1"></iframe>
+</div>
+
+
+  
+
+<div class="doubanshow">
+<p class="asidetitle">豆瓣秀</p>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/53279288/?show=collection&amp;n=12&amp;columns=3&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book|movie" ></script>
+</div>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Stay hungry, stay foolish <br/>
+			Talk is cheap, show me the code.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1680627603" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/yulingtianxia" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/2374982" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/yulingtianxia" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/yulingtianxia" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		<a href="https://www.linkedin.com/in/yulingtianxia" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		<a href="https://www.douban.com/people/53279288" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/yulingtianxia" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/106642427004837273341?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yulingtianxia@gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+				<div class="cc-license">
+          <a href="http://creativecommons.org/licenses/by-nc-nd/4.0" class="cc-opacity" target="_blank">
+            <img src="/img/cc-by-nc-nd.svg" alt="Creative Commons" />
+          </a>
+        </div>
+    
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2022 
+		
+		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'yulingtianxia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-49704553-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?b5cb508df15ee6247a8c32c64eadb075";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

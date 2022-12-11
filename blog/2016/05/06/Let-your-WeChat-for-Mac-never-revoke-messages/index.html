@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN,en,default">
-<head><meta name="generator" content="Hexo 3.9.0">
+<head>
   <meta charset="UTF-8">
   
     <title>让你的微信不再被人撤回消息 | yulingtianxia&#39;s blog</title>
@@ -11,23 +11,25 @@
     
 
     
-    <meta name="description" content="处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp;amp; iOS。">
-<meta name="keywords" content="macOS,iOS,Reverse Engineering">
+    <meta name="description" content="处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp; iOS。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="让你的微信不再被人撤回消息">
 <meta property="og:url" content="http://yulingtianxia.com/blog/2016/05/06/Let-your-WeChat-for-Mac-never-revoke-messages/index.html">
 <meta property="og:site_name" content="yulingtianxia&#39;s blog">
-<meta property="og:description" content="处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp;amp; iOS。">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:description" content="处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp; iOS。">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-findfuntion@2x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-pseudocode@2x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-revokemsg@2x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-NewExecutable@2x.png">
 <meta property="og:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineering/wechat-ios.png">
-<meta property="og:updated_time" content="2019-05-26T10:08:45.000Z">
+<meta property="article:published_time" content="2016-05-06T10:24:04.000Z">
+<meta property="article:modified_time" content="2019-05-26T10:08:45.000Z">
+<meta property="article:author" content="杨萧玉">
+<meta property="article:tag" content="macOS">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="Reverse Engineering">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="让你的微信不再被人撤回消息">
-<meta name="twitter:description" content="处女座强迫症最讨厌别人发消息后撤回了，尤其是发的图片还没看清就被撤了，或者还没来得及看的消息就已经被撤回了。最近逆向工程很火，所以我也简单的逆向了一把微信 for Mac &amp;amp; iOS。">
 <meta name="twitter:image" content="http://yulingtianxia.com/resources/WeChatReverseEngineeringwechat-findfuntion@2x.png">
 <meta name="twitter:creator" content="@yulingtianxia">
 <link rel="publisher" href="106642427004837273341">
@@ -42,9 +44,11 @@
     <link rel="apple-touch-icon" href="/img/jacman.jpg">
     <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
     
-    <link rel="stylesheet" href="/css/style.css">
+    
+<link rel="stylesheet" href="/css/style.css">
+
 </head>
-</html>
+
   <body>
     <header>
       
@@ -107,7 +111,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#为什么不对-iOS-动刀-Mac-和-iOS-双管齐下"><span class="toc-number">1.</span> <span class="toc-text">为什么不对 iOS 动刀 Mac 和 iOS 双管齐下</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#脑洞和胆子都要大"><span class="toc-number">2.</span> <span class="toc-text">脑洞和胆子都要大</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS-要稍微折腾一些"><span class="toc-number">3.</span> <span class="toc-text">iOS 要稍微折腾一些</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%AF%B9-iOS-%E5%8A%A8%E5%88%80-Mac-%E5%92%8C-iOS-%E5%8F%8C%E7%AE%A1%E9%BD%90%E4%B8%8B"><span class="toc-number">1.</span> <span class="toc-text">为什么不对 iOS 动刀 Mac 和 iOS 双管齐下</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%84%91%E6%B4%9E%E5%92%8C%E8%83%86%E5%AD%90%E9%83%BD%E8%A6%81%E5%A4%A7"><span class="toc-number">2.</span> <span class="toc-text">脑洞和胆子都要大</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS-%E8%A6%81%E7%A8%8D%E5%BE%AE%E6%8A%98%E8%85%BE%E4%B8%80%E4%BA%9B"><span class="toc-number">3.</span> <span class="toc-text">iOS 要稍微折腾一些</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li></ol>
 		
 		</div>
 		
@@ -211,7 +215,7 @@
 
 <section id="comments" class="comment">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 
@@ -223,7 +227,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#为什么不对-iOS-动刀-Mac-和-iOS-双管齐下"><span class="toc-number">1.</span> <span class="toc-text">为什么不对 iOS 动刀 Mac 和 iOS 双管齐下</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#脑洞和胆子都要大"><span class="toc-number">2.</span> <span class="toc-text">脑洞和胆子都要大</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS-要稍微折腾一些"><span class="toc-number">3.</span> <span class="toc-text">iOS 要稍微折腾一些</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%AF%B9-iOS-%E5%8A%A8%E5%88%80-Mac-%E5%92%8C-iOS-%E5%8F%8C%E7%AE%A1%E9%BD%90%E4%B8%8B"><span class="toc-number">1.</span> <span class="toc-text">为什么不对 iOS 动刀 Mac 和 iOS 双管齐下</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%84%91%E6%B4%9E%E5%92%8C%E8%83%86%E5%AD%90%E9%83%BD%E8%A6%81%E5%A4%A7"><span class="toc-number">2.</span> <span class="toc-text">脑洞和胆子都要大</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS-%E8%A6%81%E7%A8%8D%E5%BE%AE%E6%8A%98%E8%85%BE%E4%B8%80%E4%BA%9B"><span class="toc-number">3.</span> <span class="toc-text">iOS 要稍微折腾一些</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li></ol>
  
   </div>
 
@@ -259,7 +263,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/字体/" style="font-size: 10px;">字体</a> <a href="/tags/开发者大会/" style="font-size: 10px;">开发者大会</a> <a href="/tags/本地化/" style="font-size: 10px;">本地化</a> <a href="/tags/瞎折腾/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/碰撞检测/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/翻译/" style="font-size: 14.62px;">翻译</a> <a href="/tags/设计模式/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/转载/" style="font-size: 10px;">转载</a>
+       <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/Algorithm/" style="font-size: 12.31px;">Algorithm</a> <a href="/tags/App-Extensions/" style="font-size: 10px;">App Extensions</a> <a href="/tags/AppGroups/" style="font-size: 10px;">AppGroups</a> <a href="/tags/AppleScript/" style="font-size: 10px;">AppleScript</a> <a href="/tags/BlockHook/" style="font-size: 15.38px;">BlockHook</a> <a href="/tags/C/" style="font-size: 10.77px;">C</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/Core-Data/" style="font-size: 13.85px;">Core Data</a> <a href="/tags/Dart/" style="font-size: 16.92px;">Dart</a> <a href="/tags/DartNative/" style="font-size: 16.92px;">DartNative</a> <a href="/tags/Flutter/" style="font-size: 16.15px;">Flutter</a> <a href="/tags/GitHub/" style="font-size: 13.08px;">GitHub</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Machine-Leaning/" style="font-size: 11.54px;">Machine Leaning</a> <a href="/tags/Message-Forwarding/" style="font-size: 10.77px;">Message Forwarding</a> <a href="/tags/Messaging/" style="font-size: 10px;">Messaging</a> <a href="/tags/Metal/" style="font-size: 11.54px;">Metal</a> <a href="/tags/NodeJS/" style="font-size: 10.77px;">NodeJS</a> <a href="/tags/Objective-C/" style="font-size: 20px;">Objective-C</a> <a href="/tags/Octopress/" style="font-size: 10px;">Octopress</a> <a href="/tags/RAC/" style="font-size: 10.77px;">RAC</a> <a href="/tags/Reference-Counting/" style="font-size: 10px;">Reference Counting</a> <a href="/tags/Reverse-Engineering/" style="font-size: 10.77px;">Reverse Engineering</a> <a href="/tags/Runtime/" style="font-size: 17.69px;">Runtime</a> <a href="/tags/Social-Framework/" style="font-size: 10px;">Social Framework</a> <a href="/tags/SpriteKit/" style="font-size: 15.38px;">SpriteKit</a> <a href="/tags/Swift/" style="font-size: 18.46px;">Swift</a> <a href="/tags/UIKit-Dynamics/" style="font-size: 10px;">UIKit Dynamics</a> <a href="/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/tags/Xcode/" style="font-size: 13.08px;">Xcode</a> <a href="/tags/iCloud/" style="font-size: 10px;">iCloud</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/macOS/" style="font-size: 15.38px;">macOS</a> <a href="/tags/%E5%AD%97%E4%BD%93/" style="font-size: 10px;">字体</a> <a href="/tags/%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A/" style="font-size: 10px;">开发者大会</a> <a href="/tags/%E6%9C%AC%E5%9C%B0%E5%8C%96/" style="font-size: 10px;">本地化</a> <a href="/tags/%E7%9E%8E%E6%8A%98%E8%85%BE/" style="font-size: 11.54px;">瞎折腾</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14.62px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13.08px;">设计模式</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
     </div>
   </div>
 
@@ -342,7 +346,7 @@
     
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2022 
 		
 		<a href="/about" target="_blank" title="杨萧玉">杨萧玉</a>
 		
